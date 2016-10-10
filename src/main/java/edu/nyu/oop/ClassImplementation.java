@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 public class ClassImplementation {
     String name;
-    Class superClass;
+    ClassImplementation superClass;
     ArrayList<MethodImplementation> methods;
 
-    public ClassImplementation(Class superClass) {
+    public ClassImplementation(ClassImplementation superClass) {
         this.superClass = superClass;
     }
 
@@ -28,6 +28,11 @@ public class ClassImplementation {
             MethodImplementation m = methods.get(i);
             if (name.equals(m.name)) return m;
         }
-        return null;
+        if (superClass == null) return null;
+        else return superClass.findMethod(name);
+    }
+
+    public String toHeader() {
+        return "";
     }
 }
