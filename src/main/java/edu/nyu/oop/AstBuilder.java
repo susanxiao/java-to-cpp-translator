@@ -11,7 +11,6 @@ import static java.lang.System.out;
 import java.lang.*;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +56,7 @@ public class AstBuilder extends Visitor {
             summary.PackageDeclarations.add(summary.tempClass);
         }
         if (summary.classBody == true) {
-            summary.tempClassBody.add(n.getString(0));
+            summary.tempMethodTypes.add(n.getString(0));
             System.out.println(n.getString(0) + " <- QualifiedIdentifier method declaration");
         }
     }
@@ -66,6 +65,7 @@ public class AstBuilder extends Visitor {
         //System.out.println(n.getString(1));
         if (summary.classDeclaration == true) {
             summary.classCounter++;
+            summary.methodCounter.add(0);
             summary.tempClassDec.add(summary.classCounter + "");
             for (Object o : n) {
                 if (o instanceof Node) {
@@ -90,50 +90,60 @@ public class AstBuilder extends Visitor {
 
     public void visitClassBody(GNode n) {
         if (summary.classBody == true) {
-            summary.tempClassBody.add(summary.classCounter + "");
+            summary.tempMethodTypes.add(summary.classCounter + "");
             for (Object o : n) {
                 if (o instanceof Node) {
                     System.out.println(o + " <- visit classbody node");
-                    summary.tempMethodDeclaration.add(summary.classCounter + "");
+                    summary.tempMethods.add(summary.classCounter + "");
                     if (o.toString().contains("MethodDeclaration")) {
+                        out.println("-------");
+                        out.println(((Node) o).getName());
+                        int temp = summary.methodCounter.get(summary.classCounter-1);
+                        temp++;
+                        summary.methodCounter.set(summary.classCounter-1,temp);
+                        out.println(summary.methodCounter.get(summary.classCounter-1) + " <- current method count");
+                        out.println("-------");
+                        summary.methodDeclaration = true;
                         for (Object o1 : (Node) o) {
+                            out.println(o1 + "<- CURRENT OBJECT PRINTING");
                             if (o1 instanceof Node) {
-                                if (o1.toString().contains("Modifiers")) {
+                                if (o1.toString().contains("Modifiers") && !o1.toString().contains("Block")) {
                                     System.out.println(o1 + " <- Modifiers method declaration");
                                     visit((GNode) o1);
-                                } else if (o1.toString().equals("Type")) {
-                                    if (o1 instanceof Node) {
-                                        if (o1.toString().contains("QualifiedIdentifier")) {
-                                            visit((GNode) o1);
-                                        }
-                                    }
                                 } else if (o1.toString().contains("VoidType")) {
                                     System.out.println(o1.toString() + " <- voidtype");
-                                    summary.tempClassBody.add("Void");
+                                    summary.tempMethodTypes.add("Void");
+                                } else if (o1.toString().contains("Type")) {
+                                    if (o1 instanceof Node) {
+                                        out.println(" <-- inside of Type");
+                                        visit((GNode) o1);
+                                    }
                                 } else if (o1.toString().contains("FormalParameters")) {
                                     System.out.println(o1 + " <- formal parameters not implemented");
                                 } else if (o1.toString().contains("Block")) {
+                                    summary.methodBody = true;
+                                    summary.classDeclaration = true;
+                                    summary.classBody = false;
+                                    summary.tempMethodBody.add(summary.classCounter + "");
+                                    summary.tempMethodBody.add(summary.methodCounter.get(summary.classCounter-1) + "");
                                     if (o1 instanceof Node) {
                                         for (Object o2 : (Node) o1) {
-                                            out.println(o2 + " <- block testing");
-                                            if (o2.toString().contains("ReturnStatement")) {
-                                                summary.classDeclaration = true;
-                                                for (Object o3 : (Node) o2) {
-                                                    if (o3.toString().contains("StringLiteral")) {
-                                                        visit((GNode) o2);
-                                                    }
-                                                }
+                                            out.println("block testing -> " + o1);
+                                            visit((GNode) o1);
+                                            for (Object o3 : (Node) o2) {
+                                                out.println("       " + o3 + " <- sub block testing");
                                             }
                                         }
                                     }
-                                }else{
+                                    summary.methodBody = false;
+                                } else {
                                     out.println("NOT MARKED YET -> " + o1);
                                 }
                             } else {
                                 if (o1 != null) {
                                     System.out.println(o1 + " <- added to MethodDeclarationList");
-                                    summary.tempMethodDeclaration.add(o1.toString());
-                                    System.out.println(summary.tempMethodDeclaration);
+                                    summary.tempMethods.add(o1.toString());
+                                    System.out.println(summary.tempMethods);
                                 } else {
                                     System.out.println(o1 + " <- Not instance of node/added as string");
                                 }
@@ -149,17 +159,39 @@ public class AstBuilder extends Visitor {
         }
     }
 
-    public void visitModifier(GNode n) {
+    public void visitFieldDeclaration(GNode n) {
         if (summary.classBody == true) {
-            System.out.println(n.getString(0) + " <- modifier method declaration");
-            summary.tempClassBody.add(n.getString(0));
+            out.println(n.getName() + " <- inside block");
+            for (Object o : n) {
+                out.println("sub inside block -> " + o);
+                if (o instanceof Node) {
+                    visit((GNode) o);
+                } else {
+
+                }
+            }
         }
     }
 
-    public void visitStringLiteral(GNode n) {
+    public void visitReturnStatement(GNode n) {
+        out.println(n + " <- return statement ");
+        if(summary.methodBody == true){
+            for (Object o : n){
+                out.println(o + " <- return statement sub methodBody");
+                if(o instanceof Node){
+                    summary.tempMethodBody.add("return");
+                    if(((Node) o).getName() == "StringLiteral"){
+                       summary.tempMethodBody.add(((Node) o).getString(0));
+                    }
+                }
+            }
+        }
+    }
+
+    public void visitModifier(GNode n) {
         if (summary.classBody == true) {
-            System.out.println(n.getString(0) + " <- String literal Return statement");
-            summary.tempMethodDeclaration.add(n.getString(0));
+            System.out.println(n.getString(0) + " <- modifier method declaration");
+            summary.tempMethodTypes.add(n.getString(0));
         }
     }
 
@@ -174,7 +206,28 @@ public class AstBuilder extends Visitor {
             }
             summary.classModifiers = false;
         }
+        if (summary.classBody == true) {
+            int counter = 0;
+            for (Object o : n) {
+                System.out.println(o + " <- block declaration modifiers");
+                for (Object o2 : (Node) o) {
+                    out.println(o2);
+                }
+            }
+        }
     }
+
+    public void visitStringLiteral(GNode n) {
+        out.println("hello");
+        if (summary.classBody == true) {
+            System.out.println(n.getString(0) + " <- String literal Return statement");
+            summary.tempMethods.add(n.getString(0));
+        }
+        if (summary.methodBody == true){
+            out.println(n + " <- inside method body string literal");
+        }
+    }
+
 
     public void visit(Node n) {
         for (Object o : n) {
@@ -220,16 +273,20 @@ public class AstBuilder extends Visitor {
     public AstBuilder.AstBuilderSummary getClassDeclarations(Node n) {
         System.out.println("getClassDeclarations running");
         summary.classDeclaration = true;
-        summary.tempClassBody = new ArrayList<String>();
+        summary.tempMethodTypes = new ArrayList<String>();
         summary.tempClassDec = new ArrayList<String>();
-        summary.tempMethodDeclaration = new ArrayList<String>();
+        summary.tempMethods = new ArrayList<String>();
+        summary.tempMethodBody = new ArrayList<String>();
 
         super.dispatch(n);
         summary.ClassDeclarations.add(summary.tempClassDec);
-        summary.ClassDeclarations.add(summary.tempClassBody);
-        summary.ClassDeclarations.add(summary.tempMethodDeclaration);
-        System.out.println("getClassBody complete");
-        System.out.println("ClassDeclarations list " + summary.ClassDeclarations);
+        summary.ClassDeclarations.add(summary.tempMethodTypes);
+        summary.ClassDeclarations.add(summary.tempMethods);
+        System.out.println("getClassBody complete\n");
+        out.println("Class declarations: " + summary.tempClassDec);
+        out.println("Method types: " + summary.tempMethodTypes);
+        out.println("Methods: " + summary.tempMethods);
+        out.println("MethodBody: " + summary.tempMethodBody);
         return summary;
     }
 
@@ -239,11 +296,13 @@ public class AstBuilder extends Visitor {
         Boolean first = true;
         int classCount = 0;
         int classCounter = 0;
+        ArrayList<Integer> methodCounter = new ArrayList<Integer>();
 
         ArrayList<String> tempClass;
         ArrayList<String> tempClassDec;
-        ArrayList<String> tempClassBody;
-        ArrayList<String> tempMethodDeclaration;
+        ArrayList<String> tempMethodTypes;
+        ArrayList<String> tempMethods;
+        ArrayList<String> tempMethodBody;
 
 
         Boolean headerDeclaration = false;
@@ -254,6 +313,8 @@ public class AstBuilder extends Visitor {
         Boolean classModifiers = false;
         Boolean classBody = false;
         Boolean classBodyModifiers = false;
+        Boolean methodDeclaration = false;
+        Boolean methodBody = false;
         List<ArrayList<String>> ClassDeclarations = new ArrayList<ArrayList<String>>();
     }
 }
