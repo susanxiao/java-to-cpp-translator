@@ -3,6 +3,9 @@ package edu.nyu.oop;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import xtc.tree.GNode;
+import static java.lang.System.out;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Garrett on 10/12/16.
@@ -18,10 +21,10 @@ public class AstBuilderTest {
     }
 
     @Test
-    public void testClassesSummary() {
+    public void testInput001() {
         AstBuilder visitor = new AstBuilder(XtcTestUtils.newRuntime());
-        AstBuilder.AstBuilderSummary summary = visitor.getPackageDeclaration(node);
-        AstBuilder.AstBuilderSummary summary1 = visitor.getClassDeclarations(node);
+        AstBuilder.AstBuilderSummary summary = visitor.getClassDeclarations(node);
+
 
     }
 }
