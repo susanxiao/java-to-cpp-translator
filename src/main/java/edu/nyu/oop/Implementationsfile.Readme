@@ -1,4 +1,19 @@
-Test001.java
+Output of the implementations file
+Test001 
+
+IMPLEMENTATION FIle
+DEBUGGING IS ON
+   Classes
+       [A, Test001]
+   Method class groupings
+       [[1, RETURN, "A"], [1, FieldDeclaration, A, a, new, A, ExpressionStatement, System, out, println, a, toString]]
+   method body strings
+       [[return "A" ], [A a = new A , System.out.println(a.toString()]]
+   Method grouping
+       [[toString], [main]]
+   method type groupings
+       [[String], [Void]]
+
 
 // A implementations
 __A::__A() : __vptr(&__vtable) {}
@@ -10,6 +25,7 @@ String __A::toString(A __this) {
    return new __String(sout.str());
 }
 
+
 Class __A::__class(){
    static Class k =
      new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
@@ -18,14 +34,6 @@ Class __A::__class(){
 
 __A_VT __A::__vtable;
 
-Methods for 2
-[main, String, [], args]
-methodTypes for 2
-[Void]
-current classname Test001
-method body for 2
-[1, RETURN, "A", 1, FieldDeclaration, A, a, new, A, ExpressionStatement, System, out, println, a, toString]
-methods [main]
 
 
 // Test001 implementations
@@ -33,8 +41,10 @@ __Test001::__Test001() : __vptr(&__vtable) {}
 
 
 Void __Test001::main(Test001 __this) {
-   MAIN METHOD IMPLEMENTATION
+   A a = new A 
+   System.out.println(a.toString()
 }
+
 
 Class __Test001::__class(){
    static Class k =
