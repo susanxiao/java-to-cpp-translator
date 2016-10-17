@@ -1,0 +1,45 @@
+Test001.java
+
+// A implementations
+__A::__A() : __vptr(&__vtable) {}
+
+
+String __A::toString(A __this) {
+   std::ostringstream sout
+   sout << "A";
+   return new __String(sout.str());
+}
+
+Class __A::__class(){
+   static Class k =
+     new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+   return k
+}
+
+__A_VT __A::__vtable;
+
+Methods for 2
+[main, String, [], args]
+methodTypes for 2
+[Void]
+current classname Test001
+method body for 2
+[1, RETURN, "A", 1, FieldDeclaration, A, a, new, A, ExpressionStatement, System, out, println, a, toString]
+methods [main]
+
+
+// Test001 implementations
+__Test001::__Test001() : __vptr(&__vtable) {}
+
+
+Void __Test001::main(Test001 __this) {
+   MAIN METHOD IMPLEMENTATION
+}
+
+Class __Test001::__class(){
+   static Class k =
+     new __Class(__rt::literal("class inputs.javalang.Test001"), (Class) __rt::null());
+   return k
+}
+
+__Test001_VT __Test001::__vtable;
