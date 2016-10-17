@@ -17,12 +17,12 @@ import java.util.List;
 /**
  * Created by Garrett on 10/12/16.
  */
-public class AstBuilder extends Visitor {
+public class AstTraversal extends Visitor {
 
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private Runtime runtime;
 
-    private AstBuilder.AstBuilderSummary summary = new AstBuilder.AstBuilderSummary();
+    private AstTraversal.AstBuilderSummary summary = new AstTraversal.AstBuilderSummary();
 
     public void visitCompilationUnit(GNode n) {
         if (summary.first) {
@@ -456,16 +456,16 @@ public class AstBuilder extends Visitor {
         //runtime.console().p("Exiting scope at ").loc(curr).pln();
     }
 
-    public AstBuilder(Runtime runtime) {
+    public AstTraversal(Runtime runtime) {
         this.runtime = runtime;
     }
 
-    public AstBuilder.AstBuilderSummary getSummary(Node n) {
+    public AstTraversal.AstBuilderSummary getSummary(Node n) {
         super.dispatch(n);
         return summary;
     }
 
-    public AstBuilder.AstBuilderSummary getClassDeclarations(Node n) {
+    public AstTraversal.AstBuilderSummary getClassDeclarations(Node n) {
 
         summary.headerDeclaration = true;
         summary.tempClass = new ArrayList<String>();

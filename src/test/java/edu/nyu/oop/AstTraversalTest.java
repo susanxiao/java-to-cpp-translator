@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Garrett on 10/12/16.
  */
-public class AstBuilderTest {
+public class AstTraversalTest {
     private static GNode node = null;
 
     @BeforeClass
@@ -22,8 +22,8 @@ public class AstBuilderTest {
 
     @Test
     public void testInput001() {
-        AstBuilder visitor = new AstBuilder(XtcTestUtils.newRuntime());
-        AstBuilder.AstBuilderSummary summary = visitor.getClassDeclarations(node);
+        AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
+        AstTraversal.AstBuilderSummary summary = visitor.getClassDeclarations(node);
 
 
     }

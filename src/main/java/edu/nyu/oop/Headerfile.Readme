@@ -1,0 +1,103 @@
+Basic implementation to print the header file in C++
+This has been tested on Test001.java
+
+This file works in correspondence to the Implementationsfile
+
+// forward declarations
+struct __A;
+struct __A_VT;
+struct __Test001;
+struct __Test001_VT;
+
+typedef __A* A
+typedef __Test001* Test001
+
+
+// printing the struct for A
+struct __A
+{
+
+   // pointer to the vtable
+   __A_VT* __vtpr;
+
+
+   // the constructor
+   __A();
+
+
+   // the methods implemented
+   static String toString(A);
+
+
+   // function return class
+   static Class _class();
+
+
+   // the vtable
+   static __A_VT vtable;
+};
+
+
+struct __A_VT
+{
+
+
+   // the dynamic type
+   Class __isa;
+
+
+   // the function pointers
+   String (*toString)(A);
+
+
+   __A_VT()
+    :__isa(__A::__class()),
+     toString(&__A::toString),
+    {}
+
+
+};
+// printing the struct for Test001
+struct __Test001
+{
+
+   // pointer to the vtable
+   __Test001_VT* __vtpr;
+
+
+   // the constructor
+   __Test001();
+
+
+   // the methods implemented
+   static Void main(Test001);
+
+
+   // function return class
+   static Class _class();
+
+
+   // the vtable
+   static __Test001_VT vtable;
+};
+
+
+struct __Test001_VT
+{
+
+
+   // the dynamic type
+   Class __isa;
+
+
+   // the function pointers
+   Void (*main)(Test001);
+
+
+   __Test001_VT()
+    :__isa(__Test001::__class()),
+     main(&__Test001::main),
+    {}
+
+
+};
