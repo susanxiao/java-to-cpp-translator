@@ -24,7 +24,7 @@ public class Implementationsfile {
     /**
      * Obtain the classes
      */
-    static ArrayList<String> getClasses(AstTraversal.AstBuilderSummary summary) {
+    static ArrayList<String> getClasses(AstTraversal.AstTraversalSummary summary) {
         ArrayList<String> classDeclarations = summary.tempClassDec;
         ArrayList<String> classes = new ArrayList<String>();
         for (Object o : classDeclarations) {
@@ -38,7 +38,7 @@ public class Implementationsfile {
     /**
      * Obtain method groupings by the class
      */
-    static ArrayList<ArrayList<String>> methodClassGrouping(AstTraversal.AstBuilderSummary summary) {
+    static ArrayList<ArrayList<String>> methodClassGrouping(AstTraversal.AstTraversalSummary summary) {
 
         int currentClass = 0;
 
@@ -112,7 +112,7 @@ public class Implementationsfile {
      * Obtain the method body strings that are going to be used for implementation
      */
     // obtain the method body strings
-    static ArrayList<ArrayList<String>> bodyStrings(AstTraversal.AstBuilderSummary summary, ArrayList<ArrayList<String>> methodClasses) {
+    static ArrayList<ArrayList<String>> bodyStrings(AstTraversal.AstTraversalSummary summary, ArrayList<ArrayList<String>> methodClasses) {
         ArrayList<ArrayList<String>> stringsClasses = new ArrayList<ArrayList<String>>();
         ArrayList<String> strings = new ArrayList<String>();
 
@@ -218,7 +218,7 @@ public class Implementationsfile {
     /**
      * Obtain the methods
      */
-    static ArrayList<ArrayList<String>> methodGroupings(AstTraversal.AstBuilderSummary summary, ArrayList<String> classes) {
+    static ArrayList<ArrayList<String>> methodGroupings(AstTraversal.AstTraversalSummary summary, ArrayList<String> classes) {
 
         ArrayList<String> methods = new ArrayList<String>();
         ArrayList<String> methods1 = new ArrayList<String>();
@@ -274,7 +274,7 @@ public class Implementationsfile {
     /**
      * Obtain the method type groupings
      */
-    static ArrayList<ArrayList<String>> methodTypeGroupings(AstTraversal.AstBuilderSummary summary, ArrayList<String> classes) {
+    static ArrayList<ArrayList<String>> methodTypeGroupings(AstTraversal.AstTraversalSummary summary, ArrayList<String> classes) {
         ArrayList<ArrayList<String>> typeGroupings = new ArrayList<ArrayList<String>>();
         ArrayList<String> methodTypes = new ArrayList<String>();
 
@@ -313,6 +313,81 @@ public class Implementationsfile {
     }
 
     /**
+     * Print the headerfile
+     */
+    static void printHeaderFile(ArrayList<String> classes, ArrayList<ArrayList<String>> methodClasses,
+                                ArrayList<ArrayList<String>> methodBodyStrings, ArrayList<ArrayList<String>> methodGrouping,
+                                ArrayList<ArrayList<String>> methodTypeGrouping) {
+
+        // printing forward declarations
+        for (Object o : classes) {
+            out.println("struct __" + o.toString() + ";");
+            out.println("struct __" + o.toString() + "_VT;");
+        }
+        out.print("\n");
+
+        for (Object o : classes) {
+            out.println("typedef __" + o.toString() + "* " + o.toString());
+        }
+        out.print("\n");
+
+        String className;
+        int classCounter = -1;
+        for (Object o : classes) {
+
+            classCounter += 1;
+            className = o.toString();
+
+            out.println("struct __" + className + "\n{\n");
+            out.println("   __" + className + "_VT* __vtpr;");
+            out.println("\n");
+
+            out.println("   __" + className + "();");
+            out.println("\n");
+
+            for (int i = 0; i < methodGrouping.get(classCounter).size(); i++) {
+                out.print("   static " + methodTypeGrouping.get(classCounter).get(i) + " ");
+                out.println(methodGrouping.get(classCounter).get(i) + "(" + className + ");");
+            }
+            out.println("\n");
+
+            out.println("   static Class _class();");
+            out.println("\n");
+
+            out.println("   static __" + className + "_VT" + " vtable;");
+
+            out.println("};");
+
+            // printing the virtual table
+            out.println("\n");
+            out.println("struct __" + className + "_VT\n{");
+            out.println("\n");
+            out.println("   Class __isa;");
+            out.println("\n");
+
+            for (int i = 0; i < methodGrouping.get(classCounter).size(); i++) {
+                out.print("   " + methodTypeGrouping.get(classCounter).get(i) + " (*");
+                out.println(methodGrouping.get(classCounter).get(i) + ")(" + className + ");");
+            }
+
+            // vtable constructor
+            out.println("\n");
+            out.println("   __" + className + "_VT()");
+            out.println("    :__isa(__" + className + "::__class()),");
+            for (int i = 0; i < methodGrouping.get(classCounter).size(); i++) {
+                out.print("     " + methodGrouping.get(classCounter).get(i) + "(&__" + className);
+                out.println("::" + methodGrouping.get(classCounter).get(i) + "),");
+            }
+            out.println("    {}");
+            out.println("\n");
+            out.println("};");
+            out.print("\n");
+        }
+        return;
+    }
+
+
+    /**
      * Print the implementation
      */
 
@@ -337,10 +412,10 @@ public class Implementationsfile {
                 out.println("(" + className + " __this) {");
                 if (o2.equals("toString")) {
                     String tempString = "";
-                    for(Object o3 : methodBodyStrings.get(classCounter)){
-                        if(o3.toString().equals("return")){
+                    for (Object o3 : methodBodyStrings.get(classCounter)) {
+                        if (o3.toString().equals("return")) {
                             continue;
-                        }else{
+                        } else {
                             tempString += o3.toString() + " ";
                         }
                     }
@@ -381,12 +456,17 @@ public class Implementationsfile {
     public static void main(String[] args) {
         boolean debug = true;
 
-        GNode node = (GNode) LoadFile.loadTestFile("./src/test/java/inputs/test001/Test001.java");
-        AstTraversal visitor = new AstTraversal(LoadFile.newRuntime());
-        AstTraversal.AstBuilderSummary summary = visitor.getClassDeclarations(node);
+        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
+        AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
+        AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+
+        boolean printImp, printHead;
+        printImp = printHead = false;
+        printHead = true;
+
         out.println("\n\n-----------------\n\n");
 
-        if(debug){
+        if (debug) {
             out.println("IMPLEMENTATION FIle");
             out.println("DEBUGGING IS ON");
         }
@@ -426,8 +506,26 @@ public class Implementationsfile {
             out.println("       " + methodTypeGrouping);
         }
 
+        if(debug){
+            out.println("\n");
+        }
+
+        // print the implementations or the header file or both the implementations and the headerfile
+        if (printImp && printHead) {
+            printHeaderFile(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
+            printImplementations(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
+            return;
+        }
+        if (printImp) {
+
+            printImplementations(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
+            return;
+        }
+        if (printHead) {
+            printHeaderFile(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
+            return;
+        }
         // print the implementations
-        printImplementations(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
 
     }
 }

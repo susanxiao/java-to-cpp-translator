@@ -3,7 +3,6 @@ package edu.nyu.oop;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import xtc.tree.GNode;
-import static java.lang.System.out;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,7 +22,7 @@ public class AstTraversalTest {
     @Test
     public void testInput001() {
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
-        AstTraversal.AstBuilderSummary summary = visitor.getClassDeclarations(node);
+        AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
 
 
     }

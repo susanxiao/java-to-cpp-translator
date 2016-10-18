@@ -21,23 +21,27 @@ public class AstTraversal extends Visitor {
 
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private Runtime runtime;
+    boolean debug = true;
+    private AstTraversalSummary summary = new AstTraversalSummary();
 
-    private AstTraversal.AstBuilderSummary summary = new AstTraversal.AstBuilderSummary();
-
+    /**
+     * visitXXX methods
+     */
     public void visitCompilationUnit(GNode n) {
         if (summary.first) {
             summary.first = false;
             summary.classCount = n.size() - 1;
-            System.out.println("The number of classes " + summary.classCount);
+            if (debug) {
+                out.println("The number of classes " + summary.classCount);
+            }
         }
         visit(n);
         runtime.console().flush();
     }
 
     public void visitPackageDeclaration(GNode n) {
-        if (summary.headerDeclaration == true) {
+        if (summary.headerDeclaration) {
             for (Object o : n) {
-                System.out.println(o + " <- visit package declaration");
                 if (o instanceof Node) {
                     visitQualifiedIdentifier((GNode) o);
                 }
@@ -46,39 +50,36 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitQualifiedIdentifier(GNode n) {
-        if (summary.headerDeclaration == true) {
-            System.out.println(n + " <- visit qualified identifier");
+        if (summary.headerDeclaration) {
             for (Object o : n) {
-                System.out.println(o + " <- visit qualified identifier");
                 summary.tempClass.add((String) o);
             }
             summary.headerDeclaration = false;
             summary.PackageDeclarations.add(summary.tempClass);
         }
-        if (summary.classBody == true && !summary.parameterTypes == true) {
+        if (summary.classBody && !summary.parameterTypes) {
             summary.tempMethodTypes.add(n.getString(0));
-            System.out.println(n.getString(0) + " <- QualifiedIdentifier method declaration");
         }
-        if (summary.methodBody == true) {
+        if (summary.methodBody) {
             summary.tempMethodBody.add(n.getString(0));
-            out.println(n.getString(0) + " <- QualifiedIdentifier method body");
         }
-        if (summary.parameterTypes == true) {
-            out.println(n.getString(0) + "      <- QualifiedIdentifier parameter ");
+        if (summary.parameterTypes) {
             summary.tempMethods.add(n.getString(0));
         }
     }
 
     public void visitClassDeclaration(GNode n) {
-        if (summary.classDeclaration == true) {
+        if (summary.classDeclaration) {
             summary.classCounter++;
+            if(debug){
+                out.println("current class count " + summary.classCounter);
+            }
             summary.methodCounter.add(0);
             summary.tempClassDec.add(summary.classCounter + "");
             for (Object o : n) {
                 if (o instanceof Node) {
                     if (((Node) o).getName() == "Modifiers") {
                         summary.classModifiers = true;
-                        System.out.println(o + " <- visit class declaration");
                         visitModifiers((GNode) o);
                     } else if (((Node) o).getName() == "ClassBody") {
                         summary.classDeclaration = false;
@@ -87,7 +88,6 @@ public class AstTraversal extends Visitor {
                         return;
                     }
                 } else {
-                    System.out.println(o + " <- visit class declaration");
                     if (o != null) {
                         summary.tempClassDec.add((String) o);
                     }
@@ -97,40 +97,32 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitClassBody(GNode n) {
-        if (summary.classBody == true) {
+        if (summary.classBody) {
             summary.tempMethodTypes.add(summary.classCounter + "");
             for (Object o : n) {
                 if (o instanceof Node) {
-                    System.out.println(o + " <- visit classbody node");
                     summary.tempMethods.add(summary.classCounter + "");
                     if (o.toString().contains("MethodDeclaration")) {
-                        out.println("-------");
-                        out.println(((Node) o).getName());
                         int temp = summary.methodCounter.get(summary.classCounter - 1);
                         temp++;
                         summary.methodCounter.set(summary.classCounter - 1, temp);
-                        out.println(summary.methodCounter.get(summary.classCounter - 1) + " <- current method count");
-                        out.println("-------");
+                        if (debug) {
+                            out.println(summary.methodCounter.get(summary.classCounter - 1) + " <- current method count");
+                        }
                         summary.methodDeclaration = true;
                         for (Object o1 : (Node) o) {
-                            out.println(o1 + "<- CURRENT OBJECT PRINTING");
                             if (o1 instanceof Node) {
-                                out.println(((Node) o1).getName() + " <- CURRENT NAME ");
                                 if (((Node) o1).getName() == "Modifiers") {
-                                    System.out.println(o1 + " <- Modifiers method declaration");
                                     visitModifiers((GNode) o1);
                                 } else if (((Node) o1).getName() == "VoidType") {
-                                    System.out.println(o1.toString() + " <- voidtype");
                                     summary.tempMethodTypes.add("Void");
                                 } else if (((Node) o1).getName() == "Type") {
                                     if (o1 instanceof Node) {
                                         summary.methodType = true;
-                                        out.println(" <-- inside of Type");
                                         visitType((GNode) o1);
                                     }
                                 } else if (((Node) o1).getName() == "FormalParameters") {
                                     summary.methodParameters = true;
-                                    System.out.println(o1 + " <- formal parameters");
                                     visitFormalParameters((GNode) o1);
                                 } else if (((Node) o1).getName() == "Block") {
                                     summary.methodBody = true;
@@ -147,17 +139,13 @@ public class AstTraversal extends Visitor {
                                 }
                             } else {
                                 if (o1 != null) {
-                                    System.out.println(o1 + " <- added to MethodDeclarationList");
                                     summary.tempMethods.add(o1.toString());
-                                    System.out.println(summary.tempMethods);
                                 } else {
-                                    System.out.println(o1 + " <- Not instance of node/added as string");
                                 }
                             }
                         }
                     }
                 } else {
-                    System.out.println(o + " <- visit classbody");
                     if (o != null) {
                         summary.tempClassDec.add((String) o);
                     }
@@ -168,15 +156,11 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitType(GNode n) {
-        if (summary.methodType == true) {
-            out.println("   -> Type method body");
-            out.println("   -> " + n.getNode(0).getString(0));
+        if (summary.methodType) {
             summary.tempMethodTypes.add(n.getNode(0).getString(0));
             summary.methodType = false;
-        } else if (summary.parameterTypes == true) {
-            out.println("   -> Type Parameters");
+        } else if (summary.parameterTypes) {
             for (Object o : n) {
-                out.println(o);
                 if (o instanceof Node) {
                     if (((Node) o).getName() == "QualifiedIdentifier") {
                         visitQualifiedIdentifier((GNode) o);
@@ -194,8 +178,7 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitArguments(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("   -> Arguments method body");
+        if (summary.methodBody) {
             for (Object o : n) {
                 if (o instanceof Node) {
                     if (((GNode) o).getName() == "CallExpression") {
@@ -211,9 +194,8 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitExpressionStatement(GNode n) {
-        if (summary.methodBody == true) {
+        if (summary.methodBody) {
             summary.tempMethodBody.add("ExpressionStatement");
-            out.println("ExpressionStatement method body");
             for (Object o : n) {
                 if (o instanceof Node) {
                     if (((Node) o).getName() == "CallExpression") {
@@ -225,10 +207,8 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitCallExpression(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("    -> Call expression method body");
+        if (summary.methodBody) {
             for (Object o : n) {
-                out.println("       -> sub CallExpression " + o);
                 if (o instanceof Node) {
                     if (((Node) o).getName() == "SelectionExpression") {
                         visitSelectionExpression((GNode) o);
@@ -239,7 +219,6 @@ public class AstTraversal extends Visitor {
                     }
                 } else {
                     if (o != null) {
-                        out.println("   -> " + o.toString());
                         summary.tempMethodBody.add(o.toString());
                     }
                 }
@@ -248,8 +227,7 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitSelectionExpression(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("   -> Selection expression method body");
+        if (summary.methodBody) {
             for (Object o : n) {
                 if (o instanceof Node) {
                     //visit((GNode) o);
@@ -258,7 +236,6 @@ public class AstTraversal extends Visitor {
                     }
                 } else {
                     if (o != null) {
-                        out.println("   -> " + o.toString());
                         summary.tempMethodBody.add(o.toString());
                     }
                 }
@@ -267,14 +244,12 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitPrimaryIdentifier(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("   -> PrimaryIdentifier method body");
+        if (summary.methodBody) {
             for (Object o : n) {
                 if (o instanceof Node) {
                     visit((GNode) o);
                 } else {
                     if (o != null) {
-                        out.println("   ->" + o.toString());
                         summary.tempMethodBody.add(o.toString());
                     }
                 }
@@ -282,29 +257,13 @@ public class AstTraversal extends Visitor {
         }
     }
 
-    /**
-     * public void visitDeclarators(GNode n) {
-     * if (summary.methodBody == true) {
-     * out.println("-==================\n\n");
-     * out.println("   -> Declarators method body");
-     * for (Object o : n) {
-     * visit((GNode) o);
-     * }
-     * }
-     * }
-     **/
-
     public void visitDeclarator(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("   -> Declarator method body");
+        if (summary.methodBody) {
             for (Object o : n) {
                 if (o instanceof Node) {
-                    out.println("       " + ((Node) o).getName());
-                    //visit((GNode)o);
                     visitNewClassExpression((GNode) o);
                 } else {
                     if (o != null) {
-                        out.println("       " + o.toString());
                         summary.tempMethodBody.add(o.toString());
                     }
                 }
@@ -313,8 +272,7 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitNewClassExpression(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("   -> new class expression method body");
+        if (summary.methodBody) {
             summary.tempMethodBody.add("new");
             for (Object o : n) {
                 if (o instanceof Node) {
@@ -328,12 +286,10 @@ public class AstTraversal extends Visitor {
 
 
     public void visitFieldDeclaration(GNode n) {
-        if (summary.methodBody == true) {
-            out.println("FieldDeclaration method body");
+        if (summary.methodBody) {
             summary.tempMethodBody.add("FieldDeclaration");
             for (Object o : n) {
                 if (o instanceof Node) {
-                    out.println("   " + ((Node) o).getName());
                     visit((GNode) o);
                 }
             }
@@ -341,10 +297,8 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitReturnStatement(GNode n) {
-        out.println(n + " <- return statement ");
-        if (summary.methodBody == true) {
+        if (summary.methodBody) {
             for (Object o : n) {
-                out.println(o + " <- return statement sub methodBody");
                 if (o instanceof Node) {
                     summary.tempMethodBody.add("RETURN");
                     if (((Node) o).getName() == "StringLiteral") {
@@ -356,20 +310,17 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitModifier(GNode n) {
-        if (summary.classModifiers == true) {
-            out.println("   class modifier -> " + n.toString());
+        if (summary.classModifiers) {
             summary.tempClassDec.add(n.getString(0));
-        } else if (summary.classBody == true) {
-            System.out.println(n.getString(0) + " <- modifier method declaration");
+        } else if (summary.classBody) {
             summary.tempMethodTypes.add(n.getString(0));
         }
     }
 
     public void visitModifiers(GNode n) {
-        if (summary.classModifiers == true) {
+        if (summary.classModifiers) {
             int counter = 0;
             for (Object o : n) {
-                System.out.println(o + " <- class declaration modifiers");
                 if (o instanceof Node) {
                     if (((Node) o).getName() == "Modifier") {
                         visitModifier((GNode) o);
@@ -377,33 +328,27 @@ public class AstTraversal extends Visitor {
                 }
             }
             summary.classModifiers = false;
-        } else if (summary.classBody == true) {
+        } else if (summary.classBody) {
             int counter = 0;
             for (Object o : n) {
-                System.out.println(o + " <- block declaration modifiers");
                 for (Object o2 : (Node) o) {
-                    out.println(o2);
+                    //out.println(o2);
                 }
             }
-        } else if (summary.methodBody == true) {
-            out.println(" <- Modifiers method body ");
+        } else if (summary.methodBody) {
         }
     }
 
     public void visitStringLiteral(GNode n) {
-        out.println("hello");
-        if (summary.classBody == true) {
-            System.out.println(n.getString(0) + " <- String literal Return statement");
+        if (summary.classBody) {
             summary.tempMethods.add(n.getString(0));
         }
-        if (summary.methodBody == true) {
-            out.println(n + " <- inside method body string literal");
+        if (summary.methodBody) {
         }
     }
 
     public void visitFormalParameters(GNode n) {
-        if (summary.methodParameters == true) {
-            out.println("   -> FormalParameters method body");
+        if (summary.methodParameters) {
             for (Object o : n) {
                 if (o instanceof Node) {
                     visitFormalParameter((GNode) o);
@@ -417,8 +362,7 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitFormalParameter(GNode n) {
-        if (summary.methodParameters == true) {
-            out.println("   -> FormalParameter method body");
+        if (summary.methodParameters) {
             for (Object o : n) {
                 if (o instanceof Node) {
                     summary.parameterTypes = true;
@@ -427,7 +371,6 @@ public class AstTraversal extends Visitor {
                     }
                 } else {
                     if (o != null) {
-                        out.println("   ->" + o.toString());
                         summary.tempMethods.add(o.toString());
                     }
                 }
@@ -435,37 +378,25 @@ public class AstTraversal extends Visitor {
         }
     }
 
+    /**
+     * visit method
+     */
 
     public void visit(Node n) {
         for (Object o : n) {
             if (o instanceof Node) {
-                if (((Node) o).getName() == "ClassDeclaration") {
-                    out.println("======");
-                    out.println(((Node) o).getName());
-                    out.println("======");
-                }
                 dispatch((Node) o);
             }
         }
     }
 
 
-    private void scope(Node curr, Node next) {
-        //runtime.console().p("Entering scope at ").loc(curr).pln();
-        if (null != next) visit(next);
-        //runtime.console().p("Exiting scope at ").loc(curr).pln();
-    }
-
     public AstTraversal(Runtime runtime) {
         this.runtime = runtime;
     }
 
-    public AstTraversal.AstBuilderSummary getSummary(Node n) {
-        super.dispatch(n);
-        return summary;
-    }
 
-    public AstTraversal.AstBuilderSummary getClassDeclarations(Node n) {
+    public AstTraversalSummary getTraversal(Node n) {
 
         summary.headerDeclaration = true;
         summary.tempClass = new ArrayList<String>();
@@ -482,26 +413,16 @@ public class AstTraversal extends Visitor {
         super.dispatch(n);
 
 
-        out.println("\n");
-        out.println("Package declarations: " + summary.PackageDeclarations);
-        out.println("Class declarations: " + summary.tempClassDec);
-        out.println("Method types: " + summary.tempMethodTypes);
-        out.println("Methods: " + summary.tempMethods);
-        out.println("MethodBody: " + summary.tempMethodBody);
-
-        summary.tempClass = new ArrayList<String>();
-
-        ArrayList<String> classTemp = new ArrayList<String>();
-        for (int j = 1; j < summary.tempClassDec.size(); j++) {
-            if (isNumeric(summary.tempClassDec.get(j))) {
-                summary.ClassDeclarations.add(classTemp);
-                classTemp = new ArrayList<String>();
-            } else {
-                classTemp.add(summary.tempClassDec.get(j));
-            }
+        if (debug) {
+            out.println("\n");
+            out.println("AST TRAVERSAL");
+            out.println("DEBUGGING IS ON");
+            out.println("   Package declarations: " + summary.PackageDeclarations);
+            out.println("   Class declarations: " + summary.tempClassDec);
+            out.println("   Method types: " + summary.tempMethodTypes);
+            out.println("   Methods: " + summary.tempMethods);
+            out.println("   MethodBody: " + summary.tempMethodBody);
         }
-        summary.ClassDeclarations.add(classTemp);
-        out.println("Classes ->" + summary.ClassDeclarations);
 
         return summary;
     }
@@ -510,7 +431,7 @@ public class AstTraversal extends Visitor {
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
-    static class AstBuilderSummary {
+    static class AstTraversalSummary {
 
         Boolean first = true;
         int classCount = 0;
@@ -537,8 +458,6 @@ public class AstTraversal extends Visitor {
         Boolean methodType = false;
         Boolean methodParameters = false;
         Boolean parameterTypes = false;
-
-        List<ArrayList<String>> ClassDeclarations = new ArrayList<ArrayList<String>>();
 
 
     }
