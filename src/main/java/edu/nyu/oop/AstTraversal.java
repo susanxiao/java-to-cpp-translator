@@ -72,7 +72,7 @@ public class AstTraversal extends Visitor {
                     visitMethodDeclaration((GNode) o);
                 else {
                     if (o != null) {
-                        //TODO: If class body contains fields or constructor...?
+                        //TODO: If class body contains fields or constructor
                     }
                 }
             }
@@ -100,7 +100,6 @@ public class AstTraversal extends Visitor {
         visitMethodFormalParameters(n.getGeneric(4));
 
         /** Implementation **/
-        //TODO: store implementation
         visitMethodBlock(n.getGeneric(7));
     }
 
@@ -225,142 +224,9 @@ public class AstTraversal extends Visitor {
         }
     }
 
-    /*public void visitArguments(GNode n) {
-        if (summary.methodBody) {
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    if (((GNode) o).getName() == "CallExpression") {
-                        visitCallExpression((GNode) o);
-                    }
-                } else {
-                    if (o != null) {
-                        summary.tempMethodBody.add(o.toString());
-                    }
-                }
-            }
-        }
-    }
-
-    public void visitExpressionStatement(GNode n) {
-        if (summary.methodBody) {
-            summary.tempMethodBody.add("ExpressionStatement");
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    if (((Node) o).getName() == "CallExpression") {
-                        visitCallExpression((GNode) o);
-                    }
-                }
-            }
-        }
-    }
-
-    public void visitCallExpression(GNode n) {
-        if (summary.methodBody) {
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    if (((Node) o).getName() == "SelectionExpression") {
-                        visitSelectionExpression((GNode) o);
-                    } else if (((Node) o).getName() == "Arguments") {
-                        visitArguments((GNode) o);
-                    } else if (((Node) o).getName() == "PrimaryIdentifier") {
-                        visitPrimaryIdentifier((GNode) o);
-                    }
-                } else {
-                    if (o != null) {
-                        summary.tempMethodBody.add(o.toString());
-                    }
-                }
-            }
-        }
-    }
-
-    public void visitSelectionExpression(GNode n) {
-        if (summary.methodBody) {
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    //visit((GNode) o);
-                    if (((GNode) o).getName() == "PrimaryIdentifier") {
-                        visitPrimaryIdentifier((GNode) o);
-                    }
-                } else {
-                    if (o != null) {
-                        summary.tempMethodBody.add(o.toString());
-                    }
-                }
-            }
-        }
-    }
-
-    public void visitPrimaryIdentifier(GNode n) {
-        if (summary.methodBody) {
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    visit((GNode) o);
-                } else {
-                    if (o != null) {
-                        summary.tempMethodBody.add(o.toString());
-                    }
-                }
-            }
-        }
-    }
-
-    public void visitDeclarator(GNode n) {
-        if (summary.methodBody) {
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    visitNewClassExpression((GNode) o);
-                } else {
-                    if (o != null) {
-                        summary.tempMethodBody.add(o.toString());
-                    }
-                }
-            }
-        }
-    }
-
-    public void visitNewClassExpression(GNode n) {
-        if (summary.methodBody) {
-            summary.tempMethodBody.add("new");
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    if (((Node) o).getName() == "QualifiedIdentifier") {
-                        visitQualifiedIdentifier((GNode) o);
-                    }
-                }
-            }
-        }
-    }
-
-
-    public void visitFieldDeclaration(GNode n) {
-        if (summary.methodBody) {
-            summary.tempMethodBody.add("FieldDeclaration");
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    visit((GNode) o);
-                }
-            }
-        }
-    }
-
-    public void visitReturnStatement(GNode n) {
-        if (summary.methodBody) {
-            for (Object o : n) {
-                if (o instanceof Node) {
-                    summary.tempMethodBody.add("RETURN");
-                    if (((Node) o).getName() == "StringLiteral") {
-                        summary.tempMethodBody.add(((Node) o).getString(0));
-                    }
-                }
-            }
-        }
-    }*/
-
     /**
      * visit method
      */
-
     public void visit(Node n) {
         for (Object o : n) {
             if (o instanceof Node) {
