@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 public class ClassImplementation {
-    //TODO: modifiers
+    //TODO: modifiers, global instances
     String name;
     ClassImplementation superClass;
     ArrayList<MethodImplementation> methods;

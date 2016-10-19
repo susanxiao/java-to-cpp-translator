@@ -10,27 +10,25 @@ public class MethodImplementation {
     //TODO: modifiers
     String name;
     String returnType;
-    ArrayList<ArrayList<String>> parameters;
-    String implementation;
+    ArrayList<ParameterImplementation> parameters;
+    ArrayList<MethodStatement> implementation;
 
     public MethodImplementation(String name) {
         this.name = name;
         parameters = new ArrayList<>();
+        implementation = new ArrayList<>();
     }
 
     public void setReturnType(String returnType) {
         this.returnType = returnType;
     }
 
-    public void addParameter(String parameterType, String name) {
-        ArrayList<String> newParam = new ArrayList<>();
-        newParam.add(parameterType);
-        newParam.add(name);
-        parameters.add(newParam);
+    public void addParameter(ParameterImplementation param) {
+        parameters.add(param);
     }
 
-    public void setImplementation(String implementation) {
-        this.implementation = implementation;
+    public void addMethodStatement(MethodStatement m) {
+        implementation.add(m);
     }
 
     @Override
@@ -46,12 +44,16 @@ public class MethodImplementation {
         /** Parameters **/
         s.append("(");
         for (int i = 0; i < parameters.size(); i++) {
-            ArrayList<String> p = parameters.get(i);
-            s.append(p.get(0)+" "+p.get(1));
+            s.append(parameters.get(i).toString());
             if (i < parameters.size() - 1)
                 s.append(",");
         }
-        s.append(")");
+        s.append(")\n");
+
+        /** Implementation **/
+        for (int i = 0; i < implementation.size(); i++) {
+            s.append("\t"+implementation.get(i).toString()+"\n");
+        }
 
         return s.toString();
     }
