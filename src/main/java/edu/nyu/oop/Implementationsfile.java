@@ -17,27 +17,27 @@ import static java.lang.System.out;
  */
 public class Implementationsfile {
 
-    static boolean isNumeric(String s) {
+    /*static boolean isNumeric(String s) {
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
-    /**
+    *//**
      * Obtain the classes
-     */
+     *//*
     static ArrayList<String> getClasses(AstTraversal.AstTraversalSummary summary) {
         ArrayList<String> classDeclarations = summary.tempClassDec;
         ArrayList<String> classes = new ArrayList<String>();
         for (Object o : classDeclarations) {
-            if (o.toString() != "public" && o.toString() != "private" && !isNumeric(o.toString())) {
+            if (!o.toString().equals("public") && !o.toString().equals("private") && !isNumeric(o.toString())) {
                 classes.add(o.toString());
             }
         }
         return classes;
     }
 
-    /**
+    *//**
      * Obtain method groupings by the class
-     */
+     *//*
     static ArrayList<ArrayList<String>> methodClassGrouping(AstTraversal.AstTraversalSummary summary) {
 
         int currentClass = 0;
@@ -84,13 +84,13 @@ public class Implementationsfile {
                     }
                 }
                 if (!isNumeric(summary.tempMethodBody.get(tempCounter1)) && currentClass == i + 1) {
-                    /**
+                    *//**
                      if(debug){
                      out.println("   The current class is " + currentClass);
                      out.println("   Printing current from tempMethodBody");
                      out.println("   " + summary.tempMethodBody.get(tempCounter1));
                      }
-                     **/
+                     **//*
                     methodTemp.add(summary.tempMethodBody.get(tempCounter1));
                     methodIndicatorGate = true;
                     tempCounter1 += 1;
@@ -108,9 +108,9 @@ public class Implementationsfile {
         return methodClasses;
     }
 
-    /**
+    *//**
      * Obtain the method body strings that are going to be used for implementation
-     */
+     *//*
     // obtain the method body strings
     static ArrayList<ArrayList<String>> bodyStrings(AstTraversal.AstTraversalSummary summary, ArrayList<ArrayList<String>> methodClasses) {
         ArrayList<ArrayList<String>> stringsClasses = new ArrayList<ArrayList<String>>();
@@ -215,9 +215,9 @@ public class Implementationsfile {
         return stringsClasses;
     }
 
-    /**
+    *//**
      * Obtain the methods
-     */
+     *//*
     static ArrayList<ArrayList<String>> methodGroupings(AstTraversal.AstTraversalSummary summary, ArrayList<String> classes) {
 
         ArrayList<String> methods = new ArrayList<String>();
@@ -271,9 +271,9 @@ public class Implementationsfile {
         return methodGroupings;
     }
 
-    /**
+    *//**
      * Obtain the method type groupings
-     */
+     *//*
     static ArrayList<ArrayList<String>> methodTypeGroupings(AstTraversal.AstTraversalSummary summary, ArrayList<String> classes) {
         ArrayList<ArrayList<String>> typeGroupings = new ArrayList<ArrayList<String>>();
         ArrayList<String> methodTypes = new ArrayList<String>();
@@ -312,9 +312,9 @@ public class Implementationsfile {
         return typeGroupings;
     }
 
-    /**
+    *//**
      * Print the headerfile
-     */
+     *//*
     static void printHeaderFile(ArrayList<String> classes, ArrayList<ArrayList<String>> methodClasses,
                                 ArrayList<ArrayList<String>> methodBodyStrings, ArrayList<ArrayList<String>> methodGrouping,
                                 ArrayList<ArrayList<String>> methodTypeGrouping) {
@@ -391,9 +391,9 @@ public class Implementationsfile {
     }
 
 
-    /**
+    *//**
      * Print the implementation
-     */
+     *//*
 
     static void printImplementations(ArrayList<String> classes, ArrayList<ArrayList<String>> methodClasses,
                                      ArrayList<ArrayList<String>> methodBodyStrings, ArrayList<ArrayList<String>> methodGrouping,
@@ -448,14 +448,14 @@ public class Implementationsfile {
         }
         return;
 
-    }
+    }*/
 
 
     /**
      * Main method runs the program
      */
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         boolean debug = true;
 
         GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
@@ -529,7 +529,7 @@ public class Implementationsfile {
         }
         // print the implementations
 
-    }
+    } */
 }
 
 
