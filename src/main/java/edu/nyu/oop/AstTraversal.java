@@ -27,18 +27,6 @@ public class AstTraversal extends Visitor {
     /**
      * visitXXX methods
      */
-/*    public void visitCompilationUnit(GNode n) {
-        if (summary.first) {
-            summary.first = false;
-            summary.classCount = n.size() - 1;
-            if (debug) {
-                out.println("The number of classes " + summary.classCount);
-            }
-        }
-        visit(n);
-        runtime.console().flush();
-    }*/
-
     public void visitPackageDeclaration(GNode n) {
         //Node qualifiedIdentifier = (Node) n.getProperty("QualifiedIdentifier");
         Node qualifiedIdentifier = n.getNode(1);
