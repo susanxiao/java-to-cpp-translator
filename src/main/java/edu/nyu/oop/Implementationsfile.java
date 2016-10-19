@@ -401,9 +401,9 @@ public class Implementationsfile {
 
         String className;
         int classCounter = -1;
-        for (Object o : classes) {
+        for (int i = 0; i < classes.size() - 1; i++) {
             classCounter += 1;
-            className = o.toString();
+            className = classes.get(i).toString();
             out.println("\n");
             out.println("// " + className + " implementations");
             out.println("__" + className + "::__" + className + "()" + " : " + "__vptr(&__vtable) {}");
@@ -424,30 +424,28 @@ public class Implementationsfile {
                         }
                     }
                     tempString = tempString.replaceFirst("return", "").trim();
-                    out.println("   std::ostringstream sout");
+                    out.println("   std::ostringstream sout;");
                     out.println("   sout << " + tempString + ";");
                     out.println("   return new __String(sout.str());");
                 }
-                if (o2.equals("main")) {
-                    for (Object o3 : methodBodyStrings.get(classCounter)) {
-                        out.println("   " + o3);
-                    }
-                }
+//                if (o2.equals("main")) {
+//                    for (Object o3 : methodBodyStrings.get(classCounter)) {
+//                        out.println("   " + o3);
+//                    }
+//                }
                 out.println("}");
             }
             out.println("\n");
 
-            out.println("Class __" + className + "::" + "__class(){");
+            out.println("Class __" + className + "::" + "__class() {");
             out.println("   static Class k =");
             out.println("     new __Class(__rt::literal(\"class inputs.javalang." + className + "\"), (Class) __rt::null());");
-            out.println("   return k\n}");
+            out.println("   return k;\n}");
             out.print("\n");
 
             out.println("__" + className + "_VT" + " __" + className + "::__vtable;");
             out.print("\n");
         }
-
-
         return;
 
     }
@@ -465,8 +463,8 @@ public class Implementationsfile {
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
 
         boolean printImp, printHead;
-        printImp = printHead = false;
-        printHead = true;
+        printImp = printHead = true;
+        printHead = false;
 
         out.println("\n\n-----------------\n\n");
 
