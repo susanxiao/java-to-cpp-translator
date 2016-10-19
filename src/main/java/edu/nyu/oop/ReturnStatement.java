@@ -5,12 +5,13 @@ package edu.nyu.oop;
  */
 public class ReturnStatement extends MethodStatement {
 
-    String value; /** If it is a literal value */
+    String literalValue;
 
     //TODO: nonliteral value
+    ExpressionStatement nonLiteralValue;
 
     @Override
     public String toString() {
-        return "return "+value;
+        return "return "+literalValue;
     }
 }
