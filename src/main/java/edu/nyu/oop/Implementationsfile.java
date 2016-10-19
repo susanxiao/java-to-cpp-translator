@@ -320,23 +320,22 @@ public class Implementationsfile {
                                 ArrayList<ArrayList<String>> methodTypeGrouping) {
 
         // printing forward declarations
-        for (Object o : classes) {
-            out.println("struct __" + o.toString() + ";");
-            out.println("struct __" + o.toString() + "_VT;");
+        for (int i = 0; i < classes.size() - 1; i++) {
+            out.println("struct __" + classes.get(i).toString() + ";");
+            out.println("struct __" + classes.get(i).toString() + "_VT;");
         }
         out.print("\n");
 
-        for (Object o : classes) {
-            out.println("typedef __" + o.toString() + "* " + o.toString());
+        for (int i = 0; i < classes.size() - 1; i++) {
+            out.println("typedef __" + classes.get(i).toString() + "* " + classes.get(i).toString() + ";");
         }
         out.print("\n");
 
         String className;
         int classCounter = -1;
-        for (Object o : classes) {
-
+        for (int i = 0; i < classes.size() - 1; i++) {
             classCounter += 1;
-            className = o.toString();
+            className = classes.get(i).toString();
 
             out.println("struct __" + className + "\n{\n");
             out.println("   __" + className + "_VT* __vtpr;");
@@ -345,16 +344,16 @@ public class Implementationsfile {
             out.println("   __" + className + "();");
             out.println("\n");
 
-            for (int i = 0; i < methodGrouping.get(classCounter).size(); i++) {
-                out.print("   static " + methodTypeGrouping.get(classCounter).get(i) + " ");
-                out.println(methodGrouping.get(classCounter).get(i) + "(" + className + ");");
+            for (int j = 0; j < methodGrouping.get(classCounter).size(); j++) {
+                out.print("   static " + methodTypeGrouping.get(classCounter).get(j) + " ");
+                out.println(methodGrouping.get(classCounter).get(j) + "(" + className + ");");
             }
             out.println("\n");
 
-            out.println("   static Class _class();");
+            out.println("   static Class __class();");
             out.println("\n");
 
-            out.println("   static __" + className + "_VT" + " vtable;");
+            out.println("   static __" + className + "_VT " + " __vtable;");
 
             out.println("};");
 
@@ -365,18 +364,23 @@ public class Implementationsfile {
             out.println("   Class __isa;");
             out.println("\n");
 
-            for (int i = 0; i < methodGrouping.get(classCounter).size(); i++) {
-                out.print("   " + methodTypeGrouping.get(classCounter).get(i) + " (*");
-                out.println(methodGrouping.get(classCounter).get(i) + ")(" + className + ");");
+            for (int j = 0; j < methodGrouping.get(classCounter).size(); j++) {
+                out.print("   " + methodTypeGrouping.get(classCounter).get(j) + " (*");
+                out.println(methodGrouping.get(classCounter).get(j) + ")(" + className + ");");
             }
 
             // vtable constructor
             out.println("\n");
             out.println("   __" + className + "_VT()");
             out.println("    :__isa(__" + className + "::__class()),");
-            for (int i = 0; i < methodGrouping.get(classCounter).size(); i++) {
-                out.print("     " + methodGrouping.get(classCounter).get(i) + "(&__" + className);
-                out.println("::" + methodGrouping.get(classCounter).get(i) + "),");
+            for (int j = 0; j < methodGrouping.get(classCounter).size(); j++) {
+                out.print("     " + methodGrouping.get(classCounter).get(j) + "(&__" + className);
+                out.print("::" + methodGrouping.get(classCounter).get(j) + ")");
+                if (j != methodGrouping.get(classCounter).size() - 1) {
+                    out.println(',');
+                } else {
+                    out.println();
+                }
             }
             out.println("    {}");
             out.println("\n");
