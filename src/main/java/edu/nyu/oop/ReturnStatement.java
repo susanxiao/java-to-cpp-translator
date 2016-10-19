@@ -11,6 +11,6 @@ public class ReturnStatement extends MethodStatement {
 
     @Override
     public String toString() {
-        return null;
+        return "return "+value;
     }
 }

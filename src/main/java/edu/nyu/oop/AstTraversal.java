@@ -207,6 +207,8 @@ public class AstTraversal extends Visitor {
                     else {
                         //TODO: nonliteral return value
                     }
+
+                    summary.currentMethod.addMethodStatement(currentStatement);
                 }
             }
         }
