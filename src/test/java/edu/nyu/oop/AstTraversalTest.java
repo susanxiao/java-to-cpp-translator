@@ -15,7 +15,7 @@ public class AstTraversalTest {
     @BeforeClass
     public static void beforeClass() {
         System.out.println("Executing AstBuilder");
-        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
         // XtcTestUtils.prettyPrintAst(node);
     }
 

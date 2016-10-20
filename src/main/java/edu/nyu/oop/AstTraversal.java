@@ -205,14 +205,25 @@ public class AstTraversal extends Visitor {
                         currentStatement.arguments = new ArrayList<>();
                         ExpressionStatement currentArgument = new ExpressionStatement();
                         for (int i = 0; i < arguments.size(); i++) {
-                            Node argumentsCallExpression = arguments.getNode(i);
-                            String argumentsPrimaryIdentifier = argumentsCallExpression.getNode(0).getString(0);
-                            currentArgument.primaryIdentifier = argumentsPrimaryIdentifier;
 
-                            //TODO: handle fields of primary identifier within arguments
+                            if (arguments.getNode(i).getName().equals("StringLiteral")) {
+                                Node argumentsStringLiteral = arguments.getNode(i);
+                                String argument = argumentsStringLiteral.getString(0);
+                                currentArgument.stringLiteral = argument;
+                            }
+                            else {
+                                Node argumentsCallExpression = arguments.getNode(i);
 
-                            String argumentsMethod = argumentsCallExpression.getString(2);
-                            currentArgument.method = argumentsMethod;
+                                String argumentsPrimaryIdentifier = argumentsCallExpression.getNode(0).getString(0);
+                                currentArgument.primaryIdentifier = argumentsPrimaryIdentifier;
+
+                                //TODO: handle fields of primary identifier within arguments
+
+                                String argumentsMethod = argumentsCallExpression.getString(2);
+                                currentArgument.method = argumentsMethod;
+                            }
+
+
 
                             currentStatement.arguments.add(currentArgument);
                         }
