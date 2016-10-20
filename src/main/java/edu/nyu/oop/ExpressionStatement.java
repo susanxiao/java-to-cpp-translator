@@ -2,6 +2,8 @@ package edu.nyu.oop;
 
 import java.util.ArrayList;
 
+import static java.lang.System.out;
+
 /**
  * Created by susan on 10/19/16.
  */
@@ -30,13 +32,14 @@ public class ExpressionStatement extends MethodStatement {
             s.append("."+method+"(");
             if (arguments != null) {
                 for (int i = 0; i < arguments.size(); i++) {
-                    s.append(arguments.toString());
+                    s.append(arguments.get(i).toString());
                     if (i < arguments.size() - 1)
                         s.append(", ");
                 }
             }
             s.append(")");
         }
+
 
         return s.toString();
     }

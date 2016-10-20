@@ -58,7 +58,13 @@ public class ClassImplementation {
 
         /** Package **/
         s.append("Package:\n\t");
+        int packageCounter = 0;
         for (String p : packages) {
+            packageCounter ++;
+            if(packageCounter == packages.size()){
+                s.append(p);
+                break;
+            }
             s.append(p+".");
         }
         s.append("\n");

@@ -195,14 +195,13 @@ public class AstTraversal extends Visitor {
                             currentStatement.arguments.add(currentArgument);
                         }
                     }
-
                     summary.currentMethod.addMethodStatement(currentStatement);
                 }
                 else if (current.getName().equals(("ReturnStatement"))) {
                     ReturnStatement currentStatement = new ReturnStatement();
                     Node returnType = current.getNode(0);
                     if (returnType.getName().equals("StringLiteral")) {
-                        currentStatement.value = returnType.getString(0);
+                        currentStatement.literalValue = returnType.getString(0);
                     }
                     else {
                         //TODO: nonliteral return value

@@ -52,7 +52,7 @@ public class MethodImplementation {
 
         /** Implementation **/
         for (int i = 0; i < implementation.size(); i++) {
-            s.append("\t"+implementation.get(i).toString()+"\n");
+            s.append("\t\t"+implementation.get(i).toString()+"\n");
         }
 
         return s.toString();

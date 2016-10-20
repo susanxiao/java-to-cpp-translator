@@ -455,81 +455,16 @@ public class Implementationsfile {
      * Main method runs the program
      */
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         boolean debug = true;
 
         GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
         AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
 
-        boolean printImp, printHead;
-        printImp = printHead = true;
-        printHead = false;
 
-        out.println("\n\n-----------------\n\n");
 
-        if (debug) {
-            out.println("IMPLEMENTATION FIle");
-            out.println("DEBUGGING IS ON");
-        }
-
-        // obtain classes
-        ArrayList<String> classes = getClasses(summary);
-        if (debug) {
-            out.println("   Classes");
-            out.println("       " + classes);
-        }
-
-        // obtain method class grouping
-        ArrayList<ArrayList<String>> methodClasses = methodClassGrouping(summary);
-        if (debug) {
-            out.println("   Method class groupings");
-            out.println("       " + methodClasses);
-        }
-
-        // obtain method body strings
-        ArrayList<ArrayList<String>> methodBodyStrings = bodyStrings(summary, methodClasses);
-        if (debug) {
-            out.println("   method body strings");
-            out.println("       " + methodBodyStrings);
-        }
-
-        // obtain method groupings by class
-        ArrayList<ArrayList<String>> methodGrouping = methodGroupings(summary, classes);
-        if (debug) {
-            out.println("   Method grouping");
-            out.println("       " + methodGrouping);
-        }
-
-        // obtain method types by class
-        ArrayList<ArrayList<String>> methodTypeGrouping = methodTypeGroupings(summary, classes);
-        if (debug) {
-            out.println("   method type groupings");
-            out.println("       " + methodTypeGrouping);
-        }
-
-        if(debug){
-            out.println("\n");
-        }
-
-        // print the implementations or the header file or both the implementations and the headerfile
-        if (printImp && printHead) {
-            printHeaderFile(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
-            printImplementations(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
-            return;
-        }
-        if (printImp) {
-
-            printImplementations(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
-            return;
-        }
-        if (printHead) {
-            printHeaderFile(classes, methodClasses, methodBodyStrings, methodGrouping, methodTypeGrouping);
-            return;
-        }
-        // print the implementations
-
-    } */
+    }
 }
 
 
