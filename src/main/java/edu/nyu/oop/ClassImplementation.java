@@ -13,13 +13,16 @@ public class ClassImplementation {
     ClassImplementation superClass;
     ArrayList<MethodImplementation> methods;
     ArrayList<String> packages;
+    ArrayList<ConstructorImplementation> constructors;
 
     public ClassImplementation(ClassImplementation superClass, String name) {
         this.superClass = superClass;
         this.name = name;
 
-        methods = new ArrayList<>();
         packages = new ArrayList<>();
+        constructors = new ArrayList<>();
+        methods = new ArrayList<>();
+
     }
 
     public ClassImplementation(String name) {
@@ -32,6 +35,10 @@ public class ClassImplementation {
 
     public void addMethod(MethodImplementation m) {
         methods.add(m);
+    }
+
+    public void addConstructor(ConstructorImplementation constructor){
+        constructors.add(constructor);
     }
 
     public MethodImplementation findMethod(String name) {
@@ -79,6 +86,12 @@ public class ClassImplementation {
             currentClass = currentClass.superClass;
         }
         s.append("\n");
+
+        /** Constructors **/
+        s.append("Constructor:\n");
+        for(ConstructorImplementation constructor : constructors){
+            s.append("\t" + constructor.toString() + "\n");
+        }
 
         /** Methods **/
         s.append("Methods:\n");

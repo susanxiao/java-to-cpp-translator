@@ -12,6 +12,21 @@ public class ReturnStatement extends MethodStatement {
 
     @Override
     public String toString() {
-        return "return "+ literalValue;
+        //Ordering of the return values?
+
+        StringBuilder s = new StringBuilder();
+
+        s.append("return ");
+
+        if (nonLiteralValue != null) {
+            s.append(nonLiteralValue);
+        }
+
+        if(literalValue != null){
+            s.append(literalValue);
+        }
+
+        return s.toString();
+
     }
 }

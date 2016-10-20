@@ -1,0 +1,23 @@
+DEBUGGING IS ON
+Package:
+	inputs.test003
+Class:
+	A
+Constructor:
+	A(String f)
+		fld = f
+
+Methods:
+	String getFld()
+		return fld
+
+
+Package:
+	inputs.test003
+Class:
+	Test003
+Constructor:
+Methods:
+	void main(String[ args)
+		A a = new A("A")
+		System.out.println(a.getFld())

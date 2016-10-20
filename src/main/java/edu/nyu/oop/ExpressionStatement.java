@@ -9,6 +9,7 @@ import static java.lang.System.out;
  */
 public class ExpressionStatement extends MethodStatement {
 
+    String stringLiteral;
     String primaryIdentifier; /** Object we are making the call on **/
     ArrayList<String> fields; /** Fields are nested within each other
                                 e.g. primaryIdentifier contains fields(0),
@@ -16,11 +17,16 @@ public class ExpressionStatement extends MethodStatement {
     String method; /** Method we are calling if we call a method which is contained by fields.get(fields.size() - 1) **/
     ArrayList<ExpressionStatement> arguments; /** Arguments for method if it is not null */
 
+    String assignment;
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        s.append(primaryIdentifier);
+        if(primaryIdentifier != null){
+            s.append(primaryIdentifier);
+        }
 
         if (fields != null) {
             for (int i = 0; i < fields.size(); i++) {
@@ -38,6 +44,10 @@ public class ExpressionStatement extends MethodStatement {
                 }
             }
             s.append(")");
+        }
+
+        if(stringLiteral != null){
+            s.append(stringLiteral);
         }
 
 

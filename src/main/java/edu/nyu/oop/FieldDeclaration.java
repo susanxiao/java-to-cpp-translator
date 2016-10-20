@@ -2,6 +2,8 @@ package edu.nyu.oop;
 
 import java.util.ArrayList;
 
+import static java.lang.System.out;
+
 /**
  * Created by susan on 10/19/16.
  */
@@ -11,6 +13,9 @@ public class FieldDeclaration extends MethodStatement {
 
     /** For primitive types, below is null **/
     String dynamicType;
+
+    String primaryIdentifier;
+
     ArrayList<ExpressionStatement> arguments;
 
 
@@ -27,6 +32,8 @@ public class FieldDeclaration extends MethodStatement {
                 }
             }
             s.append(")");
+        } else if(!primaryIdentifier.equals(null)){
+            s.append(" " + primaryIdentifier);
         }
         return s.toString();
     }

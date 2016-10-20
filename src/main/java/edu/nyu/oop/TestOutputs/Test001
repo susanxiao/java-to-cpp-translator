@@ -1,0 +1,18 @@
+DEBUGGING IS ON
+Package:
+	inputs.test001
+Class:
+	Test001
+Methods:
+	void main(String[ args)
+		A a = new A()
+		System.out.println(a.toString())
+
+
+Package:
+	inputs.test001
+Class:
+	A
+Methods:
+	String toString()
+		return "A"
