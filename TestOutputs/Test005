@@ -1,0 +1,36 @@
+DEBUGGING IS ON
+Package:
+	inputs.test005
+Class:
+	A
+Constructor:
+Declarations:
+Methods:
+	String toString()
+		return "A"
+
+
+Package:
+	inputs.test005
+Class:
+	B extends A
+Constructor:
+Declarations:
+Methods:
+	String toString()
+		return "B"
+
+
+Package:
+	inputs.test005
+Class:
+	Test005
+Constructor:
+Declarations:
+Methods:
+	void main(String[ args)
+		B b  = new B()
+		A a1  = new A()
+		A a2  = b
+		System.out.println(a1.toString())
+		System.out.println(a2.toString())

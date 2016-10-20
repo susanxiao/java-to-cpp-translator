@@ -10,18 +10,23 @@ import java.util.Queue;
 public class ClassImplementation {
     //TODO: modifiers, global instances
     String name;
+    String superClassName;
+
     ClassImplementation superClass;
-    ArrayList<MethodImplementation> methods;
+
     ArrayList<String> packages;
     ArrayList<ConstructorImplementation> constructors;
+    ArrayList<MethodImplementation> methods;
+    ArrayList<FieldDeclaration> declarations;
 
-    public ClassImplementation(ClassImplementation superClass, String name) {
-        this.superClass = superClass;
+    public ClassImplementation(String superClass, String name) {
+        this.superClassName = superClass;
         this.name = name;
 
         packages = new ArrayList<>();
         constructors = new ArrayList<>();
         methods = new ArrayList<>();
+        declarations = new ArrayList<>();
 
     }
 
@@ -37,18 +42,22 @@ public class ClassImplementation {
         methods.add(m);
     }
 
-    public void addConstructor(ConstructorImplementation constructor){
+    public void addConstructor(ConstructorImplementation constructor) {
         constructors.add(constructor);
     }
 
+    public void addDeclaration(FieldDeclaration declaration) {
+        declarations.add(declaration);
+    }
+    /**
     public MethodImplementation findMethod(String name) {
-        for (int i =0; i < methods.size(); i++) {
+        for (int i = 0; i < methods.size(); i++) {
             MethodImplementation m = methods.get(i);
             if (name.equals(m.name)) return m;
         }
         if (superClass == null) return null;
         else return superClass.findMethod(name);
-    }
+    }**/
 
     public void addPackage(String name) {
         packages.add(name);
@@ -67,12 +76,12 @@ public class ClassImplementation {
         s.append("Package:\n\t");
         int packageCounter = 0;
         for (String p : packages) {
-            packageCounter ++;
-            if(packageCounter == packages.size()){
+            packageCounter++;
+            if (packageCounter == packages.size()) {
                 s.append(p);
                 break;
             }
-            s.append(p+".");
+            s.append(p + ".");
         }
         s.append("\n");
 
@@ -81,22 +90,29 @@ public class ClassImplementation {
         ClassImplementation currentClass = this;
         while (currentClass != null) {
             s.append(currentClass.name);
-            if (superClass != null)
-                s.append(" extends ");
+
+            if (superClassName != null)
+                s.append(" extends " + superClassName);
             currentClass = currentClass.superClass;
         }
         s.append("\n");
 
         /** Constructors **/
         s.append("Constructor:\n");
-        for(ConstructorImplementation constructor : constructors){
+        for (ConstructorImplementation constructor : constructors) {
             s.append("\t" + constructor.toString() + "\n");
+        }
+
+        /** Declarations **/
+        s.append("Declarations:\n");
+        for(FieldDeclaration declaration : declarations){
+            s.append("\t" + declaration.toString() + "\n");
         }
 
         /** Methods **/
         s.append("Methods:\n");
         for (MethodImplementation m : methods) {
-            s.append("\t"+m.toString()+"\n");
+            s.append("\t" + m.toString() + "\n");
         }
 
         return s.toString();

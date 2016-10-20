@@ -1,23 +1,28 @@
 DEBUGGING IS ON
 Package:
-	inputs.test003
+	inputs.test004
 Class:
 	A
 Constructor:
-	A(String f)
-		fld = f
+	A(String fld)
+		this.fld = fld
 
+Declarations:
+	private String fld
 Methods:
 	String getFld()
 		return fld
 
 
 Package:
-	inputs.test003
+	inputs.test004
 Class:
-	Test003
+	Test004
 Constructor:
+Declarations:
 Methods:
 	void main(String[ args)
-		A a = new A("A")
+		A a  = new A("A")
 		System.out.println(a.getFld())
+
+

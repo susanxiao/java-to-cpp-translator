@@ -37,15 +37,41 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
+
         String name = n.getString(1);
-        Node extension = n.getNode(3);
-        if (extension != null) {
+        String superClassName = "";
+
+        for (Object o : n) {
+            if (o instanceof Node) {
+                Node classNode = (Node) o;
+                if (classNode.getName().equals("Extension")) {
+                    for (Object o1 : classNode) {
+                        if (o1 instanceof Node) {
+                            Node extensionNode = (Node) o1;
+                            if (extensionNode.getName().equals("Type")) {
+                                for(Object o2 : extensionNode){
+                                    if(o2 instanceof Node){
+                                        Node typeNode = (Node) o2;
+                                        if(typeNode.getName().equals("QualifiedIdentifier")){
+                                            superClassName = typeNode.getString(0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (superClassName != "") {
             //TODO: we may need to add all classes first before attempting to extend
             Node type = n.getNode(0);
+            /*
             Node qualifiedIdentifier = type.getNode(0);
             String superClassName = qualifiedIdentifier.getString(0);
             ClassImplementation superClass = summary.findClass(superClassName);
-            summary.addClass(superClass, name);
+            */
+            summary.addClass(superClassName, name);
         } else {
             summary.addClass(null, name);
         }
@@ -55,12 +81,13 @@ public class AstTraversal extends Visitor {
     public void visitClassBody(GNode n) {
         for (Object o : n) {
             if (o instanceof Node) {
-                if (((Node) o).getName().equals("MethodDeclaration"))
+                Node currentNode = (Node) o;
+                if (currentNode.getName().equals("MethodDeclaration"))
                     visitMethodDeclaration((GNode) o);
-                else if (((Node) o).getName().equals("ConstructorDeclaration")) {
+                else if (currentNode.getName().equals("ConstructorDeclaration")) {
                     visitConstructorDeclaration((GNode) o);
-                } else if (((Node) o).getName().equals("FieldDeclaration")) {
-
+                } else if (currentNode.getName().equals("FieldDeclaration")) {
+                    visitFieldDeclaration((GNode) o);
                 } else {
                     if (o != null) {
                         //TODO: If class body contains fields or constructor
@@ -69,6 +96,52 @@ public class AstTraversal extends Visitor {
             }
         }
     }
+
+    public void visitFieldDeclaration(GNode n) {
+        FieldDeclaration currentStatement = new FieldDeclaration();
+        for (Object o : n) {
+            Node currentNode = (Node) o;
+            if (currentNode instanceof Node) {
+                if (currentNode.getName().equals("Modifiers")) {
+                    for (Object o1 : currentNode) {
+                        Node modifiersNode = (Node) o1;
+                        if (modifiersNode instanceof Node) {
+                            if (modifiersNode.getName().equals("Modifier")) {
+                                String modifierString = modifiersNode.getString(0);
+                                if (modifierString != null) {
+                                    currentStatement.modifiers = modifierString;
+                                }
+                            }
+                        }
+                    }
+                } else if (currentNode.getName().equals("Type")) {
+                    for (Object o1 : currentNode) {
+                        Node typeNode = (Node) o1;
+                        if (typeNode instanceof Node) {
+                            if (typeNode.getName().equals("QualifiedIdentifier")) {
+                                String typeString = typeNode.getString(0);
+                                if (typeString != null) {
+                                    currentStatement.staticType = typeString;
+                                }
+                            }
+                        }
+                    }
+                } else if (currentNode.getName().equals("Declarators")) {
+                    for (Object o1 : currentNode) {
+                        Node declaratorNode = (Node) o1;
+                        if (declaratorNode instanceof Node) {
+                            if (declaratorNode.getName().equals("Declarator")) {
+                                String declaratorString = declaratorNode.getString(0);
+                                currentStatement.variableName = declaratorString;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        summary.currentClass.addDeclaration(currentStatement);
+    }
+
 
     public void visitMethodDeclaration(GNode n) {
         /** Name **/
@@ -166,12 +239,6 @@ public class AstTraversal extends Visitor {
 
                                         currentArgument.stringLiteral = argumentsStringLiteral;
 
-                                        /*
-                                        out.println("this is the string " + argumentsStringLiteral);
-                                        out.println("this should not be null =" + currentArgument);
-                                        out.println("arguments size " + arguments.size());
-                                         */
-
                                         currentStatement.arguments.add(currentArgument);
                                     }
                                 }
@@ -206,24 +273,19 @@ public class AstTraversal extends Visitor {
                         ExpressionStatement currentArgument = new ExpressionStatement();
                         for (int i = 0; i < arguments.size(); i++) {
 
+
+                            //TODO: handle fields of primary identifier within arguments
                             if (arguments.getNode(i).getName().equals("StringLiteral")) {
                                 Node argumentsStringLiteral = arguments.getNode(i);
                                 String argument = argumentsStringLiteral.getString(0);
                                 currentArgument.stringLiteral = argument;
-                            }
-                            else {
+                            }else{
                                 Node argumentsCallExpression = arguments.getNode(i);
-
                                 String argumentsPrimaryIdentifier = argumentsCallExpression.getNode(0).getString(0);
                                 currentArgument.primaryIdentifier = argumentsPrimaryIdentifier;
-
-                                //TODO: handle fields of primary identifier within arguments
-
                                 String argumentsMethod = argumentsCallExpression.getString(2);
                                 currentArgument.method = argumentsMethod;
                             }
-
-
 
                             currentStatement.arguments.add(currentArgument);
                         }
@@ -292,22 +354,34 @@ public class AstTraversal extends Visitor {
                 Node current = (Node) o;
                 if (current.getName().equals("ExpressionStatement")) {
                     ExpressionStatementConstructor currentStatement = new ExpressionStatementConstructor();
-                    for (Object o1 : ((Node) o)) {
-                        Node currentSubExpression = (Node) o1;
+                    for (Object o1 : current) {
                         if (o1 instanceof Node) {
-                            if (((Node) o1).getName().equals("Expression")) {
+                            Node expressionStatementNode = (Node) o1;
+                            if (expressionStatementNode.getName().equals("Expression")) {
                                 int expressionCounter = 0;
-                                for (Object o2 : ((Node) o1)) {
-                                    expressionCounter++;
+                                for (Object o2 : expressionStatementNode) {
                                     if (o2 instanceof Node) {
-                                        Node subExpressionStatement = (Node) o2;
-                                        if (subExpressionStatement.getName().equals("PrimaryIdentifier")) {
-                                            String primaryIdentifier = subExpressionStatement.getString(0);
+                                        Node expressionNode = (Node) o2;
+                                        expressionCounter++;
+                                        if (expressionNode.getName().equals("PrimaryIdentifier")) {
+                                            String primaryIdentifier = expressionNode.getString(0);
                                             currentStatement.primaryIdentifier = primaryIdentifier;
+                                        } else if (expressionNode.getName().equals("SelectionExpression")) {
+                                            String selectionExpressionString = "";
+                                            for (Object o3 : expressionNode) {
+                                                if (o3 instanceof Node) {
+                                                    Node selectionNode = (Node) o3;
+                                                    if (selectionNode.getName().equals("ThisExpression")) {
+                                                        selectionExpressionString += "this.";
+                                                    }
+                                                } else {
+                                                    String selectionString = o3.toString();
+                                                    selectionExpressionString += selectionString;
+                                                    currentStatement.primaryIdentifier = selectionExpressionString;
+                                                }
+                                            }
                                         }
-                                    }
-
-                                    if (summary.operators.contains(o2.toString())) {
+                                    } else if (summary.operators.contains(o2.toString())) {
 
                                         String assignmentString = "";
                                         String operator = o2.toString();
@@ -318,10 +392,12 @@ public class AstTraversal extends Visitor {
                                                 expressionCounter--;
                                                 continue;
                                             }
-                                            Node currentNode = (Node) o3;
-                                            if (currentNode.getName().equals("PrimaryIdentifier")) {
-                                                String primaryIdentifier = currentNode.getString(0);
-                                                assignmentString += primaryIdentifier;
+                                            if (o3 instanceof Node) {
+                                                Node currentNode = (Node) o3;
+                                                if (currentNode.getName().equals("PrimaryIdentifier")) {
+                                                    String primaryIdentifier = currentNode.getString(0);
+                                                    assignmentString += primaryIdentifier;
+                                                }
                                             }
                                         }
                                         // Not sure about this
@@ -384,7 +460,7 @@ public class AstTraversal extends Visitor {
         // operators ?
         String operators = "=+-*/";
 
-        public void addClass(ClassImplementation superClass, String name) {
+        public void addClass(String superClass, String name) {
             ClassImplementation c = new ClassImplementation(superClass, name);
             c.packages.addAll(currentPackages);
 

@@ -1,0 +1,12 @@
+
+DEBUGGING IS ON
+Package:
+	inputs.test000
+Class:
+	Test000
+Constructor:
+Declarations:
+Methods:
+	void main(String[ args)
+		System.out.println("Hello.")
+

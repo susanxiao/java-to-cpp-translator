@@ -8,6 +8,9 @@ import static java.lang.System.out;
  * Created by susan on 10/19/16.
  */
 public class FieldDeclaration extends MethodStatement {
+
+
+    String modifiers;
     String staticType;
     String variableName;
 
@@ -21,9 +24,23 @@ public class FieldDeclaration extends MethodStatement {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder(staticType+" "+variableName+" =");
+
+        StringBuilder s = new StringBuilder();
+
+        if(modifiers != null){
+            s.append(modifiers + " ");
+        }
+
+        if(staticType != null){
+            s.append(staticType + " ");
+        }
+
+        if(variableName != null){
+            s.append(variableName + " ");
+        }
+
         if (dynamicType != null) {
-            s .append(" new "+dynamicType+"(");
+            s .append(" = new "+dynamicType+"(");
             if (arguments != null && !arguments.isEmpty()) {
                 for (int i = 0; i < arguments.size(); i++) {
                     s.append(arguments.get(i));
@@ -32,9 +49,10 @@ public class FieldDeclaration extends MethodStatement {
                 }
             }
             s.append(")");
-        } else if(!primaryIdentifier.equals(null)){
-            s.append(" " + primaryIdentifier);
+        } else if(primaryIdentifier != null){
+            s.append(" = " + primaryIdentifier);
         }
+
         return s.toString();
     }
 }
