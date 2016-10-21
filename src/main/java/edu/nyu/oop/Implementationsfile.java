@@ -463,7 +463,9 @@ public class Implementationsfile {
         //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test002/Test002.java");
         //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test003/Test003.java");
         //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test004/Test004.java");
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test005/Test005.java");
+        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test005/Test005.java");
+        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test006/Test006.java");
+
 
         AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);

@@ -240,8 +240,8 @@ CompilationUnit(
                 "a"
               ),
               null,
-              "almostSetFld",
-              Arguments(
+              "almostSeArgumentstFld",
+              (
                 StringLiteral(
                   "\"B\""
                 )

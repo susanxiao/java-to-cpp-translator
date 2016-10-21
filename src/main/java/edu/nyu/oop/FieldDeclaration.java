@@ -13,8 +13,11 @@ public class FieldDeclaration extends MethodStatement {
     String modifiers;
     String staticType;
     String variableName;
+    String stringLiteral;
 
-    /** For primitive types, below is null **/
+    /**
+     * For primitive types, below is null
+     **/
     String dynamicType;
 
     String primaryIdentifier;
@@ -27,20 +30,20 @@ public class FieldDeclaration extends MethodStatement {
 
         StringBuilder s = new StringBuilder();
 
-        if(modifiers != null){
+        if (modifiers != null) {
             s.append(modifiers + " ");
         }
 
-        if(staticType != null){
+        if (staticType != null) {
             s.append(staticType + " ");
         }
 
-        if(variableName != null){
+        if (variableName != null) {
             s.append(variableName + " ");
         }
 
         if (dynamicType != null) {
-            s .append(" = new "+dynamicType+"(");
+            s.append(" = new " + dynamicType + "(");
             if (arguments != null && !arguments.isEmpty()) {
                 for (int i = 0; i < arguments.size(); i++) {
                     s.append(arguments.get(i));
@@ -49,8 +52,10 @@ public class FieldDeclaration extends MethodStatement {
                 }
             }
             s.append(")");
-        } else if(primaryIdentifier != null){
+        } else if (primaryIdentifier != null) {
             s.append(" = " + primaryIdentifier);
+        } else if (stringLiteral != null) {
+            s.append(" = " + stringLiteral);
         }
 
         return s.toString();

@@ -1,0 +1,33 @@
+DEBUGGING IS ON
+Package:
+	inputs.test006
+Class:
+	A
+Constructor:
+	A()
+
+Declarations:
+	private String fld  = "A"
+Methods:
+	void setFld(String f)
+
+	void almostSetFld(String f)
+		String fld
+
+	String getFld()
+
+
+Package:
+	inputs.test006
+Class:
+	Test006
+Constructor:
+Declarations:
+Methods:
+	void main(String[ args)
+		A a  = new A()
+		a.almostSetFld("B")
+		.System.out.println(a.getFld())
+		a.setFld("B")
+		.System.out.println(a.getFld())
+
