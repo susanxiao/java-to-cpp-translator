@@ -28,6 +28,11 @@ public class ExpressionStatement extends MethodStatement {
             s.append(primaryIdentifier);
         }
 
+        if(assignment != null){
+            s.append(" " + assignment);
+            return s.toString();
+        }
+
         if (fields != null) {
             for (int i = 0; i < fields.size(); i++) {
                 s.append("." + fields.get(i));

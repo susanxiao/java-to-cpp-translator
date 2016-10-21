@@ -10,11 +10,14 @@ Declarations:
 	private String fld  = "A"
 Methods:
 	void setFld(String f)
+		fld  = f
 
 	void almostSetFld(String f)
 		String fld
+		fld  = f
 
 	String getFld()
+		return fld
 
 
 Package:
@@ -27,7 +30,8 @@ Methods:
 	void main(String[ args)
 		A a  = new A()
 		a.almostSetFld("B")
-		.System.out.println(a.getFld())
+		System.out.println(a.getFld())
 		a.setFld("B")
-		.System.out.println(a.getFld())
+		System.out.println(a.getFld())
+
 
