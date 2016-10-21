@@ -19,8 +19,13 @@ public class ClassImplementation {
     ArrayList<MethodImplementation> methods;
     ArrayList<FieldDeclaration> declarations;
 
-    public ClassImplementation(String superClass, String name) {
-        this.superClassName = superClass;
+    public ClassImplementation(ClassImplementation superClass, String name) {
+        if(superClass != null){
+            this.superClassName = superClass.name;
+        }else{
+            this.superClassName = null;
+        }
+
         this.name = name;
 
         packages = new ArrayList<>();
@@ -49,7 +54,7 @@ public class ClassImplementation {
     public void addDeclaration(FieldDeclaration declaration) {
         declarations.add(declaration);
     }
-    /**
+
     public MethodImplementation findMethod(String name) {
         for (int i = 0; i < methods.size(); i++) {
             MethodImplementation m = methods.get(i);
@@ -57,7 +62,7 @@ public class ClassImplementation {
         }
         if (superClass == null) return null;
         else return superClass.findMethod(name);
-    }**/
+    }
 
     public void addPackage(String name) {
         packages.add(name);

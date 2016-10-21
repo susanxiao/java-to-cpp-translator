@@ -71,7 +71,8 @@ public class AstTraversal extends Visitor {
             String superClassName = qualifiedIdentifier.getString(0);
             ClassImplementation superClass = summary.findClass(superClassName);
             */
-            summary.addClass(superClassName, name);
+            ClassImplementation superClass = summary.findClass(superClassName);
+            summary.addClass(superClass, name);
         } else {
             summary.addClass(null, name);
         }
@@ -460,7 +461,7 @@ public class AstTraversal extends Visitor {
         // operators ?
         String operators = "=+-*/";
 
-        public void addClass(String superClass, String name) {
+        public void addClass(ClassImplementation superClass, String name) {
             ClassImplementation c = new ClassImplementation(superClass, name);
             c.packages.addAll(currentPackages);
 
