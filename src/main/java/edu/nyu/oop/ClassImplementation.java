@@ -9,6 +9,7 @@ import java.util.Queue;
 
 public class ClassImplementation {
     //TODO: modifiers, global instances
+    String modifier;
     String name;
     String superClassName;
 
@@ -19,7 +20,7 @@ public class ClassImplementation {
     ArrayList<MethodImplementation> methods;
     ArrayList<FieldDeclaration> declarations;
 
-    public ClassImplementation(ClassImplementation superClass, String name) {
+    public ClassImplementation(ClassImplementation superClass, String name, String modifier) {
         if(superClass != null){
             this.superClassName = superClass.name;
         }else{
@@ -28,6 +29,10 @@ public class ClassImplementation {
 
         this.name = name;
 
+        if(modifier != ""){
+            this.modifier = modifier;
+        }
+
         packages = new ArrayList<>();
         constructors = new ArrayList<>();
         methods = new ArrayList<>();
@@ -35,8 +40,8 @@ public class ClassImplementation {
 
     }
 
-    public ClassImplementation(String name) {
-        this(null, name);
+    public ClassImplementation(String name, String modifier) {
+        this(null, name, modifier);
     }
 
     public void setSuperClass(ClassImplementation superClass) {
@@ -89,6 +94,13 @@ public class ClassImplementation {
             s.append(p + ".");
         }
         s.append("\n");
+
+        /** Modifier **/
+
+        if(modifier != null){
+            s.append("Modifier\n\t");
+            s.append(modifier + "\n");
+        }
 
         /** Class **/
         s.append("Class:\n\t");

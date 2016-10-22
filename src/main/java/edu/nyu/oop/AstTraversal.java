@@ -40,11 +40,19 @@ public class AstTraversal extends Visitor {
 
         String name = n.getString(1);
         String superClassName = "";
+        String modifier = "";
 
         for (Object o : n) {
             if (o instanceof Node) {
                 Node classNode = (Node) o;
-                if (classNode.getName().equals("Extension")) {
+                if(classNode.getName().equals("Modifiers")){
+                    for(Object o1 : classNode){
+                        if(o1 instanceof Node){
+                            modifier = classNode.getNode(0).getString(0);
+                        }
+                    }
+                }
+                else if (classNode.getName().equals("Extension")) {
                     for (Object o1 : classNode) {
                         if (o1 instanceof Node) {
                             Node extensionNode = (Node) o1;
@@ -72,10 +80,11 @@ public class AstTraversal extends Visitor {
             ClassImplementation superClass = summary.findClass(superClassName);
             */
             ClassImplementation superClass = summary.findClass(superClassName);
-            summary.addClass(superClass, name);
+            summary.addClass(superClass, name, modifier);
         } else {
-            summary.addClass(null, name);
+            summary.addClass(null, name, modifier);
         }
+        //this can be cleaned up
         visitClassBody(n.getGeneric(5));
     }
 
@@ -582,6 +591,8 @@ public class AstTraversal extends Visitor {
     static class AstTraversalSummary {
 
         HashMap<String, ClassImplementation> classes = new HashMap<>();
+        ArrayList<String> classNames = new ArrayList<>();
+
         ArrayList<String> currentPackages = new ArrayList<>();
 
         ClassImplementation currentClass;
@@ -591,11 +602,12 @@ public class AstTraversal extends Visitor {
         // operators ?
         String operators = "=+-*/";
 
-        public void addClass(ClassImplementation superClass, String name) {
-            ClassImplementation c = new ClassImplementation(superClass, name);
+        public void addClass(ClassImplementation superClass, String name, String modifier) {
+            ClassImplementation c = new ClassImplementation(superClass, name, modifier);
             c.packages.addAll(currentPackages);
 
             classes.put(name, c);
+            classNames.add(name);
             currentClass = c;
         }
 
