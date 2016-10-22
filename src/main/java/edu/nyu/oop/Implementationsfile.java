@@ -469,6 +469,8 @@ public class Implementationsfile {
 
         AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        out.println(summary.classes);
+
 
 
 
