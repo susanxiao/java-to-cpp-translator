@@ -237,7 +237,6 @@ public class AstTraversal extends Visitor {
 
                             Node arguments = newClassExpression.getNode(3);
                             //TODO: handle arguments--is this implementation correct
-                            //TODO: clean up duplicate code
                             if (arguments.size() > 0) {
                                 currentStatement.arguments = new ArrayList<>();
                                 ExpressionStatement currentArgument = new ExpressionStatement();
@@ -257,7 +256,7 @@ public class AstTraversal extends Visitor {
                                         String argumentsStringLiteral = argumentsCallExpression.getString(0);
 
 
-                                        currentArgument.stringLiteral = argumentsStringLiteral;
+                                        currentArgument.literalAssignment = argumentsStringLiteral;
 
                                         currentStatement.arguments.add(currentArgument);
                                     }
@@ -267,6 +266,20 @@ public class AstTraversal extends Visitor {
                             Node primaryIdentifier = declarator.getNode(2);
                             String primaryIdentifierLiteral = primaryIdentifier.getString(0);
                             currentStatement.primaryIdentifier = primaryIdentifierLiteral;
+                        } else if (declaratorNodeName.equals("SelectionExpression")) {
+                            ExpressionStatement assignment = new ExpressionStatement();
+                            for (Object o1 : declarator.getNode(2)) {
+                                if (o1 instanceof Node) {
+                                    String primaryIdentifier = ((Node) o1).getString(0);
+                                    assignment.primaryIdentifier = primaryIdentifier;
+                                }
+                                else if (o1 instanceof String) {
+                                    if (assignment.fields == null)
+                                        assignment.fields = new ArrayList<>();
+                                    assignment.fields.add((String) o1);
+                                }
+                            }
+                            currentStatement.assignment = assignment;
                         }
                     }
                     summary.currentMethod.addMethodStatement(currentStatement);
@@ -286,7 +299,7 @@ public class AstTraversal extends Visitor {
                                             currentStatement.primaryIdentifier = primaryIdentifierString;
                                         }
                                     } else if (summary.operators.contains(o2.toString())) {
-                                        String assignmentString = " ";
+                                        String assignmentString = "";
                                         assignmentString += o2.toString() + " ";
                                         for (Object o4 : currentNode) {
                                             if (expressionStatementNodeCounter > 0) {
@@ -298,7 +311,7 @@ public class AstTraversal extends Visitor {
                                                 if (currentExpressionNode.getName().equals("PrimaryIdentifier")) {
                                                     String primaryIdentifierString = currentExpressionNode.getString(0);
                                                     assignmentString += primaryIdentifierString;
-                                                    currentStatement.assignment = assignmentString;
+                                                    currentStatement.literalAssignment = assignmentString;
                                                     summary.currentMethod.addMethodStatement(currentStatement);
                                                     return;
                                                 }
@@ -321,7 +334,7 @@ public class AstTraversal extends Visitor {
                                                     Node argumentsNode = (Node) o3;
                                                     if (argumentsNode.getName().equals("StringLiteral")) {
                                                         String literalString = argumentsNode.getString(0);
-                                                        currentArgument.stringLiteral = literalString;
+                                                        currentArgument.literalAssignment = literalString;
                                                     } else if (argumentsNode.getName().equals("CallExpression")) {
                                                         for (Object o4 : argumentsNode) {
                                                             if (o4 instanceof Node) {
@@ -330,10 +343,46 @@ public class AstTraversal extends Visitor {
                                                                     String argPrimaryIdentifier = callExpressionNodeArgs.getString(0);
                                                                     currentArgument.primaryIdentifier = argPrimaryIdentifier;
                                                                 }
+                                                                else if (callExpressionNodeArgs.getName().equals("SelectionExpression")) {
+                                                                    for (Object o5 : callExpressionNodeArgs) {
+                                                                        if (o5 instanceof Node) {
+                                                                            Node selectionExpressionArgs = (Node) o5;
+                                                                            if (selectionExpressionArgs.getName().equals("PrimaryIdentifier")) {
+                                                                                String argPrimaryIdentifier = selectionExpressionArgs.getString(0);
+                                                                                currentArgument.primaryIdentifier = argPrimaryIdentifier;
+                                                                            }
+                                                                        }
+                                                                        else if (o5 instanceof String) {
+                                                                            if (currentArgument.fields == null)
+                                                                                currentArgument.fields = new ArrayList<>();
+                                                                            currentArgument.fields.add((String) o5);
+                                                                        }
+                                                                    }
+                                                                }
                                                             } else {
                                                                 if (o4 != null) {
                                                                     currentArgument.method = o4.toString();
                                                                 }
+                                                            }
+                                                        }
+                                                    }
+                                                    else if (argumentsNode.getName().equals("PrimaryIdentifier")) {
+                                                        String primaryIdentifier = argumentsNode.getString(0);
+                                                        currentArgument.primaryIdentifier = primaryIdentifier;
+                                                    }
+                                                    else if (argumentsNode.getName().equals("SelectionExpression")) {
+                                                        for (Object o4 : argumentsNode) {
+                                                            if (o4 instanceof Node) {
+                                                                Node selectionExpressionArgs = (Node) o4;
+                                                                if (selectionExpressionArgs.getName().equals("PrimaryIdentifier")) {
+                                                                    String argPrimaryIdentifier = selectionExpressionArgs.getString(0);
+                                                                    currentArgument.primaryIdentifier = argPrimaryIdentifier;
+                                                                }
+                                                            }
+                                                            else if (o4 instanceof String) {
+                                                                if (currentArgument.fields == null)
+                                                                    currentArgument.fields = new ArrayList<>();
+                                                                currentArgument.fields.add((String) o4);
                                                             }
                                                         }
                                                     }
@@ -446,6 +495,7 @@ public class AstTraversal extends Visitor {
                                             String primaryIdentifier = expressionNode.getString(0);
                                             currentStatement.primaryIdentifier = primaryIdentifier;
                                         } else if (expressionNode.getName().equals("SelectionExpression")) {
+                                            //TODO: this needs to be split up and not all saved as primaryIdentifier i think
                                             String selectionExpressionString = "";
                                             for (Object o3 : expressionNode) {
                                                 if (o3 instanceof Node) {
@@ -459,6 +509,8 @@ public class AstTraversal extends Visitor {
                                                     currentStatement.primaryIdentifier = selectionExpressionString;
                                                 }
                                             }
+                                        } else if (expressionNode.getName().equals("ThisExpression")) {
+                                            currentStatement.literalAssignment = " = this";
                                         }
                                     } else if (summary.operators.contains(o2.toString())) {
 
@@ -476,77 +528,55 @@ public class AstTraversal extends Visitor {
                                                 if (currentNode.getName().equals("PrimaryIdentifier")) {
                                                     String primaryIdentifier = currentNode.getString(0);
                                                     assignmentString += primaryIdentifier;
-                                                }
-                                                else if (currentNode.getName().equals("StringLiteral")) {
+                                                } else if (currentNode.getName().equals("StringLiteral")) {
                                                     String stringLiteral = currentNode.getString(0);
                                                     assignmentString += stringLiteral;
                                                 }
                                             }
                                         }
                                         // Not sure about this
-                                        currentStatement.assignment = assignmentString;
-                                        summary.currentConstructor.addConstructorStatement(currentStatement);
-                                        //return;
+                                        currentStatement.literalAssignment = assignmentString;
                                     }
                                 }
                             }
                             else if (expressionStatementNode.getName().equals("CallExpression")) {
-                                for (Object o2 : expressionStatementNode) {
+                                Node selectionExpression = expressionStatementNode.getNode(0);
+                                for (Object o2 : selectionExpression) {
                                     if (o2 instanceof Node) {
-                                        Node callExpressionNode = (Node) o2;
-                                        if (callExpressionNode.getName().equals("PrimaryIdentifier")) {
-                                            String primaryIdentifierString = callExpressionNode.getString(0);
-                                            currentStatement.primaryIdentifier = primaryIdentifierString;
-                                        } else if (callExpressionNode.getName().equals("Arguments")) {
-                                            currentStatement.arguments = new ArrayList<>();
-                                            ExpressionStatement currentArgument = new ExpressionStatement();
-                                            for (Object o3 : callExpressionNode) {
-                                                if (o3 instanceof Node) {
-                                                    Node argumentsNode = (Node) o3;
-                                                    if (argumentsNode.getName().equals("StringLiteral")) {
-                                                        String literalString = argumentsNode.getString(0);
-                                                        currentArgument.stringLiteral = literalString;
-                                                    } else if (argumentsNode.getName().equals("CallExpression")) {
-                                                        for (Object o4 : argumentsNode) {
-                                                            if (o4 instanceof Node) {
-                                                                Node callExpressionNodeArgs = (Node) o4;
-                                                                if (callExpressionNodeArgs.getName().equals("PrimaryIdentifier")) {
-                                                                    String argPrimaryIdentifier = callExpressionNodeArgs.getString(0);
-                                                                    currentArgument.primaryIdentifier = argPrimaryIdentifier;
-                                                                }
-                                                            } else {
-                                                                if (o4 != null) {
-                                                                    currentArgument.method = o4.toString();
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            currentStatement.arguments.add(currentArgument);
-                                        } else if (callExpressionNode.getName().equals("SelectionExpression")) {
+                                        String primaryIdentifier = ((Node) o2).getString(0);
+                                        currentStatement.primaryIdentifier = primaryIdentifier;
+                                    }
+                                    else if (o2 instanceof String) {
+                                        if (currentStatement.fields == null)
                                             currentStatement.fields = new ArrayList<>();
-                                            for (Object o3 : callExpressionNode) {
-                                                if (o3 instanceof Node) {
-                                                    Node selectionExpressionNode = (Node) o3;
-                                                    if (selectionExpressionNode.getName().equals("PrimaryIdentifier")) {
-                                                        currentStatement.primaryIdentifier = selectionExpressionNode.getString(0);
-                                                    }
-                                                } else {
-                                                    if (o3 != null) {
-                                                        currentStatement.fields.add(o3.toString());
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        if (o2 != null) {
-                                            //
-                                            currentStatement.method = o2.toString();
-                                        }
+                                        String field = (String) o2;
+                                        currentStatement.fields.add(field);
                                     }
                                 }
+
+                                String method = expressionStatementNode.getString(2);
+                                currentStatement.method = method;
+
+                                //TODO: not sure what the structure of AST is for multiple arguments
+                                Node arguments = expressionStatementNode.getNode(3);
+                                if (arguments.size() > 0) {
+                                    currentStatement.arguments = new ArrayList<>();
+                                    for (Object o2 : arguments) {
+                                        ExpressionStatement currentArgument = new ExpressionStatement();
+                                        if (o2 instanceof Node) {
+                                            String primaryIdentifier = ((Node) o2).getString(0);
+                                            currentArgument.primaryIdentifier = primaryIdentifier;
+                                        }
+                                        else if (o2 instanceof String) {
+                                            //is this a field in primary identifier, or second argument, or...
+                                        }
+                                        currentStatement.arguments.add(currentArgument);
+                                    }
+                                }
+
                             }
+                            summary.currentConstructor.addConstructorStatement(currentStatement);
+                            //return;
                         }
                     }
                 }

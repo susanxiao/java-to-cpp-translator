@@ -18,12 +18,19 @@ public class FieldDeclaration extends MethodStatement {
     /**
      * For primitive types, below is null
      **/
-    String dynamicType;
 
+    /**
+     * Declaring a new object
+     */
+    String dynamicType;
     String primaryIdentifier;
 
     ArrayList<ExpressionStatement> arguments;
 
+    /**
+     * Other declarations
+     */
+    ExpressionStatement assignment;
 
     @Override
     public String toString() {
@@ -56,6 +63,9 @@ public class FieldDeclaration extends MethodStatement {
             s.append(" = " + primaryIdentifier);
         } else if (stringLiteral != null) {
             s.append(" = " + stringLiteral);
+        }
+        else if (assignment != null) {
+            s.append(" = "+assignment.toString());
         }
 
         return s.toString();

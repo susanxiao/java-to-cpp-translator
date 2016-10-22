@@ -2,14 +2,11 @@ package edu.nyu.oop;
 
 import java.util.ArrayList;
 
-import static java.lang.System.out;
-
 /**
  * Created by susan on 10/19/16.
  */
 public class ExpressionStatement extends MethodStatement {
 
-    String stringLiteral;
     String primaryIdentifier;
     /**
      * Object we are making the call on
@@ -29,7 +26,8 @@ public class ExpressionStatement extends MethodStatement {
      * Arguments for method if it is not null
      */
 
-    String assignment;
+    String literalAssignment;
+    ExpressionStatement nonliteralAssignment;
 
 
     @Override
@@ -38,11 +36,6 @@ public class ExpressionStatement extends MethodStatement {
 
         if (primaryIdentifier != null) {
             s.append(primaryIdentifier);
-        }
-
-        if (assignment != null) {
-            s.append(" " + assignment);
-            return s.toString();
         }
 
         if (fields != null) {
@@ -63,10 +56,10 @@ public class ExpressionStatement extends MethodStatement {
             s.append(")");
         }
 
-        if (stringLiteral != null) {
-            s.append(stringLiteral);
+        if (literalAssignment != null) {
+            s.append(" "+ literalAssignment);
+            return s.toString();
         }
-
 
         return s.toString();
     }
