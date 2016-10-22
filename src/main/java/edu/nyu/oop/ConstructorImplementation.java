@@ -9,7 +9,7 @@ public class ConstructorImplementation {
 
     String name;
     ArrayList<ParameterImplementation> parameters;
-    ArrayList<ConstructorStatement> implementations;
+    ArrayList<MethodStatement> implementations;
 
     public ConstructorImplementation(String name) {
         this.name = name;
@@ -21,7 +21,7 @@ public class ConstructorImplementation {
         parameters.add(param);
     }
 
-    public void addConstructorStatement(ConstructorStatement statement){
+    public void addConstructorStatement(MethodStatement statement){
         implementations.add(statement);
     }
 

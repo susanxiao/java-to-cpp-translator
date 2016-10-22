@@ -424,7 +424,7 @@ public class AstTraversal extends Visitor {
             if (o instanceof Node) {
                 Node current = (Node) o;
                 if (current.getName().equals("ExpressionStatement")) {
-                    ExpressionStatementConstructor currentStatement = new ExpressionStatementConstructor();
+                    ExpressionStatement currentStatement = new ExpressionStatement();
                     for (Object o1 : current) {
                         if (o1 instanceof Node) {
                             Node expressionStatementNode = (Node) o1;
