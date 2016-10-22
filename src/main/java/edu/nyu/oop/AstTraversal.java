@@ -84,7 +84,6 @@ public class AstTraversal extends Visitor {
         } else {
             summary.addClass(null, name, modifier);
         }
-        //this can be cleaned up
         visitClassBody(n.getGeneric(5));
     }
 
