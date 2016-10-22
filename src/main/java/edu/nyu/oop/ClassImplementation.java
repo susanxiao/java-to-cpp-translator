@@ -102,16 +102,16 @@ public class ClassImplementation {
         }
         s.append("\n");
 
-        /** Constructors **/
-        s.append("Constructor:\n");
-        for (ConstructorImplementation constructor : constructors) {
-            s.append("\t" + constructor.toString() + "\n");
-        }
-
         /** Declarations **/
         s.append("Declarations:\n");
         for(FieldDeclaration declaration : declarations){
             s.append("\t" + declaration.toString() + "\n");
+        }
+
+        /** Constructors **/
+        s.append("Constructor:\n");
+        for (ConstructorImplementation constructor : constructors) {
+            s.append("\t" + constructor.toString() + "\n");
         }
 
         /** Methods **/
