@@ -29,4 +29,10 @@ public class ReturnStatement extends MethodStatement {
         return s.toString();
 
     }
+
+    @Override
+    public String toCpp(){
+        StringBuilder s = new StringBuilder();
+        return s.toString();
+    }
 }

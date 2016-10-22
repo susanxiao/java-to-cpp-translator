@@ -8,5 +8,5 @@ public abstract class MethodStatement {
     @Override
     public abstract String toString();
 
-    // public abstract String toCpp();
+    public abstract String toCpp();
 }

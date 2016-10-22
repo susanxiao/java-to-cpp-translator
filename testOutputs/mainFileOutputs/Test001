@@ -1,0 +1,6 @@
+int main(void)
+{
+  A a  = new A()
+  cout << a->__vptr->toString(a)->data << endl;
+  return 0;
+}

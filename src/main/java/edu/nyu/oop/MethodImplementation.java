@@ -88,4 +88,10 @@ public class MethodImplementation {
 
         return s.toString();
     }
+
+    public String toCpp(){
+        StringBuilder s = new StringBuilder();
+        return s.toString();
+    }
+
 }
