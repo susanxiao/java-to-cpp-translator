@@ -469,6 +469,10 @@ public class AstTraversal extends Visitor {
                                                     String primaryIdentifier = currentNode.getString(0);
                                                     assignmentString += primaryIdentifier;
                                                 }
+                                                else if (currentNode.getName().equals("StringLiteral")) {
+                                                    String stringLiteral = currentNode.getString(0);
+                                                    assignmentString += stringLiteral;
+                                                }
                                             }
                                         }
                                         // Not sure about this

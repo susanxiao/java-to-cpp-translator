@@ -68,7 +68,7 @@ public class AstTraversalTest {
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test007() {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
