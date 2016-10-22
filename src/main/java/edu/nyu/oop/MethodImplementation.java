@@ -31,6 +31,37 @@ public class MethodImplementation {
         implementation.add(m);
     }
 
+
+    /**
+     * StringBuilders
+     **/
+
+    public String typeNameToString() {
+        StringBuilder s = new StringBuilder();
+        s.append(returnType);
+        s.append(" " + name);
+        return s.toString();
+    }
+
+    public String parametersToString() {
+        StringBuilder s = new StringBuilder();
+        s.append("(");
+        for (int i = 0; i < parameters.size(); i++) {
+            s.append(parameters.get(i).toString());
+            if (i < parameters.size() - 1)
+                s.append(",");
+        }
+        s.append(")\n");
+        return s.toString();
+    }
+
+    public String pointerToString() {
+        StringBuilder s = new StringBuilder();
+        s.append(returnType);
+        s.append(" (*" + name + ")");
+        return s.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -39,7 +70,7 @@ public class MethodImplementation {
         s.append(returnType);
 
         /** Name **/
-        s.append(" "+name);
+        s.append(" " + name);
 
         /** Parameters **/
         s.append("(");
@@ -52,7 +83,7 @@ public class MethodImplementation {
 
         /** Implementation **/
         for (int i = 0; i < implementation.size(); i++) {
-            s.append("\t\t"+implementation.get(i).toString()+"\n");
+            s.append("\t\t" + implementation.get(i).toString() + "\n");
         }
 
         return s.toString();

@@ -25,62 +25,94 @@ public class printHeaderFile {
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
 
         HashMap<String, ClassImplementation> classes = summary.classes;
+
         ArrayList<String> keys = summary.classNames;
         ArrayList<String> classNames = keys;
 
-        StringBuilder s = new StringBuilder();
-
+        ArrayList<String> classesImplementing = new ArrayList<>();
 
         for (Object o : classNames) {
+            String className = o.toString();
+            ClassImplementation currentClass = classes.get(className);
+            if (currentClass.modifier == null) {
+                classesImplementing.add(className);
+            }
+        }
+
+
+        StringBuilder s = new StringBuilder();
+
+        for (Object o : classesImplementing) {
             s.append("struct __" + o.toString() + ";\n");
             s.append("struct __" + o.toString() + "_VT;\n");
         }
         s.append("\n");
-        for (Object o : classNames) {
+        for (Object o : classesImplementing) {
             s.append("typedef __" + o.toString() + "* " + o.toString() + ";\n");
         }
+        s.append("\n");
+        for (Object o : classesImplementing) {
 
-        for (Object o : classNames) {
             String className = o.toString();
+            ClassImplementation currentClass = classes.get(className);
+
             s.append("struct __" + className + "\n{\n");
             s.append("   __" + className + "_VT* __vtpr;\n");
             s.append("\n");
 
             s.append("   __" + className + "();\n");
             s.append("\n");
+
+            for (MethodImplementation o1 : currentClass.methods) {
+                MethodImplementation currentMethod = o1;
+                s.append("   static " + currentMethod.typeNameToString());
+                s.append(currentMethod.parametersToString());
+            }
+
+            s.append("   static Class __class();\n");
+            s.append("\n");
+            s.append("   static __" + className + "_VT " + " __vtable;\n");
+            s.append("};\n");
+
+            s.append("\n");
+            s.append("struct __" + className + "_VT\n{");
+            s.append("\n");
+            s.append("   Class __isa;");
+            s.append("\n");
+
+            for (MethodImplementation o1 : currentClass.methods) {
+                MethodImplementation currentMethod = o1;
+                s.append("   " + currentMethod.pointerToString() + "(" + className + ");\n");
+            }
+
+            s.append("\n");
+            s.append("   __" + className + "_VT()\n");
+            s.append("    :__isa(__" + className + "::__class()),\n");
+
+            // TODO: if the class inherits the method
+            int methodCounter = currentClass.methods.size();
+            for (MethodImplementation o1 : currentClass.methods) {
+                MethodImplementation currentMethod = o1;
+                s.append("     " + currentMethod.name + "(&__" + className);
+                s.append("::" + currentMethod.name + ")");
+                if(methodCounter > 0){
+                    methodCounter--;
+                    s.append(",\n");
+                }
+            }
+            s.append("    {}");
+            s.append("\n");
+            s.append("};");
+            s.append("\n");
         }
+
+
 
         out.println(s.toString());
 
     }
 
     /*
-
-        for (int j = 0; j < methodGrouping.get(classCounter).size(); j++) {
-            out.print("   static " + methodTypeGrouping.get(classCounter).get(j) + " ");
-            out.println(methodGrouping.get(classCounter).get(j) + "(" + className + ");");
-        }
-        out.println("\n");
-
-        out.println("   static Class __class();");
-        out.println("\n");
-
-        out.println("   static __" + className + "_VT " + " __vtable;");
-
-        out.println("};");
-
-        // printing the virtual table
-        out.println("\n");
-        out.println("struct __" + className + "_VT\n{");
-        out.println("\n");
-        out.println("   Class __isa;");
-        out.println("\n");
-
-        for (int j = 0; j < methodGrouping.get(classCounter).size(); j++) {
-            out.print("   " + methodTypeGrouping.get(classCounter).get(j) + " (*");
-            out.println(methodGrouping.get(classCounter).get(j) + ")(" + className + ");");
-        }
-
         // vtable constructor
         out.println("\n");
         out.println("   __" + className + "_VT()");

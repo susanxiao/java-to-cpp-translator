@@ -456,7 +456,6 @@ public class Implementationsfile {
      */
 
     public static void main(String[] args) {
-        boolean debug = true;
 
         //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test000/Test000.java");
         //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
@@ -467,13 +466,9 @@ public class Implementationsfile {
         GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test006/Test006.java");
 
 
+
         AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        out.println(summary.classes);
-
-
-
-
     }
 }
 
