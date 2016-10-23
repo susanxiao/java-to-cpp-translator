@@ -13,41 +13,46 @@ import static java.lang.System.out;
 public class printMainFile {
     public static void main(String[] args) {
 
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
-        AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
-        AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        /**
 
-        HashMap<String, ClassImplementation> classes = summary.classes;
+         GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
+         AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
+         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
 
-        ArrayList<String> keys = summary.classNames;
-        ArrayList<String> classNames = keys;
+         HashMap<String, ClassImplementation> classes = summary.classes;
 
-        ArrayList<String> classesImplementing = new ArrayList<>();
+         ArrayList<String> keys = summary.classNames;
+         ArrayList<String> classNames = keys;
 
-        for (Object o : classNames) {
-            String className = o.toString();
-            ClassImplementation currentClass = classes.get(className);
-            if (currentClass.modifier == "public") {
-                classesImplementing.add(className);
-            }
-        }
+         ArrayList<String> classesImplementing = new ArrayList<>();
 
-        StringBuilder s = new StringBuilder();
+         for (Object o : classNames) {
+         String className = o.toString();
+         ClassImplementation currentClass = classes.get(className);
+         if (currentClass.modifier == "public") {
+         classesImplementing.add(className);
+         }
+         }
 
-        ClassImplementation mainClass = classes.get(classesImplementing.get(0));
+         StringBuilder s = new StringBuilder();
 
-        s.append("int main(void)\n{\n");
-        for(MethodImplementation currentMethod : mainClass.methods){
+         ClassImplementation mainClass = classes.get(classesImplementing.get(0));
 
-            for(MethodStatement currentStatement : currentMethod.implementation){
-                s.append("  " + currentStatement.toCpp() + "\n");
-            }
+         s.append("int main(void)\n{\n");
+         for(MethodImplementation currentMethod : mainClass.methods){
 
-        }
+         for(MethodStatement currentStatement : currentMethod.implementation){
+         s.append("  " + currentStatement.toCpp() + "\n");
+         }
 
-        s.append("  return 0;\n");
-        s.append("}\n");
+         }
 
-        out.println(s.toString());
+         s.append("  return 0;\n");
+         s.append("}\n");
+
+         out.println(s.toString());
+
+         **/
     }
+
 }
