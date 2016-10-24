@@ -1,27 +1,46 @@
+#pragma once
+#include <iostream>
+#include "java_lang.h"
+
+
+namespace inputs {
+namespace test001 {
+
+
 struct __A;
 struct __A_VT;
-
-typedef __A* A;
-
+typedef __*A A;
 struct __A
 {
-   __A_VT* __vtpr;
+__A_VT* __vptr 
 
-   __A();
+static __A_VT __vtable 
 
-   static String toString()
-   static Class __class();
-
-   static __A_VT  __vtable;
+String toString(A );
+static int32_t hashCode(Object __Object);
+static Class getClass(Object __Object);
+static bool equals(Object Object,Object);
+static bool equals(Object );
 };
 
 struct __A_VT
 {
-   Class __isa;
-   String (*toString)(A);
 
-   __A_VT()
-    :__isa(__A::__class()),
-     toString(&__A::toString),
-    {}
+String (*toString)(A);
+int32_t (*hashCode)(Object);
+Class (*getClass)(Object);
+bool (*equals)(Object);
+
+__A_VT()
+: __isa(__A::__class(),
+   toString(&__::toString),
+   hashCode(&__::hashCode),
+   getClass((Class(*)(A)) &__Object::getClass),
+   equals(&__::equals),
+{}
+
 };
+
+
+} 
+} 

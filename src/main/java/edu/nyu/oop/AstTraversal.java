@@ -21,8 +21,9 @@ public class AstTraversal extends Visitor {
 
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private Runtime runtime;
-    boolean debug = true;
+    boolean debug = false;
     private AstTraversalSummary summary = new AstTraversalSummary();
+
 
     /**
      * visitXXX methods
