@@ -23,7 +23,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -34,7 +34,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+       printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -45,7 +45,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -56,7 +56,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -67,7 +67,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -78,7 +78,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -89,7 +89,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -100,7 +100,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -111,7 +111,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -122,7 +122,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -133,7 +133,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -144,7 +144,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -155,7 +155,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -166,7 +166,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -177,7 +177,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -188,7 +188,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -199,7 +199,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -210,7 +210,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -221,7 +221,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -232,7 +232,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
@@ -243,7 +243,7 @@ public class printHeaderFileTest {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(),summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 }

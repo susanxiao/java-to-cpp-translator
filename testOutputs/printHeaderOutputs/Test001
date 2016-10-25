@@ -2,8 +2,7 @@
 #include <iostream>
 #include "java_lang.h"
 
-
-java::lang;
+using namespace java::lang;
 
 namespace inputs {
 	namespace test001 {
@@ -22,10 +21,6 @@ namespace inputs {
 	static __A_VT __vtable
 
 	static String toString(A);
-	static int32_t hashCode(Object);
-	static Class getClass(Object);
-	static bool equals(Object);
-	static Class __class(Object);
 
 	};
 
@@ -36,14 +31,14 @@ namespace inputs {
 	String (*toString)(A);
 	int32_t (*hashCode)(Object);
 	Class (*getClass)(Object);
-	bool (*equals)(Object);
+	bool (*equals)(A,Object);
 
 	__A_VT()
 	: __isa(__A::__class(),
-		toString(&__::toString),
-		hashCode(&__::hashCode),
+		toString(&__A::toString),
+		hashCode((int_32t(*)(A)) &__Object::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
-		equals(&__::equals),
+		equals((bool(*)(A,Object)) &__Object::equals)
 		{}
 
 	};

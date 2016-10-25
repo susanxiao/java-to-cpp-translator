@@ -4,9 +4,13 @@ import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.util.Runtime;
+
 import java.util.ArrayList;
+
 import static java.lang.System.out;
+
 import xtc.tree.Visitor;
+
 import java.lang.*;
 
 
@@ -32,7 +36,10 @@ public class printHeaderFile extends Visitor {
 
     private printHeaderFile.headerFileSummary summary = new headerFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
+
     private Runtime runtime;
+    private AstTraversal.AstTraversalSummary summaryTraversal;
+
     StringBuilder s1 = new StringBuilder();
 
     // visitXXX methods
@@ -76,34 +83,46 @@ public class printHeaderFile extends Visitor {
     }
 
     public void visitDataLayoutMethodDeclaration(GNode n) {
-        String currentMethodDeclaration = "\t";
-        // TODO: modifiers?
-        currentMethodDeclaration += "static ";
-        /*
-        if (n.getNode(0).size() > 0) {
-            currentMethodDeclaration += n.getNode(0).getString(0) + " ";
-        }*/
+        for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
+            // if the class implements the method
+            String methodComparing = n.getString(2);
+            if (currMethod.name == methodComparing) {
+                String currentMethodDeclaration = "\t";
+                // TODO: modifiers?
+                currentMethodDeclaration += "static ";
+                /*
+                if (n.getNode(0).size() > 0) {
+                    currentMethodDeclaration += n.getNode(0).getString(0) + " ";
+                }*/
 
-        currentMethodDeclaration += n.getString(1) + " ";
-        currentMethodDeclaration += n.getString(2) + "(";
-        currentMethodDeclaration += n.getString(3);
-
-        // Parameters
-        /*
-        if (n.getNode(4).size() > 0) {
-            int size = n.getNode(4).size();
-            for (Object o : n.getNode(4)) {
-                if (size > 1) {
-                    size--;
-                    currentMethodDeclaration += o.toString() + ",";
-                } else {
-                    currentMethodDeclaration += o.toString();
+                currentMethodDeclaration += n.getString(1) + " ";
+                currentMethodDeclaration += n.getString(2) + "(";
+                if (n.getString(2) != "__class") {
+                    if (n.getString(2).equals("equals")) {
+                        currentMethodDeclaration += summary.currentClassName + ",";
+                    }
+                    currentMethodDeclaration += n.getString(3);
                 }
-            }
-        }*/
 
-        currentMethodDeclaration += ");";
-        s1.append(currentMethodDeclaration + "\n");
+                // Parameters
+                /*
+                if (n.getNode(4).size() > 0) {
+                    int size = n.getNode(4).size();
+                    for (Object o : n.getNode(4)) {
+                        if (size > 1) {
+                            size--;
+                            currentMethodDeclaration += o.toString() + ",";
+                        } else {
+                            currentMethodDeclaration += o.toString();
+                        }
+                    }
+                }*/
+
+                currentMethodDeclaration += ");";
+                s1.append(currentMethodDeclaration + "\n");
+            }
+        }
+
     }
 
     public void visitVTable(GNode n) {
@@ -118,7 +137,7 @@ public class printHeaderFile extends Visitor {
         s1.append("\t};\n");
     }
 
-    public String vTableConstructor(GNode n){
+    public String vTableConstructor(GNode n) {
         StringBuilder x = new StringBuilder();
 
         // TODO: Inheritance
@@ -130,15 +149,35 @@ public class printHeaderFile extends Visitor {
             GNode currentMethod = (GNode) o;
             if (currentMethod.getString(2).equals("__isa")) {
                 continue;
-            } else if (currentMethod.getString(2).equals("getClass")) {
-                vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object::getClass)";
+
             } else {
-                vTableMethod += "\t\t" + currentMethod.getString(2);
-                vTableMethod += "(&__::" + currentMethod.getString(2) + ")";
+                // checking if the class implements the method
+                for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
+                    // if the class implements the method
+                    String methodComparing = currentMethod.getString(2);
+                    if (currMethod.name == methodComparing) {
+                        vTableMethod += "\t\t" + currentMethod.getString(2);
+                        vTableMethod += "(&__";
+                        vTableMethod += summary.currentClassName;
+                    } else { // the class does not implement the method
+                        // check for superclass that implements the method
+                        if (methodComparing.equals("hashCode")) {
+                            vTableMethod += "\t\thashCode((int_32t(*)(" + summary.currentClassName + ")) &__Object";
+                        } else if (methodComparing.equals("getClass")) {
+                            vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object";
+                        } else if (methodComparing.equals("equals")) {
+                            vTableMethod += "\t\tequals((bool(*)(" + summary.currentClassName + ",Object)) &__Object";
+                        }
+
+                    }
+                }
+                vTableMethod += "::" + currentMethod.getString(2) + ")";
             }
-            if (size > 1) {
+            if (size > 2) {
                 size--;
                 vTableMethod += ",\n";
+            } else {
+                vTableMethod += "\n";
             }
             x.append(vTableMethod);
         }
@@ -158,7 +197,13 @@ public class printHeaderFile extends Visitor {
             }
             currentMethodDeclaration += n.getString(1) + " ";
             currentMethodDeclaration += "(*" + n.getString(2) + ")";
-            currentMethodDeclaration += "(" + n.getString(3) + ");";
+
+            // Case equals
+            if(n.getString(2).equals("equals")){
+                currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
+            }else{
+                currentMethodDeclaration += "(" + n.getString(3) + ");";
+            }
             s1.append(currentMethodDeclaration + "\n");
         }
     }
@@ -175,8 +220,9 @@ public class printHeaderFile extends Visitor {
     }
 
 
-    public printHeaderFile(Runtime runtime) {
+    public printHeaderFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
         this.runtime = runtime;
+        this.summaryTraversal = summaryTraversal;
     }
 
     static class headerFileSummary {
@@ -191,8 +237,6 @@ public class printHeaderFile extends Visitor {
 
         String usingNamespace = "";
 
-        ArrayList<String> packages = new ArrayList<String>();
-
     }
 
 
@@ -202,18 +246,18 @@ public class printHeaderFile extends Visitor {
 
         s.append("#pragma once\n");
         s.append("#include <iostream>\n");
-        s.append("#include \"java_lang.h\"\n\n\n");
+        s.append("#include \"java_lang.h\"\n\n");
         summary.headerGuard += s;
 
-        summary.usingNamespace = "java::lang;\n\n";
+        summary.usingNamespace = "using namespace java::lang;\n\n";
 
         s = new StringBuilder();
         // all classes in the same namespace?
         String namespace;
         namespace = n.getNode(0).getNode(0).getString(1);
         int namespaceSize = 0;
-        for(Object o : namespace.split("_")){
-            for(int i = 0; i < namespaceSize; i++){
+        for (Object o : namespace.split("_")) {
+            for (int i = 0; i < namespaceSize; i++) {
                 s.append("\t");
             }
             s.append("namespace " + o + " {\n");
@@ -261,8 +305,8 @@ public class printHeaderFile extends Visitor {
         // appending the namespace size
         s = new StringBuilder();
         s.append("\n\n");
-        while(namespaceSize > 0){
-            for(int i = 0; i < namespaceSize-1; i++){
+        while (namespaceSize > 0) {
+            for (int i = 0; i < namespaceSize - 1; i++) {
                 s.append("\t");
             }
             s.append("}\n");
@@ -279,7 +323,7 @@ public class printHeaderFile extends Visitor {
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime());
+        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
 
 
@@ -288,7 +332,6 @@ public class printHeaderFile extends Visitor {
         headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
 
         out.println(headerFile);
-
 
     }
 
