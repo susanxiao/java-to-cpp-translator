@@ -142,35 +142,35 @@ public class printHeaderFile extends Visitor {
 
         // TODO: Inheritance
         x.append("\n\t__" + summary.currentClassName + "_VT()\n");
-        x.append("\t: __isa(__" + summary.currentClassName + "::" + "__class(),\n");
+        x.append("\t: __isa(__" + summary.currentClassName + "::" + "__class()),\n");
         int size = n.size();
+
         for (Object o : n) {
             String vTableMethod = "";
             GNode currentMethod = (GNode) o;
             if (currentMethod.getString(2).equals("__isa")) {
                 continue;
-
             } else {
+                String methodComparing = currentMethod.getString(2);
                 // checking if the class implements the method
                 for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
                     // if the class implements the method
-                    String methodComparing = currentMethod.getString(2);
                     if (currMethod.name == methodComparing) {
                         vTableMethod += "\t\t" + currentMethod.getString(2);
                         vTableMethod += "(&__";
                         vTableMethod += summary.currentClassName;
-                    } else { // the class does not implement the method
-                        // check for superclass that implements the method
-                        if (methodComparing.equals("hashCode")) {
-                            vTableMethod += "\t\thashCode((int_32t(*)(" + summary.currentClassName + ")) &__Object";
-                        } else if (methodComparing.equals("getClass")) {
-                            vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object";
-                        } else if (methodComparing.equals("equals")) {
-                            vTableMethod += "\t\tequals((bool(*)(" + summary.currentClassName + ",Object)) &__Object";
-                        }
-
+                        break;
                     }
                 }
+
+                if (methodComparing.equals("hashCode")) {
+                    vTableMethod += "\t\thashCode((int_32t(*)(" + summary.currentClassName + ")) &__Object";
+                } else if (methodComparing.equals("getClass")) {
+                    vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object";
+                } else if (methodComparing.equals("equals")) {
+                    vTableMethod += "\t\tequals((bool(*)(" + summary.currentClassName + ",Object)) &__Object";
+                }
+
                 vTableMethod += "::" + currentMethod.getString(2) + ")";
             }
             if (size > 2) {
@@ -199,9 +199,9 @@ public class printHeaderFile extends Visitor {
             currentMethodDeclaration += "(*" + n.getString(2) + ")";
 
             // Case equals
-            if(n.getString(2).equals("equals")){
+            if (n.getString(2).equals("equals")) {
                 currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
-            }else{
+            } else {
                 currentMethodDeclaration += "(" + n.getString(3) + ");";
             }
             s1.append(currentMethodDeclaration + "\n");
@@ -285,7 +285,7 @@ public class printHeaderFile extends Visitor {
             GNode currentNode = (GNode) classNode;
             if (!currentNode.getName().contains("Test")) {
                 String className = currentNode.getName();
-                s.append("\ttypedef __*" + className + " " + className + ";\n");
+                s.append("\ttypedef __" + className + "* " + className + ";\n");
             }
         }
         s.append("\n");
@@ -319,7 +319,7 @@ public class printHeaderFile extends Visitor {
     }
 
     public static void main(String[] args) {
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
+        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test006/Test006.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);

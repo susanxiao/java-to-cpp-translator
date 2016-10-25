@@ -103,10 +103,10 @@ public class AstC {
             // DATA LAYOUT
 
             // Cycle through the methods
-            DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
-            dataLayoutNode.add(DataLayoutMethodDeclarationNode);
             // TODO: Main method does not list the methods?
             for (MethodImplementation currentMethod : currentClass.methods) {
+                DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
+                dataLayoutNode.add(DataLayoutMethodDeclarationNode);
                 // TODO: Method Implementation needs modifiers
                 ModifiersNode = GNode.create("Modifiers");
                 //ModifiersNode.add(currentMethod.modifer);
