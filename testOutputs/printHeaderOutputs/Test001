@@ -3,44 +3,51 @@
 #include "java_lang.h"
 
 
+java::lang;
+
 namespace inputs {
-namespace test001 {
+	namespace test001 {
 
 
-struct __A;
-struct __A_VT;
-typedef __*A A;
-struct __A
-{
-__A_VT* __vptr 
+	struct __A;
+	struct __A_VT;
 
-static __A_VT __vtable 
+	typedef __*A A;
 
-String toString(A );
-static int32_t hashCode(Object __Object);
-static Class getClass(Object __Object);
-static bool equals(Object Object,Object);
-static bool equals(Object );
-};
+	struct __A
+	{
 
-struct __A_VT
-{
+	__A_VT* __vptr
 
-String (*toString)(A);
-int32_t (*hashCode)(Object);
-Class (*getClass)(Object);
-bool (*equals)(Object);
+	static __A_VT __vtable
 
-__A_VT()
-: __isa(__A::__class(),
-   toString(&__::toString),
-   hashCode(&__::hashCode),
-   getClass((Class(*)(A)) &__Object::getClass),
-   equals(&__::equals),
-{}
+	static String toString(A);
+	static int32_t hashCode(Object);
+	static Class getClass(Object);
+	static bool equals(Object);
+	static Class __class(Object);
 
-};
+	};
+
+	struct __A_VT
+	{
+
+	Class __isa;
+	String (*toString)(A);
+	int32_t (*hashCode)(Object);
+	Class (*getClass)(Object);
+	bool (*equals)(Object);
+
+	__A_VT()
+	: __isa(__A::__class(),
+		toString(&__::toString),
+		hashCode(&__::hashCode),
+		getClass((Class(*)(A)) &__Object::getClass),
+		equals(&__::equals),
+		{}
+
+	};
 
 
-} 
-} 
+	}
+}

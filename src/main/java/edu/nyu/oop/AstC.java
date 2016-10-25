@@ -1,30 +1,25 @@
 package edu.nyu.oop;
 
-import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.nyu.oop.util.NodeUtil;
 
-import org.slf4j.Logger;
-import xtc.tree.GNode;
-import xtc.tree.Node;
-import xtc.util.Runtime;
-
-import java.util.List;
+import static edu.nyu.oop.AstTraversal.*;
 
 /**
  * Created by Garrett on 10/24/16.
  */
 public class AstC {
 
-    static GNode C_AST(String file) {
-        GNode node = (GNode) LoadFileImplementations.loadTestFile(file);
-        AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
-        AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+
+
+    static GNode cAst(AstTraversalSummary summary) {
+
+        // TODO: TESTING INFORMATION
+        int numberClasses = 0;
+
+
         HashMap<String, ClassImplementation> classes = summary.classes;
         ArrayList<String> keys = summary.classNames;
 
@@ -45,6 +40,7 @@ public class AstC {
 
         // Cycles through the classes
         for (Object key : keys) {
+            numberClasses++;
             // This is the current class Node that is being implemented
             ClassImplementation currentClass = classes.get(key);
             currentClassNode = GNode.create(currentClass.name);
@@ -168,8 +164,8 @@ public class AstC {
             ModifiersNode = GNode.create("Modifiers");
             DataLayoutMethodDeclarationNode.add(ModifiersNode);
             ModifiersNode.add("static");
-            DataLayoutMethodDeclarationNode.add("bool");
-            DataLayoutMethodDeclarationNode.add("equals");
+            DataLayoutMethodDeclarationNode.add("Class");
+            DataLayoutMethodDeclarationNode.add("__class");
             DataLayoutMethodDeclarationNode.add("Object");
             ParametersNode = GNode.create("Parameters");
             DataLayoutMethodDeclarationNode.add(ParametersNode);
@@ -201,7 +197,7 @@ public class AstC {
                 // TODO: Add modifiers to methods
                 /*
                 for(ModifierImplementation modifier : currentMethod.modifiers){
-                    ModifiersNode.add(modifier);
+                    ModifiersNode.add(modifier.name);
                 }
                 */
 
@@ -260,29 +256,9 @@ public class AstC {
             // Add the currentClassNode to the parent Node
             parent.add(currentClassNode);
         }
-
         return parent;
     }
 
-}
-
-class XtcTestUtils1 {
-
-    public static Runtime newRuntime() {
-        Runtime runtime = new Runtime();
-        runtime.initDefaultValues();
-        runtime.dir("in", Runtime.INPUT_DIRECTORY, true, "");
-        runtime.setValue(Runtime.INPUT_DIRECTORY, JavaEntities.TEMP_DIR);
-        return runtime;
-    }
-
-    public static Node loadTestFile(String filename) {
-        File file = new File(filename);
-        return NodeUtil.parseJavaFile(file);
-    }
-
-    public static void prettyPrintAst(Node node) {
-        newRuntime().console().format(node).pln().flush();
-    }
 
 }
+
