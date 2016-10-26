@@ -12,8 +12,6 @@ import static edu.nyu.oop.AstTraversal.*;
  */
 public class AstC {
 
-
-
     static GNode cAst(AstTraversalSummary summary) {
 
         // TODO: TESTING INFORMATION
@@ -258,7 +256,6 @@ public class AstC {
         }
         return parent;
     }
-
 
 }
 

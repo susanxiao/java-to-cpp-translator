@@ -7,8 +7,10 @@ import xtc.tree.Node;
 import xtc.util.Runtime;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.PrintWriter;
 
+import static com.sun.tools.javac.util.Constants.format;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.out;
 
@@ -23,18 +25,59 @@ public class Implementationsfile {
 
     public static void main(String[] args) {
 
-        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test000/Test000.java");
-        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test001/Test001.java");
-        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test002/Test002.java");
-        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test003/Test003.java");
-        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test004/Test004.java");
-        //GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test005/Test005.java");
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test006/Test006.java");
+        StringBuilder s = new StringBuilder();
+        s.append("./src/test/java/inputs/");
+        StringBuilder s1 = new StringBuilder(args[0]);
+        StringBuilder s2 = new StringBuilder();
+        s2 = s1;
+        s.append(s1);
+        s2.setCharAt(0, 'T');
+        s.append("/" + s2);
+        s.append(".java");
+        String filePath = s.toString();
+        GNode node = (GNode) LoadFileImplementations.loadTestFile(filePath);
+        AstTraversal visitor1 = new AstTraversal(LoadFileImplementations.newRuntime());
+
+        // obtain the traversal summary
+        AstTraversal.AstTraversalSummary summaryTraversal = visitor1.getTraversal(node);
+
+        // c++ Ast
+        GNode parentNode = AstC.cAst(summaryTraversal);
+
+        try {
+            PrintWriter printerHeader;
+
+            File newDirectory;
+
+            File header;
+            File output;
+            File main;
+
+            newDirectory = new File("outputFiles");
+            newDirectory.mkdir();
+
+            // printing the header file
+            printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
+            printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+            String headerFile = "";
+            headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
+            headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
+
+            header = new File("outputFiles", "header.h");
+            header.createNewFile();
+            printerHeader = new PrintWriter(header);
+            printerHeader.println(headerFile);
+            printerHeader.flush();
+            printerHeader.close();
+            out.println("header.h printed to ./translator-5tran/outputFiles* \n");
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
 
-        AstTraversal visitor = new AstTraversal(LoadFileImplementations.newRuntime());
-        AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
     }
 }
 
@@ -56,5 +99,11 @@ class LoadFileImplementations {
     public boolean isNumeric(String s) {
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
+
+    public static void prettyPrintAst(Node node) {
+        //return newRuntime().console().format(node).pln().flush();
+        newRuntime().console().p("output.h");
+    }
+
 
 }
