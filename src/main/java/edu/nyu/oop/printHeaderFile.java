@@ -5,6 +5,8 @@ import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.util.Runtime;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import static java.lang.System.out;
@@ -12,6 +14,10 @@ import static java.lang.System.out;
 import xtc.tree.Visitor;
 
 import java.lang.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 
 
 /**
@@ -396,8 +402,9 @@ public class printHeaderFile extends Visitor {
         return summary;
     }
 
+    /*
     public static void main(String[] args) {
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test0018/Test0018.java");
+        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test018/Test018.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);
@@ -411,7 +418,7 @@ public class printHeaderFile extends Visitor {
 
         out.println(headerFile);
 
-    }
+    }*/
 
 }
 
