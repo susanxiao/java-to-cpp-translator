@@ -38,7 +38,6 @@ public class Implementationsfile {
     }
 }
 
-
 class LoadFileImplementations {
     public static Runtime newRuntime() {
         Runtime runtime = new Runtime();
@@ -46,6 +45,10 @@ class LoadFileImplementations {
         runtime.dir("in", Runtime.INPUT_DIRECTORY, true, "");
         runtime.setValue(Runtime.INPUT_DIRECTORY, JavaEntities.TEMP_DIR);
         return runtime;
+    }
+
+    public static void prettyPrintAst(Node node) {
+        newRuntime().console().format(node).pln().flush();
     }
 
     public static Node loadTestFile(String filename) {

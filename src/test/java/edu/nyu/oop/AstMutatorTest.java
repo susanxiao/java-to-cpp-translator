@@ -23,6 +23,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Test
@@ -31,6 +32,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
