@@ -47,14 +47,9 @@ public class Implementationsfile {
         try {
             PrintWriter printerHeader;
 
-            File newDirectory;
-
             File header;
             File output;
             File main;
-
-            newDirectory = new File("outputFiles");
-            newDirectory.mkdir();
 
             // printing the header file
             printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
@@ -63,13 +58,13 @@ public class Implementationsfile {
             headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
             headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
 
-            header = new File("outputFiles", "header.h");
+            header = new File("output", "output.h");
             header.createNewFile();
             printerHeader = new PrintWriter(header);
             printerHeader.println(headerFile);
             printerHeader.flush();
             printerHeader.close();
-            out.println("header.h printed to ./translator-5tran/outputFiles* \n");
+            out.println("output.h printed\n");
 
 
         } catch (IOException e) {
@@ -102,8 +97,5 @@ class LoadFileImplementations {
 
     public static void prettyPrintAst(Node node) {
         //return newRuntime().console().format(node).pln().flush();
-        newRuntime().console().p("output.h");
     }
-
-
 }
