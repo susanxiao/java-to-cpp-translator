@@ -47,6 +47,11 @@ public class printHeaderFile extends Visitor {
         String className = n.getString(0);
         summary.currentClassName = className;
         s1.append("\tstruct __" + className + "\n\t{\n\n");
+
+        // TODO: CONSTRUCTOR FOR THE CLASS
+        s1.append("\t__" + className + "(" + ");\n\n");
+
+
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -55,6 +60,7 @@ public class printHeaderFile extends Visitor {
                 }
             }
         }
+
     }
 
     public void visitDataLayout(GNode n) {
@@ -134,7 +140,7 @@ public class printHeaderFile extends Visitor {
         }
         // vtable constructor
         s1.append(vTableConstructor(n));
-        s1.append("\t};\n");
+        s1.append("\t};\n\n");
     }
 
     public String vTableConstructor(GNode n) {
@@ -319,7 +325,7 @@ public class printHeaderFile extends Visitor {
     }
 
     public static void main(String[] args) {
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test006/Test006.java");
+        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test012/Test012.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);

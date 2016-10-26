@@ -2,7 +2,7 @@ Object(
   A(
     HeaderDeclaration(
       "A",
-      "inputs_test007_",
+      "inputs_test008_",
       DataLayout(
         FieldDeclaration(
           Modifiers(),
@@ -104,7 +104,7 @@ Object(
   B(
     HeaderDeclaration(
       "B",
-      "inputs_test007_",
+      "inputs_test008_",
       DataLayout(
         FieldDeclaration(
           Modifiers(),
@@ -203,14 +203,14 @@ Object(
       )
     )
   ),
-  Test007(
+  Test008(
     HeaderDeclaration(
-      "Test007",
-      "inputs_test007_",
+      "Test008",
+      "inputs_test008_",
       DataLayout(
         FieldDeclaration(
           Modifiers(),
-          "__Test007_VT*",
+          "__Test008_VT*",
           "__vptr",
           Declarators()
         ),
@@ -218,7 +218,7 @@ Object(
           Modifiers(
             "static"
           ),
-          "__Test007_VT",
+          "__Test008_VT",
           "__vtable",
           Declarators()
         ),
@@ -226,7 +226,7 @@ Object(
           Modifiers(),
           "void",
           "main",
-          "Test007",
+          "Test008",
           Parameters(
             "String[ args"
           )
@@ -286,7 +286,7 @@ Object(
             Modifiers(),
             "void",
             "main",
-            "Test007",
+            "Test008",
             Parameters(
               String[ args
             )

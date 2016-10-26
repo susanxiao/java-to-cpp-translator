@@ -1,0 +1,156 @@
+#pragma once
+#include <iostream>
+#include "java_lang.h"
+
+using namespace java::lang;
+
+namespace inputs {
+	namespace test012 {
+
+
+	struct __A;
+	struct __A_VT;
+	struct __B1;
+	struct __B1_VT;
+	struct __B2;
+	struct __B2_VT;
+	struct __C;
+	struct __C_VT;
+
+	typedef __A* A;
+	typedef __B1* B1;
+	typedef __B2* B2;
+	typedef __C* C;
+
+	struct __A
+	{
+
+	__A();
+
+	__A_VT* __vptr
+
+	static __A_VT __vtable
+
+	static void setA(A);
+	static void printOther(A);
+	static String myToString(A);
+
+	};
+
+	struct __A_VT
+	{
+
+	Class __isa;
+	void (*setA)(A);
+	void (*printOther)(A);
+	String (*myToString)(A);
+	int32_t (*hashCode)(Object);
+	Class (*getClass)(Object);
+	bool (*equals)(A,Object);
+
+	__A_VT()
+	: __isa(__A::__class()),
+		setA(&__A::setA),
+		printOther(&__A::printOther),
+		myToString(&__A::myToString),
+		hashCode((int_32t(*)(A)) &__Object::hashCode),
+		getClass((Class(*)(A)) &__Object::getClass),
+		equals((bool(*)(A,Object)) &__Object::equals)
+		{}
+
+	};
+
+	struct __B1
+	{
+
+	__B1();
+
+	__B1_VT* __vptr
+
+	static __B1_VT __vtable
+
+
+	};
+
+	struct __B1_VT
+	{
+
+	Class __isa;
+	int32_t (*hashCode)(Object);
+	Class (*getClass)(Object);
+	bool (*equals)(B1,Object);
+
+	__B1_VT()
+	: __isa(__B1::__class()),
+		hashCode((int_32t(*)(B1)) &__Object::hashCode),
+		getClass((Class(*)(B1)) &__Object::getClass),
+		equals((bool(*)(B1,Object)) &__Object::equals)
+		{}
+
+	};
+
+	struct __B2
+	{
+
+	__B2();
+
+	__B2_VT* __vptr
+
+	static __B2_VT __vtable
+
+
+	};
+
+	struct __B2_VT
+	{
+
+	Class __isa;
+	int32_t (*hashCode)(Object);
+	Class (*getClass)(Object);
+	bool (*equals)(B2,Object);
+
+	__B2_VT()
+	: __isa(__B2::__class()),
+		hashCode((int_32t(*)(B2)) &__Object::hashCode),
+		getClass((Class(*)(B2)) &__Object::getClass),
+		equals((bool(*)(B2,Object)) &__Object::equals)
+		{}
+
+	};
+
+	struct __C
+	{
+
+	__C();
+
+	__C_VT* __vptr
+
+	static __C_VT __vtable
+
+	static String myToString(C);
+
+	};
+
+	struct __C_VT
+	{
+
+	Class __isa;
+	String (*myToString)(C);
+	int32_t (*hashCode)(Object);
+	Class (*getClass)(Object);
+	bool (*equals)(C,Object);
+
+	__C_VT()
+	: __isa(__C::__class()),
+		myToString(&__C::myToString),
+		hashCode((int_32t(*)(C)) &__Object::hashCode),
+		getClass((Class(*)(C)) &__Object::getClass),
+		equals((bool(*)(C,Object)) &__Object::equals)
+		{}
+
+	};
+
+
+
+	}
+}

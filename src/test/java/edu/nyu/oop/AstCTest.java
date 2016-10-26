@@ -146,7 +146,7 @@ public class AstCTest {
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         GNode n = AstC.cAst(summary);
-        //XtcTestUtils.prettyPrintAst(n);
+        XtcTestUtils.prettyPrintAst(n);
     }
 
     @Test
