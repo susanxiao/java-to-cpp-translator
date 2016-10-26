@@ -27,11 +27,13 @@ namespace inputs {
 
 	__A();
 
+	String a;
+
 	__A_VT* __vptr
 
 	static __A_VT __vtable
 
-	static void setA(A);
+	static void setA(String);
 	static void printOther(A);
 	static String toString(A);
 
@@ -41,7 +43,7 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setA)(A);
+	void (*setA)(String);
 	void (*printOther)(A);
 	String (*toString)(A);
 	int32_t (*hashCode)(Object);
@@ -64,6 +66,10 @@ namespace inputs {
 	{
 
 	__B1();
+
+	String b;
+
+	Class parent;
 
 	__B1_VT* __vptr
 
@@ -94,6 +100,10 @@ namespace inputs {
 
 	__B2();
 
+	String b;
+
+	Class parent;
+
 	__B2_VT* __vptr
 
 	static __B2_VT __vtable
@@ -122,6 +132,10 @@ namespace inputs {
 	{
 
 	__C();
+
+	String c;
+
+	Class parent;
 
 	__C_VT* __vptr
 

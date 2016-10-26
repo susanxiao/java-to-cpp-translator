@@ -45,11 +45,55 @@ public class printHeaderFile extends Visitor {
     // visitXXX methods
     public void visitHeaderDeclaration(GNode n) {
         String className = n.getString(0);
+
         summary.currentClassName = className;
+        summary.currentClass = summaryTraversal.classes.get(className);
+        summary.currentMethodList = summaryTraversal.classes.get(className).methods;
+        summary.currentFieldDeclarationList = summaryTraversal.classes.get(className).declarations;
+        summary.currentConstructorList = summaryTraversal.classes.get(className).constructors;
+
         s1.append("\tstruct __" + className + "\n\t{\n\n");
 
-        // TODO: CONSTRUCTOR FOR THE CLASS
-        s1.append("\t__" + className + "(" + ");\n\n");
+        if (summary.currentFieldDeclarationList.size() != 0) {
+            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
+                String type;
+                if (currentDeclaration.staticType.equals("int")) {
+                    type = "int32_t";
+                } else {
+                    type = currentDeclaration.staticType;
+                }
+                s1.append("\t" + type + " " + currentDeclaration.variableName + ";\n\n");
+            }
+        }
+
+        // Is this correct?
+        if (summary.currentConstructorList.size() > 0) {
+            s1.append("\t__" + className + "(");
+            for(ConstructorImplementation currentConstructor: summary.currentConstructorList){
+                int size = currentConstructor.parameters.size();
+                for(ParameterImplementation param : currentConstructor.parameters){
+                    size--;
+                    String type;
+                    if(param.type.equals("int")){
+                        type = "int32_t";
+                    }else{
+                        type = param.type;
+                    }
+                    s1.append(type + " " + param.name);
+                    if(size > 0){
+                        s1.append(",");
+                    }
+                }
+            }
+            s1.append(");\n\n");
+        } else {
+            s1.append("\t__" + className + "(" + ");\n\n");
+        }
+
+
+        if (summary.currentClass.superClassName != null) {
+            s1.append("\tClass parent;\n\n");
+        }
 
 
         for (Object o : n) {
@@ -107,7 +151,13 @@ public class printHeaderFile extends Visitor {
                     if (n.getString(2).equals("equals")) {
                         currentMethodDeclaration += summary.currentClassName + ",";
                     }
-                    currentMethodDeclaration += n.getString(3);
+                    if (currMethod.parameters.size() != 0) {
+                        for (ParameterImplementation param : currMethod.parameters) {
+                            currentMethodDeclaration += param.type;
+                        }
+                    } else {
+                        currentMethodDeclaration += n.getString(3);
+                    }
                 }
 
                 // Parameters
@@ -208,8 +258,25 @@ public class printHeaderFile extends Visitor {
             if (n.getString(2).equals("equals")) {
                 currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
             } else {
-                currentMethodDeclaration += "(" + n.getString(3) + ");";
+                currentMethodDeclaration += "(";
+                boolean gateMatch = false;
+                for (MethodImplementation currMethod : summary.currentMethodList) {
+                    if (currMethod.name.equals(n.getString(2))) {
+                        if (currMethod.parameters.size() != 0) {
+                            gateMatch = true;
+                            for (ParameterImplementation param : currMethod.parameters) {
+                                currentMethodDeclaration += param.type;
+                            }
+                        }
+                    }
+                }
+                if (!gateMatch) {
+                    currentMethodDeclaration += n.getString(3);
+
+                }
+                currentMethodDeclaration += ");";
             }
+
             s1.append(currentMethodDeclaration + "\n");
         }
     }
@@ -242,6 +309,11 @@ public class printHeaderFile extends Visitor {
         String closeNameSpace = "";
 
         String usingNamespace = "";
+
+        ClassImplementation currentClass;
+        ArrayList<MethodImplementation> currentMethodList;
+        ArrayList<FieldDeclaration> currentFieldDeclarationList;
+        ArrayList<ConstructorImplementation> currentConstructorList;
 
     }
 
@@ -325,7 +397,7 @@ public class printHeaderFile extends Visitor {
     }
 
     public static void main(String[] args) {
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test012/Test012.java");
+        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test0018/Test0018.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = AstC.cAst(summaryTraversal);

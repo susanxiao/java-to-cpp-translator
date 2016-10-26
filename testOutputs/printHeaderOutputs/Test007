@@ -19,6 +19,10 @@ namespace inputs {
 	struct __A
 	{
 
+	__A();
+
+	String a;
+
 	__A_VT* __vptr
 
 	static __A_VT __vtable
@@ -45,6 +49,12 @@ namespace inputs {
 
 	struct __B
 	{
+
+	__B();
+
+	String b;
+
+	Class parent;
 
 	__B_VT* __vptr
 

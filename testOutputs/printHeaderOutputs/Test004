@@ -16,6 +16,10 @@ namespace inputs {
 	struct __A
 	{
 
+	String fld;
+
+	__A(String fld);
+
 	__A_VT* __vptr
 
 	static __A_VT __vtable
@@ -42,6 +46,7 @@ namespace inputs {
 		{}
 
 	};
+
 
 
 	}

@@ -19,6 +19,8 @@ namespace inputs {
 	struct __A
 	{
 
+	__A();
+
 	__A_VT* __vptr
 
 	static __A_VT __vtable
@@ -45,8 +47,13 @@ namespace inputs {
 		{}
 
 	};
+
 	struct __B
 	{
+
+	__B();
+
+	Class parent;
 
 	__B_VT* __vptr
 
@@ -74,6 +81,7 @@ namespace inputs {
 		{}
 
 	};
+
 
 
 	}
