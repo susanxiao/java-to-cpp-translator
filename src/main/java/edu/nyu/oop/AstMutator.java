@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.NodeUtil;
 import org.slf4j.Logger;
 import xtc.parser.StringLiteral;
 import xtc.tree.GNode;
@@ -9,6 +10,7 @@ import xtc.util.Runtime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static java.lang.System.out;
 
@@ -21,8 +23,35 @@ public class AstMutator extends Visitor {
     boolean debug = false;
     private AstMutator.AstMutatorSummary summary = new AstMutator.AstMutatorSummary();
 
-    public void visitArguments(GNode n) {
-        //TODO
+    public void visitClassDeclaration(GNode n) {
+        summary.classes.add(n.getString(1));
+
+        for (Object o : n)
+            if (o instanceof Node)
+                visit((Node) o);
+    }
+
+    //TODO: rewrite traversal to use visitFieldDeclaration instead of Declaration
+    //we need to check that the staticType == dynamicType
+    //if not, then add a cast
+    
+    public void visitDeclarator(GNode n) {
+        String varName = n.getString(0);
+
+        for (Object o : n) {
+            if (o instanceof Node) {
+                Node node = (Node) o;
+                if (node.getName().equals("NewClassExpression")) {
+                    String type = node.getNode(2).getString(0);
+                    visitNewClassExpression(GNode.cast(node));
+                    if (summary.classes.contains(type))
+                        summary.objects.put(varName, type);
+                }
+                else {
+                    visit((Node) o);
+                }
+            }
+        }
     }
 
     public void visitCallExpression(GNode n) {
@@ -64,7 +93,6 @@ public class AstMutator extends Visitor {
                 Node primaryIdentifier = (Node) o;
                 Object fieldsObj = n.get(1);
                 if (fieldsObj == null) {
-                    System.out.println("test");
                     GNode fields = GNode.create("Fields");
                     fields.add(0, "__vptr");
                     n.set(1, fields);
@@ -75,6 +103,16 @@ public class AstMutator extends Visitor {
                         fields = GNode.ensureVariable(fields);
                         fields.add(0, "__vptr");
                         n.set(1, fields);
+                    }
+                }
+                if (primaryIdentifier != null && summary.objects.get(primaryIdentifier.getString(0)) != null) {
+                    System.out.println("test");
+                    GNode arguments = n.getGeneric(3);
+
+                    if (!arguments.hasVariable()) {
+                        arguments = GNode.ensureVariable(arguments);
+                        arguments.add(primaryIdentifier.getString(0));
+                        n.set(3, arguments);
                     }
                 }
 
@@ -91,7 +129,7 @@ public class AstMutator extends Visitor {
                 if (((Node) o).getName().equals("ReturnStatement"))
                     visitReturnStatement(n, i);
                 else
-                    dispatch((Node) o);
+                    visit((Node) o);
             }
         }
     }
@@ -159,9 +197,7 @@ public class AstMutator extends Visitor {
         if (debug) {
             out.println("\n");
             out.println("DEBUGGING IS ON");
-            for (ClassImplementation c : summary.classes.values()) {
-                out.println(c.toString());
-            }
+
         }
 
         return summary;
@@ -169,39 +205,8 @@ public class AstMutator extends Visitor {
 
     static class AstMutatorSummary {
 
-        HashMap<String, ClassImplementation> classes = new HashMap<>();
-        ArrayList<String> classNames = new ArrayList<>();
+        HashSet<String> classes = new HashSet<>();
+        HashMap<String, String> objects = new HashMap<>();
 
-        ArrayList<String> currentPackages = new ArrayList<>();
-
-        ClassImplementation currentClass;
-        MethodImplementation currentMethod;
-        ConstructorImplementation currentConstructor;
-
-        // operators ?
-        String operators = "=+-*/";
-
-        public void addClass(ClassImplementation superClass, String name, String modifier) {
-            ClassImplementation c = new ClassImplementation(superClass, name, modifier);
-            c.packages.addAll(currentPackages);
-
-            classes.put(name, c);
-            classNames.add(name);
-            currentClass = c;
-        }
-
-        public void addMethod(MethodImplementation m) {
-            currentClass.addMethod(m);
-            currentMethod = m;
-        }
-
-        public void addConstructor(ConstructorImplementation constructor) {
-            currentClass.addConstructor(constructor);
-            currentConstructor = constructor;
-        }
-
-        public ClassImplementation findClass(String name) {
-            return classes.get(name);
-        }
     }
 }

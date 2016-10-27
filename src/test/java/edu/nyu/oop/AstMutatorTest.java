@@ -35,12 +35,13 @@ public class AstMutatorTest {
         LoadFileImplementations.prettyPrintAst(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test002() {
         System.out.println("*********************** Test 002 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -49,6 +50,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test003/Test003.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -57,6 +59,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test004/Test004.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -65,6 +68,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test005/Test005.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -73,6 +77,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -81,6 +86,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -89,6 +95,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -97,6 +104,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -105,6 +113,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -113,6 +122,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test011/Test011.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -121,6 +131,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test012/Test012.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -129,6 +140,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test013/Test013.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -137,6 +149,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test014/Test014.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -145,6 +158,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test015/Test015.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -153,6 +167,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test016/Test016.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -161,6 +176,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test017/Test017.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -169,6 +185,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test018/Test018.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -177,6 +194,7 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test019/Test019.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 
     @Ignore @Test
@@ -185,5 +203,6 @@ public class AstMutatorTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test020/Test020.java");
         AstMutator visitor = new AstMutator(XtcTestUtils.newRuntime());
         AstMutator.AstMutatorSummary summary = visitor.getMutator(node);
+        LoadFileImplementations.prettyPrintAst(node);
     }
 }

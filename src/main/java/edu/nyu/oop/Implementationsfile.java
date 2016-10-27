@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static com.sun.tools.javac.util.Constants.format;
-import static java.lang.Integer.parseInt;
+//import static com.sun.tools.javac.util.Constants.format;
+//import static java.lang.Integer.parseInt;
 import static java.lang.System.out;
 
 /**
@@ -98,7 +98,4 @@ class LoadFileImplementations {
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
-    public static void prettyPrintAst(Node node) {
-        //return newRuntime().console().format(node).pln().flush();
-    }
 }
