@@ -20,9 +20,9 @@ namespace inputs {
 
 	__A();
 
-	__A_VT* __vptr 
+	__A_VT* __vptr;
 
-	static __A_VT __vtable 
+	static __A_VT __vtable;
 
 	static void setFld(String);
 	static void almostSetFld(String);

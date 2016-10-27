@@ -129,12 +129,20 @@ public class printHeaderFile extends Visitor {
             }
         }
         currentFieldDeclaration += n.getString(1) + " ";
-        currentFieldDeclaration += n.getString(2) + " ";
+        currentFieldDeclaration += n.getString(2);
         if (n.getNode(3).size() > 0) {
+            currentFieldDeclaration += " ";
+            int k = n.getNode(3).size();
             for (Object o : n.getNode(3)) {
-                currentFieldDeclaration += o.toString() + " ";
+                k--;
+                if(k > 0) {
+                    currentFieldDeclaration += o.toString() + " ";
+                }else{
+                    currentFieldDeclaration += o.toString();
+                }
             }
         }
+        currentFieldDeclaration += ";";
         s1.append(currentFieldDeclaration + "\n\n");
     }
 
