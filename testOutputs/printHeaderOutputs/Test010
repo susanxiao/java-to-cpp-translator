@@ -25,13 +25,13 @@ namespace inputs {
 	struct __A
 	{
 
-	__A();
-
 	String a;
 
-	__A_VT* __vptr
+	__A();
 
-	static __A_VT __vtable
+	__A_VT* __vptr;
+
+	static __A_VT __vtable;
 
 	static void setA(String);
 	static void printOther(A);
@@ -65,15 +65,15 @@ namespace inputs {
 	struct __B1
 	{
 
-	__B1();
-
 	String b;
+
+	__B1();
 
 	Class parent;
 
-	__B1_VT* __vptr
+	__B1_VT* __vptr;
 
-	static __B1_VT __vtable
+	static __B1_VT __vtable;
 
 
 	};
@@ -98,15 +98,15 @@ namespace inputs {
 	struct __B2
 	{
 
-	__B2();
-
 	String b;
+
+	__B2();
 
 	Class parent;
 
-	__B2_VT* __vptr
+	__B2_VT* __vptr;
 
-	static __B2_VT __vtable
+	static __B2_VT __vtable;
 
 
 	};
@@ -131,15 +131,15 @@ namespace inputs {
 	struct __C
 	{
 
-	__C();
-
 	String c;
+
+	__C();
 
 	Class parent;
 
-	__C_VT* __vptr
+	__C_VT* __vptr;
 
-	static __C_VT __vtable
+	static __C_VT __vtable;
 
 
 	};
@@ -165,3 +165,4 @@ namespace inputs {
 
 	}
 }
+

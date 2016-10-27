@@ -16,13 +16,13 @@ namespace inputs {
 	struct __A
 	{
 
-	__A();
-
 	A some;
 
-	__A_VT* __vptr
+	__A();
 
-	static __A_VT __vtable
+	__A_VT* __vptr;
+
+	static __A_VT __vtable;
 
 	static void printOther(A);
 
@@ -51,3 +51,4 @@ namespace inputs {
 
 	}
 }
+

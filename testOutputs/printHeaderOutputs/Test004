@@ -20,9 +20,9 @@ namespace inputs {
 
 	__A(String fld);
 
-	__A_VT* __vptr
+	__A_VT* __vptr;
 
-	static __A_VT __vtable
+	static __A_VT __vtable;
 
 	static String getFld(A);
 
@@ -51,3 +51,4 @@ namespace inputs {
 
 	}
 }
+

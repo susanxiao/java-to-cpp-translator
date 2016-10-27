@@ -16,13 +16,13 @@ namespace inputs {
 	struct __A
 	{
 
-	__A();
-
 	String fld;
 
-	__A_VT* __vptr
+	__A();
 
-	static __A_VT __vtable
+	__A_VT* __vptr;
+
+	static __A_VT __vtable;
 
 	static void setFld(String);
 	static void almostSetFld(String);
@@ -57,3 +57,4 @@ namespace inputs {
 
 	}
 }
+

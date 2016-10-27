@@ -21,9 +21,9 @@ namespace inputs {
 
 	__A();
 
-	__A_VT* __vptr
+	__A_VT* __vptr;
 
-	static __A_VT __vtable
+	static __A_VT __vtable;
 
 	static void printOther(A);
 
@@ -51,15 +51,15 @@ namespace inputs {
 	struct __B
 	{
 
-	__B();
-
 	B some;
+
+	__B();
 
 	Class parent;
 
-	__B_VT* __vptr
+	__B_VT* __vptr;
 
-	static __B_VT __vtable
+	static __B_VT __vtable;
 
 	static void printOther(A);
 	static String toString(B);
@@ -91,3 +91,4 @@ namespace inputs {
 
 	}
 }
+

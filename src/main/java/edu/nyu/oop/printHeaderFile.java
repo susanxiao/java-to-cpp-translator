@@ -75,18 +75,18 @@ public class printHeaderFile extends Visitor {
         // Is this correct?
         if (summary.currentConstructorList.size() > 0) {
             s1.append("\t__" + className + "(");
-            for(ConstructorImplementation currentConstructor: summary.currentConstructorList){
+            for (ConstructorImplementation currentConstructor : summary.currentConstructorList) {
                 int size = currentConstructor.parameters.size();
-                for(ParameterImplementation param : currentConstructor.parameters){
+                for (ParameterImplementation param : currentConstructor.parameters) {
                     size--;
                     String type;
-                    if(param.type.equals("int")){
+                    if (param.type.equals("int")) {
                         type = "int32_t";
-                    }else{
+                    } else {
                         type = param.type;
                     }
                     s1.append(type + " " + param.name);
-                    if(size > 0){
+                    if (size > 0) {
                         s1.append(",");
                     }
                 }
@@ -135,9 +135,9 @@ public class printHeaderFile extends Visitor {
             int k = n.getNode(3).size();
             for (Object o : n.getNode(3)) {
                 k--;
-                if(k > 0) {
+                if (k > 0) {
                     currentFieldDeclaration += o.toString() + " ";
-                }else{
+                } else {
                     currentFieldDeclaration += o.toString();
                 }
             }
@@ -410,23 +410,56 @@ public class printHeaderFile extends Visitor {
         return summary;
     }
 
-    /*
     public static void main(String[] args) {
-        GNode node = (GNode) LoadFileImplementations.loadTestFile("./src/test/java/inputs/test018/Test018.java");
-        AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
-        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
-        printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
-        printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        for (int i = 0; i < 21; i++) {
+            String test = "./src/test/java/inputs/";
+            String test1 = "";
+            String test2 = "";
+            if (i < 10) {
+                test1 = "test00" + i;
+                test2 = "Test00" + i;
+            } else {
+                test1 = "test0" + i;
+                test2 = "Test0" + i;
+            }
+            test += test1;
+            test += "/" + test2 + ".java";
+
+            out.println(test);
+            GNode node = (GNode) LoadFileImplementations.loadTestFile(test);
+            AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
+            AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+            GNode parentNode = AstC.cAst(summaryTraversal);
+
+            try {
+                PrintWriter printerHeader;
+
+                File header;
+                File output;
+                File main;
+
+                // printing the header file
+                printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
+                printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+                String headerFile = "";
+                headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
+                headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
+
+                header = new File("testOutputs/printHeaderOutputs", test2);
+                header.createNewFile();
+                printerHeader = new PrintWriter(header);
+                printerHeader.println(headerFile);
+                printerHeader.flush();
+                printerHeader.close();
+                out.println("header " + i + "printed\n");
 
 
-        String headerFile = "";
-        headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
-        headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-        out.println(headerFile);
-
-    }*/
+    }
 
 }
 
