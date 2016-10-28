@@ -1,21 +1,17 @@
 
-------------------
+//------------------
 
 #include "output.h"
 #include <sstream>
 
 using namespace java::lang;
-
+using namespace std;
 inputs{
-	test001{
-
-	__A::__A()  :  __vptr(&__vtable) {}
-
-
+	test000{
 
 	}
 }
 
-------------------
+//------------------
 
 

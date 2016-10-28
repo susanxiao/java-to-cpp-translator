@@ -7,16 +7,17 @@
 using namespace java::lang;
 using namespace std;
 inputs{
-	test001{
+	test004{
 
-	__A::__A()  :  __vptr(&__vtable) {}
+	__A::__A(String fld) : __vptr(&__vtable),
+		fld(fld)  {
+			}
 
-	String __A::toString() {
-		std::ostringstream sout;
-		sout << "A";
-		return new __String(sout.str());
+	__A_VT __A::__vtable;
+
+	String __A::getFld() {
+		return fld;
 	}
-
 
 	Class __A::__class() {
 		static Class k =

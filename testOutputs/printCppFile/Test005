@@ -7,7 +7,7 @@
 using namespace java::lang;
 using namespace std;
 inputs{
-	test001{
+	test005{
 
 	__A::__A()  :  __vptr(&__vtable) {}
 
@@ -21,6 +21,22 @@ inputs{
 	Class __A::__class() {
 		static Class k =
 			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+ 		return k;
+	}
+
+
+	__B::__B()  :  __vptr(&__vtable) {}
+
+	String __B::toString() {
+		std::ostringstream sout;
+		sout << "B";
+		return new __String(sout.str());
+	}
+
+
+	Class __B::__class() {
+		static Class k =
+			new __Class(__rt::literal("class inputs.javalang.B"), (Class) __rt::null());
  		return k;
 	}
 
