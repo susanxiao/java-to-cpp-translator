@@ -159,7 +159,6 @@ public class printMainFile extends Visitor {
         for(Object o : n){
             if(((Node)o).getName().equals("PackageDeclaration")){
                 Node currentNode = (Node) o;
-                out.println(currentNode);
                 int size = currentNode.getNode(1).size();
                 for(Object o1 : currentNode.getNode(1)){
                     size--;
