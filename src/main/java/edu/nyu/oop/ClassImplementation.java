@@ -40,6 +40,13 @@ public class ClassImplementation {
 
     }
 
+    public boolean isSuperClass(String superClassName) {
+        if (superClass == null) return false;
+        else if (superClass.name.equals(superClassName)) return true;
+
+        return superClass.isSuperClass(superClassName);
+    }
+
     public ClassImplementation(String name, String modifier) {
         this(null, name, modifier);
     }

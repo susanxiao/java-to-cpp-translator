@@ -24,7 +24,7 @@ public class AstMutator extends Visitor {
     private AstMutator.AstMutatorSummary summary = new AstMutator.AstMutatorSummary();
 
     public void visitClassDeclaration(GNode n) {
-        summary.classes.add(n.getString(1));
+        //summary.classes.add(n.getString(1));
 
         for (Object o : n)
             if (o instanceof Node)
@@ -34,7 +34,35 @@ public class AstMutator extends Visitor {
     //TODO: rewrite traversal to use visitFieldDeclaration instead of Declaration
     //we need to check that the staticType == dynamicType
     //if not, then add a cast
-    
+
+    public void visitFieldDeclaration(GNode n) {
+        Node type = n.getNode(1);
+
+        if (type != null) {
+            Node qualifiedIdentifier = type.getNode(0);
+            if (qualifiedIdentifier != null) {
+                String staticType = qualifiedIdentifier.getString(0);
+                if (n.get(2) instanceof Node && n.getNode(2).getName().equals("Declarators")) {
+                    Node declarator = n.getNode(2).getNode(0);
+                    String varName = declarator.getString(0);
+                    summary.objects.put(varName, staticType);
+                    Node primaryIdentifier = declarator.getGeneric(2);
+                    if (primaryIdentifier.getName().equals("PrimaryIdentifier")) {
+                        String primaryIdentifierString = primaryIdentifier.getString(0);
+                        String dynamicType = summary.objects.get(primaryIdentifierString);
+
+                        System.out.println("test");
+                        if (!staticType.equals(dynamicType)) {
+                            primaryIdentifier.set(0, "(" + staticType + ") " + primaryIdentifierString);
+                        }
+                    } else visitDeclarator(n.getNode(2).getGeneric(0));
+                }
+            }
+        }
+
+
+    }
+
     public void visitDeclarator(GNode n) {
         String varName = n.getString(0);
 
@@ -44,8 +72,7 @@ public class AstMutator extends Visitor {
                 if (node.getName().equals("NewClassExpression")) {
                     String type = node.getNode(2).getString(0);
                     visitNewClassExpression(GNode.cast(node));
-                    if (summary.classes.contains(type))
-                        summary.objects.put(varName, type);
+                    summary.objects.put(varName, type);
                 }
                 else {
                     visit((Node) o);
@@ -126,7 +153,9 @@ public class AstMutator extends Visitor {
         for (int i = 0; i < n.size(); i++) {
             Object o = n.get(i);
             if (o instanceof Node) {
-                if (((Node) o).getName().equals("ReturnStatement"))
+                if (((Node) o).getName().equals("FieldDeclaration"))
+                    visitFieldDeclaration(GNode.cast(o));
+                else if (((Node) o).getName().equals("ReturnStatement"))
                     visitReturnStatement(n, i);
                 else
                     visit((Node) o);
@@ -205,7 +234,6 @@ public class AstMutator extends Visitor {
 
     static class AstMutatorSummary {
 
-        HashSet<String> classes = new HashSet<>();
         HashMap<String, String> objects = new HashMap<>();
 
     }
