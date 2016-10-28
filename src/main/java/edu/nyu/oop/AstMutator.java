@@ -46,16 +46,19 @@ public class AstMutator extends Visitor {
                     Node declarator = n.getNode(2).getNode(0);
                     String varName = declarator.getString(0);
                     summary.objects.put(varName, staticType);
-                    Node primaryIdentifier = declarator.getGeneric(2);
-                    if (primaryIdentifier.getName().equals("PrimaryIdentifier")) {
-                        String primaryIdentifierString = primaryIdentifier.getString(0);
-                        String dynamicType = summary.objects.get(primaryIdentifierString);
+                    if (declarator.get(2) instanceof Node) {
+                        Node primaryIdentifier = declarator.getGeneric(2);
+                        if (primaryIdentifier.getName().equals("PrimaryIdentifier")) {
+                            String primaryIdentifierString = primaryIdentifier.getString(0);
+                            String dynamicType = summary.objects.get(primaryIdentifierString);
 
-                        System.out.println("test");
-                        if (!staticType.equals(dynamicType)) {
-                            primaryIdentifier.set(0, "(" + staticType + ") " + primaryIdentifierString);
-                        }
-                    } else visitDeclarator(n.getNode(2).getGeneric(0));
+                            System.out.println("test");
+                            if (!staticType.equals(dynamicType)) {
+                                primaryIdentifier.set(0, "(" + staticType + ") " + primaryIdentifierString);
+                            }
+                        } else visitDeclarator(n.getNode(2).getGeneric(0));
+                    }
+                    else visitDeclarator(GNode.cast(declarator));
                 }
             }
         }
@@ -133,7 +136,6 @@ public class AstMutator extends Visitor {
                     }
                 }
                 if (primaryIdentifier != null && summary.objects.get(primaryIdentifier.getString(0)) != null) {
-                    System.out.println("test");
                     GNode arguments = n.getGeneric(3);
 
                     if (!arguments.hasVariable()) {
@@ -172,6 +174,8 @@ public class AstMutator extends Visitor {
                 parent.set(returnStatementIndex, n);
             }
 
+            String value = ((Node) o).getString(0);
+
             GNode newClassExpression = GNode.create("NewClassExpression");
             newClassExpression.add(0, null);
             newClassExpression.add(1, null);
@@ -181,7 +185,7 @@ public class AstMutator extends Visitor {
                 GNode arguments = GNode.create("Arguments");
                     GNode argument = GNode.create("Argument");
                         GNode stringLiteral = GNode.create("StringLiteral");
-                        stringLiteral.add(0, "\"A\"");
+                        stringLiteral.add(0, value);
                     argument.add(0, stringLiteral);
                 arguments.add(0, argument);
             newClassExpression.add(3, arguments);
