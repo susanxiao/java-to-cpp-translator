@@ -6,12 +6,13 @@
 
 using namespace java::lang;
 using namespace std;
-inputs{
-	test003{
+namespace inputs{
+	namespace test003{
 
 	__A::__A(String f) : __vptr(&__vtable),
 		fld(f)  {
-			}
+		
+	}
 
 	__A_VT __A::__vtable;
 

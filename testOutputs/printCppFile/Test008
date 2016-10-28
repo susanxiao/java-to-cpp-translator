@@ -6,12 +6,13 @@
 
 using namespace java::lang;
 using namespace std;
-inputs{
-	test008{
+namespace inputs{
+	namespace test008{
 
 	__A::__A() : __vptr(&__vtable),
 		a("A")  {
 		cout << a << endl;
+
 	}
 
 	__A_VT __A::__vtable;
@@ -27,6 +28,7 @@ inputs{
 		b("B"),
 		a("B")  {
 		cout << a << endl;
+
 	}
 
 	__B_VT __B::__vtable;

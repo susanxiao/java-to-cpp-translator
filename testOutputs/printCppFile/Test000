@@ -6,8 +6,8 @@
 
 using namespace java::lang;
 using namespace std;
-inputs{
-	test000{
+namespace inputs{
+	namespace test000{
 
 	}
 }

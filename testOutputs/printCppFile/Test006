@@ -6,11 +6,12 @@
 
 using namespace java::lang;
 using namespace std;
-inputs{
-	test006{
+namespace inputs{
+	namespace test006{
 
 	__A::__A() : __vptr(&__vtable)  {
-			}
+		
+	}
 
 	__A_VT __A::__vtable;
 

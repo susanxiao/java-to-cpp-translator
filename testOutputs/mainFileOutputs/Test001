@@ -1,5 +1,5 @@
 
-------------------
+//------------------
 
 #include <iostream>
 #include <sstream>
@@ -8,15 +8,19 @@
 #include "output.h"
 
 using namespace java::lang;
-using namespace inputs::javalang;
 using namespace std;
+using namespace inputs::test001;
 
 int main(void)
 {
 
+	A a  = new __A();
+
+	cout << a->__vptr->toString(a)->data << endl;
+
 	return 0;
 }
 
-------------------
+//------------------
 
 

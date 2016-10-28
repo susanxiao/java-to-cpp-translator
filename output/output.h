@@ -5,7 +5,7 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test006 {
+	namespace test001 {
 
 
 	struct __A;
@@ -16,17 +16,17 @@ namespace inputs {
 	struct __A
 	{
 
-	String fld;
-
 	__A();
+
+	static Class __class();
+
+	static int32_t hashCode(A);
 
 	__A_VT* __vptr;
 
 	static __A_VT __vtable;
 
-	static void setFld(String);
-	static void almostSetFld(String);
-	static String getFld(A);
+	static String toString(A);
 
 	};
 
@@ -34,19 +34,15 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setFld)(String);
-	void (*almostSetFld)(String);
-	String (*getFld)(A);
-	int32_t (*hashCode)(Object);
-	Class (*getClass)(Object);
+	String (*toString)(A);
+	int32_t (*hashCode)(A);
+	Class (*getClass)(A);
 	bool (*equals)(A,Object);
 
 	__A_VT()
 	: __isa(__A::__class()),
-		setFld(&__A::setFld),
-		almostSetFld(&__A::almostSetFld),
-		getFld(&__A::getFld),
-		hashCode((int_32t(*)(A)) &__Object::hashCode),
+		toString(&__A::toString),
+		hashCode(&__A::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals)
 		{}

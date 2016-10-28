@@ -46,6 +46,8 @@ public class Implementationsfile {
 
         try {
             PrintWriter printerHeader;
+            PrintWriter printerCppFile;
+            PrintWriter printerMainFile;
 
             File header;
             File output;
@@ -65,6 +67,38 @@ public class Implementationsfile {
             printerHeader.flush();
             printerHeader.close();
             out.println("output.h printed\n");
+
+
+
+            // get the mutated tree
+            AstMutator visitorMutator = new AstMutator(LoadFileImplementations.newRuntime());
+            AstMutator.AstMutatorSummary summaryMutator = visitorMutator.getMutator(node);
+
+            // get the summary of the cpp implementations
+            printCppFile visitorCpp = new printCppFile(LoadFileImplementations.newRuntime(), summaryTraversal);
+            printCppFile.printCppFileSummary summaryCpp = visitorCpp.getSummary(node);
+            String cppFile = summaryCpp.filePrinted;
+
+            output = new File("output", "output.cpp");
+            output.createNewFile();
+            printerCppFile = new PrintWriter(output);
+            printerCppFile.println(cppFile);
+            printerCppFile.flush();
+            printerCppFile.close();
+            out.println("output.cpp printed\n");
+
+            // get the summary of the main implementations
+            printMainFile visitorMain = new printMainFile(LoadFileImplementations.newRuntime(), summaryTraversal);
+            printMainFile.printMainFileSummary summaryMain = visitorMain.getSummary(node);
+            String mainFile = summaryMain.filePrinted;
+
+            main = new File("output", "main.cpp");
+            main.createNewFile();
+            printerMainFile = new PrintWriter(main);
+            printerMainFile.println(mainFile);
+            printerMainFile.flush();
+            printerMainFile.close();
+            out.println("main.cpp printed\n");
 
 
         } catch (IOException e) {

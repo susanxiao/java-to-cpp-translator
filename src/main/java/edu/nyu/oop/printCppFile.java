@@ -36,6 +36,14 @@ public class printCppFile extends Visitor {
 
         visitClassBody((GNode) n.getNode(5));
 
+        // quick hashCode implementation?
+        StringBuilder hashCodeMethod = new StringBuilder();
+        hashCodeMethod.append("\tint32_t __" + summary.currentClassName + "::hashCode(");
+        hashCodeMethod.append(summary.currentClassName + " __this){\n");
+        hashCodeMethod.append("\t\treturn 5;\n");
+        hashCodeMethod.append("\t}\n\n");
+
+        cppImplementation.append(hashCodeMethod);
 
         cppImplementation.append("\tClass __" + summary.currentClassName + "::__class() {\n" +
                 "\t\tstatic Class k =\n" +
@@ -59,6 +67,8 @@ public class printCppFile extends Visitor {
                     constructor += "__" + summary.currentClassName + "(" + ")";
                     constructor += "  :  __vptr(&__vtable) {}";
                     cppImplementation.append(constructor + "\n\n");
+                    cppImplementation.append("\t__" + summary.currentClassName);
+                    cppImplementation.append("_VT __" + summary.currentClassName + "::__vtable;\n\n");
                 }
                 visitMethodDeclaration(currentMethod);
             }
@@ -219,7 +229,7 @@ public class printCppFile extends Visitor {
             }
         }
         constructor += initializerBlock;
-        constructor += "\t}";
+        constructor += "\n\t}";
 
         cppImplementation.append(constructor + "\n\n");
 
@@ -251,7 +261,7 @@ public class printCppFile extends Visitor {
         cppImplementation.append("__" + summary.currentClassName + "::" + methodName + "(");
 
         // check if the method contains parameters
-        if (n.getNode(4).getName().equals("Arguments")) {
+        if (n.getNode(4).getName().equals("FormalParameters")) {
             int numberArgs = n.getNode(4).size();
             if (n.getNode(4).size() > 0) {
                 for (Object argument : n.getNode(4)) {
@@ -402,7 +412,7 @@ public class printCppFile extends Visitor {
             for (int i = 0; i < namespaceCounter; i++) {
                 namespace += "\t";
             }
-            namespace += packageName.toString() + "{\n";
+            namespace += "namespace " + packageName.toString() + "{\n";
             namespaceCounter += 1;
         }
         s1.append(namespace);
@@ -442,7 +452,7 @@ public class printCppFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i > 8) {
+            if (i != 1) {
                 continue;
             }
 

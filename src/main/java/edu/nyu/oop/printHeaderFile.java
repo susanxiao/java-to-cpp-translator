@@ -101,15 +101,20 @@ public class printHeaderFile extends Visitor {
             s1.append("\tClass parent;\n\n");
         }
 
+        s1.append("\tstatic Class __class();\n\n");
+
 
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("DataLayout")) {
+                    s1.append("\tstatic int32_t hashCode(A);\n\n");
                     visitDataLayout(currentNode);
                 }
             }
         }
+
+
 
     }
 
@@ -234,7 +239,7 @@ public class printHeaderFile extends Visitor {
                 }
 
                 if (methodComparing.equals("hashCode")) {
-                    vTableMethod += "\t\thashCode((int_32t(*)(" + summary.currentClassName + ")) &__Object";
+                    vTableMethod += "\t\thashCode(&__" + summary.currentClassName;
                 } else if (methodComparing.equals("getClass")) {
                     vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object";
                 } else if (methodComparing.equals("equals")) {
@@ -273,6 +278,7 @@ public class printHeaderFile extends Visitor {
                 currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
             } else {
                 currentMethodDeclaration += "(";
+                /*
                 boolean gateMatch = false;
                 for (MethodImplementation currMethod : summary.currentMethodList) {
                     if (currMethod.name.equals(n.getString(2))) {
@@ -288,6 +294,8 @@ public class printHeaderFile extends Visitor {
                     currentMethodDeclaration += n.getString(3);
 
                 }
+                */
+                currentMethodDeclaration += summary.currentClassName;
                 currentMethodDeclaration += ");";
             }
 
