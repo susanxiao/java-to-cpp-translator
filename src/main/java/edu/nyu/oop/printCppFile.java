@@ -441,7 +441,7 @@ public class printCppFile extends Visitor {
         }
         s1.append(closeNamespace);
         s1.append("\n//------------------\n\n");
-        out.println(s1.toString());
+        //out.println(s1.toString());
 
         summary.filePrinted = s1.toString();
 

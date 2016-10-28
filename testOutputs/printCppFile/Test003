@@ -16,8 +16,12 @@ namespace inputs{
 
 	__A_VT __A::__vtable;
 
-	String __A::getFld() {
+	String __A::getFld(A __this) {
 		return fld;
+	}
+
+	int32_t __A::hashCode(A __this){
+		return 5;
 	}
 
 	Class __A::__class() {

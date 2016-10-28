@@ -29,6 +29,10 @@ namespace inputs {
 
 	__A();
 
+	static Class __class();
+
+	static int32_t hashCode(A);
+
 	__A_VT* __vptr;
 
 	static __A_VT __vtable;
@@ -43,11 +47,11 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setA)(String);
+	void (*setA)(A);
 	void (*printOther)(A);
 	String (*myToString)(A);
-	int32_t (*hashCode)(Object);
-	Class (*getClass)(Object);
+	int32_t (*hashCode)(A);
+	Class (*getClass)(A);
 	bool (*equals)(A,Object);
 
 	__A_VT()
@@ -55,7 +59,7 @@ namespace inputs {
 		setA(&__A::setA),
 		printOther(&__A::printOther),
 		myToString(&__A::myToString),
-		hashCode((int_32t(*)(A)) &__Object::hashCode),
+		hashCode(&__A::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals)
 		{}
@@ -71,6 +75,10 @@ namespace inputs {
 
 	Class parent;
 
+	static Class __class();
+
+	static int32_t hashCode(A);
+
 	__B1_VT* __vptr;
 
 	static __B1_VT __vtable;
@@ -82,13 +90,13 @@ namespace inputs {
 	{
 
 	Class __isa;
-	int32_t (*hashCode)(Object);
-	Class (*getClass)(Object);
+	int32_t (*hashCode)(B1);
+	Class (*getClass)(B1);
 	bool (*equals)(B1,Object);
 
 	__B1_VT()
 	: __isa(__B1::__class()),
-		hashCode((int_32t(*)(B1)) &__Object::hashCode),
+		hashCode(&__B1::hashCode),
 		getClass((Class(*)(B1)) &__Object::getClass),
 		equals((bool(*)(B1,Object)) &__Object::equals)
 		{}
@@ -104,6 +112,10 @@ namespace inputs {
 
 	Class parent;
 
+	static Class __class();
+
+	static int32_t hashCode(A);
+
 	__B2_VT* __vptr;
 
 	static __B2_VT __vtable;
@@ -115,13 +127,13 @@ namespace inputs {
 	{
 
 	Class __isa;
-	int32_t (*hashCode)(Object);
-	Class (*getClass)(Object);
+	int32_t (*hashCode)(B2);
+	Class (*getClass)(B2);
 	bool (*equals)(B2,Object);
 
 	__B2_VT()
 	: __isa(__B2::__class()),
-		hashCode((int_32t(*)(B2)) &__Object::hashCode),
+		hashCode(&__B2::hashCode),
 		getClass((Class(*)(B2)) &__Object::getClass),
 		equals((bool(*)(B2,Object)) &__Object::equals)
 		{}
@@ -137,6 +149,10 @@ namespace inputs {
 
 	Class parent;
 
+	static Class __class();
+
+	static int32_t hashCode(A);
+
 	__C_VT* __vptr;
 
 	static __C_VT __vtable;
@@ -150,14 +166,14 @@ namespace inputs {
 
 	Class __isa;
 	String (*myToString)(C);
-	int32_t (*hashCode)(Object);
-	Class (*getClass)(Object);
+	int32_t (*hashCode)(C);
+	Class (*getClass)(C);
 	bool (*equals)(C,Object);
 
 	__C_VT()
 	: __isa(__C::__class()),
 		myToString(&__C::myToString),
-		hashCode((int_32t(*)(C)) &__Object::hashCode),
+		hashCode(&__C::hashCode),
 		getClass((Class(*)(C)) &__Object::getClass),
 		equals((bool(*)(C,Object)) &__Object::equals)
 		{}

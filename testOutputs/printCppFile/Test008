@@ -17,6 +17,10 @@ namespace inputs{
 
 	__A_VT __A::__vtable;
 
+	int32_t __A::hashCode(A __this){
+		return 5;
+	}
+
 	Class __A::__class() {
 		static Class k =
 			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
@@ -32,6 +36,10 @@ namespace inputs{
 	}
 
 	__B_VT __B::__vtable;
+
+	int32_t __B::hashCode(B __this){
+		return 5;
+	}
 
 	Class __B::__class() {
 		static Class k =

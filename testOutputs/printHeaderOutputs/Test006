@@ -20,6 +20,10 @@ namespace inputs {
 
 	__A();
 
+	static Class __class();
+
+	static int32_t hashCode(A);
+
 	__A_VT* __vptr;
 
 	static __A_VT __vtable;
@@ -34,11 +38,11 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setFld)(String);
-	void (*almostSetFld)(String);
+	void (*setFld)(A);
+	void (*almostSetFld)(A);
 	String (*getFld)(A);
-	int32_t (*hashCode)(Object);
-	Class (*getClass)(Object);
+	int32_t (*hashCode)(A);
+	Class (*getClass)(A);
 	bool (*equals)(A,Object);
 
 	__A_VT()
@@ -46,7 +50,7 @@ namespace inputs {
 		setFld(&__A::setFld),
 		almostSetFld(&__A::almostSetFld),
 		getFld(&__A::getFld),
-		hashCode((int_32t(*)(A)) &__Object::hashCode),
+		hashCode(&__A::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals)
 		{}

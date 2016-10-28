@@ -1,0 +1,84 @@
+
+//------------------
+
+#include "output.h"
+#include <sstream>
+
+using namespace java::lang;
+using namespace std;
+namespace inputs{
+	namespace test010{
+
+	__A::__A()  :  __vptr(&__vtable) {}
+
+	__A_VT __A::__vtable;
+
+	void __A::setA(FormalParameter(Modifiers(), Type(QualifiedIdentifier("String"), null), null, "x", null)) {
+		a = x;
+	}
+
+
+	__A::__A()  :  __vptr(&__vtable) {}
+
+	__A_VT __A::__vtable;
+
+	void __A::printOther(FormalParameter(Modifiers(), Type(QualifiedIdentifier("A"), null), null, "other", null)) {
+		;
+	}
+
+
+	__A::__A()  :  __vptr(&__vtable) {}
+
+	__A_VT __A::__vtable;
+
+	String __A::toString(A __this) {
+		return a;
+	}
+
+	int32_t __A::hashCode(A __this){
+		return 5;
+	}
+
+	Class __A::__class() {
+		static Class k =
+			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+ 		return k;
+	}
+
+	int32_t __B1::hashCode(B1 __this){
+		return 5;
+	}
+
+	Class __B1::__class() {
+		static Class k =
+			new __Class(__rt::literal("class inputs.javalang.B1"), (Class) __rt::null());
+ 		return k;
+	}
+
+	int32_t __B2::hashCode(B2 __this){
+		return 5;
+	}
+
+	Class __B2::__class() {
+		static Class k =
+			new __Class(__rt::literal("class inputs.javalang.B2"), (Class) __rt::null());
+ 		return k;
+	}
+
+	int32_t __C::hashCode(C __this){
+		return 5;
+	}
+
+	Class __C::__class() {
+		static Class k =
+			new __Class(__rt::literal("class inputs.javalang.C"), (Class) __rt::null());
+ 		return k;
+	}
+
+
+	}
+}
+
+//------------------
+
+

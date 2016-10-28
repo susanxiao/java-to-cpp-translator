@@ -9,12 +9,15 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test000;
+using namespace inputs::test002;
 
 int main(void)
 {
 
-	cout << "Hello." << endl;
+	A a  = new __A();
+
+	Object o 
+	cout << o->__vptr->toString(o)->data << endl;
 
 	return 0;
 }

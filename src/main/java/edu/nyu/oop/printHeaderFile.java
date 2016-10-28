@@ -459,7 +459,7 @@ public class printHeaderFile extends Visitor {
                 printerHeader.println(headerFile);
                 printerHeader.flush();
                 printerHeader.close();
-                out.println("header " + i + "printed\n");
+                out.println("header " + i + " printed\n");
 
 
             } catch (IOException e) {

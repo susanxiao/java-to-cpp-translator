@@ -7,17 +7,17 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs{
-	namespace test004{
+	namespace test017{
 
-	__A::__A(String fld) : __vptr(&__vtable),
-		fld(fld)  {
+	__A::__A(int x) : __vptr(&__vtable),
+		self(null)  {
 		
 	}
 
 	__A_VT __A::__vtable;
 
-	String __A::getFld(A __this) {
-		return fld;
+	A __A::self(A __this) {
+		return self;
 	}
 
 	int32_t __A::hashCode(A __this){
