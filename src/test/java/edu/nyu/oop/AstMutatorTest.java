@@ -71,7 +71,7 @@ public class AstMutatorTest {
         LoadFileImplementations.prettyPrintAst(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test006() {
         System.out.println("*********************** Test 006 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
@@ -80,7 +80,7 @@ public class AstMutatorTest {
         LoadFileImplementations.prettyPrintAst(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test007() {
         System.out.println("*********************** Test 007 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
@@ -89,7 +89,7 @@ public class AstMutatorTest {
         LoadFileImplementations.prettyPrintAst(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test008() {
         System.out.println("*********************** Test 008 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
@@ -98,7 +98,7 @@ public class AstMutatorTest {
         LoadFileImplementations.prettyPrintAst(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test009() {
         System.out.println("*********************** Test 009 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
@@ -107,7 +107,7 @@ public class AstMutatorTest {
         LoadFileImplementations.prettyPrintAst(node);
     }
 
-    @Ignore @Test
+    @Test
     public void test010() {
         System.out.println("*********************** Test 010 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
