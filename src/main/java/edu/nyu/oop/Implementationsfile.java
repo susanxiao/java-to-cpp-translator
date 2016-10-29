@@ -4,11 +4,10 @@ import edu.nyu.oop.util.NodeUtil;
 import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
 import xtc.tree.Node;
+import xtc.tree.Printer;
 import xtc.util.Runtime;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 //import static com.sun.tools.javac.util.Constants.format;
 //import static java.lang.Integer.parseInt;
@@ -68,8 +67,6 @@ public class Implementationsfile {
             printerHeader.close();
             out.println("output.h printed\n");
 
-
-
             // get the mutated tree
             AstMutator visitorMutator = new AstMutator(LoadFileImplementations.newRuntime());
             AstMutator.AstMutatorSummary summaryMutator = visitorMutator.getMutator(node);
@@ -104,9 +101,6 @@ public class Implementationsfile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
     }
 }
 
@@ -121,6 +115,17 @@ class LoadFileImplementations {
 
     public static void prettyPrintAst(Node node) {
         newRuntime().console().format(node).pln().flush();
+    }
+
+    public static void prettyPrintToFile(File f, Node node) {
+        try {
+            f.getParentFile().mkdirs();
+            f.createNewFile();
+            Printer console = new Printer(new FileWriter(f));
+            console.format(node).pln().flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Node loadTestFile(String filename) {
