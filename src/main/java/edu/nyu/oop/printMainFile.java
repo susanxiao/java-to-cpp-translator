@@ -205,7 +205,7 @@ public class printMainFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i != 1) {
+            if (i != 2) {
                 continue;
             }
             String test = "./src/test/java/inputs/";
