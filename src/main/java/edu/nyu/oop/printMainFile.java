@@ -46,7 +46,8 @@ public class printMainFile extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n) {
-        GNode block = (GNode) n.getNode(7);
+        // block node is always last child of main method node
+        GNode block = (GNode) n.getNode(n.size()-1);
         for (Object o : block) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -114,7 +115,7 @@ public class printMainFile extends Visitor {
                         if (o instanceof Node) {
                             Node currentNode = (Node) o;
                             if (currentNode.getName().equals("CallExpression")) {
-                                if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
+                                if (currentNode.getNode(0).getName().equals("SelectionExpression") || currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
                                     expressionStatement += "." + currentNode.getString(1);
                                 } else { expressionStatement += currentNode.getNode(0).getString(0); }
