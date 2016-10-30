@@ -1,0 +1,46 @@
+
+//------------------
+
+#include <iostream>
+#include <sstream>
+#include "java_lang.h"
+
+#include "output.h"
+
+using namespace java::lang;
+using namespace std;
+using namespace inputs::test012;
+
+int main(void)
+{
+
+	A a = new __A();
+
+	a->__vptr->setA("A");
+
+	B1 b1 = new __B1();
+
+	b1->__vptr->setA("B1");
+
+	B2 b2 = new __B2();
+
+	b2->__vptr->setA("B2");
+
+	C c = new __C();
+
+	c->__vptr->setA("C");
+
+	a->__vptr->printOther();
+
+	a->__vptr->printOther();
+
+	a->__vptr->printOther();
+
+	a->__vptr->printOther();
+
+	return 0;
+}
+
+//------------------
+
+

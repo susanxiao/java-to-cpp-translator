@@ -114,7 +114,11 @@ public class printMainFile extends Visitor {
                         if (o instanceof Node) {
                             Node currentNode = (Node) o;
                             if (currentNode.getName().equals("CallExpression")) {
-                                expressionStatement += currentNode.getNode(0).getString(0);
+                                if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
+                                    expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
+                                    expressionStatement += "." + currentNode.getString(1);
+                                } else { expressionStatement += currentNode.getNode(0).getString(0); }
+                                // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
                                 expressionStatement += "->__vptr->" + method + "(";
                                 Node args = currentNode.getNode(3);
