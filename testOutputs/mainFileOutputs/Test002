@@ -14,10 +14,11 @@ using namespace inputs::test002;
 int main(void)
 {
 
-	A a  = new __A();
+	A a = new __A();
 
-	Object o 
-	cout << o->__vptr->toString(o)->data << endl;
+	Object o = a;
+
+	cout << o->__vptr->toString(o)->data  << endl;
 
 	return 0;
 }

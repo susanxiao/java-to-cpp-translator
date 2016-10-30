@@ -14,11 +14,11 @@ using namespace inputs::test007;
 int main(void)
 {
 
-	B b  = new __B();
+	B b = new __B();
 
-	cout << << endl;
+	cout << b.a << endl;
 
-	cout << << endl;
+	cout << b.b << endl;
 
 	return 0;
 }

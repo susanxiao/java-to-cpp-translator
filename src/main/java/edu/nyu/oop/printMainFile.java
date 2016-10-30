@@ -72,14 +72,27 @@ public class printMainFile extends Visitor {
                     Node currentDeclarator = (Node) o;
                     fieldDeclaration += currentDeclarator.getString(0) + " ";
                     if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
-                        fieldDeclaration += " = new ";
+                        fieldDeclaration += "= new ";
                         fieldDeclaration += currentDeclarator.getNode(2).getNode(2).getString(0);
                         Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
                         if (declaratorArgs.size() > 0) {
-
+                            fieldDeclaration += "(";
+                            for(Object arg : declaratorArgs){
+                                if(arg instanceof Node){
+                                    Node currentArg = (Node) arg;
+                                    if(currentArg.getName().equals("StringLiteral")){
+                                        fieldDeclaration += currentArg.getString(0);
+                                    }
+                                }
+                            }
+                            fieldDeclaration += ");";
                         } else {
                             fieldDeclaration += "();\n";
                         }
+                    }else if(currentDeclarator.getNode(2).getName().equals("CastExpression")){
+                        String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
+                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
+                        fieldDeclaration += "= " + primaryIdentifier + ";\n";
                     }
                 }
             }
@@ -120,11 +133,28 @@ public class printMainFile extends Visitor {
                                 }
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
+                            } else if (currentNode.getName().equals("SelectionExpression")){
+                                expressionStatement += currentNode.getNode(0).getString(0);
+                                expressionStatement += "." + currentNode.getString(1);
                             }
                         }
                     }
                 }
-                expressionStatement += "<< endl;";
+                expressionStatement += " << endl;";
+            }else{
+                Node callExpressionNode = n.getNode(0);
+                expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
+                expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
+                expressionStatement += callExpressionNode.getString(2);
+                if(callExpressionNode.getNode(3).getName().equals("Arguments")){
+                    expressionStatement += "(";
+                    Node argumentsNode = (Node) callExpressionNode.getNode(3);
+                    if(argumentsNode.getNode(1).getName().equals("NewClassExpression")){
+                        Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
+                        expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                    }
+                    expressionStatement += ");";
+                }
             }
         }
         mainImplementation.append(expressionStatement + "\n\n");
@@ -193,7 +223,7 @@ public class printMainFile extends Visitor {
 
         s1.append("\n\n//------------------\n\n");
 
-        //out.println(s1.toString());
+        out.println(s1.toString());
 
         summary.filePrinted = s1.toString();
 
@@ -205,7 +235,7 @@ public class printMainFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i != 2) {
+            if (i > 8) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

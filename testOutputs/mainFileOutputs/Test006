@@ -14,15 +14,15 @@ using namespace inputs::test006;
 int main(void)
 {
 
-	A a  = new __A();
+	A a = new __A();
 
-	
+	a->__vptr->almostSetFld("B");
 
-	cout << a->__vptr->getFld(a)<< endl;
+	cout << a->__vptr->getFld(a) << endl;
 
-	
+	a->__vptr->setFld("B");
 
-	cout << a->__vptr->getFld(a)<< endl;
+	cout << a->__vptr->getFld(a) << endl;
 
 	return 0;
 }

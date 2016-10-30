@@ -14,9 +14,9 @@ using namespace inputs::test001;
 int main(void)
 {
 
-	A a  = new __A();
+	A a = new __A();
 
-	cout << a->__vptr->toString(a)->data << endl;
+	cout << a->__vptr->toString(a)->data  << endl;
 
 	return 0;
 }

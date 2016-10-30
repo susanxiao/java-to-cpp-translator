@@ -14,7 +14,7 @@ using namespace inputs::test000;
 int main(void)
 {
 
-	cout << "Hello." << endl;
+	cout << "Hello."  << endl;
 
 	return 0;
 }
