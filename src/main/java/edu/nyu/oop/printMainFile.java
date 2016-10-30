@@ -47,7 +47,8 @@ public class printMainFile extends Visitor {
 
     public void visitMethodDeclaration(GNode n) {
         // block node is always last child of main method node
-        GNode block = (GNode) n.getNode(n.size()-1);
+        int blockIndex = n.size() - 1;
+        GNode block = (GNode) n.getNode(blockIndex);
         for (Object o : block) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -94,6 +95,13 @@ public class printMainFile extends Visitor {
                         String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                         String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
                         fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
+                    } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
+                        String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
+                        fieldDeclaration += "= " + primaryIdentifier + ";\n";
+                    } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
+                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
+                        String field = currentDeclarator.getNode(2).getString(1);
+                        fieldDeclaration += "= " + primaryIdentifier + "." + field + ";\n";
                     }
                 }
             }
@@ -106,7 +114,7 @@ public class printMainFile extends Visitor {
         if (n.getNode(0).getName().equals("CallExpression")) {
             String primaryIdentifer = "";
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
-                n.getNode(0).getNode(0).getNode(0).getName().equals("PrimaryIdentifier");
+                //n.getNode(0).getNode(0).getNode(0).getName().equals("PrimaryIdentifier");
                 if (n.getNode(0).getNode(0).getNode(0).getString(0).equals("cout")) {
                     expressionStatement += n.getNode(0).getNode(0).getNode(0).getString(0) + " << ";
                     primaryIdentifer = n.getNode(0).getNode(0).getNode(0).getString(0);
@@ -115,9 +123,12 @@ public class printMainFile extends Visitor {
                         if (o instanceof Node) {
                             Node currentNode = (Node) o;
                             if (currentNode.getName().equals("CallExpression")) {
-                                if (currentNode.getNode(0).getName().equals("SelectionExpression") || currentNode.getNode(0).getName().equals("CallExpression")) {
+                                if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "." + currentNode.getString(1);
+                                    expressionStatement += "." + currentNode.getNode(0).getString(1);
+                                } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
+                                    expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
+                                    expressionStatement += "." + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
                                 } else { expressionStatement += currentNode.getNode(0).getString(0); }
                                 // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
@@ -162,7 +173,29 @@ public class printMainFile extends Visitor {
                         Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
                         expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
                     }
+                    else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
+                        expressionStatement += argumentsNode.getNode(1).getString(0);
+                    } else { expressionStatement += argumentsNode.getString(0); }
                     expressionStatement += ");";
+                }
+            }
+
+        } else if (n.getNode(0).getName().equals("Expression")) {
+            Node expressionNode = n.getNode(0);
+            for (Object o : expressionNode) {
+                if (o instanceof Node) {
+                    Node currNode = (Node) o;
+                    if (currNode.getName().equals("SelectionExpression")) {
+                        String varName = currNode.getNode(0).getString(0);
+                        String field = currNode.getString(1);
+                        expressionStatement += varName + "." + field + " = ";
+                    } else if (currNode.getName().equals("PrimaryIdentifier")) {
+                        expressionStatement += currNode.getString(0) + ";\n";
+                    } else if (currNode.getName().equals("CastExpression")) {
+                        String castType = currNode.getNode(0).getNode(0).getString(0);
+                        String varName = currNode.getNode(1).getString(0);
+                        expressionStatement += "(" + castType + ") " + varName + ";\n";
+                    }
                 }
             }
         }

@@ -16,8 +16,9 @@ int main(void)
 
 	A a = new __A();
 
-	A other 
-	a->__vptr->printOther();
+	A other = a.some;
+
+	a->__vptr->printOther(other);
 
 	return 0;
 }

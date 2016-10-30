@@ -16,10 +16,11 @@ int main(void)
 
 	A a = new __A();
 
-	A other 
+	A other = a;
+
 	other->__vptr->setA("A");
 
-	a->__vptr->printOther();
+	a->__vptr->printOther(other);
 
 	return 0;
 }

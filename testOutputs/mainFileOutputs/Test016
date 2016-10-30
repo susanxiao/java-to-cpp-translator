@@ -18,9 +18,10 @@ int main(void)
 
 	B other = new __B();
 
-	
+	other.some = (B) a;
 
-	a->__vptr->printOther();
+
+	a->__vptr->printOther(other);
 
 	return 0;
 }
