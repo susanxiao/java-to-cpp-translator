@@ -16,9 +16,9 @@ namespace inputs {
 	struct __A
 	{
 
-	String fld;
+	std::string fld;
 
-	__A(String f);
+	__A(std::string f);
 
 	static Class __class();
 

@@ -77,10 +77,10 @@ public class printMainFile extends Visitor {
                         Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
                         if (declaratorArgs.size() > 0) {
                             fieldDeclaration += "(";
-                            for(Object arg : declaratorArgs){
-                                if(arg instanceof Node){
+                            for (Object arg : declaratorArgs) {
+                                if (arg instanceof Node) {
                                     Node currentArg = (Node) arg;
-                                    if(currentArg.getName().equals("StringLiteral")){
+                                    if (currentArg.getName().equals("StringLiteral")) {
                                         fieldDeclaration += currentArg.getString(0);
                                     }
                                 }
@@ -89,10 +89,10 @@ public class printMainFile extends Visitor {
                         } else {
                             fieldDeclaration += "();\n";
                         }
-                    }else if(currentDeclarator.getNode(2).getName().equals("CastExpression")){
+                    } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                         String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                         String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
-                        fieldDeclaration += "= " + primaryIdentifier + ";\n";
+                        fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
                     }
                 }
             }
@@ -103,10 +103,12 @@ public class printMainFile extends Visitor {
     public void visitExpressionStatement(GNode n) {
         String expressionStatement = "\t";
         if (n.getNode(0).getName().equals("CallExpression")) {
+            String primaryIdentifer = "";
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
                 n.getNode(0).getNode(0).getNode(0).getName().equals("PrimaryIdentifier");
-                expressionStatement += "cout << ";
                 if (n.getNode(0).getNode(0).getNode(0).getString(0).equals("cout")) {
+                    expressionStatement += n.getNode(0).getNode(0).getNode(0).getString(0) + " << ";
+                    primaryIdentifer = n.getNode(0).getNode(0).getNode(0).getString(0);
                     Node arguments = n.getNode(0).getNode(3);
                     for (Object o : arguments) {
                         if (o instanceof Node) {
@@ -120,20 +122,22 @@ public class printMainFile extends Visitor {
                                 if (args.size() > 0) {
                                     for (Object o1 : args) {
                                         argSize--;
-                                        if(argSize > 0){
-                                            expressionStatement+= o1.toString() + ",";
-                                        }else{
+                                        if (argSize > 0) {
+                                            expressionStatement += o1.toString() + ",";
+                                        } else {
                                             expressionStatement += o1.toString();
                                         }
                                     }
                                 }
                                 expressionStatement += ")";
-                                if(method.equals("toString")){
+                                if (method.equals("toString")) {
+                                    expressionStatement += "->data ";
+                                }else if(primaryIdentifer.equals("cout")){
                                     expressionStatement += "->data ";
                                 }
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
-                            } else if (currentNode.getName().equals("SelectionExpression")){
+                            } else if (currentNode.getName().equals("SelectionExpression")) {
                                 expressionStatement += currentNode.getNode(0).getString(0);
                                 expressionStatement += "." + currentNode.getString(1);
                             }
@@ -141,15 +145,15 @@ public class printMainFile extends Visitor {
                     }
                 }
                 expressionStatement += " << endl;";
-            }else{
+            } else {
                 Node callExpressionNode = n.getNode(0);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
                 expressionStatement += callExpressionNode.getString(2);
-                if(callExpressionNode.getNode(3).getName().equals("Arguments")){
+                if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                     expressionStatement += "(";
                     Node argumentsNode = (Node) callExpressionNode.getNode(3);
-                    if(argumentsNode.getNode(1).getName().equals("NewClassExpression")){
+                    if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
                         Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
                         expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
                     }
@@ -186,15 +190,15 @@ public class printMainFile extends Visitor {
                 "using namespace std;\n");
         s1.append("using namespace ");
 
-        for(Object o : n){
-            if(((Node)o).getName().equals("PackageDeclaration")){
+        for (Object o : n) {
+            if (((Node) o).getName().equals("PackageDeclaration")) {
                 Node currentNode = (Node) o;
                 int size = currentNode.getNode(1).size();
-                for(Object o1 : currentNode.getNode(1)){
+                for (Object o1 : currentNode.getNode(1)) {
                     size--;
-                    if(size > 0) {
+                    if (size > 0) {
                         s1.append(o1.toString() + "::");
-                    }else{
+                    } else {
                         s1.append(o1.toString());
                     }
                 }
@@ -235,7 +239,7 @@ public class printMainFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i > 8) {
+            if (i == 23) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

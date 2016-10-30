@@ -18,7 +18,7 @@ int main(void)
 
 	A a1 = new __A();
 
-	A a2 = b;
+	A a2 = (A) b;
 
 	cout << a1->__vptr->toString(a1)->data  << endl;
 

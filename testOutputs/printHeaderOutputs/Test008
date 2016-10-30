@@ -19,7 +19,7 @@ namespace inputs {
 	struct __A
 	{
 
-	String a;
+	std::string a;
 
 	__A();
 
@@ -54,7 +54,7 @@ namespace inputs {
 	struct __B
 	{
 
-	String b;
+	std::string b;
 
 	__B();
 

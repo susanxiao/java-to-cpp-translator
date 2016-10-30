@@ -16,7 +16,7 @@ int main(void)
 
 	A a = new __A();
 
-	Object o = a;
+	Object o = (Object) a;
 
 	cout << o->__vptr->toString(o)->data  << endl;
 

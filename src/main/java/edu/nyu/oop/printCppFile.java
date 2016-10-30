@@ -96,6 +96,9 @@ public class printCppFile extends Visitor {
                             Node currentNode1 = (Node) o1;
                             if (currentNode1.getName().equals("Type")) {
                                 String type = currentNode1.getNode(0).getString(0);
+                                if(type.equals("String")){
+                                    type = "std::string";
+                                }
                                 constructorArguments += type + " ";
                             }
                         } else {
@@ -109,25 +112,6 @@ public class printCppFile extends Visitor {
                 }
             }
         }
-
-        /*
-          Block(
-          ExpressionStatement(
-            Expression(
-              SelectionExpression(
-                ThisExpression(
-                  null
-                ),
-                "fld"
-              ),
-              "=",
-              PrimaryIdentifier(
-                "fld"
-              )
-            )
-          )
-        )
-         */
 
         constructor += constructorArguments;
         constructor += ")";
@@ -237,19 +221,12 @@ public class printCppFile extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n) {
-        /*
-        Type(
-          QualifiedIdentifier(
-            "String"
-          ),
-          null
-        ),
-         */
-        // obtain the return type
+
         String type = "";
         String methodName = "";
         if (n.getNode(2).getName().equals("Type")) {
             type = n.getNode(2).getNode(0).getString(0);
+            summary.qualifiedIdentifier = type;
             methodName = n.getString(3);
         } else if (n.getNode(2).getName().equals("VoidType")) {
             type = "void";
@@ -260,8 +237,7 @@ public class printCppFile extends Visitor {
         cppImplementation.append("\t" + type + " ");
         cppImplementation.append("__" + summary.currentClassName + "::" + methodName + "(");
 
-        // check if the method contains parameters
-        if (n.getNode(4).getName().equals("FormalParameters")) {
+        if (n.getNode(4).getName().equals("Arguments")) {
             int numberArgs = n.getNode(4).size();
             if (n.getNode(4).size() > 0) {
                 for (Object argument : n.getNode(4)) {
@@ -279,11 +255,12 @@ public class printCppFile extends Visitor {
             int numberParameters = n.getNode(4).size();
             Node formalParameters = n.getNode(4);
             for (Object o : formalParameters) {
-                numberParameters--;
                 if (o instanceof Node) {
                     Node currentNode = (Node) o;
                     String parameter = "";
                     if (currentNode.getName().equals("FormalParameter")) {
+                        summary.thisGate = true;
+                        numberParameters--;
                         if (numberParameters > 0) {
                             parameter += currentNode.getNode(1).getNode(0).getString(0) + " ";
                             parameter += currentNode.getString(3) + ",";
@@ -327,7 +304,7 @@ public class printCppFile extends Visitor {
                 return;
             }
         }
-
+        summary.thisGate = false;
         cppImplementation.append("\t}\n\n");
     }
 
@@ -369,8 +346,21 @@ public class printCppFile extends Visitor {
                     }
                 }
             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
-                returnPrimaryIdentifier += "\t\treturn " + currentNode.getString(0) + ";";
-                cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
+                if(summary.qualifiedIdentifier.equals("String") && summary.thisGate){
+                    returnPrimaryIdentifier += "\t\treturn new __String( __this->" + currentNode.getString(0) + ");";
+                    cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
+                    return;
+                }else {
+                    returnPrimaryIdentifier += "\t\treturn " + currentNode.getString(0) + ";";
+                    cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
+                    return;
+                }
+            } else if (currentNode.getName().equals("StringLiteral")) {
+                returnStatementString = "\t\tstd::ostringstream sout;\n";
+                returnStatementString += "\t\tsout << ";
+                returnStatementString += currentNode.getString(0) + ";\n";
+                returnStatementString += "\t\treturn new __String(sout.str());\n\t}\n";
+                cppImplementation.append(returnStatementString + "\n\n");
                 return;
             }
         }
@@ -396,6 +386,9 @@ public class printCppFile extends Visitor {
     static class printCppFileSummary {
         String currentClassName;
         String filePrinted;
+        String qualifiedIdentifier;
+        boolean thisGate = false;
+
     }
 
     public printCppFileSummary getSummary(GNode n) {
@@ -441,7 +434,7 @@ public class printCppFile extends Visitor {
         }
         s1.append(closeNamespace);
         s1.append("\n//------------------\n\n");
-        //out.println(s1.toString());
+        out.println(s1.toString());
 
         summary.filePrinted = s1.toString();
 
@@ -452,7 +445,7 @@ public class printCppFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i != 1) {
+            if (i == 23) {
                 continue;
             }
 

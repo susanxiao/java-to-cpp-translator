@@ -9,7 +9,7 @@ using namespace std;
 namespace inputs{
 	namespace test003{
 
-	__A::__A(String f) : __vptr(&__vtable),
+	__A::__A(std::string f) : __vptr(&__vtable),
 		fld(f)  {
 		
 	}
@@ -17,7 +17,7 @@ namespace inputs{
 	__A_VT __A::__vtable;
 
 	String __A::getFld(A __this) {
-		return fld;
+		return new __String( __this->fld);
 	}
 
 	int32_t __A::hashCode(A __this){

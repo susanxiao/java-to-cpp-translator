@@ -7,18 +7,18 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs{
-	namespace test001{
+	namespace test003{
 
-	__A::__A()  :  __vptr(&__vtable) {}
+	__A::__A(std::string f) : __vptr(&__vtable),
+		fld(f)  {
+		
+	}
 
 	__A_VT __A::__vtable;
 
-	String __A::toString(A __this) {
-		std::ostringstream sout;
-		sout << "A";
-		return new __String(sout.str());
+	String __A::getFld(A __this) {
+		return new __String( __this->fld);
 	}
-
 
 	int32_t __A::hashCode(A __this){
 		return 5;

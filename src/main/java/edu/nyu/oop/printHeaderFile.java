@@ -24,19 +24,6 @@ import java.io.Reader;
  * Created by Garrett on 10/21/16.
  */
 
-/**
- * Nodes
- * GNode currentClassNode;
- * GNode headerDeclaration;
- * GNode dataLayoutNode;
- * GNode FieldDeclarationNode;
- * GNode ModifiersNode;
- * GNode ParametersNode;
- * GNode DataLayoutMethodDeclarationNode;
- * GNode DeclaratorsNode;
- * GNode VTableNode;
- * GNode VTableMethodDeclarationNode;
- */
 
 public class printHeaderFile extends Visitor {
 
@@ -65,6 +52,8 @@ public class printHeaderFile extends Visitor {
                 String type;
                 if (currentDeclaration.staticType.equals("int")) {
                     type = "int32_t";
+                } else if (currentDeclaration.staticType.equals("String")) {
+                    type = "std::string";
                 } else {
                     type = currentDeclaration.staticType;
                 }
@@ -72,16 +61,17 @@ public class printHeaderFile extends Visitor {
             }
         }
 
-        // Is this correct?
         if (summary.currentConstructorList.size() > 0) {
             s1.append("\t__" + className + "(");
             for (ConstructorImplementation currentConstructor : summary.currentConstructorList) {
                 int size = currentConstructor.parameters.size();
                 for (ParameterImplementation param : currentConstructor.parameters) {
                     size--;
-                    String type;
+                    String type = "";
                     if (param.type.equals("int")) {
                         type = "int32_t";
+                    } else if (param.type.equals("String")) {
+                        type = "std::string";
                     } else {
                         type = param.type;
                     }
@@ -115,7 +105,6 @@ public class printHeaderFile extends Visitor {
         }
 
 
-
     }
 
     public void visitDataLayout(GNode n) {
@@ -133,7 +122,13 @@ public class printHeaderFile extends Visitor {
                 currentFieldDeclaration += n.getNode(0).getString(0) + " ";
             }
         }
-        currentFieldDeclaration += n.getString(1) + " ";
+
+        if (n.getString(1).equals("String")) {
+            currentFieldDeclaration += "std::string ";
+        } else {
+            currentFieldDeclaration += n.getString(1) + " ";
+        }
+
         currentFieldDeclaration += n.getString(2);
         if (n.getNode(3).size() > 0) {
             currentFieldDeclaration += " ";
@@ -153,7 +148,6 @@ public class printHeaderFile extends Visitor {
 
     public void visitDataLayoutMethodDeclaration(GNode n) {
         for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
-            // if the class implements the method
             String methodComparing = n.getString(2);
             if (currMethod.name == methodComparing) {
                 String currentMethodDeclaration = "\t";
@@ -179,20 +173,6 @@ public class printHeaderFile extends Visitor {
                     }
                 }
 
-                // Parameters
-                /*
-                if (n.getNode(4).size() > 0) {
-                    int size = n.getNode(4).size();
-                    for (Object o : n.getNode(4)) {
-                        if (size > 1) {
-                            size--;
-                            currentMethodDeclaration += o.toString() + ",";
-                        } else {
-                            currentMethodDeclaration += o.toString();
-                        }
-                    }
-                }*/
-
                 currentMethodDeclaration += ");";
                 s1.append(currentMethodDeclaration + "\n");
             }
@@ -207,7 +187,7 @@ public class printHeaderFile extends Visitor {
                 visitVTableMethodDeclaration((GNode) o);
             }
         }
-        // vtable constructor
+
         s1.append(vTableConstructor(n));
         s1.append("\t};\n\n");
     }
@@ -273,28 +253,10 @@ public class printHeaderFile extends Visitor {
             currentMethodDeclaration += n.getString(1) + " ";
             currentMethodDeclaration += "(*" + n.getString(2) + ")";
 
-            // Case equals
             if (n.getString(2).equals("equals")) {
                 currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
             } else {
                 currentMethodDeclaration += "(";
-                /*
-                boolean gateMatch = false;
-                for (MethodImplementation currMethod : summary.currentMethodList) {
-                    if (currMethod.name.equals(n.getString(2))) {
-                        if (currMethod.parameters.size() != 0) {
-                            gateMatch = true;
-                            for (ParameterImplementation param : currMethod.parameters) {
-                                currentMethodDeclaration += param.type;
-                            }
-                        }
-                    }
-                }
-                if (!gateMatch) {
-                    currentMethodDeclaration += n.getString(3);
-
-                }
-                */
                 currentMethodDeclaration += summary.currentClassName;
                 currentMethodDeclaration += ");";
             }
@@ -352,7 +314,7 @@ public class printHeaderFile extends Visitor {
         summary.usingNamespace = "using namespace java::lang;\n\n";
 
         s = new StringBuilder();
-        // all classes in the same namespace?
+
         String namespace;
         namespace = n.getNode(0).getNode(0).getString(1);
         int namespaceSize = 0;
@@ -367,7 +329,7 @@ public class printHeaderFile extends Visitor {
         summary.namespace = s.toString();
 
         s = new StringBuilder();
-        // ForwardDeclarations
+
         for (Object classNode : n) {
             GNode currentNode = (GNode) classNode;
             if (!currentNode.getName().contains("Test")) {
@@ -380,7 +342,7 @@ public class printHeaderFile extends Visitor {
         summary.fowardDeclarations = s.toString();
 
         s = new StringBuilder();
-        // TypeDefs
+
         for (Object classNode : n) {
             GNode currentNode = (GNode) classNode;
             if (!currentNode.getName().contains("Test")) {
@@ -402,7 +364,6 @@ public class printHeaderFile extends Visitor {
         }
 
 
-        // appending the namespace size
         s = new StringBuilder();
         s.append("\n\n");
         while (namespaceSize > 0) {
@@ -420,6 +381,9 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
         for (int i = 0; i < 21; i++) {
+            if (i == 23) {
+                continue;
+            }
             String test = "./src/test/java/inputs/";
             String test1 = "";
             String test2 = "";
@@ -438,6 +402,7 @@ public class printHeaderFile extends Visitor {
             AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
             GNode parentNode = AstC.cAst(summaryTraversal);
+            LoadFileImplementations.prettyPrintAst(parentNode);
 
             try {
                 PrintWriter printerHeader;
@@ -452,6 +417,8 @@ public class printHeaderFile extends Visitor {
                 String headerFile = "";
                 headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
                 headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
+
+                out.println(headerFile);
 
                 header = new File("testOutputs/printHeaderOutputs", test2);
                 header.createNewFile();

@@ -9,14 +9,13 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test001;
+using namespace inputs::test003;
 
 int main(void)
 {
 
-	A a  = new __A();
-
-	cout << a->__vptr->toString(a)->data << endl;
+	A a = new __A("A");
+	cout << a->__vptr->getFld(a)->data  << endl;
 
 	return 0;
 }

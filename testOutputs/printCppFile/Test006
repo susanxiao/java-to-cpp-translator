@@ -15,17 +15,17 @@ namespace inputs{
 
 	__A_VT __A::__vtable;
 
-	void __A::setFld(FormalParameter(Modifiers(), Type(QualifiedIdentifier("String"), null), null, "f", null)) {
+	void __A::setFld(A __this,String f) {
 		fld = f;
 	}
 
-	void __A::almostSetFld(FormalParameter(Modifiers(), Type(QualifiedIdentifier("String"), null), null, "f", null)) {
+	void __A::almostSetFld(A __this,String f) {
 		String fld;
 		fld = f;
 	}
 
 	String __A::getFld(A __this) {
-		return fld;
+		return new __String( __this->fld);
 	}
 
 	int32_t __A::hashCode(A __this){

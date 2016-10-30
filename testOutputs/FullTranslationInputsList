@@ -1,8 +1,10 @@
 Summary
-print main.cpp -> test000 -> test008
+print main.cpp -> test000 -> test007
 print output.cpp -> test000 -> test008
 print output.h -> test000 -> test020
 
 Working translations
 Test000 -> good
 Test001 -> good
+Test002 -> not sure
+Test003 -> good

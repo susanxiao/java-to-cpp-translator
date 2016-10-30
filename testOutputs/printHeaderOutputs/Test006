@@ -16,7 +16,7 @@ namespace inputs {
 	struct __A
 	{
 
-	String fld;
+	std::string fld;
 
 	__A();
 
