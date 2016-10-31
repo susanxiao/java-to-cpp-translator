@@ -59,12 +59,24 @@ public class Implementationsfile {
             headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
             headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
 
+            String headerFile1 = headerFile;
+
             header = new File("output", "output.h");
+            File header1 = new File("testOutputs/translationOutputs", s1.toString() + "output.h");
             header.createNewFile();
+            header1.createNewFile();
+
             printerHeader = new PrintWriter(header);
+            PrintWriter printerHeader1 = new PrintWriter(header1);
+
             printerHeader.println(headerFile);
             printerHeader.flush();
             printerHeader.close();
+
+            printerHeader1.println(headerFile1);
+            printerHeader1.flush();
+            printerHeader1.close();
+
             out.println("output.h printed\n");
 
             // get the mutated tree
@@ -75,9 +87,20 @@ public class Implementationsfile {
             printCppFile visitorCpp = new printCppFile(LoadFileImplementations.newRuntime(), summaryTraversal);
             printCppFile.printCppFileSummary summaryCpp = visitorCpp.getSummary(node);
             String cppFile = summaryCpp.filePrinted;
+            String cppFile1 = cppFile;
 
             output = new File("output", "output.cpp");
             output.createNewFile();
+
+
+            File output1 = new File("testOutputs/translationOutputs", s1.toString() + "output.cpp");
+            output1.createNewFile();
+
+            PrintWriter printWriterCppFile1 = new PrintWriter(output1);
+            printWriterCppFile1.println(cppFile1);
+            printWriterCppFile1.flush();
+            printWriterCppFile1.close();
+
             printerCppFile = new PrintWriter(output);
             printerCppFile.println(cppFile);
             printerCppFile.flush();
@@ -89,8 +112,18 @@ public class Implementationsfile {
             printMainFile.printMainFileSummary summaryMain = visitorMain.getSummary(node);
             String mainFile = summaryMain.filePrinted;
 
+            String mainFile1 = mainFile;
+
             main = new File("output", "main.cpp");
             main.createNewFile();
+
+            File main1 = new File("testOutputs/translationOutputs", s1.toString() + "main.cpp");
+
+            PrintWriter printerMainFile1 = new PrintWriter(main1);
+            printerMainFile1.println(mainFile1);
+            printerMainFile1.flush();
+            printerMainFile1.close();
+
             printerMainFile = new PrintWriter(main);
             printerMainFile.println(mainFile);
             printerMainFile.flush();
