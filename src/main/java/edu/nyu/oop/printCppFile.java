@@ -445,7 +445,7 @@ public class printCppFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i == 23) {
+            if (i != 6) {
                 continue;
             }
 

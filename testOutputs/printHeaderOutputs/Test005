@@ -61,7 +61,7 @@ namespace inputs {
 
 	static Class __class();
 
-	static int32_t hashCode(A);
+	static int32_t hashCode(B);
 
 	__B_VT* __vptr;
 

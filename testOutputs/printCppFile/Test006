@@ -15,11 +15,11 @@ namespace inputs{
 
 	__A_VT __A::__vtable;
 
-	void __A::setFld(A __this,String f) {
+	void __A::setFld(std::string f) {
 		fld = f;
 	}
 
-	void __A::almostSetFld(A __this,String f) {
+	void __A::almostSetFld(std::string f) {
 		String fld;
 		fld = f;
 	}

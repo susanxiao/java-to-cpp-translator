@@ -61,6 +61,8 @@ public class printHeaderFile extends Visitor {
             }
         }
 
+        s1.append("\t__" + summary.currentClassName + "_VT* __vptr;\n\n");
+
         if (summary.currentConstructorList.size() > 0) {
             s1.append("\t__" + className + "(");
             for (ConstructorImplementation currentConstructor : summary.currentConstructorList) {
@@ -98,7 +100,7 @@ public class printHeaderFile extends Visitor {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("DataLayout")) {
-                    s1.append("\tstatic int32_t hashCode(A);\n\n");
+                    s1.append("\tstatic int32_t hashCode(" + summary.currentClassName + ");\n\n");
                     visitDataLayout(currentNode);
                 }
             }
@@ -130,6 +132,9 @@ public class printHeaderFile extends Visitor {
         }
 
         currentFieldDeclaration += n.getString(2);
+        if(n.getString(2).equals("__vptr")){
+            return;
+        }
         if (n.getNode(3).size() > 0) {
             currentFieldDeclaration += " ";
             int k = n.getNode(3).size();
@@ -381,7 +386,7 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
         for (int i = 0; i < 21; i++) {
-            if (i == 23) {
+            if (i != 5) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

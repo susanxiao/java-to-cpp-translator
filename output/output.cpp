@@ -7,14 +7,22 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs{
-	namespace test003{
+	namespace test006{
 
-	__A::__A(std::string f) : __vptr(&__vtable),
-		fld(f)  {
+	__A::__A() : __vptr(&__vtable)  {
 		
 	}
 
 	__A_VT __A::__vtable;
+
+	void __A::setFld(String f) {
+		fld = f;
+	}
+
+	void __A::almostSetFld(String f) {
+		String fld;
+		fld = f;
+	}
 
 	String __A::getFld(A __this) {
 		return new __String( __this->fld);
