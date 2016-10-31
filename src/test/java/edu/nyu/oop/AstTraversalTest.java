@@ -26,7 +26,7 @@ public class AstTraversalTest {
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
     }
 
-    @Test
+    @Ignore @Test
     public void test001() {
         System.out.println("*********************** Test 001 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
@@ -40,6 +40,7 @@ public class AstTraversalTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        XtcTestUtils.prettyPrintAst(node);
     }
 
     @Ignore @Test

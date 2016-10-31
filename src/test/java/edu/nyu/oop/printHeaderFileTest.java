@@ -40,7 +40,7 @@ public class printHeaderFileTest {
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
-    @Ignore
+
     @Test
     public void test002() {
         out.println("*********************** Test 002 ***********************");
@@ -88,6 +88,7 @@ public class printHeaderFileTest {
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
 
+    @Ignore
     @Test
     public void test006() {
         System.out.println("*********************** Test 006 ***********************");
