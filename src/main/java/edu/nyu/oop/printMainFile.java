@@ -83,7 +83,7 @@ public class printMainFile extends Visitor {
                                 if (arg instanceof Node) {
                                     Node currentArg = (Node) arg;
                                     if (currentArg.getName().equals("StringLiteral")) {
-                                        fieldDeclaration += currentArg.getString(0);
+                                        fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
                                     }
                                 }
                             }
@@ -163,15 +163,23 @@ public class printMainFile extends Visitor {
                 expressionStatement += " << endl;";
             } else {
                 Node callExpressionNode = n.getNode(0);
+                String methodName = callExpressionNode.getString(2);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
-                expressionStatement += callExpressionNode.getString(2);
+                expressionStatement += methodName;
                 if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                     expressionStatement += "(";
                     Node argumentsNode = (Node) callExpressionNode.getNode(3);
+                    if(methodName.startsWith("set")){
+                        expressionStatement += argumentsNode.getString(0) + ", ";
+                    }
                     if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
                         Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
+                        String newClassIdentifier = "new ";
+                        newClassIdentifier += newClassExpressionNode.getNode(2).getString(0) + "(";
+                        expressionStatement += newClassIdentifier;
                         expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                        expressionStatement += ")";
                     }
                     else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         expressionStatement += argumentsNode.getNode(1).getString(0);
@@ -277,7 +285,7 @@ public class printMainFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i == 23) {
+            if (i != 3) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

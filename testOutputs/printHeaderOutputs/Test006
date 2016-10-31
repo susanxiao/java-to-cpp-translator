@@ -16,7 +16,9 @@ namespace inputs {
 	struct __A
 	{
 
-	std::string fld;
+	String fld;
+
+	__A_VT* __vptr;
 
 	__A();
 
@@ -24,11 +26,9 @@ namespace inputs {
 
 	static int32_t hashCode(A);
 
-	__A_VT* __vptr;
-
 	static __A_VT __vtable;
 
-	static void setFld(String);
+	static void setFld(A,String);
 	static void almostSetFld(String);
 	static String getFld(A);
 
@@ -38,8 +38,8 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setFld)(A);
-	void (*almostSetFld)(A);
+	void (*setFld)(A,String);
+	void (*almostSetFld)(String);
 	String (*getFld)(A);
 	int32_t (*hashCode)(A);
 	Class (*getClass)(A);

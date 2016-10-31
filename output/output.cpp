@@ -10,13 +10,14 @@ namespace inputs{
 	namespace test006{
 
 	__A::__A() : __vptr(&__vtable)  {
-		
+		fld = new __String("A");
+
 	}
 
 	__A_VT __A::__vtable;
 
-	void __A::setFld(String f) {
-		fld = f;
+	void __A::setFld(A __this,String f) {
+		__this->fld = f;
 	}
 
 	void __A::almostSetFld(String f) {
@@ -25,7 +26,7 @@ namespace inputs{
 	}
 
 	String __A::getFld(A __this) {
-		return new __String( __this->fld);
+		return  __this->fld;
 	}
 
 	int32_t __A::hashCode(A __this){

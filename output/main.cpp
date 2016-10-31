@@ -16,11 +16,11 @@ int main(void)
 
 	A a = new __A();
 
-	a->__vptr->almostSetFld("B");
+	a->__vptr->almostSetFld(new __String("B"));
 
 	cout << a->__vptr->getFld(a)->data  << endl;
 
-	a->__vptr->setFld("B");
+	a->__vptr->setFld(a, new __String("B"));
 
 	cout << a->__vptr->getFld(a)->data  << endl;
 

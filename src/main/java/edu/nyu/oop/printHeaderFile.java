@@ -52,8 +52,6 @@ public class printHeaderFile extends Visitor {
                 String type;
                 if (currentDeclaration.staticType.equals("int")) {
                     type = "int32_t";
-                } else if (currentDeclaration.staticType.equals("String")) {
-                    type = "std::string";
                 } else {
                     type = currentDeclaration.staticType;
                 }
@@ -72,9 +70,11 @@ public class printHeaderFile extends Visitor {
                     String type = "";
                     if (param.type.equals("int")) {
                         type = "int32_t";
-                    } else if (param.type.equals("String")) {
+                    }
+                    /*else if (param.type.equals("String")) {
                         type = "std::string";
-                    } else {
+                    }*/
+                    else {
                         type = param.type;
                     }
                     s1.append(type + " " + param.name);
@@ -132,7 +132,7 @@ public class printHeaderFile extends Visitor {
         }
 
         currentFieldDeclaration += n.getString(2);
-        if(n.getString(2).equals("__vptr")){
+        if (n.getString(2).equals("__vptr")) {
             return;
         }
         if (n.getNode(3).size() > 0) {
@@ -170,6 +170,9 @@ public class printHeaderFile extends Visitor {
                         currentMethodDeclaration += summary.currentClassName + ",";
                     }
                     if (currMethod.parameters.size() != 0) {
+                        if (n.getString(2).startsWith("set")) {
+                            currentMethodDeclaration += summary.currentClassName + ",";
+                        }
                         for (ParameterImplementation param : currMethod.parameters) {
                             currentMethodDeclaration += param.type;
                         }
@@ -246,6 +249,11 @@ public class printHeaderFile extends Visitor {
     }
 
     public void visitVTableMethodDeclaration(GNode n) {
+
+        String currentMethodName = "";
+        currentMethodName = n.getString(2);
+        int sizeParameters = n.getNode(4).size();
+
         String currentMethodDeclaration = "\t";
         if (n.getString(2).equals("__isa")) {
             currentMethodDeclaration += n.getString(1) + " ";
@@ -260,7 +268,28 @@ public class printHeaderFile extends Visitor {
 
             if (n.getString(2).equals("equals")) {
                 currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
-            } else {
+            } else if (n.getString(2).equals("hashCode")) {
+                currentMethodDeclaration += "(" + summary.currentClassName + ");";
+            } else if (n.getString(2).equals("getClass")) {
+                currentMethodDeclaration += "(" + summary.currentClassName + ");";
+            } else if (sizeParameters > 0) {
+                currentMethodDeclaration += "(";
+                if (currentMethodName.startsWith("set")) {
+                    currentMethodDeclaration += summary.currentClassName + ",";
+                }
+                for (Object param : n.getNode(4)) {
+                    sizeParameters--;
+                    String parameter = param.toString().split(" ")[0];
+                    if (parameter.equals("__Object")) {
+                        parameter = "Object";
+                    }
+                    if (sizeParameters > 0) {
+                        currentMethodDeclaration += parameter + ",";
+                    } else
+                        currentMethodDeclaration += parameter;
+                }
+                currentMethodDeclaration += ");";
+            } else if (sizeParameters == 0) {
                 currentMethodDeclaration += "(";
                 currentMethodDeclaration += summary.currentClassName;
                 currentMethodDeclaration += ");";
@@ -292,6 +321,7 @@ public class printHeaderFile extends Visitor {
         String typeDefs = "";
         String structs = "";
         String currentClassName = "";
+        String currentMethodName;
         String headerGuard = "";
 
         String namespace = "";
@@ -386,7 +416,7 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
         for (int i = 0; i < 21; i++) {
-            if (i != 5) {
+            if (i != 6) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

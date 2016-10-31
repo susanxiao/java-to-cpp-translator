@@ -5,18 +5,21 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test006 {
+	namespace test007 {
 
 
 	struct __A;
 	struct __A_VT;
+	struct __B;
+	struct __B_VT;
 
 	typedef __A* A;
+	typedef __B* B;
 
 	struct __A
 	{
 
-	std::string fld;
+	String a;
 
 	__A_VT* __vptr;
 
@@ -28,9 +31,6 @@ namespace inputs {
 
 	static __A_VT __vtable;
 
-	static void setFld(String);
-	static void almostSetFld(String);
-	static String getFld(A);
 
 	};
 
@@ -38,21 +38,52 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setFld)(String);
-	void (*almostSetFld)(String);
-	String (*getFld)(A);
 	int32_t (*hashCode)(A);
 	Class (*getClass)(A);
 	bool (*equals)(A,Object);
 
 	__A_VT()
 	: __isa(__A::__class()),
-		setFld(&__A::setFld),
-		almostSetFld(&__A::almostSetFld),
-		getFld(&__A::getFld),
 		hashCode(&__A::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals)
+		{}
+
+	};
+
+	struct __B
+	{
+
+	String b;
+
+	__B_VT* __vptr;
+
+	__B();
+
+	Class parent;
+
+	static Class __class();
+
+	static int32_t hashCode(B);
+
+	static __B_VT __vtable;
+
+
+	};
+
+	struct __B_VT
+	{
+
+	Class __isa;
+	int32_t (*hashCode)(B);
+	Class (*getClass)(B);
+	bool (*equals)(B,Object);
+
+	__B_VT()
+	: __isa(__B::__class()),
+		hashCode(&__B::hashCode),
+		getClass((Class(*)(B)) &__Object::getClass),
+		equals((bool(*)(B,Object)) &__Object::equals)
 		{}
 
 	};
