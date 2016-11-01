@@ -122,22 +122,24 @@ public class printMainFile extends Visitor {
                                     }
                                 }
                                 fieldDeclaration += ");";
-                            } else {
-                                fieldDeclaration += "();\n";
                             }
-                        } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
-                            String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
-                            String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
-                            fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
-                        } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
-                            String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
-                            fieldDeclaration += "= " + primaryIdentifier + ";\n";
-                        } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
-                            String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
-                            String field = currentDeclarator.getNode(2).getString(1);
-                            fieldDeclaration += "= " + primaryIdentifier + "." + field + ";\n";
+                        } else {
+                            fieldDeclaration += "();\n";
                         }
-                    } else { fieldDeclaration += ";\n"; }
+
+                    } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
+                        String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
+                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
+                        fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
+                    } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
+                        String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
+                        fieldDeclaration += "= " + primaryIdentifier + ";\n";
+                    } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
+                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
+                        String field = currentDeclarator.getNode(2).getString(1);
+                        fieldDeclaration += "= " + primaryIdentifier + "." + field + ";\n";
+                    }
+                    else { fieldDeclaration += ";\n"; }
                 }
             }
         }

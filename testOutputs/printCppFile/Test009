@@ -24,7 +24,7 @@ namespace inputs{
 
 	String __A::toString(A __this) {
 		std::ostringstream sout;
-		sout << "__this";
+		sout << __this;
 		return new __String(sout.str());
 	}
 

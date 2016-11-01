@@ -548,26 +548,37 @@ public class printCppFile extends Visitor {
         return summary;
     }
 
+    public static int getInteger(String val) {
+        try {
+            int value = Integer.parseInt(val);
+            if (value >= 0 && value <= 20)
+                return value;
+            else return -1;
+        }
+        catch (Exception e) {
+            return -1;
+        }
+    }
+
     public static void main(String[] args) {
 
-        //LoadFileImplementations.prettyPrintAst(node);
-        for (int i = 0; i < 21; i++) {
-            if (i != 9) {
-                continue;
-            }
+        //TO RUN: run-main printCppFile ***
+        // *** a number 0-20
+        int start = 0;
+        int end = 20;
 
-            String test = "./src/test/java/inputs/";
-            String test1 = "";
-            String test2 = "";
-            if (i < 10) {
-                test1 = "test00" + i;
-                test2 = "Test00" + i;
-            } else {
-                test1 = "test0" + i;
-                test2 = "Test0" + i;
+        if (args.length > 0) {
+            int value = getInteger(args[0]);
+            if (value > 0) {
+                start = value;
+                end = value;
             }
-            test += test1;
-            test += "/" + test2 + ".java";
+        }
+
+        //LoadFileImplementations.prettyPrintAst(node);
+        for (int i = start; i <= end; i++) {
+            String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
+            
             try {
                 PrintWriter printerOutput;
 
@@ -590,7 +601,7 @@ public class printCppFile extends Visitor {
                 String outputCppFile = "";
                 outputCppFile += summaryCpp.filePrinted;
 
-                output = new File("testOutputs/printCppFile", test2);
+                output = new File("testOutputs/printCppFile", String.format("Test%03d", i));
                 output.createNewFile();
 
                 printerOutput = new PrintWriter(output);
