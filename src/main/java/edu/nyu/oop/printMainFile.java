@@ -100,23 +100,6 @@ public class printMainFile extends Visitor {
             for (Object o : declaratorsNode) {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
-<<<<<<< HEAD
-                    fieldDeclaration += currentDeclarator.getString(0);
-                    if(currentDeclarator.getNode(2) != null) {
-                        fieldDeclaration += " ";
-                        if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
-                            fieldDeclaration += "= new ";
-                            fieldDeclaration += currentDeclarator.getNode(2).getNode(2).getString(0);
-                            Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
-                            if (declaratorArgs.size() > 0) {
-                                fieldDeclaration += "(";
-                                for (Object arg : declaratorArgs) {
-                                    if (arg instanceof Node) {
-                                        Node currentArg = (Node) arg;
-                                        if (currentArg.getName().equals("StringLiteral")) {
-                                            fieldDeclaration += currentArg.getString(0);
-                                        }
-=======
                     String variable = currentDeclarator.getString(0);
                     fieldDeclaration += variable + " ";
                     if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
@@ -136,7 +119,6 @@ public class printMainFile extends Visitor {
                                     Node currentArg = (Node) arg;
                                     if (currentArg.getName().equals("StringLiteral")) {
                                         fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
->>>>>>> e24dd5e52d55b41493713c7a5a17a82fa80bc925
                                     }
                                 }
                                 fieldDeclaration += ");";
@@ -207,13 +189,10 @@ public class printMainFile extends Visitor {
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
-<<<<<<< HEAD
                                 expressionStatement += currentNode.getNode(0).getString(0);
                                 expressionStatement += "." + currentNode.getString(1);
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
                                 expressionStatement += currentNode.getString(0);
-=======
-
                                 // we have to determine if the parent should be used when accessing the dataString
                                 String variable = currentNode.getNode(0).getString(0);
                                 String dataString = currentNode.getString(1);
@@ -232,7 +211,6 @@ public class printMainFile extends Visitor {
                                         }
                                     }
                                 }
-
                                 if(gateParent) {
                                     expressionStatement += variable;
                                     expressionStatement += "->parent." + dataString + "->data";
@@ -240,7 +218,6 @@ public class printMainFile extends Visitor {
                                     expressionStatement += variable;
                                     expressionStatement += "->" + dataString + "->data";
                                 }
->>>>>>> e24dd5e52d55b41493713c7a5a17a82fa80bc925
                             }
                         }
                     }
