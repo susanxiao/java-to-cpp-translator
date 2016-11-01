@@ -14,6 +14,14 @@ using namespace inputs::test019;
 int main(void)
 {
 
+	int x;
+
+	int x;
+
+	x = 3;
+
+	cout << x << endl;
+
 	return 0;
 }
 

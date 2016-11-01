@@ -20,7 +20,6 @@ int main(void)
 
 	other.some = (B) a;
 
-
 	a->__vptr->printOther(other);
 
 	return 0;

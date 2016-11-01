@@ -41,8 +41,34 @@ public class printMainFile extends Visitor {
     }
 
     public void visitClassBody(GNode n) {
-        GNode methodMain = (GNode) n.getNode(0);
-        visitMethodDeclaration(methodMain);
+        for (Object o: n) {
+            if (o instanceof Node) {
+                GNode currentNode = (GNode) o;
+                if (currentNode.getName().equals("FieldDeclaration")) {
+                    visitFieldDeclaration(currentNode);
+                } else if (currentNode.getName().equals("MethodDeclaration")) {
+                    visitMethodDeclaration(currentNode);
+                }
+            }
+        }
+        //GNode methodMain = (GNode) n.getNode(0);
+        //visitMethodDeclaration(methodMain);
+    }
+
+    public void visitNestedBlock(GNode n) {
+        mainImplementation.append("\t{\n");
+        for (Object o : n) {
+            if (o instanceof Node) {
+                GNode currentNode = (GNode) o;
+                if (currentNode.getName().equals("FieldDeclaration")) {
+                    mainImplementation.append("\t");
+                    visitFieldDeclaration(currentNode);
+                } else if (currentNode.getName().equals("ExpressionStatement")) {
+                    mainImplementation.append("\t");
+                    visitExpressionStatement(currentNode);
+                }
+            }
+        } mainImplementation.append("\t}\n\n");
     }
 
     public void visitMethodDeclaration(GNode n) {
@@ -56,6 +82,8 @@ public class printMainFile extends Visitor {
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
                     visitExpressionStatement(currentNode);
+                } else if (currentNode.getName().equals("Block")) {
+                    visitNestedBlock(currentNode);
                 }
             }
         }
@@ -72,37 +100,40 @@ public class printMainFile extends Visitor {
             for (Object o : declaratorsNode) {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
-                    fieldDeclaration += currentDeclarator.getString(0) + " ";
-                    if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
-                        fieldDeclaration += "= new ";
-                        fieldDeclaration += currentDeclarator.getNode(2).getNode(2).getString(0);
-                        Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
-                        if (declaratorArgs.size() > 0) {
-                            fieldDeclaration += "(";
-                            for (Object arg : declaratorArgs) {
-                                if (arg instanceof Node) {
-                                    Node currentArg = (Node) arg;
-                                    if (currentArg.getName().equals("StringLiteral")) {
-                                        fieldDeclaration += currentArg.getString(0);
+                    fieldDeclaration += currentDeclarator.getString(0);
+                    if(currentDeclarator.getNode(2) != null) {
+                        fieldDeclaration += " ";
+                        if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
+                            fieldDeclaration += "= new ";
+                            fieldDeclaration += currentDeclarator.getNode(2).getNode(2).getString(0);
+                            Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
+                            if (declaratorArgs.size() > 0) {
+                                fieldDeclaration += "(";
+                                for (Object arg : declaratorArgs) {
+                                    if (arg instanceof Node) {
+                                        Node currentArg = (Node) arg;
+                                        if (currentArg.getName().equals("StringLiteral")) {
+                                            fieldDeclaration += currentArg.getString(0);
+                                        }
                                     }
                                 }
+                                fieldDeclaration += ");";
+                            } else {
+                                fieldDeclaration += "();\n";
                             }
-                            fieldDeclaration += ");";
-                        } else {
-                            fieldDeclaration += "();\n";
+                        } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
+                            String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
+                            String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
+                            fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
+                        } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
+                            String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
+                            fieldDeclaration += "= " + primaryIdentifier + ";\n";
+                        } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
+                            String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
+                            String field = currentDeclarator.getNode(2).getString(1);
+                            fieldDeclaration += "= " + primaryIdentifier + "." + field + ";\n";
                         }
-                    } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
-                        String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
-                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
-                        fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
-                    } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
-                        String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
-                        fieldDeclaration += "= " + primaryIdentifier + ";\n";
-                    } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
-                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
-                        String field = currentDeclarator.getNode(2).getString(1);
-                        fieldDeclaration += "= " + primaryIdentifier + "." + field + ";\n";
-                    }
+                    } else { fieldDeclaration += ";\n"; }
                 }
             }
         }
@@ -129,7 +160,9 @@ public class printMainFile extends Visitor {
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
                                     expressionStatement += "." + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
-                                } else { expressionStatement += currentNode.getNode(0).getString(0); }
+                                } else {
+                                    expressionStatement += currentNode.getNode(0).getString(0);
+                                }
                                 // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
                                 expressionStatement += "->__vptr->" + method + "(";
@@ -148,7 +181,7 @@ public class printMainFile extends Visitor {
                                 expressionStatement += ")";
                                 if (method.equals("toString")) {
                                     expressionStatement += "->data ";
-                                }else if(primaryIdentifer.equals("cout")){
+                                } else if (primaryIdentifer.equals("cout")) {
                                     expressionStatement += "->data ";
                                 }
                             } else if (currentNode.getName().equals("StringLiteral")) {
@@ -156,6 +189,8 @@ public class printMainFile extends Visitor {
                             } else if (currentNode.getName().equals("SelectionExpression")) {
                                 expressionStatement += currentNode.getNode(0).getString(0);
                                 expressionStatement += "." + currentNode.getString(1);
+                            } else if (currentNode.getName().equals("PrimaryIdentifier")) {
+                                expressionStatement += currentNode.getString(0);
                             }
                         }
                     }
@@ -188,16 +223,18 @@ public class printMainFile extends Visitor {
                     if (currNode.getName().equals("SelectionExpression")) {
                         String varName = currNode.getNode(0).getString(0);
                         String field = currNode.getString(1);
-                        expressionStatement += varName + "." + field + " = ";
+                        expressionStatement += varName + "." + field;
                     } else if (currNode.getName().equals("PrimaryIdentifier")) {
-                        expressionStatement += currNode.getString(0) + ";\n";
+                        expressionStatement += currNode.getString(0);
                     } else if (currNode.getName().equals("CastExpression")) {
                         String castType = currNode.getNode(0).getNode(0).getString(0);
                         String varName = currNode.getNode(1).getString(0);
-                        expressionStatement += "(" + castType + ") " + varName + ";\n";
+                        expressionStatement += "(" + castType + ") " + varName;
+                    } else if (currNode.getName().equals("IntegerLiteral")) {
+                        expressionStatement += currNode.getString(0);
                     }
-                }
-            }
+                } else { expressionStatement += " " + o.toString() + " "; }
+            } expressionStatement += ";";
         }
         mainImplementation.append(expressionStatement + "\n\n");
     }

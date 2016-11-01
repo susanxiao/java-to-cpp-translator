@@ -14,6 +14,12 @@ using namespace inputs::test020;
 int main(void)
 {
 
+	int x;
+
+	x = 3;
+
+	cout << A->__vptr->x(A)->data  << endl;
+
 	return 0;
 }
 
