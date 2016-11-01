@@ -90,7 +90,7 @@ public class printHeaderFile extends Visitor {
 
 
         if (summary.currentClass.superClassName != null) {
-            s1.append("\tClass parent;\n\n");
+            s1.append("\t__" + summary.currentClass.superClassName +  " parent;\n\n");
         }
 
         s1.append("\tstatic Class __class();\n\n");
@@ -101,6 +101,33 @@ public class printHeaderFile extends Visitor {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("DataLayout")) {
                     s1.append("\tstatic int32_t hashCode(" + summary.currentClassName + ");\n\n");
+
+                    /*
+                    // adding getMethods because we don't have a way to access variables defined in the class
+                    // when translating to C++
+                    if (summary.currentFieldDeclarationList.size() != 0) {
+                        for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
+                            String type;
+                            if (currentDeclaration.staticType.equals("int")) {
+                                type = "int32_t";
+                            } else {
+                                type = currentDeclaration.staticType;
+                            }
+                            s1.append("\tstatic " + type + " get" + currentDeclaration.variableName + "("
+                                    + summary.currentClassName + ")" + ";\n\n");
+
+                            String name = "get" + currentDeclaration.variableName;
+                            MethodImplementation getter = new MethodImplementation(name);
+                            getter.returnType = "String";
+
+
+                            summaryTraversal.classes.get(summary.currentClassName).methods.add(getter);
+                        }
+                    }
+                    */
+
+
+                    // visiting the datalayout because we need to obtain the methods that are declared in the class
                     visitDataLayout(currentNode);
                 }
             }
@@ -195,7 +222,37 @@ public class printHeaderFile extends Visitor {
                 visitVTableMethodDeclaration((GNode) o);
             }
         }
-
+        /*
+        // need to add getMethod function pointers
+        if (summary.currentFieldDeclarationList.size() != 0) {
+            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
+                String type;
+                if (currentDeclaration.staticType.equals("int")) {
+                    type = "int32_t";
+                } else {
+                    type = currentDeclaration.staticType;
+                }
+                s1.append("\t" + type + " (*get" + currentDeclaration.variableName + ")("
+                        + summary.currentClassName + ")" + ";\n");
+            }
+        }
+        */
+        /*
+        // adding methods that are from superClass to make inheritance work
+        String superClassName = summaryTraversal.classes.get(summary.currentClassName).superClassName;
+        ClassImplementation superClass = summaryTraversal.classes.get(superClassName);
+        if(superClass != null){
+            ArrayList<MethodImplementation> methodsSuper = superClass.methods;
+            for(MethodImplementation m : methodsSuper){
+                if(summary.currentClass.methods != null){
+                    if(!(summary.currentClass.methods.contains(m))){
+                        s1.append("\t" + m.returnType + " (*" + m.name + ")("
+                                + summary.currentClassName + ")" + ";\n");
+                    }
+                }
+            }
+        }
+        */
         s1.append(vTableConstructor(n));
         s1.append("\t};\n\n");
     }
@@ -240,10 +297,48 @@ public class printHeaderFile extends Visitor {
                 size--;
                 vTableMethod += ",\n";
             } else {
-                vTableMethod += "\n";
+                vTableMethod += "";
             }
             x.append(vTableMethod);
         }
+        /*
+        // need to add the getMethods for the class members
+        if (summary.currentFieldDeclarationList.size() != 0) {
+            x.append(",\n");
+            int declarationSize = summary.currentFieldDeclarationList.size();
+            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
+                String type = currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType;
+                declarationSize--;
+                String methodString = "\t\t" + "get" + currentDeclaration.variableName + "(&__" + summary.currentClassName + "::get" + currentDeclaration.variableName + ")";
+                if(declarationSize > 0) {
+                    x.append(methodString + "\n");
+                }else{
+                    x.append(methodString);
+                }
+            }
+        }else{
+            x.append("\n");
+        }
+        */
+        /*
+        // adding methods that are from superClass to make inheritance work
+        String superClassName = summaryTraversal.classes.get(summary.currentClassName).superClassName;
+        ClassImplementation superClass = summaryTraversal.classes.get(superClassName);
+        if(superClass != null){
+            x.append(",\n");
+            ArrayList<MethodImplementation> methodsSuper = superClass.methods;
+            for(MethodImplementation m : methodsSuper){
+                if(summary.currentClass.methods != null){
+                    if(!(summary.currentClass.methods.contains(m))){
+                        String methodString = "\t\t" + m.name + "((" + m.returnType + "(*)(" + summary.currentClassName + "))";
+                        methodString += " &__" + superClassName + "::" + m.name+ ")";
+                        x.append(methodString);
+                    }
+                }
+            }
+        }
+        */
+        x.append(("\n"));
         x.append("\t\t{}\n\n");
         return x.toString();
     }
@@ -416,7 +511,7 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
         for (int i = 0; i < 21; i++) {
-            if (i != 6) {
+            if (i != 7) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

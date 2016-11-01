@@ -10,7 +10,7 @@ namespace inputs{
 	namespace test006{
 
 	__A::__A() : __vptr(&__vtable)  {
-		fld = new __String("A")
+		fld = new __String("A");
 
 	}
 

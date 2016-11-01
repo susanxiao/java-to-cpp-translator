@@ -3,7 +3,9 @@ package inputs.test006;
 class A {
     private String fld = "A";
 
-    public A() { }
+    public A() {
+
+    }
 
     public void setFld(String f) {
         fld = f;

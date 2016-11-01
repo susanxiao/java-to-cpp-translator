@@ -43,8 +43,29 @@ public class printCppFile extends Visitor {
         hashCodeMethod.append(summary.currentClassName + " __this){\n");
         hashCodeMethod.append("\t\treturn 5;\n");
         hashCodeMethod.append("\t}\n\n");
-
         cppImplementation.append(hashCodeMethod);
+
+        /*
+        // adding getMethods because we don't have a way to access variables defined in the class
+        // when translating to C++
+        StringBuilder getMethods = new StringBuilder();
+        if (summary.currentFieldDeclarationList.size() != 0) {
+            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
+                String type;
+                if (currentDeclaration.staticType.equals("int")) {
+                    type = "int32_t";
+                } else {
+                    type = currentDeclaration.staticType;
+                }
+                getMethods.append("\t" + type + " __" + className + "::get" + currentDeclaration.variableName + "("
+                        + summary.currentClassName + " __this)" + "{\n");
+                getMethods.append("\t\t" + "return __this->" + currentDeclaration.variableName + ";");
+                getMethods.append("\n\t}\n\n");
+            }
+        }
+
+        cppImplementation.append(getMethods);
+        */
 
         cppImplementation.append("\tClass __" + summary.currentClassName + "::__class() {\n" +
                 "\t\tstatic Class k =\n" +
@@ -77,6 +98,7 @@ public class printCppFile extends Visitor {
     }
 
     public void visitConstructorDeclaration(GNode n) {
+        out.println(n);
 
         String constructorDeclaration = n.getString(2);
         Node formalParameters = n.getNode(3);
@@ -122,7 +144,7 @@ public class printCppFile extends Visitor {
         constructor += " : __vptr(&__vtable)";
 
         String constructorInitializer = "";
-
+        out.println(block);
         for (Object o : block) {
             if (o instanceof Node) {
                 Node currentNode = (Node) o;
@@ -135,28 +157,36 @@ public class printCppFile extends Visitor {
                                 if (currentNode1.getNode(0).getName().equals("PrimaryIdentifier")
                                         && currentNode1.getNode(2).getName().equals("NewClassExpression")) {
 
-                                    constructorInitializer += currentNode1.getNode(0).getString(0);
-                                    constructorInitializer += "(";
-
+                                    String primaryIdentifier = currentNode1.getNode(0).getString(0);
                                     Node newClassExpression = currentNode1.getNode(2);
                                     String newClassType = newClassExpression.getNode(2).getString(0);
                                     Node newClassExpressionArgs = newClassExpression.getNode(3);
+                                    String qualifiedIdentifier = newClassExpression.getNode(2).getString(0);
 
                                     int argsSize = newClassExpressionArgs.size();
                                     if (newClassExpressionArgs.size() > 0) {
+                                        constructorInitializer += primaryIdentifier + "(";
                                         for (Object arg : newClassExpressionArgs) {
                                             argsSize--;
-                                            Node currentArg = (Node) arg;
-                                            if (currentArg.getNode(0).getName().equals("StringLiteral")) {
-                                                if (argsSize > 0) {
-                                                    constructorInitializer += currentArg.getNode(0).getString(0) + ",";
-                                                } else {
-                                                    constructorInitializer += currentArg.getNode(0).getString(0);
+                                            if (arg instanceof Node) {
+                                                Node currentArg = (Node) arg;
+                                                if (currentArg.getName().equals("StringLiteral")) {
+                                                    constructorInitializer += "new " + qualifiedIdentifier + "("
+                                                            + currentArg.getString(0) + ")";
+                                                } else if (currentArg.getNode(0) instanceof Node) {
+
+                                                    if (currentArg.getNode(0).getName().equals("StringLiteral")) {
+                                                        if (argsSize > 0) {
+                                                            constructorInitializer += currentArg.getNode(0).getString(0) + ",";
+                                                        } else {
+                                                            constructorInitializer += currentArg.getNode(0).getString(0);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
+                                        constructorInitializer += ")";
                                     }
-                                    constructorInitializer += ")";
                                 } else if (currentNode1.getNode(0).getName().equals("PrimaryIdentifier")) {
                                     constructorInitializer += currentNode1.getNode(0).getString(0);
                                     constructorInitializer += "(";
@@ -217,10 +247,10 @@ public class printCppFile extends Visitor {
         }
         constructor += initializerBlock;
 
-        if(summary.currentFieldDeclarationList.size() > 0){
-            for(FieldDeclaration o1 : summary.currentFieldDeclarationList){
-                if(o1.staticType.equals("String")){
-                    if(!(o1.stringLiteral == null)) {
+        if (summary.currentFieldDeclarationList.size() > 0) {
+            for (FieldDeclaration o1 : summary.currentFieldDeclarationList) {
+                if (o1.staticType.equals("String")) {
+                    if (!(o1.stringLiteral == null)) {
                         constructor += o1.variableName + " = new __String(" + o1.stringLiteral + ");\n";
                         continue;
                     }
@@ -281,9 +311,9 @@ public class printCppFile extends Visitor {
                         String paramIdentifier = currentNode.getNode(1).getNode(0).getString(0) + " ";
                         String paramName = currentNode.getString(3);
                         if (numberParameters > 0) {
-                            if(!summary.currentMethodName.startsWith("set") && paramName.equals("__this")){
+                            if (!summary.currentMethodName.startsWith("set") && paramName.equals("__this")) {
 
-                            }else {
+                            } else {
                                 parameter += paramIdentifier;
                                 parameter += paramName + ",";
                                 cppImplementation.append(parameter);
@@ -317,10 +347,10 @@ public class printCppFile extends Visitor {
                 String expressionStatement = "\t\t";
                 if (currentNode.getNode(0).getNode(0).getName().equals("PrimaryIdentifier")) {
                     String currentPrimaryIdentifier = currentNode.getNode(0).getNode(0).getString(0);
-                    if(summary.thisGate && summary.currentMethodName.startsWith("set")) {
+                    if (summary.thisGate && summary.currentMethodName.startsWith("set")) {
                         expressionStatement += "__this->";
                         expressionStatement += currentPrimaryIdentifier;
-                    }else{
+                    } else {
                         expressionStatement += currentPrimaryIdentifier;
                     }
                     if (currentNode.getNode(0).getNode(2).getName().equals("PrimaryIdentifier")) {
@@ -375,11 +405,11 @@ public class printCppFile extends Visitor {
                     }
                 }
             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
-                if(summary.thisGate){
+                if (summary.thisGate) {
                     returnPrimaryIdentifier += "\t\treturn  __this->" + currentNode.getString(0) + ";";
                     cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
                     return;
-                }else {
+                } else {
                     returnPrimaryIdentifier += "\t\treturn " + currentNode.getString(0) + ";";
                     cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
                     return;
@@ -477,7 +507,7 @@ public class printCppFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i != 6) {
+            if (i != 7) {
                 continue;
             }
 

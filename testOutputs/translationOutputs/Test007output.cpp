@@ -20,10 +20,6 @@ namespace inputs{
 		return 5;
 	}
 
-	String geta(A __this){
-		return __this->a;	
-}
-
 	Class __A::__class() {
 		static Class k =
 			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
@@ -41,10 +37,6 @@ namespace inputs{
 	int32_t __B::hashCode(B __this){
 		return 5;
 	}
-
-	String getb(B __this){
-		return __this->b;	
-}
 
 	Class __B::__class() {
 		static Class k =

@@ -5,7 +5,7 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test008 {
+	namespace test007 {
 
 
 	struct __A;
