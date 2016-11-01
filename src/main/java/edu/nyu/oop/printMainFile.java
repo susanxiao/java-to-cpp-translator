@@ -100,6 +100,7 @@ public class printMainFile extends Visitor {
             for (Object o : declaratorsNode) {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
+<<<<<<< HEAD
                     fieldDeclaration += currentDeclarator.getString(0);
                     if(currentDeclarator.getNode(2) != null) {
                         fieldDeclaration += " ";
@@ -115,6 +116,27 @@ public class printMainFile extends Visitor {
                                         if (currentArg.getName().equals("StringLiteral")) {
                                             fieldDeclaration += currentArg.getString(0);
                                         }
+=======
+                    String variable = currentDeclarator.getString(0);
+                    fieldDeclaration += variable + " ";
+                    if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
+                        fieldDeclaration += "= new ";
+                        String qualifiedIdentifier = currentDeclarator.getNode(2).getNode(2).getString(0);
+                        fieldDeclaration += qualifiedIdentifier;
+
+                        // have to add the class and variable to a list so that we can use inheritance
+                        summary.classNames.add(type);
+                        summary.variables.add(variable);
+
+                        Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
+                        if (declaratorArgs.size() > 0) {
+                            fieldDeclaration += "(";
+                            for (Object arg : declaratorArgs) {
+                                if (arg instanceof Node) {
+                                    Node currentArg = (Node) arg;
+                                    if (currentArg.getName().equals("StringLiteral")) {
+                                        fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
+>>>>>>> e24dd5e52d55b41493713c7a5a17a82fa80bc925
                                     }
                                 }
                                 fieldDeclaration += ");";
@@ -156,13 +178,11 @@ public class printMainFile extends Visitor {
                             if (currentNode.getName().equals("CallExpression")) {
                                 if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "." + currentNode.getNode(0).getString(1);
+                                    expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "." + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
-                                } else {
-                                    expressionStatement += currentNode.getNode(0).getString(0);
-                                }
+                                    expressionStatement += "->" + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
+                                } else { expressionStatement += currentNode.getNode(0).getString(0); }
                                 // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
                                 expressionStatement += "->__vptr->" + method + "(";
@@ -187,10 +207,40 @@ public class printMainFile extends Visitor {
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
+<<<<<<< HEAD
                                 expressionStatement += currentNode.getNode(0).getString(0);
                                 expressionStatement += "." + currentNode.getString(1);
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
                                 expressionStatement += currentNode.getString(0);
+=======
+
+                                // we have to determine if the parent should be used when accessing the dataString
+                                String variable = currentNode.getNode(0).getString(0);
+                                String dataString = currentNode.getString(1);
+                                String classVar = "";
+                                boolean gateParent = true;
+                                for(int i = 0; i < summary.classNames.size(); i++){
+                                    out.println(summary.variables.get(i));
+                                    out.println(variable);
+                                    if(summary.variables.get(i).equals(variable)){
+                                        classVar = summary.classNames.get(i);
+                                        out.println(classVar);
+                                        for(int j = 0; i < summary.classNames.size(); i++){
+                                            if(summary.classNames.get(i).equals(classVar) && summary.variables.get(i).equals(dataString)){
+                                                gateParent = false;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if(gateParent) {
+                                    expressionStatement += variable;
+                                    expressionStatement += "->parent." + dataString + "->data";
+                                }else{
+                                    expressionStatement += variable;
+                                    expressionStatement += "->" + dataString + "->data";
+                                }
+>>>>>>> e24dd5e52d55b41493713c7a5a17a82fa80bc925
                             }
                         }
                     }
@@ -198,15 +248,23 @@ public class printMainFile extends Visitor {
                 expressionStatement += " << endl;";
             } else {
                 Node callExpressionNode = n.getNode(0);
+                String methodName = callExpressionNode.getString(2);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
-                expressionStatement += callExpressionNode.getString(2);
+                expressionStatement += methodName;
                 if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                     expressionStatement += "(";
                     Node argumentsNode = (Node) callExpressionNode.getNode(3);
+                    if(methodName.startsWith("set")){
+                        expressionStatement += argumentsNode.getString(0) + ", ";
+                    }
                     if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
                         Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
+                        String newClassIdentifier = "new ";
+                        newClassIdentifier += newClassExpressionNode.getNode(2).getString(0) + "(";
+                        expressionStatement += newClassIdentifier;
                         expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                        expressionStatement += ")";
                     }
                     else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         expressionStatement += argumentsNode.getNode(1).getString(0);
@@ -250,6 +308,8 @@ public class printMainFile extends Visitor {
     static class printMainFileSummary {
         String currentClassName;
         String filePrinted;
+        ArrayList<String> classNames = new ArrayList<String>();
+        ArrayList<String> variables = new ArrayList<String>();
     }
 
     public printMainFile.printMainFileSummary getSummary(GNode n) {
@@ -288,6 +348,7 @@ public class printMainFile extends Visitor {
             Node currentClass = (Node) o;
             if (currentClass.getName().equals("ClassDeclaration")) {
                 if (currentClass.getString(1).contains("Test")) {
+                    summary.currentClassName = currentClass.getString(1);
                     visitClassDeclaration((GNode) currentClass);
                 }
             }
@@ -314,7 +375,7 @@ public class printMainFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i == 23) {
+            if (i != 7) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

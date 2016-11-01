@@ -19,7 +19,9 @@ namespace inputs {
 	struct __A
 	{
 
-	std::string a;
+	String a;
+
+	__A_VT* __vptr;
 
 	__A();
 
@@ -27,7 +29,7 @@ namespace inputs {
 
 	static int32_t hashCode(A);
 
-	__A_VT* __vptr;
+	static String geta(A);
 
 	static __A_VT __vtable;
 
@@ -41,12 +43,14 @@ namespace inputs {
 	int32_t (*hashCode)(A);
 	Class (*getClass)(A);
 	bool (*equals)(A,Object);
+	String (*geta)(A);
 
 	__A_VT()
 	: __isa(__A::__class()),
 		hashCode(&__A::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals)
+		equals((bool(*)(A,Object)) &__Object::equals),
+		geta(&__A::geta)
 		{}
 
 	};
@@ -54,7 +58,9 @@ namespace inputs {
 	struct __B
 	{
 
-	std::string b;
+	String b;
+
+	__B_VT* __vptr;
 
 	__B();
 
@@ -62,9 +68,9 @@ namespace inputs {
 
 	static Class __class();
 
-	static int32_t hashCode(A);
+	static int32_t hashCode(B);
 
-	__B_VT* __vptr;
+	static String getb(B);
 
 	static __B_VT __vtable;
 
@@ -78,12 +84,16 @@ namespace inputs {
 	int32_t (*hashCode)(B);
 	Class (*getClass)(B);
 	bool (*equals)(B,Object);
+	String (*getb)(B);
+	String (*geta)(B);
 
 	__B_VT()
 	: __isa(__B::__class()),
 		hashCode(&__B::hashCode),
 		getClass((Class(*)(B)) &__Object::getClass),
-		equals((bool(*)(B,Object)) &__Object::equals)
+		equals((bool(*)(B,Object)) &__Object::equals),
+		getb(&__B::getb),
+		geta(String(*)(B))(&__A::geta)
 		{}
 
 	};
