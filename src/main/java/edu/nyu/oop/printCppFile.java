@@ -34,7 +34,9 @@ public class printCppFile extends Visitor {
         }
         String className = n.getString(1);
         summary.currentClassName = className;
+        summary.methodList = summaryTraversal.classes.get(className).methods;
         summary.currentFieldDeclarationList = summaryTraversal.classes.get(className).declarations;
+        summary.superClassName = summaryTraversal.classes.get(className).superClassName;
 
         visitClassBody((GNode) n.getNode(5));
 
@@ -45,6 +47,22 @@ public class printCppFile extends Visitor {
         hashCodeMethod.append("\t}\n\n");
         cppImplementation.append(hashCodeMethod);
 
+        boolean toStringGate = true;
+        for(MethodImplementation m : summary.methodList){
+            if(m.name.equals("toString")){
+                toStringGate = false;
+                break;
+            }
+        }
+        StringBuilder toString = new StringBuilder();
+        if(toStringGate){
+            toString.append("\tString __" + className + "::toString(" + className + " __this) {\n" +
+                    "\t\tstd::ostringstream sout;\n" +
+                    "\t\tsout << __this;\n" +
+                    "\t\treturn new __String(sout.str());\n" +
+                    "\t}\n\n");
+        }
+        cppImplementation.append(toString);
         /*
         // adding getMethods because we don't have a way to access variables defined in the class
         // when translating to C++
@@ -98,7 +116,6 @@ public class printCppFile extends Visitor {
     }
 
     public void visitConstructorDeclaration(GNode n) {
-        out.println(n);
 
         String constructorDeclaration = n.getString(2);
         Node formalParameters = n.getNode(3);
@@ -143,8 +160,7 @@ public class printCppFile extends Visitor {
 
         constructor += " : __vptr(&__vtable)";
 
-        String constructorInitializer = "";
-        out.println(block);
+        String blockStrings = "";
         for (Object o : block) {
             if (o instanceof Node) {
                 Node currentNode = (Node) o;
@@ -153,7 +169,7 @@ public class printCppFile extends Visitor {
                         if (o1 instanceof Node) {
                             Node currentNode1 = (Node) o1;
                             if (currentNode1.getName().equals("Expression")) {
-                                constructorInitializer += ",\n\t\t";
+                                blockStrings += "\n\t\t";
                                 if (currentNode1.getNode(0).getName().equals("PrimaryIdentifier")
                                         && currentNode1.getNode(2).getName().equals("NewClassExpression")) {
 
@@ -165,40 +181,52 @@ public class printCppFile extends Visitor {
 
                                     int argsSize = newClassExpressionArgs.size();
                                     if (newClassExpressionArgs.size() > 0) {
-                                        constructorInitializer += primaryIdentifier + "(";
+                                        if(summary.superClassName == null) {
+                                            blockStrings += primaryIdentifier + " = ";
+                                        }else{
+                                            boolean gateParent = true;
+                                            for(FieldDeclaration curr : summary.currentFieldDeclarationList){
+                                                if(primaryIdentifier.equals(curr.variableName)){
+                                                    blockStrings += primaryIdentifier + " = ";
+                                                    gateParent = false;
+                                                }
+                                            }
+                                            if(gateParent){
+                                                blockStrings += "parent." + primaryIdentifier + " = ";
+                                            }
+                                        }
                                         for (Object arg : newClassExpressionArgs) {
                                             argsSize--;
                                             if (arg instanceof Node) {
                                                 Node currentArg = (Node) arg;
                                                 if (currentArg.getName().equals("StringLiteral")) {
-                                                    constructorInitializer += "new " + qualifiedIdentifier + "("
-                                                            + currentArg.getString(0) + ")";
+                                                    blockStrings += "new " + qualifiedIdentifier + "("
+                                                            + currentArg.getString(0) + ");";
                                                 } else if (currentArg.getNode(0) instanceof Node) {
 
                                                     if (currentArg.getNode(0).getName().equals("StringLiteral")) {
                                                         if (argsSize > 0) {
-                                                            constructorInitializer += currentArg.getNode(0).getString(0) + ",";
+                                                            blockStrings += currentArg.getNode(0).getString(0) + ",";
                                                         } else {
-                                                            constructorInitializer += currentArg.getNode(0).getString(0);
+                                                            blockStrings += currentArg.getNode(0).getString(0);
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                        constructorInitializer += ")";
                                     }
                                 } else if (currentNode1.getNode(0).getName().equals("PrimaryIdentifier")) {
-                                    constructorInitializer += currentNode1.getNode(0).getString(0);
-                                    constructorInitializer += "(";
-                                    constructorInitializer += currentNode1.getNode(2).getString(0);
-                                    constructorInitializer += ")";
+                                    blockStrings += currentNode1.getNode(0).getString(0);
+                                    if(currentNode1.getNode(2).getName().equals("ThisExpression")){
+                                        blockStrings += " = this;\n";
+                                    }
                                 } else if (currentNode1.getNode(0).getName().equals("SelectionExpression")) {
                                     if (currentNode1.getNode(0).getNode(0).getName().equals("ThisExpression")) {
-                                        constructorInitializer += currentNode1.getNode(0).getString(1);
+                                        blockStrings += currentNode1.getNode(0).getString(1);
                                     }
-                                    constructorInitializer += "(";
-                                    constructorInitializer += currentNode1.getNode(2).getString(0);
-                                    constructorInitializer += ")";
+                                    blockStrings += "(";
+                                    blockStrings += currentNode1.getNode(2).getString(0);
+                                    blockStrings += ")";
                                 }
 
                             }
@@ -209,11 +237,11 @@ public class printCppFile extends Visitor {
 
         }
 
-        constructor += constructorInitializer;
+        //constructor += blockStrings;
         constructor += "  {\n";
 
         // initializer block
-        String initializerBlock = "\t\t";
+        blockStrings += "\n\t\t";
         for (Object o : block) {
             if (o instanceof Node) {
                 Node currentNode = (Node) o;
@@ -223,7 +251,7 @@ public class printCppFile extends Visitor {
                             Node currentNode2 = (Node) o1;
                             if (currentNode2.getName().equals("CallExpression")) {
                                 if (currentNode2.getNode(0).getNode(0).getString(0).equals("cout")) {
-                                    initializerBlock += "cout << ";
+                                    blockStrings += "cout << ";
                                 }
                                 if (currentNode2.getString(2).equals("endl")) {
                                     Node args = currentNode2.getNode(3);
@@ -231,11 +259,25 @@ public class printCppFile extends Visitor {
                                         if (o3 instanceof Node) {
                                             Node currentNode3 = (Node) o3;
                                             if (currentNode3.getName().equals("PrimaryIdentifier")) {
-                                                initializerBlock += currentNode3.getString(0) + " ";
+                                                String primaryIdentifier = currentNode3.getString(0);
+                                                if(summary.superClassName == null) {
+                                                    blockStrings += primaryIdentifier + "->data ";
+                                                }else{
+                                                    boolean gateParent = true;
+                                                    for(FieldDeclaration curr : summary.currentFieldDeclarationList){
+                                                        if(primaryIdentifier.equals(curr.variableName)){
+                                                            blockStrings += primaryIdentifier + "->data ";
+                                                            gateParent = false;
+                                                        }
+                                                    }
+                                                    if(gateParent){
+                                                        blockStrings += "parent." + primaryIdentifier + "->data ";
+                                                    }
+                                                }
                                             }
                                         }
                                     }
-                                    initializerBlock += "<< endl;\n";
+                                    blockStrings += "<< endl;\n";
                                 }
                             }
 
@@ -245,18 +287,19 @@ public class printCppFile extends Visitor {
                 }
             }
         }
-        constructor += initializerBlock;
-
+       // constructor += initializerBlock;
         if (summary.currentFieldDeclarationList.size() > 0) {
             for (FieldDeclaration o1 : summary.currentFieldDeclarationList) {
                 if (o1.staticType.equals("String")) {
                     if (!(o1.stringLiteral == null)) {
-                        constructor += o1.variableName + " = new __String(" + o1.stringLiteral + ");\n";
+                        blockStrings += o1.variableName + " = new __String(" + o1.stringLiteral + ");\n";
                         continue;
                     }
                 }
             }
         }
+
+        constructor += blockStrings;
 
         constructor += "\n\t}";
 
@@ -450,6 +493,8 @@ public class printCppFile extends Visitor {
         int numberParameters;
         String currentMethodName;
         ArrayList<FieldDeclaration> currentFieldDeclarationList;
+        String superClassName;
+        ArrayList<MethodImplementation> methodList;
 
     }
 
@@ -507,7 +552,7 @@ public class printCppFile extends Visitor {
 
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = 0; i < 21; i++) {
-            if (i != 7) {
+            if (i != 9) {
                 continue;
             }
 

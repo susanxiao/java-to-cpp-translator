@@ -39,6 +39,7 @@ public class printHeaderFile extends Visitor {
     public void visitHeaderDeclaration(GNode n) {
         String className = n.getString(0);
 
+        summary.methodNames = "";
         summary.currentClassName = className;
         summary.currentClass = summaryTraversal.classes.get(className);
         summary.currentMethodList = summaryTraversal.classes.get(className).methods;
@@ -216,12 +217,16 @@ public class printHeaderFile extends Visitor {
     }
 
     public void visitVTable(GNode n) {
+        if(!(summary.methodNames.contains("toString"))){
+            s1.append("\tstatic String toString(" + summary.currentClassName + ");\n");
+        }
         s1.append("\n\t};\n\n\tstruct __" + summary.currentClassName + "_VT\n\t{\n\n");
         for (Object o : n) {
             if (o instanceof Node) {
                 visitVTableMethodDeclaration((GNode) o);
             }
         }
+
         /*
         // need to add getMethod function pointers
         if (summary.currentFieldDeclarationList.size() != 0) {
@@ -253,6 +258,9 @@ public class printHeaderFile extends Visitor {
             }
         }
         */
+        if(!(summary.methodNames.contains("toString"))){
+            s1.append("\tString (*toString)(" + summary.currentClassName + ");\n");
+        }
         s1.append(vTableConstructor(n));
         s1.append("\t};\n\n");
     }
@@ -276,6 +284,9 @@ public class printHeaderFile extends Visitor {
                 for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
                     // if the class implements the method
                     if (currMethod.name == methodComparing) {
+
+                        summary.methodNames += currMethod.name;
+
                         vTableMethod += "\t\t" + currentMethod.getString(2);
                         vTableMethod += "(&__";
                         vTableMethod += summary.currentClassName;
@@ -300,6 +311,9 @@ public class printHeaderFile extends Visitor {
                 vTableMethod += "";
             }
             x.append(vTableMethod);
+        }
+        if(!(summary.methodNames.contains("toString"))){
+            x.append(",\n\t\ttoString(&__" + summary.currentClassName + "::toString)");
         }
         /*
         // need to add the getMethods for the class members
@@ -392,6 +406,8 @@ public class printHeaderFile extends Visitor {
 
             s1.append(currentMethodDeclaration + "\n");
         }
+
+
     }
 
 
@@ -428,6 +444,8 @@ public class printHeaderFile extends Visitor {
         ArrayList<MethodImplementation> currentMethodList;
         ArrayList<FieldDeclaration> currentFieldDeclarationList;
         ArrayList<ConstructorImplementation> currentConstructorList;
+
+        String methodNames = "";
 
     }
 
@@ -511,7 +529,7 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
         for (int i = 0; i < 21; i++) {
-            if (i != 7) {
+            if (i != 8) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

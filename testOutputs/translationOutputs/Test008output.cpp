@@ -9,9 +9,10 @@ using namespace std;
 namespace inputs{
 	namespace test008{
 
-	__A::__A() : __vptr(&__vtable),
-		a(new __String("A"))  {
-		cout << a << endl;
+	__A::__A() : __vptr(&__vtable)  {
+
+		a = new __String("A");
+		cout << a->data << endl;
 
 	}
 
@@ -28,10 +29,11 @@ namespace inputs{
 	}
 
 
-	__B::__B() : __vptr(&__vtable),
-		b(new __String("B")),
-		a(new __String("B"))  {
-		cout << a << endl;
+	__B::__B() : __vptr(&__vtable)  {
+
+		b = new __String("B");
+		parent.a = new __String("B");
+		cout << parent.a->data << endl;
 
 	}
 

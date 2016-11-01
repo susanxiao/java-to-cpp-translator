@@ -9,9 +9,9 @@ using namespace std;
 namespace inputs{
 	namespace test007{
 
-	__A::__A() : __vptr(&__vtable),
-		a(new __String("A"))  {
-		
+	__A::__A() : __vptr(&__vtable)  {
+
+		a = new __String("A");		
 	}
 
 	__A_VT __A::__vtable;
@@ -27,9 +27,9 @@ namespace inputs{
 	}
 
 
-	__B::__B() : __vptr(&__vtable),
-		b(new __String("B"))  {
-		
+	__B::__B() : __vptr(&__vtable)  {
+
+		b = new __String("B");		
 	}
 
 	__B_VT __B::__vtable;

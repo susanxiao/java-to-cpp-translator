@@ -132,10 +132,10 @@ public class printMainFile extends Visitor {
                             if (currentNode.getName().equals("CallExpression")) {
                                 if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "." + currentNode.getNode(0).getString(1);
+                                    expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "." + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
+                                    expressionStatement += "->" + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
                                 } else { expressionStatement += currentNode.getNode(0).getString(0); }
                                 // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
