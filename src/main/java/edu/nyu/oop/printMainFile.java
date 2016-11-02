@@ -101,45 +101,51 @@ public class printMainFile extends Visitor {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
                     String variable = currentDeclarator.getString(0);
-                    fieldDeclaration += variable + " ";
-                    if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
-                        fieldDeclaration += "= new ";
-                        String qualifiedIdentifier = currentDeclarator.getNode(2).getNode(2).getString(0);
-                        fieldDeclaration += qualifiedIdentifier;
+                    fieldDeclaration += variable;
+                    if (currentDeclarator.getNode(2) != null) {
+                        if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
+                            fieldDeclaration += " = new ";
+                            String qualifiedIdentifier = currentDeclarator.getNode(2).getNode(2).getString(0);
+                            fieldDeclaration += qualifiedIdentifier;
 
-                        // have to add the class and variable to a list so that we can use inheritance
-                        summary.classNames.add(type);
-                        summary.variables.add(variable);
+                            // have to add the class and variable to a list so that we can use inheritance
+                            summary.classNames.add(type);
+                            summary.variables.add(variable);
 
-                        Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
-                        if (declaratorArgs.size() > 0) {
-                            fieldDeclaration += "(";
-                            for (Object arg : declaratorArgs) {
-                                if (arg instanceof Node) {
-                                    Node currentArg = (Node) arg;
-                                    if (currentArg.getName().equals("StringLiteral")) {
-                                        fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
+                            Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
+                            if (declaratorArgs.size() > 0) {
+                                fieldDeclaration += "(";
+                                for (Object arg : declaratorArgs) {
+                                    if (arg instanceof Node) {
+                                        Node currentArg = (Node) arg;
+                                        if (currentArg.getName().equals("StringLiteral")) {
+                                            fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
+                                        }
                                     }
+                                    fieldDeclaration += ");";
                                 }
-                                fieldDeclaration += ");";
+                            } else {
+                                fieldDeclaration += "();\n";
                             }
-                        } else {
-                            fieldDeclaration += "();\n";
-                        }
 
-                    } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
-                        String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
-                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
-                        fieldDeclaration += "= (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
-                    } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
-                        String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
-                        fieldDeclaration += "= " + primaryIdentifier + ";\n";
-                    } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
-                        String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
-                        String field = currentDeclarator.getNode(2).getString(1);
-                        fieldDeclaration += "= " + primaryIdentifier + "." + field + ";\n";
+                        } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
+                            String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
+                            String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
+                            fieldDeclaration += " = (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
+                        } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
+                            String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
+                            fieldDeclaration += " = " + primaryIdentifier + ";\n";
+                        } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
+                            String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
+                            String field = currentDeclarator.getNode(2).getString(1);
+                            fieldDeclaration += " = " + primaryIdentifier + "." + field + ";\n";
+                        } else {
+                            fieldDeclaration += ";\n";
+                        }
+                    } else {
+                        //only instantiated variable, not defined
+                        fieldDeclaration += ";\n";
                     }
-                    else { fieldDeclaration += ";\n"; }
                 }
             }
         }
@@ -175,18 +181,20 @@ public class printMainFile extends Visitor {
                                 if (args.size() > 0) {
                                     for (Object o1 : args) {
                                         argSize--;
-                                        if (argSize > 0) {
-                                            expressionStatement += o1.toString() + ",";
-                                        } else {
-                                            expressionStatement += o1.toString();
+                                        if(primaryIdentifer.equals(method)) {
+                                            if (argSize > 0) {
+                                                expressionStatement += o1.toString() + ",";
+                                            } else {
+                                                expressionStatement += o1.toString();
+                                            }
                                         }
                                     }
                                 }
                                 expressionStatement += ")";
                                 if (method.equals("toString")) {
-                                    expressionStatement += "->data ";
+                                    expressionStatement += "->data";
                                 } else if (primaryIdentifer.equals("cout")) {
-                                    expressionStatement += "->data ";
+                                    expressionStatement += "->data";
                                 }
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
@@ -196,29 +204,31 @@ public class printMainFile extends Visitor {
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
                                 expressionStatement += currentNode.getString(0);
                                 // we have to determine if the parent should be used when accessing the dataString
-                                String variable = currentNode.getNode(0).getString(0);
-                                String dataString = currentNode.getString(1);
-                                String classVar = "";
-                                boolean gateParent = true;
-                                for(int i = 0; i < summary.classNames.size(); i++){
-                                    out.println(summary.variables.get(i));
-                                    out.println(variable);
-                                    if(summary.variables.get(i).equals(variable)){
-                                        classVar = summary.classNames.get(i);
-                                        out.println(classVar);
-                                        for(int j = 0; i < summary.classNames.size(); i++){
-                                            if(summary.classNames.get(i).equals(classVar) && summary.variables.get(i).equals(dataString)){
-                                                gateParent = false;
+                                if (currentNode.size() - 1 > 0) { //when the primary identifier has more children than just a variable name, parent usage becomes important
+                                    String variable = currentNode.getNode(0).getString(0);
+                                    String dataString = currentNode.getString(1);
+                                    String classVar = "";
+                                    boolean gateParent = true;
+                                    for (int i = 0; i < summary.classNames.size(); i++) {
+                                        out.println(summary.variables.get(i));
+                                        out.println(variable);
+                                        if (summary.variables.get(i).equals(variable)) {
+                                            classVar = summary.classNames.get(i);
+                                            out.println(classVar);
+                                            for (int j = 0; i < summary.classNames.size(); i++) {
+                                                if (summary.classNames.get(i).equals(classVar) && summary.variables.get(i).equals(dataString)) {
+                                                    gateParent = false;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                if(gateParent) {
-                                    expressionStatement += variable;
-                                    expressionStatement += "->parent." + dataString + "->data";
-                                }else{
-                                    expressionStatement += variable;
-                                    expressionStatement += "->" + dataString + "->data";
+                                    if (gateParent) {
+                                        expressionStatement += variable;
+                                        expressionStatement += "->parent." + dataString + "->data";
+                                    } else {
+                                        expressionStatement += variable;
+                                        expressionStatement += "->" + dataString + "->data";
+                                    }
                                 }
                             }
                         }
@@ -365,7 +375,7 @@ public class printMainFile extends Visitor {
         }
 
         //LoadFileImplementations.prettyPrintAst(node);
-        for (int i = start; i < end; i++) {
+        for (int i = start; i <= end; i++) {
             String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
 
             try {

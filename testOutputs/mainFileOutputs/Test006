@@ -18,11 +18,11 @@ int main(void)
 
 	a->__vptr->almostSetFld(new __String("B"));
 
-	cout << a->__vptr->getFld(a)->data  << endl;
+	cout << a->__vptr->getFld()->data << endl;
 
 	a->__vptr->setFld(a, new __String("B"));
 
-	cout << a->__vptr->getFld(a)->data  << endl;
+	cout << a->__vptr->getFld()->data << endl;
 
 	return 0;
 }
