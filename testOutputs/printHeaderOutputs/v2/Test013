@@ -24,21 +24,21 @@ namespace inputs {
 		};
 
 		struct __A_VT {
-			Class __isa;
-			void (*setA)(A, String);
-			void (*printOther)(A, A);
-			int32_t (*hashCode)(A);
-			Class (*getClass)(A);
 			bool (*equals)(A, Object);
+			Class (*getClass)(A);
+			int32_t (*hashcode)(A);
+			void (*printOther)(A, A);
+			void (*setA)(A, String);
+			String (*toString)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
-			hashcode((int32_t(*)(A))&__Object::hashcode),
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
-			toString((String(*)(A))&__Object::toString),
+			hashcode((int32_t(*)(A))&__Object::hashcode),
+			printOther(&__A::printOther),
 			setA(&__A::setA),
-			printOther(&__A::printOther)
+			toString((String(*)(A))&__Object::toString)
 			{}
 		};
 	}

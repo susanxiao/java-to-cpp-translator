@@ -16,6 +16,8 @@ import xtc.tree.Visitor;
 import java.lang.*;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.TreeMap;
 
 
 /**
@@ -34,7 +36,7 @@ public class printHeaderFile extends Visitor {
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
-    private AstTraversal.AstTraversalSummary summaryTraversal;
+    public AstTraversal.AstTraversalSummary summaryTraversal;
 
     // visitXXX methods
     public void visitHeaderDeclaration(GNode n) {
@@ -49,6 +51,9 @@ public class printHeaderFile extends Visitor {
             for (String name : namespaces) {
                 summary.addNamespace(name);
             }
+        }
+        else {
+            summary.code.append("\n");
         }
 
         summary.currentClass = summaryTraversal.classes.get(className);
@@ -223,176 +228,91 @@ public class printHeaderFile extends Visitor {
 
     public void visitVTable(GNode n) {
 
-        for (Object o : n) {
-            if (o instanceof Node) {
-                visitVTableMethodDeclaration(GNode.cast(o));
-            }
-        }
-        summary.code.append("\n");
+        //NOTE: this does not handle overloading
+        //ensure that the order is the same
+        TreeMap<String, String> vMethods = new TreeMap<>();
+        TreeMap<String, String> vConstructor = new TreeMap<>();
 
-        vTableConstructor(n);
+        //populate the treemaps
 
-        /*
-        // need to add getMethod function pointers
-        if (summary.currentFieldDeclarationList.size() != 0) {
-            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
-                String type;
-                if (currentDeclaration.staticType.equals("int")) {
-                    type = "int32_t";
-                } else {
-                    type = currentDeclaration.staticType;
-                }
-                s1.append("\t" + type + " (*get" + currentDeclaration.variableName + ")("
-                        + summary.currentClassName + ")" + ";\n");
-            }
-        }
-        */
-        /*
-        // adding methods that are from superClass to make inheritance work
-        String superClassName = summaryTraversal.classes.get(summary.currentClassName).superClassName;
-        ClassImplementation superClass = summaryTraversal.classes.get(superClassName);
-        if(superClass != null){
-            ArrayList<MethodImplementation> methodsSuper = superClass.methods;
-            for(MethodImplementation m : methodsSuper){
-                if(summary.currentClass.methods != null){
-                    if(!(summary.currentClass.methods.contains(m))){
-                        s1.append("\t" + m.returnType + " (*" + m.name + ")("
-                                + summary.currentClassName + ")" + ";\n");
-                    }
-                }
-            }
-        }
-        */
-
-//        if(!(summary.methodNames.contains("toString"))){
-//            s1.append("\tString (*toString)(" + summary.currentClassName + ");\n");
-//        }
-    }
-
-    public void vTableConstructor(GNode n) {
-        summary.addLine("__" + summary.currentClass.name + "_VT()\n");
-        summary.addLine(": __isa(__" + summary.currentClass.name + "::" + "__class()),\n");
-        int size = n.size();
-
-        //superClass methods
-        //TODO: expand this for all superclassing
-        //order matters!!!
-
-        ArrayList<MethodImplementation> clonedMethods = new ArrayList<>(summary.currentClass.methods);
-
-        MethodImplementation currentMethod = summary.currentClass.findMethod("hashcode");
-        if (currentMethod == null)
-            summary.addLine("hashcode((int32_t(*)("+summary.currentClass.name+"))&__Object::hashcode),\n");
-        else {
-            summary.addLine("hashcode(&__"+summary.currentClass.name+"::hashcode,\n");
-            removeMethod(clonedMethods, currentMethod.name);
-        }
-
-        currentMethod = summary.currentClass.findMethod("equals");
-        if (currentMethod == null)
-            summary.addLine("equals((bool(*)("+summary.currentClass.name+", Object))&__Object::equals),\n");
-        else {
-            summary.addLine("equals(&__"+summary.currentClass.name+"::equals,\n");
-            removeMethod(clonedMethods, currentMethod.name);
-        }
-
-        currentMethod = summary.currentClass.findMethod("getClass");
-        if (currentMethod == null)
-            summary.addLine("getClass((Class(*)("+summary.currentClass.name+"))&__Object::getClass),\n");
-        else {
-            summary.addLine("getClass(&__"+summary.currentClass.name+"::getClass,\n");
-            removeMethod(clonedMethods, currentMethod.name);
-        }
-
-        currentMethod = summary.currentClass.findMethod("toString");
-        if (currentMethod == null)
-            summary.addLine("toString((String(*)("+summary.currentClass.name+"))&__Object::toString)");
-        else {
-            summary.addLine("toString(&__"+summary.currentClass.name+"::toString)");
-            removeMethod(clonedMethods, currentMethod.name);
-        }
-
-
-        ClassImplementation currentClass = summary.currentClass;
-        ClassImplementation superClass = currentClass.superClass;
+        //superclass methods
+        ClassImplementation superClass = summary.currentClass.superClass;
         while (superClass != null) {
-            //TODO: fix this
-            //for each superclass method, check if currentclass overrides
-            //if no (currentMethod is null)
-                //add superclass cast
-                //remove method from clonedSuperclassMethods
-            //if yes
-                //add subclass version
-                //remove from clonedMethods
+            for (int i = 0; i < superClass.methods.size(); i++) {
+                MethodImplementation currentMethod = superClass.methods.get(i);
+                if (!vConstructor.containsKey(currentMethod.name)) { //if it already exists, it is the overwriting method
+                    vConstructor.put(currentMethod.name,
+                            currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)(" + summary.currentClass.name + "))&__" + superClass.name + "::" + currentMethod.name + ")");
 
-            //then add all remaining in clonedMethods
-            //set superclass = superclass.superclass
-            //set currentclass = superclass
-            //set clonedMethods = superClassMethods
-            //set clonedsuperClassMethods = new (superClass.getmethods);
-
-            //repeat until superclass = null;
-            //add remaining clonedmethods
-
-            currentMethod = summary.currentClass.findMethod("toString");
-            if (currentMethod == null)
-                summary.addLine("toString((String(*)("+summary.currentClass.name+"))&__Object::toString)");
-            else {
-                summary.addLine("toString(&__"+summary.currentClass.name+"::toString)");
-                removeMethod(clonedMethods, currentMethod.name);
+                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*"+currentMethod.name+")(%s");
+                    for (ParameterImplementation p : currentMethod.parameters)
+                        method.append(", "+p.type);
+                    method.append(");\n");
+                    vMethods.put(currentMethod.name, method.toString());
+                }
             }
-
             superClass = superClass.superClass;
         }
 
-        //Non superclass methods
+        //hashcode
+        if (!vConstructor.containsKey("hashcode")) {
+            vConstructor.put("hashcode", "hashcode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashcode)");
+            vMethods.put("hashcode", "int32_t (*hashcode)(%s);\n");
+        }
 
-        for (int i = 0; i < clonedMethods.size(); i++) {
-            summary.code.append(",\n");
-            currentMethod = clonedMethods.get(i);
-            summary.addLine(currentMethod.name+"(&__"+summary.currentClass.name+"::"+currentMethod.name+")");
+        //equals
+        if (!vConstructor.containsKey("equals")) {
+            vConstructor.put("equals", "equals((bool(*)(" + summary.currentClass.name + ", Object))&__Object::equals)");
+            vMethods.put("equals", "bool (*equals)(%s, Object);\n");
+        }
+
+        //getClass
+        if (!vConstructor.containsKey("getClass")) {
+            vConstructor.put("getClass", "getClass((Class(*)(" + summary.currentClass.name + "))&__Object::getClass)");
+            vMethods.put("getClass", "Class (*getClass)(%s);\n");
+        }
+
+        //toString
+        if (!vConstructor.containsKey("toString")) {
+            vConstructor.put("toString", "toString((String(*)(" + summary.currentClass.name + "))&__Object::toString)");
+            vMethods.put("toString", "String (*toString)(%s);\n");
+        }
+
+        //Non superclass methods
+        for (int i = 0; i < summary.currentClass.methods.size(); i++) {
+            MethodImplementation currentMethod = summary.currentClass.methods.get(i);
+            //replace any superclass methods
+            vConstructor.put(currentMethod.name, currentMethod.name + "(&__" + summary.currentClass.name + "::" + currentMethod.name + ")");
+
+            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*"+currentMethod.name+")(%s");
+            for (ParameterImplementation p : currentMethod.parameters)
+                method.append(", "+p.type);
+            method.append(");\n");
+            vMethods.put(currentMethod.name, method.toString());
+        }
+
+
+        //vtable methods
+        Collection<String> vMethodValues = vMethods.values();
+        for (String s : vMethodValues) {
+            summary.addLine(String.format(s, summary.currentClass.name));
         }
         summary.code.append("\n");
 
-        summary.addLine("{}\n");
 
-        /*
-        // need to add the getMethods for the class members
-        if (summary.currentFieldDeclarationList.size() != 0) {
-            x.append(",\n");
-            int declarationSize = summary.currentFieldDeclarationList.size();
-            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
-                String type = currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType;
-                declarationSize--;
-                String methodString = "\t\t" + "get" + currentDeclaration.variableName + "(&__" + summary.currentClassName + "::get" + currentDeclaration.variableName + ")";
-                if(declarationSize > 0) {
-                    x.append(methodString + "\n");
-                }else{
-                    x.append(methodString);
-                }
-            }
-        }else{
-            x.append("\n");
+        //vtable constructor
+        summary.addLine("__" + summary.currentClass.name + "_VT()\n");
+        summary.addLine(": __isa(__" + summary.currentClass.name + "::" + "__class())");
+
+        Collection<String> vConstructorValues = vConstructor.values();
+        for (String s : vConstructorValues) {
+            summary.code.append(",\n");
+            summary.addLine(s);
         }
-        */
-        /*
-        // adding methods that are from superClass to make inheritance work
-        String superClassName = summaryTraversal.classes.get(summary.currentClassName).superClassName;
-        ClassImplementation superClass = summaryTraversal.classes.get(superClassName);
-        if(superClass != null){
-            x.append(",\n");
-            ArrayList<MethodImplementation> methodsSuper = superClass.methods;
-            for(MethodImplementation m : methodsSuper){
-                if(summary.currentClass.methods != null){
-                    if(!(summary.currentClass.methods.contains(m))){
-                        String methodString = "\t\t" + m.name + "((" + m.returnType + "(*)(" + summary.currentClassName + "))";
-                        methodString += " &__" + superClassName + "::" + m.name+ ")";
-                        x.append(methodString);
-                    }
-                }
-            }
-        }
-        */
+
+        summary.code.append("\n");
+
+        summary.addLine("{}\n");
     }
 
     public void visitVTableMethodDeclaration(GNode n) {
@@ -540,7 +460,7 @@ public class printHeaderFile extends Visitor {
             AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
             GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
-            LoadFileImplementations.prettyPrintAst(parentNode);
+            //LoadFileImplementations.prettyPrintAst(parentNode);
 
             try {
                 PrintWriter printerHeader;
@@ -552,7 +472,6 @@ public class printHeaderFile extends Visitor {
                 // printing the header file
                 printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
                 printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-
                 out.println(summary.code.toString());
 
                 header = new File("testOutputs/printHeaderOutputs/v2", String.format("Test%03d", i));

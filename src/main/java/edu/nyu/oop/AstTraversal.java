@@ -40,7 +40,7 @@ public class AstTraversal extends Visitor {
     public void visitClassDeclaration(GNode n) {
 
         String name = n.getString(1);
-        String superClassName = "";
+        String superClassName = null;
         String modifier = "";
 
         for (Object o : n) {
@@ -72,7 +72,8 @@ public class AstTraversal extends Visitor {
                 }
             }
         }
-        if (superClassName != "") {
+        System.out.println(superClassName);
+        if (superClassName != null) {
             //TODO: we may need to add all classes first before attempting to extend
             /*
             Node type = n.getNode(0);
