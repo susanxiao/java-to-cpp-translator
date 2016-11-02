@@ -55,11 +55,6 @@ public class Implementationsfile {
             // printing the header file
             printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
             printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-            String headerFile = "";
-            headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
-            headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
-
-            String headerFile1 = headerFile;
 
             header = new File("output", "output.h");
             File header1 = new File("testOutputs/translationOutputs", s1.toString() + "output.h");
@@ -69,11 +64,11 @@ public class Implementationsfile {
             printerHeader = new PrintWriter(header);
             PrintWriter printerHeader1 = new PrintWriter(header1);
 
-            printerHeader.println(headerFile);
+            printerHeader.println(summary.code.toString());
             printerHeader.flush();
             printerHeader.close();
 
-            printerHeader1.println(headerFile1);
+            printerHeader1.println(summary.code.toString());
             printerHeader1.flush();
             printerHeader1.close();
 
@@ -144,6 +139,18 @@ class LoadFileImplementations {
         runtime.dir("in", Runtime.INPUT_DIRECTORY, true, "");
         runtime.setValue(Runtime.INPUT_DIRECTORY, JavaEntities.TEMP_DIR);
         return runtime;
+    }
+
+    public static int getInteger(String val) {
+        try {
+            int value = Integer.parseInt(val);
+            if (value >= 0 && value <= 20)
+                return value;
+            else return -1;
+        }
+        catch (Exception e) {
+            return -1;
+        }
     }
 
     public static void prettyPrintAst(Node node) {

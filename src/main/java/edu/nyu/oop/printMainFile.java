@@ -351,24 +351,23 @@ public class printMainFile extends Visitor {
 
 
     public static void main(String[] args) {
+        //TO RUN: run-main printMainFile ***
+        // *** a number 0-20, or nothing to run all test cases
+        int start = 0;
+        int end = 20;
+
+        if (args.length > 0) {
+            int value = LoadFileImplementations.getInteger(args[0]);
+            if (value > 0) {
+                start = value;
+                end = value;
+            }
+        }
 
         //LoadFileImplementations.prettyPrintAst(node);
-        for (int i = 0; i < 21; i++) {
-            if (i != 7) {
-                continue;
-            }
-            String test = "./src/test/java/inputs/";
-            String test1 = "";
-            String test2 = "";
-            if (i < 10) {
-                test1 = "test00" + i;
-                test2 = "Test00" + i;
-            } else {
-                test1 = "test0" + i;
-                test2 = "Test0" + i;
-            }
-            test += test1;
-            test += "/" + test2 + ".java";
+        for (int i = start; i < end; i++) {
+            String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
+
             try {
                 PrintWriter printerMain;
 
@@ -392,7 +391,7 @@ public class printMainFile extends Visitor {
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;
 
-                main = new File("testOutputs/mainFileOutputs", test2);
+                main = new File("testOutputs/mainFileOutputs", String.format("Test%03d", i));
                 main.createNewFile();
 
                 printerMain = new PrintWriter(main);

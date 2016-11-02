@@ -51,7 +51,7 @@ public class MethodImplementation {
             if (i < parameters.size() - 1)
                 s.append(",");
         }
-        s.append(")\n");
+        s.append(")");
         return s.toString();
     }
 

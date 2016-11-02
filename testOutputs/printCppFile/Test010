@@ -35,18 +35,10 @@ namespace inputs{
 		return  __this->a;
 	}
 
-	int32_t __A::hashCode(A __this){
-		return 5;
-	}
-
 	Class __A::__class() {
 		static Class k =
 			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
  		return k;
-	}
-
-	int32_t __B1::hashCode(B1 __this){
-		return 5;
 	}
 
 	String __B1::toString(B1 __this) {
@@ -61,10 +53,6 @@ namespace inputs{
  		return k;
 	}
 
-	int32_t __B2::hashCode(B2 __this){
-		return 5;
-	}
-
 	String __B2::toString(B2 __this) {
 		std::ostringstream sout;
 		sout << __this;
@@ -75,10 +63,6 @@ namespace inputs{
 		static Class k =
 			new __Class(__rt::literal("class inputs.javalang.B2"), (Class) __rt::null());
  		return k;
-	}
-
-	int32_t __C::hashCode(C __this){
-		return 5;
 	}
 
 	String __C::toString(C __this) {

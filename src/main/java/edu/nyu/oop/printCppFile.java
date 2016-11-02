@@ -40,12 +40,12 @@ public class printCppFile extends Visitor {
 
         visitClassBody((GNode) n.getNode(5));
 
-        StringBuilder hashCodeMethod = new StringBuilder();
-        hashCodeMethod.append("\tint32_t __" + summary.currentClassName + "::hashCode(");
-        hashCodeMethod.append(summary.currentClassName + " __this){\n");
-        hashCodeMethod.append("\t\treturn 5;\n");
-        hashCodeMethod.append("\t}\n\n");
-        cppImplementation.append(hashCodeMethod);
+//        StringBuilder hashCodeMethod = new StringBuilder();
+//        hashCodeMethod.append("\tint32_t __" + summary.currentClassName + "::hashCode(");
+//        hashCodeMethod.append(summary.currentClassName + " __this){\n");
+//        hashCodeMethod.append("\t\treturn 5;\n");
+//        hashCodeMethod.append("\t}\n\n");
+//        cppImplementation.append(hashCodeMethod);
 
         boolean toStringGate = true;
         for(MethodImplementation m : summary.methodList){
@@ -548,27 +548,17 @@ public class printCppFile extends Visitor {
         return summary;
     }
 
-    public static int getInteger(String val) {
-        try {
-            int value = Integer.parseInt(val);
-            if (value >= 0 && value <= 20)
-                return value;
-            else return -1;
-        }
-        catch (Exception e) {
-            return -1;
-        }
-    }
+
 
     public static void main(String[] args) {
 
         //TO RUN: run-main printCppFile ***
-        // *** a number 0-20
+        // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
 
         if (args.length > 0) {
-            int value = getInteger(args[0]);
+            int value = LoadFileImplementations.getInteger(args[0]);
             if (value > 0) {
                 start = value;
                 end = value;

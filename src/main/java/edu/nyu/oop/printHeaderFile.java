@@ -33,118 +33,109 @@ public class printHeaderFile extends Visitor {
     private Runtime runtime;
     private AstTraversal.AstTraversalSummary summaryTraversal;
 
-    StringBuilder s1 = new StringBuilder();
-
     // visitXXX methods
     public void visitHeaderDeclaration(GNode n) {
         String className = n.getString(0);
 
-        summary.methodNames = "";
-        summary.currentClassName = className;
+        if (className.startsWith("Test"))
+            return;
+
+        String[] namespaces = n.getString(1).split("_");
+
+        for (String name : namespaces) {
+            summary.addNamespace(name);
+        }
+
         summary.currentClass = summaryTraversal.classes.get(className);
-        summary.currentMethodList = summaryTraversal.classes.get(className).methods;
-        summary.currentFieldDeclarationList = summaryTraversal.classes.get(className).declarations;
-        summary.currentConstructorList = summaryTraversal.classes.get(className).constructors;
 
-        s1.append("\tstruct __" + className + "\n\t{\n\n");
+        //Object and VTable
+        summary.addLine("struct __"+className+";\n");
+        summary.addLine("struct __"+className+"_VT;\n\n");
 
-        if (summary.currentFieldDeclarationList.size() != 0) {
-            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
-                String type;
-                if (currentDeclaration.staticType.equals("int")) {
-                    type = "int32_t";
-                } else {
-                    type = currentDeclaration.staticType;
-                }
-                s1.append("\t" + type + " " + currentDeclaration.variableName + ";\n\n");
+        //Typedef
+        summary.addLine("typedef __"+className+"* "+className+";\n\n");
+
+        //Construction
+        summary.addLine("struct __"+className);
+        summary.incScope();
+
+        //VPointer
+        summary.addLine("__"+className+"_VT* __vptr;\n");
+
+        //Global Declarations
+        if (summary.currentClass.declarations.size() > 0) {
+            for (FieldDeclaration currentDeclaration : summary.currentClass.declarations) {
+                String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
+                summary.addLine(type+" "+currentDeclaration.variableName+";\n");
             }
         }
 
-        s1.append("\t__" + summary.currentClassName + "_VT* __vptr;\n\n");
+        //Constructors
+        if (summary.currentClass.constructors.size() > 0) {
+            for (ConstructorImplementation currentConstructor : summary.currentClass.constructors) {
+                StringBuilder constructor = new StringBuilder("__"+className+"(");
 
-        if (summary.currentConstructorList.size() > 0) {
-            s1.append("\t__" + className + "(");
-            for (ConstructorImplementation currentConstructor : summary.currentConstructorList) {
-                int size = currentConstructor.parameters.size();
-                for (ParameterImplementation param : currentConstructor.parameters) {
-                    size--;
-                    String type = "";
-                    if (param.type.equals("int")) {
-                        type = "int32_t";
-                    }
-                    /*else if (param.type.equals("String")) {
-                        type = "std::string";
-                    }*/
-                    else {
-                        type = param.type;
-                    }
-                    s1.append(type + " " + param.name);
-                    if (size > 0) {
-                        s1.append(",");
-                    }
+                for (int i = 0; i < currentConstructor.parameters.size(); i++) {
+                    if (i > 0)
+                        constructor.append(", ");
+                    ParameterImplementation currentParameter = currentConstructor.parameters.get(i);
+                    String type = (currentParameter.type.equals("int") ? "int32_t" : currentParameter.type);
+                    constructor.append(type+" "+currentParameter.name);
                 }
+
+                constructor.append(");\n");
+                summary.addLine(constructor.toString());
             }
-            s1.append(");\n\n");
+            summary.code.append("\n");
         } else {
-            s1.append("\t__" + className + "(" + ");\n\n");
+            summary.addLine("__" + className + "();\n\n");
         }
 
-
+        //Superclass declaration
         if (summary.currentClass.superClassName != null) {
-            s1.append("\t__" + summary.currentClass.superClassName +  " parent;\n\n");
+            summary.addLine("__" + summary.currentClass.superClassName + " parent;\n\n");
         }
 
-        s1.append("\tstatic Class __class();\n\n");
+        //Class method that all Objects have
+        summary.addLine("static Class __class();\n\n");
 
+        //Methods that will be implemented in output.cpp
+        for (MethodImplementation currentMethod : summary.currentClass.methods) {
+            String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
+            summary.addLine("static "+type+" "+currentMethod.name+currentMethod.parametersToString()+";\n");
+        }
+
+        summary.decScope();
+        //End Construction
+
+        //VTable construction
+        summary.addLine("struct __"+className+"_VT");
+        summary.incScope();
 
         for (Object o : n) {
             if (o instanceof Node) {
-                GNode currentNode = (GNode) o;
+                GNode currentNode = GNode.cast(o);
                 if (currentNode.getName().equals("DataLayout")) {
-                    s1.append("\tstatic int32_t hashCode(" + summary.currentClassName + ");\n\n");
-
-                    /*
-                    // adding getMethods because we don't have a way to access variables defined in the class
-                    // when translating to C++
-                    if (summary.currentFieldDeclarationList.size() != 0) {
-                        for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
-                            String type;
-                            if (currentDeclaration.staticType.equals("int")) {
-                                type = "int32_t";
-                            } else {
-                                type = currentDeclaration.staticType;
-                            }
-                            s1.append("\tstatic " + type + " get" + currentDeclaration.variableName + "("
-                                    + summary.currentClassName + ")" + ";\n\n");
-
-                            String name = "get" + currentDeclaration.variableName;
-                            MethodImplementation getter = new MethodImplementation(name);
-                            getter.returnType = "String";
-
-
-                            summaryTraversal.classes.get(summary.currentClassName).methods.add(getter);
-                        }
-                    }
-                    */
-
-
-                    // visiting the datalayout because we need to obtain the methods that are declared in the class
                     visitDataLayout(currentNode);
                 }
             }
         }
 
-
+        summary.decScope();
+        //End VTable construction
     }
 
     public void visitDataLayout(GNode n) {
         for (Object o : n) {
             if (o instanceof Node) {
-                dispatch((GNode) o);
+                //dispatch(GNode.cast(o));
+                GNode currentNode = GNode.cast(o);
+                if (currentNode.getName().equals("VTable"))
+                    visitVTable(currentNode);
             }
         }
     }
-
+/*
     public void visitFieldDeclaration(GNode n) {
         String currentFieldDeclaration = "\t";
         if (n instanceof Node) {
@@ -177,19 +168,19 @@ public class printHeaderFile extends Visitor {
         }
         currentFieldDeclaration += ";";
         s1.append(currentFieldDeclaration + "\n\n");
-    }
+    }*/
 
-    public void visitDataLayoutMethodDeclaration(GNode n) {
+    /*public void visitDataLayoutMethodDeclaration(GNode n) {
         for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
             String methodComparing = n.getString(2);
             if (currMethod.name.equals(methodComparing)) {
                 String currentMethodDeclaration = "\t";
                 // TODO: modifiers?
                 currentMethodDeclaration += "static ";
-                /*
+                *//*
                 if (n.getNode(0).size() > 0) {
                     currentMethodDeclaration += n.getNode(0).getString(0) + " ";
-                }*/
+                }*//*
 
                 currentMethodDeclaration += n.getString(1) + " ";
                 currentMethodDeclaration += n.getString(2) + "(";
@@ -214,18 +205,17 @@ public class printHeaderFile extends Visitor {
             }
         }
 
-    }
+    }*/
 
     public void visitVTable(GNode n) {
-//        if(!(summary.methodNames.contains("toString"))){
-//            s1.append("\tstatic String toString(" + summary.currentClassName + ");\n");
-//        }
-        s1.append("\n\t};\n\n\tstruct __" + summary.currentClassName + "_VT\n\t{\n\n");
         for (Object o : n) {
             if (o instanceof Node) {
-                visitVTableMethodDeclaration((GNode) o);
+                visitVTableMethodDeclaration(GNode.cast(o));
             }
         }
+        summary.code.append("\n");
+
+        vTableConstructor(n);
 
         /*
         // need to add getMethod function pointers
@@ -262,62 +252,59 @@ public class printHeaderFile extends Visitor {
 //        if(!(summary.methodNames.contains("toString"))){
 //            s1.append("\tString (*toString)(" + summary.currentClassName + ");\n");
 //        }
-        s1.append(vTableConstructor(n));
-        s1.append("\t};\n\n");
     }
 
-    public String vTableConstructor(GNode n) {
-        StringBuilder x = new StringBuilder();
-
-        // TODO: Inheritance
-        x.append("\n\t__" + summary.currentClassName + "_VT()\n");
-        x.append("\t: __isa(__" + summary.currentClassName + "::" + "__class()),\n");
+    public void vTableConstructor(GNode n) {
+        summary.addLine("__" + summary.currentClass.name + "_VT()\n");
+        summary.addLine(": __isa(__" + summary.currentClass.name + "::" + "__class()),\n");
         int size = n.size();
 
-        for (Object o : n) {
-            String vTableMethod = "";
-            GNode currentMethod = (GNode) o;
-            if (currentMethod.getString(2).equals("__isa")) {
-                continue;
-            } else {
-                String methodComparing = currentMethod.getString(2);
-                // checking if the class implements the method
-                for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
-                    // if the class implements the method
-                    if (currMethod.name.equals(methodComparing)) {
+        //superClass methods
+        //TODO: expand this
+        //order matters!!!
 
-                        summary.methodNames += currMethod.name;
+        ArrayList<MethodImplementation> clonedMethods = new ArrayList<>(summary.currentClass.methods);
 
-                        vTableMethod += "\t\t" + currentMethod.getString(2);
-                        vTableMethod += "(&__";
-                        vTableMethod += summary.currentClassName;
-                        break;
-                    }
-                }
-
-                if (methodComparing.equals("hashCode")) {
-                    vTableMethod += "\t\thashCode("
-                            + (summary.methodNames.contains("hashcode") ?
-                            "&__"+summary.currentClassName : "(int32_t(*)("+summary.currentClassName+"))&__Object");
-                } else if (methodComparing.equals("getClass")) {
-                    vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object";
-                } else if (methodComparing.equals("equals")) {
-                    vTableMethod += "\t\tequals((bool(*)(" + summary.currentClassName + ",Object)) &__Object";
-                }
-
-                vTableMethod += "::" + currentMethod.getString(2) + ")";
-            }
-            if (size > 2) {
-                size--;
-                vTableMethod += ",\n";
-            } else {
-                vTableMethod += "";
-            }
-            x.append(vTableMethod);
+        MethodImplementation currentMethod = summary.currentClass.findMethod("hashcode");
+        if (currentMethod == null)
+            summary.addLine("hashcode((int32_t(*)("+summary.currentClass.name+"))&__Object::hashcode),\n");
+        else {
+            summary.addLine("hashcode(&__"+summary.currentClass.name+"::hashcode,\n");
+            removeMethod(clonedMethods, currentMethod.name);
         }
-        if(!(summary.methodNames.contains("toString"))){
-            x.append(",\n\t\ttoString(&__" + summary.currentClassName + "::toString)");
+
+        currentMethod = summary.currentClass.findMethod("equals");
+        if (currentMethod == null)
+            summary.addLine("equals((bool(*)("+summary.currentClass.name+", Object))&__Object::equals),\n");
+        else {
+            summary.addLine("equals(&__"+summary.currentClass.name+"::equals,\n");
+            removeMethod(clonedMethods, currentMethod.name);
         }
+
+        currentMethod = summary.currentClass.findMethod("getClass");
+        if (currentMethod == null)
+            summary.addLine("getClass((Class(*)("+summary.currentClass.name+"))&__Object::getClass),\n");
+        else {
+            summary.addLine("getClass(&__"+summary.currentClass.name+"::getClass,\n");
+            removeMethod(clonedMethods, currentMethod.name);
+        }
+
+        currentMethod = summary.currentClass.findMethod("toString");
+        if (currentMethod == null)
+            summary.addLine("toString((String(*)("+summary.currentClass.name+"))&__Object::toString)");
+        else {
+            summary.addLine("toString(&__"+summary.currentClass.name+"::toString");
+            removeMethod(clonedMethods, currentMethod.name);
+        }
+
+        //Non superclass methods
+
+        for (int i = 0; i < clonedMethods.size(); i++) {
+            currentMethod = clonedMethods.get(i);
+            summary.addLine(",\n"+currentMethod.name+"(&__"+summary.currentClass.name+"::"+currentMethod.name+")");
+        }
+        summary.code.append("\n");
+
         /*
         // need to add the getMethods for the class members
         if (summary.currentFieldDeclarationList.size() != 0) {
@@ -355,62 +342,38 @@ public class printHeaderFile extends Visitor {
             }
         }
         */
-        x.append(("\n"));
-        x.append("\t\t{}\n\n");
-        return x.toString();
     }
 
     public void visitVTableMethodDeclaration(GNode n) {
+        StringBuilder method = new StringBuilder();
 
-        String currentMethodName = "";
-        currentMethodName = n.getString(2);
-        int sizeParameters = n.getNode(4).size();
-
-        String currentMethodDeclaration = "\t";
-        if (n.getString(2).equals("__isa")) {
-            currentMethodDeclaration += n.getString(1) + " ";
-            currentMethodDeclaration += n.getString(2) + ";";
-            s1.append(currentMethodDeclaration + "\n");
-        } else {
-            if (n.getNode(0).size() > 0) {
-                currentMethodDeclaration += n.getNode(0).getString(0) + " ";
-            }
-            currentMethodDeclaration += n.getString(1) + " ";
-            currentMethodDeclaration += "(*" + n.getString(2) + ")";
-
-            if (n.getString(2).equals("equals")) {
-                currentMethodDeclaration += "(" + summary.currentClassName + "," + n.getString(3) + ");";
-            } else if (n.getString(2).equals("hashCode")) {
-                currentMethodDeclaration += "(" + summary.currentClassName + ");";
-            } else if (n.getString(2).equals("getClass")) {
-                currentMethodDeclaration += "(" + summary.currentClassName + ");";
-            } else if (sizeParameters > 0) {
-                currentMethodDeclaration += "(";
-                if (currentMethodName.startsWith("set")) {
-                    currentMethodDeclaration += summary.currentClassName + ",";
-                }
-                for (Object param : n.getNode(4)) {
-                    sizeParameters--;
-                    String parameter = param.toString().split(" ")[0];
-                    if (parameter.equals("__Object")) {
-                        parameter = "Object";
-                    }
-                    if (sizeParameters > 0) {
-                        currentMethodDeclaration += parameter + ",";
-                    } else
-                        currentMethodDeclaration += parameter;
-                }
-                currentMethodDeclaration += ");";
-            } else if (sizeParameters == 0) {
-                currentMethodDeclaration += "(";
-                currentMethodDeclaration += summary.currentClassName;
-                currentMethodDeclaration += ");";
-            }
-
-            s1.append(currentMethodDeclaration + "\n");
+        //Modifiers
+        Node modifiers = n.getNode(0);
+        for (int i = 0; i < modifiers.size(); i++) {
+            method.append(modifiers.getString(i)+" ");
         }
 
+        //return type
+        method.append(n.getString(1)+" ");
 
+        //name
+        String name = n.getString(2);
+        if (name.equals("__isa"))
+            method.append(name+";\n");
+        else {
+            method.append("(*"+name+")");
+
+            //parameters
+            Node parameters = n.getNode(4);
+
+            method.append("("+summary.currentClass.name);
+            for (int i = 0; i < parameters.size(); i++) {
+                method.append(", "+parameters.getString(i).replace("__", ""));
+            }
+            method.append(");\n");
+        }
+
+        summary.addLine(method.toString());
     }
 
 
@@ -431,122 +394,87 @@ public class printHeaderFile extends Visitor {
     }
 
     static class headerFileSummary {
-        String fowardDeclarations = "";
-        String typeDefs = "";
-        String structs = "";
-        String currentClassName = "";
-        String currentMethodName;
-        String headerGuard = "";
-
-        String namespace = "";
-        String closeNameSpace = "";
-
-        String usingNamespace = "";
-
+        StringBuilder code;
+        int scope;
         ClassImplementation currentClass;
-        ArrayList<MethodImplementation> currentMethodList;
-        ArrayList<FieldDeclaration> currentFieldDeclarationList;
-        ArrayList<ConstructorImplementation> currentConstructorList;
 
-        String methodNames = "";
+        public headerFileSummary() {
+            code = new StringBuilder(
+                      "#pragma once\n"
+                    + "#include <iostream>\n"
+                    + "#include \"java_lang.h\"\n\n"
+                    + "using namespace java::lang;\n\n"
+            );
+            scope = 0;
+        }
+
+        public void addNamespace(String name) {
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+
+            code.append("namespace "+name);
+            incScope();
+        }
+
+        public void incScope() {
+            code.append(" {\n");
+            scope++;
+        }
+
+        public void decScope() {
+            scope--;
+            
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+            code.append("};\n");
+        }
+
+        public void addLine(String line) {
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+
+            code.append(line);
+        }
 
     }
 
 
     public headerFileSummary getSummary(GNode n) {
+        visit(n);
 
-        StringBuilder s = new StringBuilder();
-
-        s.append("#pragma once\n");
-        s.append("#include <iostream>\n");
-        s.append("#include \"java_lang.h\"\n\n");
-        summary.headerGuard += s;
-
-        summary.usingNamespace = "using namespace java::lang;\n\n";
-
-        s = new StringBuilder();
-
-        String namespace;
-        namespace = n.getNode(0).getNode(0).getString(1);
-        int namespaceSize = 0;
-        for (Object o : namespace.split("_")) {
-            for (int i = 0; i < namespaceSize; i++) {
-                s.append("\t");
-            }
-            s.append("namespace " + o + " {\n");
-            namespaceSize++;
+        while (summary.scope > 0) {
+            summary.decScope();
         }
-        s.append("\n\n");
-        summary.namespace = s.toString();
-
-        s = new StringBuilder();
-
-        for (Object classNode : n) {
-            GNode currentNode = (GNode) classNode;
-            if (!currentNode.getName().contains("Test")) {
-                String className = currentNode.getName();
-                s.append("\tstruct __" + className + ";\n");
-                s.append("\tstruct __" + className + "_VT;\n");
-            }
-        }
-        s.append("\n");
-        summary.fowardDeclarations = s.toString();
-
-        s = new StringBuilder();
-
-        for (Object classNode : n) {
-            GNode currentNode = (GNode) classNode;
-            if (!currentNode.getName().contains("Test")) {
-                String className = currentNode.getName();
-                s.append("\ttypedef __" + className + "* " + className + ";\n");
-            }
-        }
-        s.append("\n");
-        summary.typeDefs = s.toString();
-
-        for (Object classNode : n) {
-            // TODO:
-            GNode currentNode = (GNode) classNode;
-            if (!currentNode.getName().contains("Test")) {
-                s1 = new StringBuilder();
-                super.dispatch(currentNode.getNode(0));
-                summary.structs += s1.toString();
-            }
-        }
-
-
-        s = new StringBuilder();
-        s.append("\n\n");
-        while (namespaceSize > 0) {
-            for (int i = 0; i < namespaceSize - 1; i++) {
-                s.append("\t");
-            }
-            s.append("}\n");
-            namespaceSize--;
-        }
-
-        summary.closeNameSpace += s;
-
         return summary;
     }
 
+    public static void removeMethod(ArrayList<MethodImplementation> methods, String name) {
+        for (int i = 0; i < methods.size(); i++) {
+            MethodImplementation currentMethod = methods.get(i);
+            if (currentMethod.name.equals(name)) {
+                methods.remove(i);
+                return;
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        for (int i = 0; i < 21; i++) {
-            if (i != 1) {
-                continue;
+
+        //TO RUN: run-main printHeaderFile ***
+        // *** a number 0-20, or nothing to run all test cases
+        int start = 0;
+        int end = 20;
+
+        if (args.length > 0) {
+            int value = LoadFileImplementations.getInteger(args[0]);
+            if (value > 0) {
+                start = value;
+                end = value;
             }
-            String test = "./src/test/java/inputs/";
-            String test1 = "";
-            String test2 = "";
-            if (i < 10) {
-                test1 = "test00" + i;
-                test2 = "Test00" + i;
-            } else {
-                test1 = "test0" + i;
-                test2 = "Test0" + i;
-            }
-            test += test1;
-            test += "/" + test2 + ".java";
+        }
+
+        for (int i = start; i <= end; i++) {
+            String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
 
             out.println(test);
             GNode node = (GNode) LoadFileImplementations.loadTestFile(test);
@@ -565,16 +493,14 @@ public class printHeaderFile extends Visitor {
                 // printing the header file
                 printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
                 printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-                String headerFile = "";
-                headerFile += summary.headerGuard + summary.usingNamespace + summary.namespace;
-                headerFile += summary.fowardDeclarations + summary.typeDefs + summary.structs + summary.closeNameSpace;
 
-                out.println(headerFile);
+                out.println(summary.code.toString());
 
-                header = new File("testOutputs/printHeaderOutputs", test2);
+                header = new File("testOutputs/printHeaderOutputs/v2", String.format("Test%03d", i));
+                header.getParentFile().mkdirs();
                 header.createNewFile();
                 printerHeader = new PrintWriter(header);
-                printerHeader.println(headerFile);
+                printerHeader.println(summary.code.toString());
                 printerHeader.flush();
                 printerHeader.close();
                 out.println("header " + i + " printed\n");

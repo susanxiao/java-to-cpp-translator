@@ -31,7 +31,6 @@ namespace inputs {
 
 	static __A_VT __vtable;
 
-	static String toString(A);
 
 	};
 
@@ -42,11 +41,10 @@ namespace inputs {
 	int32_t (*hashCode)(A);
 	Class (*getClass)(A);
 	bool (*equals)(A,Object);
-	String (*toString)(A);
 
 	__A_VT()
 	: __isa(__A::__class()),
-		hashCode(&__A::hashCode),
+		hashCode((int32_t(*)(A))&__Object::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals),
 		toString(&__A::toString)
@@ -71,7 +69,6 @@ namespace inputs {
 
 	static __B_VT __vtable;
 
-	static String toString(B);
 
 	};
 
@@ -82,11 +79,10 @@ namespace inputs {
 	int32_t (*hashCode)(B);
 	Class (*getClass)(B);
 	bool (*equals)(B,Object);
-	String (*toString)(B);
 
 	__B_VT()
 	: __isa(__B::__class()),
-		hashCode(&__B::hashCode),
+		hashCode((int32_t(*)(B))&__Object::hashCode),
 		getClass((Class(*)(B)) &__Object::getClass),
 		equals((bool(*)(B,Object)) &__Object::equals),
 		toString(&__B::toString)

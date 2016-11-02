@@ -207,7 +207,7 @@ public class AstC {
                 ParametersNode = GNode.create("Parameters");
                 VTableMethodDeclarationNode.add(ParametersNode);
                 for (ParameterImplementation param : currentMethod.parameters) {
-                    ParametersNode.add(param);
+                    ParametersNode.add(param.type);
                 }
 
             }

@@ -19,13 +19,13 @@ namespace inputs {
 	struct __A
 	{
 
+	__A_VT* __vptr;
+
 	__A();
 
 	static Class __class();
 
 	static int32_t hashCode(A);
-
-	__A_VT* __vptr;
 
 	static __A_VT __vtable;
 
@@ -45,7 +45,7 @@ namespace inputs {
 	__A_VT()
 	: __isa(__A::__class()),
 		toString(&__A::toString),
-		hashCode(&__A::hashCode),
+		hashCode((int32_t(*)(A))&__Object::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals)
 		{}
@@ -55,15 +55,15 @@ namespace inputs {
 	struct __B
 	{
 
+	__B_VT* __vptr;
+
 	__B();
 
-	Class parent;
+	__A parent;
 
 	static Class __class();
 
 	static int32_t hashCode(B);
-
-	__B_VT* __vptr;
 
 	static __B_VT __vtable;
 
@@ -83,7 +83,7 @@ namespace inputs {
 	__B_VT()
 	: __isa(__B::__class()),
 		toString(&__B::toString),
-		hashCode(&__B::hashCode),
+		hashCode((int32_t(*)(B))&__Object::hashCode),
 		getClass((Class(*)(B)) &__Object::getClass),
 		equals((bool(*)(B,Object)) &__Object::equals)
 		{}

@@ -29,8 +29,6 @@ namespace inputs {
 
 	static int32_t hashCode(A);
 
-	static String geta(A);
-
 	static __A_VT __vtable;
 
 
@@ -43,14 +41,13 @@ namespace inputs {
 	int32_t (*hashCode)(A);
 	Class (*getClass)(A);
 	bool (*equals)(A,Object);
-	String (*geta)(A);
 
 	__A_VT()
 	: __isa(__A::__class()),
-		hashCode(&__A::hashCode),
+		hashCode((int32_t(*)(A))&__Object::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
 		equals((bool(*)(A,Object)) &__Object::equals),
-		geta(&__A::geta)
+		toString(&__A::toString)
 		{}
 
 	};
@@ -64,13 +61,11 @@ namespace inputs {
 
 	__B();
 
-	Class parent;
+	__A parent;
 
 	static Class __class();
 
 	static int32_t hashCode(B);
-
-	static String getb(B);
 
 	static __B_VT __vtable;
 
@@ -84,16 +79,13 @@ namespace inputs {
 	int32_t (*hashCode)(B);
 	Class (*getClass)(B);
 	bool (*equals)(B,Object);
-	String (*getb)(B);
-	String (*geta)(B);
 
 	__B_VT()
 	: __isa(__B::__class()),
-		hashCode(&__B::hashCode),
+		hashCode((int32_t(*)(B))&__Object::hashCode),
 		getClass((Class(*)(B)) &__Object::getClass),
 		equals((bool(*)(B,Object)) &__Object::equals),
-		getb(&__B::getb),
-		geta(String(*)(B))(&__A::geta)
+		toString(&__B::toString)
 		{}
 
 	};

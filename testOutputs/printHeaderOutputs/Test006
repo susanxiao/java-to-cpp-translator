@@ -50,9 +50,10 @@ namespace inputs {
 		setFld(&__A::setFld),
 		almostSetFld(&__A::almostSetFld),
 		getFld(&__A::getFld),
-		hashCode(&__A::hashCode),
+		hashCode((int32_t(*)(A))&__Object::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals)
+		equals((bool(*)(A,Object)) &__Object::equals),
+		toString(&__A::toString)
 		{}
 
 	};
