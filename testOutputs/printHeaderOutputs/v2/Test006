@@ -13,7 +13,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String fld;
+			String fld= "A";
 
 			__A();
 

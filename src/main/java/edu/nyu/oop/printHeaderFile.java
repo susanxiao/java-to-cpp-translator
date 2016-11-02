@@ -28,8 +28,6 @@ import java.util.TreeMap;
 public class printHeaderFile extends Visitor {
 
     //TODO: write in constructors
-    //TODO: fix ordering of VTable struct
-
     //TODO: if time, collect top fields together
 
     private printHeaderFile.headerFileSummary summary = new headerFileSummary();
@@ -76,7 +74,7 @@ public class printHeaderFile extends Visitor {
         if (summary.currentClass.declarations.size() > 0) {
             for (FieldDeclaration currentDeclaration : summary.currentClass.declarations) {
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                summary.addLine(type+" "+currentDeclaration.variableName+";\n");
+                summary.addLine(type+" "+currentDeclaration.variableName+(currentDeclaration.stringLiteral == null ? "" : " = "+currentDeclaration.stringLiteral)+";\n");
             }
             summary.code.append("\n");
         }
@@ -154,77 +152,6 @@ public class printHeaderFile extends Visitor {
             }
         }
     }
-/*
-    public void visitFieldDeclaration(GNode n) {
-        String currentFieldDeclaration = "\t";
-        if (n instanceof Node) {
-            if (n.getNode(0).size() > 0) {
-                currentFieldDeclaration += n.getNode(0).getString(0) + " ";
-            }
-        }
-
-        if (n.getString(1).equals("String")) {
-            currentFieldDeclaration += "std::string ";
-        } else {
-            currentFieldDeclaration += n.getString(1) + " ";
-        }
-
-        currentFieldDeclaration += n.getString(2);
-        if (n.getString(2).equals("__vptr")) {
-            return;
-        }
-        if (n.getNode(3).size() > 0) {
-            currentFieldDeclaration += " ";
-            int k = n.getNode(3).size();
-            for (Object o : n.getNode(3)) {
-                k--;
-                if (k > 0) {
-                    currentFieldDeclaration += o.toString() + " ";
-                } else {
-                    currentFieldDeclaration += o.toString();
-                }
-            }
-        }
-        currentFieldDeclaration += ";";
-        s1.append(currentFieldDeclaration + "\n\n");
-    }*/
-
-    /*public void visitDataLayoutMethodDeclaration(GNode n) {
-        for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
-            String methodComparing = n.getString(2);
-            if (currMethod.name.equals(methodComparing)) {
-                String currentMethodDeclaration = "\t";
-                // TODO: modifiers?
-                currentMethodDeclaration += "static ";
-                *//*
-                if (n.getNode(0).size() > 0) {
-                    currentMethodDeclaration += n.getNode(0).getString(0) + " ";
-                }*//*
-
-                currentMethodDeclaration += n.getString(1) + " ";
-                currentMethodDeclaration += n.getString(2) + "(";
-                if (!n.getString(2).equals("__class")) {
-                    if (n.getString(2).equals("equals")) {
-                        currentMethodDeclaration += summary.currentClassName + ",";
-                    }
-                    if (currMethod.parameters.size() > 0) {
-                        if (n.getString(2).startsWith("set")) {
-                            currentMethodDeclaration += summary.currentClassName + ",";
-                        }
-                        for (ParameterImplementation param : currMethod.parameters) {
-                            currentMethodDeclaration += param.type;
-                        }
-                    } else {
-                        currentMethodDeclaration += n.getString(3);
-                    }
-                }
-
-                currentMethodDeclaration += ");";
-                s1.append(currentMethodDeclaration + "\n");
-            }
-        }
-
-    }*/
 
     public void visitVTable(GNode n) {
 
@@ -346,9 +273,6 @@ public class printHeaderFile extends Visitor {
 
         summary.addLine(method.toString());
     }
-
-
-    // visitMethod
 
     public void visit(Node n) {
         for (Object o : n) {
