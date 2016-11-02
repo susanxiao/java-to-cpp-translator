@@ -181,7 +181,8 @@ public class printMainFile extends Visitor {
                                 if (args.size() > 0) {
                                     for (Object o1 : args) {
                                         argSize--;
-                                        if(primaryIdentifer.equals(method)) {
+                                        if (currentNode.getNode(0).getName().equals("PrimaryIdentifier")
+                                            && !(currentNode.getNode(0).getString(0).equals(o1))) {
                                             if (argSize > 0) {
                                                 expressionStatement += o1.toString() + ",";
                                             } else {
