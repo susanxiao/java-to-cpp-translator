@@ -15,9 +15,7 @@ import xtc.tree.Visitor;
 
 import java.lang.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 
 
 /**
@@ -26,6 +24,11 @@ import java.io.Reader;
 
 
 public class printHeaderFile extends Visitor {
+
+    //TODO: write in constructors
+    //TODO: fix ordering of VTable struct
+
+    //TODO: if time, collect top fields together
 
     private printHeaderFile.headerFileSummary summary = new headerFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
@@ -40,10 +43,12 @@ public class printHeaderFile extends Visitor {
         if (className.startsWith("Test"))
             return;
 
-        String[] namespaces = n.getString(1).split("_");
+        if (summary.scope == 0) {
+            String[] namespaces = n.getString(1).split("_");
 
-        for (String name : namespaces) {
-            summary.addNamespace(name);
+            for (String name : namespaces) {
+                summary.addNamespace(name);
+            }
         }
 
         summary.currentClass = summaryTraversal.classes.get(className);
@@ -68,6 +73,7 @@ public class printHeaderFile extends Visitor {
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
                 summary.addLine(type+" "+currentDeclaration.variableName+";\n");
             }
+            summary.code.append("\n");
         }
 
         //Constructors
@@ -102,10 +108,18 @@ public class printHeaderFile extends Visitor {
         //Methods that will be implemented in output.cpp
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
-            summary.addLine("static "+type+" "+currentMethod.name+currentMethod.parametersToString()+";\n");
+
+            StringBuilder method = new StringBuilder("static "+type+" "+currentMethod.name+"("+summary.currentClass.name);
+            for (ParameterImplementation currentParameter : currentMethod.parameters) {
+                method.append(", "+currentParameter.type);
+            }
+            method.append(");\n");
+
+            summary.addLine(method.toString());
         }
 
         summary.decScope();
+        summary.code.append("\n");
         //End Construction
 
         //VTable construction
@@ -208,6 +222,7 @@ public class printHeaderFile extends Visitor {
     }*/
 
     public void visitVTable(GNode n) {
+
         for (Object o : n) {
             if (o instanceof Node) {
                 visitVTableMethodDeclaration(GNode.cast(o));
@@ -260,7 +275,7 @@ public class printHeaderFile extends Visitor {
         int size = n.size();
 
         //superClass methods
-        //TODO: expand this
+        //TODO: expand this for all superclassing
         //order matters!!!
 
         ArrayList<MethodImplementation> clonedMethods = new ArrayList<>(summary.currentClass.methods);
@@ -293,17 +308,53 @@ public class printHeaderFile extends Visitor {
         if (currentMethod == null)
             summary.addLine("toString((String(*)("+summary.currentClass.name+"))&__Object::toString)");
         else {
-            summary.addLine("toString(&__"+summary.currentClass.name+"::toString");
+            summary.addLine("toString(&__"+summary.currentClass.name+"::toString)");
             removeMethod(clonedMethods, currentMethod.name);
+        }
+
+
+        ClassImplementation currentClass = summary.currentClass;
+        ClassImplementation superClass = currentClass.superClass;
+        while (superClass != null) {
+            //TODO: fix this
+            //for each superclass method, check if currentclass overrides
+            //if no (currentMethod is null)
+                //add superclass cast
+                //remove method from clonedSuperclassMethods
+            //if yes
+                //add subclass version
+                //remove from clonedMethods
+
+            //then add all remaining in clonedMethods
+            //set superclass = superclass.superclass
+            //set currentclass = superclass
+            //set clonedMethods = superClassMethods
+            //set clonedsuperClassMethods = new (superClass.getmethods);
+
+            //repeat until superclass = null;
+            //add remaining clonedmethods
+
+            currentMethod = summary.currentClass.findMethod("toString");
+            if (currentMethod == null)
+                summary.addLine("toString((String(*)("+summary.currentClass.name+"))&__Object::toString)");
+            else {
+                summary.addLine("toString(&__"+summary.currentClass.name+"::toString)");
+                removeMethod(clonedMethods, currentMethod.name);
+            }
+
+            superClass = superClass.superClass;
         }
 
         //Non superclass methods
 
         for (int i = 0; i < clonedMethods.size(); i++) {
+            summary.code.append(",\n");
             currentMethod = clonedMethods.get(i);
-            summary.addLine(",\n"+currentMethod.name+"(&__"+summary.currentClass.name+"::"+currentMethod.name+")");
+            summary.addLine(currentMethod.name+"(&__"+summary.currentClass.name+"::"+currentMethod.name+")");
         }
         summary.code.append("\n");
+
+        summary.addLine("{}\n");
 
         /*
         // need to add the getMethods for the class members
@@ -416,6 +467,14 @@ public class printHeaderFile extends Visitor {
             incScope();
         }
 
+        public void closeNamespace() {
+            scope--;
+
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+            code.append("}\n");
+        }
+
         public void incScope() {
             code.append(" {\n");
             scope++;
@@ -423,7 +482,7 @@ public class printHeaderFile extends Visitor {
 
         public void decScope() {
             scope--;
-            
+
             for (int i = 0; i < scope; i++)
                 code.append("\t");
             code.append("};\n");
@@ -443,7 +502,7 @@ public class printHeaderFile extends Visitor {
         visit(n);
 
         while (summary.scope > 0) {
-            summary.decScope();
+            summary.closeNamespace();
         }
         return summary;
     }
@@ -480,7 +539,7 @@ public class printHeaderFile extends Visitor {
             GNode node = (GNode) LoadFileImplementations.loadTestFile(test);
             AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-            GNode parentNode = AstC.cAst(summaryTraversal);
+            GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
             LoadFileImplementations.prettyPrintAst(parentNode);
 
             try {

@@ -47,9 +47,8 @@ public class MethodImplementation {
         StringBuilder s = new StringBuilder();
         s.append("(");
         for (int i = 0; i < parameters.size(); i++) {
+
             s.append(parameters.get(i).toString());
-            if (i < parameters.size() - 1)
-                s.append(",");
         }
         s.append(")");
         return s.toString();

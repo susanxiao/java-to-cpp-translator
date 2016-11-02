@@ -10,10 +10,10 @@ import static java.lang.System.out;
 /**
  * Created by Garrett on 10/24/16.
  */
-public class AstCTest {
+public class HeaderAstTest {
     @BeforeClass
     public static void beforeClass() {
-        out.println("Executing AstC");
+        out.println("Executing HeaderAst");
     }
 
     @Ignore @Test
@@ -22,7 +22,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         XtcTestUtils.prettyPrintAst(n);
         assert(n.size() == 1);
     }
@@ -33,7 +33,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
         assert(n.size() == 2);
     }
@@ -44,7 +44,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         XtcTestUtils.prettyPrintAst(n);
         assert(n.size() == 2);
     }
@@ -55,7 +55,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test003/Test003.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -65,7 +65,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test004/Test004.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -75,7 +75,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test005/Test005.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -85,7 +85,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -95,7 +95,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -105,7 +105,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -115,7 +115,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -125,7 +125,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -135,7 +135,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test011/Test011.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -145,7 +145,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test012/Test012.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -155,7 +155,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test013/Test013.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -165,7 +165,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test014/Test014.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -175,7 +175,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test015/Test015.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -185,7 +185,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test016/Test016.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -195,7 +195,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test017/Test017.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -205,7 +205,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test018/Test018.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -215,7 +215,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test019/Test019.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 
@@ -225,7 +225,7 @@ public class AstCTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test020/Test020.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = AstC.cAst(summary);
+        GNode n = HeaderAst.ConstructHeaderAst(summary);
         //XtcTestUtils.prettyPrintAst(n);
     }
 }

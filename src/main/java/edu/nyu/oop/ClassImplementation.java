@@ -72,8 +72,9 @@ public class ClassImplementation {
             MethodImplementation m = methods.get(i);
             if (name.equals(m.name)) return m;
         }
-        if (superClass == null) return null;
-        else return superClass.findMethod(name);
+        return null;
+        //if (superClass == null) return null;
+        //else return superClass.findMethod(name);
     }
 
     public void addPackage(String name) {

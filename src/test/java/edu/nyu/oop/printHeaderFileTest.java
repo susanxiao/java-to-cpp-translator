@@ -13,7 +13,7 @@ import static java.lang.System.out;
 public class printHeaderFileTest {
     @BeforeClass
     public static void beforeClass() {
-        out.println("Executing AstC");
+        out.println("Executing HeaderAst");
     }
 
     @Ignore
@@ -23,7 +23,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -35,7 +35,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -47,7 +47,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -59,7 +59,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test003/Test003.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -71,7 +71,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test004/Test004.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -83,7 +83,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test005/Test005.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -95,7 +95,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -107,7 +107,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -119,7 +119,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -131,7 +131,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -143,7 +143,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -155,7 +155,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test011/Test011.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -167,7 +167,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test012/Test012.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -179,7 +179,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test013/Test013.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -191,7 +191,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test014/Test014.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -203,7 +203,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test015/Test015.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -215,7 +215,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test016/Test016.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -227,7 +227,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test017/Test017.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -239,7 +239,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test018/Test018.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -251,7 +251,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test019/Test019.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }
@@ -263,7 +263,7 @@ public class printHeaderFileTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test020/Test020.java");
         AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
         printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
         printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
     }

@@ -41,7 +41,7 @@ public class Implementationsfile {
         AstTraversal.AstTraversalSummary summaryTraversal = visitor1.getTraversal(node);
 
         // c++ Ast
-        GNode parentNode = AstC.cAst(summaryTraversal);
+        GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
 
         try {
             PrintWriter printerHeader;

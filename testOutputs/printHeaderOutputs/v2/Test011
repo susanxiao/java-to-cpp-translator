@@ -1,0 +1,141 @@
+#pragma once
+#include <iostream>
+#include "java_lang.h"
+
+using namespace java::lang;
+
+namespace inputs {
+	namespace test011 {
+		struct __A;
+		struct __A_VT;
+
+		typedef __A* A;
+
+		struct __A {
+			__A_VT* __vptr;
+			String a;
+
+			__A();
+
+			static Class __class();
+
+			static void setA(A, String);
+			static void printOther(A, A);
+			static String toString(A);
+		};
+
+		struct __A_VT {
+			Class __isa;
+			void (*setA)(A, String);
+			void (*printOther)(A, A);
+			String (*toString)(A);
+			int32_t (*hashCode)(A);
+			Class (*getClass)(A);
+			bool (*equals)(A, Object);
+
+			__A_VT()
+			: __isa(__A::__class()),
+			hashcode((int32_t(*)(A))&__Object::hashcode),
+			equals((bool(*)(A, Object))&__Object::equals),
+			getClass((Class(*)(A))&__Object::getClass),
+			toString(&__A::toString),
+			setA(&__A::setA),
+			printOther(&__A::printOther)
+			{}
+		};
+		struct __B1;
+		struct __B1_VT;
+
+		typedef __B1* B1;
+
+		struct __B1 {
+			__B1_VT* __vptr;
+			String b;
+
+			__B1();
+
+			__A parent;
+
+			static Class __class();
+
+		};
+
+		struct __B1_VT {
+			Class __isa;
+			int32_t (*hashCode)(B1);
+			Class (*getClass)(B1);
+			bool (*equals)(B1, Object);
+
+			__B1_VT()
+			: __isa(__B1::__class()),
+			hashcode((int32_t(*)(B1))&__Object::hashcode),
+			equals((bool(*)(B1, Object))&__Object::equals),
+			getClass((Class(*)(B1))&__Object::getClass),
+			toString((String(*)(B1))&__Object::toString)
+			{}
+		};
+		struct __B2;
+		struct __B2_VT;
+
+		typedef __B2* B2;
+
+		struct __B2 {
+			__B2_VT* __vptr;
+			String b;
+
+			__B2();
+
+			__A parent;
+
+			static Class __class();
+
+		};
+
+		struct __B2_VT {
+			Class __isa;
+			int32_t (*hashCode)(B2);
+			Class (*getClass)(B2);
+			bool (*equals)(B2, Object);
+
+			__B2_VT()
+			: __isa(__B2::__class()),
+			hashcode((int32_t(*)(B2))&__Object::hashcode),
+			equals((bool(*)(B2, Object))&__Object::equals),
+			getClass((Class(*)(B2))&__Object::getClass),
+			toString((String(*)(B2))&__Object::toString)
+			{}
+		};
+		struct __C;
+		struct __C_VT;
+
+		typedef __C* C;
+
+		struct __C {
+			__C_VT* __vptr;
+			String c;
+
+			__C();
+
+			__B1 parent;
+
+			static Class __class();
+
+		};
+
+		struct __C_VT {
+			Class __isa;
+			int32_t (*hashCode)(C);
+			Class (*getClass)(C);
+			bool (*equals)(C, Object);
+
+			__C_VT()
+			: __isa(__C::__class()),
+			hashcode((int32_t(*)(C))&__Object::hashcode),
+			equals((bool(*)(C, Object))&__Object::equals),
+			getClass((Class(*)(C))&__Object::getClass),
+			toString((String(*)(C))&__Object::toString)
+			{}
+		};
+	}
+}
+

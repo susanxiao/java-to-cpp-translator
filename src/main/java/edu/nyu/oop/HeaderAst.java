@@ -10,9 +10,9 @@ import static edu.nyu.oop.AstTraversal.*;
 /**
  * Created by Garrett on 10/24/16.
  */
-public class AstC {
+public class HeaderAst {
 
-    static GNode cAst(AstTraversalSummary summary) {
+    static GNode ConstructHeaderAst(AstTraversalSummary summary) {
 
         // TODO: TESTING INFORMATION
         int numberClasses = 0;
@@ -21,8 +21,7 @@ public class AstC {
         HashMap<String, ClassImplementation> classes = summary.classes;
         ArrayList<String> keys = summary.classNames;
 
-        GNode parent = GNode.create("Object");
-        StringBuilder s = new StringBuilder();
+        GNode parent = GNode.create("Header");
 
         // Nodes
         GNode currentClassNode;
@@ -70,10 +69,8 @@ public class AstC {
             dataLayoutNode.add(FieldDeclarationNode);
             ModifiersNode = GNode.create("Modifiers");
             FieldDeclarationNode.add(ModifiersNode);
-            s = new StringBuilder("__" + currentClass.name + "_VT*");
-            FieldDeclarationNode.add(s.toString());
-            s = new StringBuilder("__vptr");
-            FieldDeclarationNode.add(s.toString());
+            FieldDeclarationNode.add("__" + currentClass.name + "_VT*");
+            FieldDeclarationNode.add("__vptr");
             // DeclaratorsNode
             DeclaratorsNode = GNode.create("Declarators");
             FieldDeclarationNode.add(DeclaratorsNode);
@@ -89,10 +86,8 @@ public class AstC {
             // TODO: Check is the modifiers node needs to have elements added to it?
             ModifiersNode.add("static");
 
-            s = new StringBuilder("__" + currentClass.name + "_VT");
-            FieldDeclarationNode.add(s.toString());
-            s = new StringBuilder("__vtable");
-            FieldDeclarationNode.add(s.toString());
+            FieldDeclarationNode.add("__" + currentClass.name + "_VT");
+            FieldDeclarationNode.add("__vtable");
 
             // TODO: Check if there are Declarators?
             DeclaratorsNode = GNode.create("Declarators");
@@ -154,7 +149,6 @@ public class AstC {
             DataLayoutMethodDeclarationNode.add("Object");
             ParametersNode = GNode.create("Parameters");
             DataLayoutMethodDeclarationNode.add(ParametersNode);
-            ParametersNode.add("Object");
             ParametersNode.add("Object");
 
             DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
@@ -224,7 +218,6 @@ public class AstC {
             VTableMethodDeclarationNode.add("Object");
             ParametersNode = GNode.create("Parameters");
             VTableMethodDeclarationNode.add(ParametersNode);
-            ParametersNode.add("__Object");
 
             VTableMethodDeclarationNode = GNode.create("VTableMethodDeclaration");
             VTableNode.add(VTableMethodDeclarationNode);
@@ -236,7 +229,6 @@ public class AstC {
             VTableMethodDeclarationNode.add("Object");
             ParametersNode = GNode.create("Parameters");
             VTableMethodDeclarationNode.add(ParametersNode);
-            ParametersNode.add("__Object");
 
             VTableMethodDeclarationNode = GNode.create("VTableMethodDeclaration");
             VTableNode.add(VTableMethodDeclarationNode);
@@ -248,7 +240,6 @@ public class AstC {
             VTableMethodDeclarationNode.add("Object");
             ParametersNode = GNode.create("Parameters");
             VTableMethodDeclarationNode.add(ParametersNode);
-            ParametersNode.add("__Object");
             ParametersNode.add("__Object");
 
             // Add the currentClassNode to the parent Node
