@@ -25,9 +25,9 @@ import java.util.TreeMap;
  */
 
 
-public class printHeaderFile extends Visitor {
+public class PrintHeaderFile extends Visitor {
 
-    private printHeaderFile.headerFileSummary summary = new headerFileSummary();
+    private PrintHeaderFile.headerFileSummary summary = new headerFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
@@ -282,7 +282,7 @@ public class printHeaderFile extends Visitor {
     }
 
 
-    public printHeaderFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
+    public PrintHeaderFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
         this.runtime = runtime;
         this.summaryTraversal = summaryTraversal;
     }
@@ -384,13 +384,13 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
 
-        //TO RUN: run-main printHeaderFile ***
+        //TO RUN: run-main edu.nyu.oop.PrintHeaderFile ***
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
 
         if (args.length > 0) {
-            int value = LoadFileImplementations.getInteger(args[0]);
+            int value = ImplementationUtil.getInteger(args[0]);
             if (value > 0) {
                 start = value;
                 end = value;
@@ -401,8 +401,8 @@ public class printHeaderFile extends Visitor {
             String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
 
             out.println(test);
-            GNode node = (GNode) LoadFileImplementations.loadTestFile(test);
-            AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
+            GNode node = (GNode) ImplementationUtil.loadTestFile(test);
+            AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
             GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
             //LoadFileImplementations.prettyPrintAst(parentNode);
@@ -415,8 +415,8 @@ public class printHeaderFile extends Visitor {
                 File main;
 
                 // printing the header file
-                printHeaderFile visitor = new printHeaderFile(LoadFileImplementations.newRuntime(), summaryTraversal);
-                printHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+                PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+                PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
                 out.println(summary.code.toString());
 
                 header = new File("testOutputs/printHeaderOutputs/v2", String.format("Test%03d", i));

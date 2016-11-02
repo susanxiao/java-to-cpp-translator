@@ -10,16 +10,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static java.lang.System.out;
 
 /**
  * Created by Garrett on 10/21/16.
  */
-public class printCppFile extends Visitor {
+public class PrintCppFile extends Visitor {
 
-    private printCppFile.printCppFileSummary summary = new printCppFile.printCppFileSummary();
+    private PrintCppFile.printCppFileSummary summary = new PrintCppFile.printCppFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
@@ -480,7 +479,7 @@ public class printCppFile extends Visitor {
     }
 
 
-    public printCppFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
+    public PrintCppFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
         this.runtime = runtime;
         this.summaryTraversal = summaryTraversal;
     }
@@ -552,13 +551,13 @@ public class printCppFile extends Visitor {
 
     public static void main(String[] args) {
 
-        //TO RUN: run-main printCppFile ***
+        //TO RUN: run-main edu.nyu.oop.PrintCppFile ***
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
 
         if (args.length > 0) {
-            int value = LoadFileImplementations.getInteger(args[0]);
+            int value = ImplementationUtil.getInteger(args[0]);
             if (value > 0) {
                 start = value;
                 end = value;
@@ -574,24 +573,24 @@ public class printCppFile extends Visitor {
 
                 File output;
 
-                GNode node = (GNode) LoadFileImplementations.loadTestFile(test);
+                GNode node = (GNode) ImplementationUtil.loadTestFile(test);
                 // get the summary traversal (class implementations)
-                AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
+                AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
                 AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
 
                 // get the mutated tree
-                AstMutator visitor1 = new AstMutator(LoadFileImplementations.newRuntime());
-                AstMutator.AstMutatorSummary summary = visitor1.getMutator(node);
-                LoadFileImplementations.prettyPrintAst(node);
+                AstMutator visitor1 = new AstMutator(ImplementationUtil.newRuntime());
+                visitor1.mutate(node);
+                ImplementationUtil.prettyPrintAst(node);
 
                 // get the summary of the cpp implementations
-                printCppFile visitor = new printCppFile(LoadFileImplementations.newRuntime(), summaryTraversal);
+                PrintCppFile visitor = new PrintCppFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 printCppFileSummary summaryCpp = visitor.getSummary(node);
 
                 String outputCppFile = "";
                 outputCppFile += summaryCpp.filePrinted;
 
-                output = new File("testOutputs/printCppFile", String.format("Test%03d", i));
+                output = new File("testOutputs/PrintCppFile", String.format("Test%03d", i));
                 output.createNewFile();
 
                 printerOutput = new PrintWriter(output);

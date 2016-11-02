@@ -474,17 +474,10 @@ public class AstMutator extends Visitor {
         this.runtime = runtime;
     }
 
-    public AstMutator.AstMutatorSummary getMutator(Node n) {
+    public void mutate(Node n) {
 
         super.dispatch(n);
 
-        if (debug) {
-            out.println("\n");
-            out.println("DEBUGGING IS ON");
-
-        }
-
-        return summary;
     }
 
     static class AstMutatorSummary {

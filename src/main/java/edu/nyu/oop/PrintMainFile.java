@@ -10,17 +10,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static java.lang.System.out;
 
 /**
  * Created by Garrett on 10/21/16.
  */
-public class printMainFile extends Visitor {
+public class PrintMainFile extends Visitor {
 
 
-    private printMainFile.printMainFileSummary summary = new printMainFile.printMainFileSummary();
+    private PrintMainFile.printMainFileSummary summary = new PrintMainFile.printMainFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
@@ -290,7 +289,7 @@ public class printMainFile extends Visitor {
     // visitMethod
 
 
-    public printMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
+    public PrintMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
         this.runtime = runtime;
         this.summaryTraversal = summaryTraversal;
     }
@@ -302,7 +301,7 @@ public class printMainFile extends Visitor {
         ArrayList<String> variables = new ArrayList<String>();
     }
 
-    public printMainFile.printMainFileSummary getSummary(GNode n) {
+    public PrintMainFile.printMainFileSummary getSummary(GNode n) {
         StringBuilder s1 = new StringBuilder();
 
         s1.append("\n//------------------\n\n");
@@ -362,13 +361,13 @@ public class printMainFile extends Visitor {
 
 
     public static void main(String[] args) {
-        //TO RUN: run-main printMainFile ***
+        //TO RUN: run-main edu.nyu.oop.PrintMainFile ***
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
 
         if (args.length > 0) {
-            int value = LoadFileImplementations.getInteger(args[0]);
+            int value = ImplementationUtil.getInteger(args[0]);
             if (value > 0) {
                 start = value;
                 end = value;
@@ -384,20 +383,20 @@ public class printMainFile extends Visitor {
 
                 File main;
 
-                GNode node = (GNode) LoadFileImplementations.loadTestFile(test);
+                GNode node = (GNode) ImplementationUtil.loadTestFile(test);
 
                 // get the summary traversal (class implementations)
-                AstTraversal visitorTraversal = new AstTraversal(LoadFileImplementations.newRuntime());
+                AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
                 AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
 
                 // get the mutated tree
-                AstMutator visitor1 = new AstMutator(LoadFileImplementations.newRuntime());
-                AstMutator.AstMutatorSummary summary = visitor1.getMutator(node);
+                AstMutator visitor1 = new AstMutator(ImplementationUtil.newRuntime());
+                visitor1.mutate(node);
 
                 // get the summary of the cpp implementations
-                printMainFile visitor = new printMainFile(LoadFileImplementations.newRuntime(), summaryTraversal);
-                printMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                LoadFileImplementations.prettyPrintAst(node);
+                PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
+                PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
+                ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;
