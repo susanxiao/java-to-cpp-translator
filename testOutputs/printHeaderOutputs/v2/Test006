@@ -9,11 +9,12 @@ namespace inputs {
 		struct __A;
 		struct __A_VT;
 
+
 		typedef __A* A;
 
 		struct __A {
 			__A_VT* __vptr;
-			String fld= "A";
+			String fld = "A";
 
 			__A();
 

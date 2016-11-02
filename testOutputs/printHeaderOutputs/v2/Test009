@@ -9,6 +9,7 @@ namespace inputs {
 		struct __A;
 		struct __A_VT;
 
+
 		typedef __A* A;
 
 		struct __A {

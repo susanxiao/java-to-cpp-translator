@@ -27,14 +27,11 @@ import java.util.TreeMap;
 
 public class printHeaderFile extends Visitor {
 
-    //TODO: write in constructors
-    //TODO: if time, collect top fields together
-
     private printHeaderFile.headerFileSummary summary = new headerFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
-    public AstTraversal.AstTraversalSummary summaryTraversal;
+    private AstTraversal.AstTraversalSummary summaryTraversal;
 
     // visitXXX methods
     public void visitHeaderDeclaration(GNode n) {
@@ -49,6 +46,8 @@ public class printHeaderFile extends Visitor {
             for (String name : namespaces) {
                 summary.addNamespace(name);
             }
+
+            summary.code.append("%s\n%s\n"); // will be replaced by forwardDeclaration and typeDef
         }
         else {
             summary.code.append("\n");
@@ -56,12 +55,12 @@ public class printHeaderFile extends Visitor {
 
         summary.currentClass = summaryTraversal.classes.get(className);
 
-        //Object and VTable
-        summary.addLine("struct __"+className+";\n");
-        summary.addLine("struct __"+className+"_VT;\n\n");
+        //Object and VTable Forward Declaration
+        summary.addForwardDeclaration("struct __"+className+";\n");
+        summary.addForwardDeclaration("struct __"+className+"_VT;\n\n");
 
         //Typedef
-        summary.addLine("typedef __"+className+"* "+className+";\n\n");
+        summary.addTypeDef("typedef __"+className+"* "+className+";\n");
 
         //Construction
         summary.addLine("struct __"+className);
@@ -289,11 +288,16 @@ public class printHeaderFile extends Visitor {
     }
 
     static class headerFileSummary {
+        StringBuilder forwardDeclarations;
+        StringBuilder typeDef;
         StringBuilder code;
         int scope;
         ClassImplementation currentClass;
 
         public headerFileSummary() {
+            forwardDeclarations = new StringBuilder();
+            typeDef = new StringBuilder();
+
             code = new StringBuilder(
                       "#pragma once\n"
                     + "#include <iostream>\n"
@@ -301,6 +305,20 @@ public class printHeaderFile extends Visitor {
                     + "using namespace java::lang;\n\n"
             );
             scope = 0;
+        }
+
+        public void addForwardDeclaration(String line) {
+            for (int i = 0; i < scope; i++)
+                forwardDeclarations.append("\t");
+
+            forwardDeclarations.append(line);
+        }
+
+        public void addTypeDef(String line) {
+            for (int i = 0; i < scope; i++)
+                typeDef.append("\t");
+
+            typeDef.append(line);
         }
 
         public void addNamespace(String name) {
@@ -345,9 +363,12 @@ public class printHeaderFile extends Visitor {
     public headerFileSummary getSummary(GNode n) {
         visit(n);
 
+        summary.code = new StringBuilder(String.format(summary.code.toString(), summary.forwardDeclarations.toString(), summary.typeDef.toString()));
         while (summary.scope > 0) {
             summary.closeNamespace();
         }
+
+
         return summary;
     }
 
