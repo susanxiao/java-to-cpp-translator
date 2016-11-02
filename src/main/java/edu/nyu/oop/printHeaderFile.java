@@ -182,7 +182,7 @@ public class printHeaderFile extends Visitor {
     public void visitDataLayoutMethodDeclaration(GNode n) {
         for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
             String methodComparing = n.getString(2);
-            if (currMethod.name == methodComparing) {
+            if (currMethod.name.equals(methodComparing)) {
                 String currentMethodDeclaration = "\t";
                 // TODO: modifiers?
                 currentMethodDeclaration += "static ";
@@ -193,11 +193,11 @@ public class printHeaderFile extends Visitor {
 
                 currentMethodDeclaration += n.getString(1) + " ";
                 currentMethodDeclaration += n.getString(2) + "(";
-                if (n.getString(2) != "__class") {
+                if (!n.getString(2).equals("__class")) {
                     if (n.getString(2).equals("equals")) {
                         currentMethodDeclaration += summary.currentClassName + ",";
                     }
-                    if (currMethod.parameters.size() != 0) {
+                    if (currMethod.parameters.size() > 0) {
                         if (n.getString(2).startsWith("set")) {
                             currentMethodDeclaration += summary.currentClassName + ",";
                         }
@@ -217,9 +217,9 @@ public class printHeaderFile extends Visitor {
     }
 
     public void visitVTable(GNode n) {
-        if(!(summary.methodNames.contains("toString"))){
-            s1.append("\tstatic String toString(" + summary.currentClassName + ");\n");
-        }
+//        if(!(summary.methodNames.contains("toString"))){
+//            s1.append("\tstatic String toString(" + summary.currentClassName + ");\n");
+//        }
         s1.append("\n\t};\n\n\tstruct __" + summary.currentClassName + "_VT\n\t{\n\n");
         for (Object o : n) {
             if (o instanceof Node) {
@@ -258,9 +258,10 @@ public class printHeaderFile extends Visitor {
             }
         }
         */
-        if(!(summary.methodNames.contains("toString"))){
-            s1.append("\tString (*toString)(" + summary.currentClassName + ");\n");
-        }
+
+//        if(!(summary.methodNames.contains("toString"))){
+//            s1.append("\tString (*toString)(" + summary.currentClassName + ");\n");
+//        }
         s1.append(vTableConstructor(n));
         s1.append("\t};\n\n");
     }
@@ -283,7 +284,7 @@ public class printHeaderFile extends Visitor {
                 // checking if the class implements the method
                 for (MethodImplementation currMethod : summaryTraversal.classes.get(summary.currentClassName).methods) {
                     // if the class implements the method
-                    if (currMethod.name == methodComparing) {
+                    if (currMethod.name.equals(methodComparing)) {
 
                         summary.methodNames += currMethod.name;
 
@@ -295,7 +296,9 @@ public class printHeaderFile extends Visitor {
                 }
 
                 if (methodComparing.equals("hashCode")) {
-                    vTableMethod += "\t\thashCode(&__" + summary.currentClassName;
+                    vTableMethod += "\t\thashCode("
+                            + (summary.methodNames.contains("hashcode") ?
+                            "&__"+summary.currentClassName : "(int32_t(*)("+summary.currentClassName+"))&__Object");
                 } else if (methodComparing.equals("getClass")) {
                     vTableMethod += "\t\tgetClass((Class(*)(" + summary.currentClassName + ")) &__Object";
                 } else if (methodComparing.equals("equals")) {
@@ -529,7 +532,7 @@ public class printHeaderFile extends Visitor {
 
     public static void main(String[] args) {
         for (int i = 0; i < 21; i++) {
-            if (i != 8) {
+            if (i != 1) {
                 continue;
             }
             String test = "./src/test/java/inputs/";

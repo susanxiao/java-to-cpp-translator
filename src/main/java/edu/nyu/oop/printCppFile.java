@@ -578,7 +578,7 @@ public class printCppFile extends Visitor {
         //LoadFileImplementations.prettyPrintAst(node);
         for (int i = start; i <= end; i++) {
             String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
-            
+
             try {
                 PrintWriter printerOutput;
 
