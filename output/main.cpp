@@ -9,12 +9,20 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test000;
+using namespace inputs::test006;
 
 int main(void)
 {
 
-	cout << "Hello."  << endl;
+	A a = new __A();
+
+	a->__vptr->almostSetFld(new __String("B"));
+
+	cout << a->__vptr->getFld()->data << endl;
+
+	a->__vptr->setFld(a, new __String("B"));
+
+	cout << a->__vptr->getFld()->data << endl;
 
 	return 0;
 }

@@ -37,8 +37,6 @@ public class PrintHeaderFile extends Visitor {
     public void visitHeaderDeclaration(GNode n) {
         String className = n.getString(0);
 
-        if (className.startsWith("Test"))
-            return;
 
         if (summary.scope == 0) {
             String[] namespaces = n.getString(1).split("_");
@@ -52,6 +50,9 @@ public class PrintHeaderFile extends Visitor {
         else {
             summary.code.append("\n");
         }
+
+        if (className.startsWith("Test"))
+            return;
 
         summary.currentClass = summaryTraversal.classes.get(className);
 
@@ -73,7 +74,7 @@ public class PrintHeaderFile extends Visitor {
         if (summary.currentClass.declarations.size() > 0) {
             for (FieldDeclaration currentDeclaration : summary.currentClass.declarations) {
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                summary.addLine(type+" "+currentDeclaration.variableName+(currentDeclaration.stringLiteral == null ? "" : " = "+currentDeclaration.stringLiteral)+";\n");
+                summary.addLine(type+" "+currentDeclaration.variableName+";\n");
             }
             summary.code.append("\n");
         }
@@ -97,11 +98,6 @@ public class PrintHeaderFile extends Visitor {
             summary.code.append("\n");
         } else {
             summary.addLine("__" + className + "();\n\n");
-        }
-
-        //Superclass declaration
-        if (summary.currentClass.superClassName != null) {
-            summary.addLine("__" + summary.currentClass.superClassName + " parent;\n\n");
         }
 
         //Class method that all Objects have
