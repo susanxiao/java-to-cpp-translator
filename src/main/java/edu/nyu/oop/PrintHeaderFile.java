@@ -180,10 +180,10 @@ public class PrintHeaderFile extends Visitor {
             superClass = superClass.superClass;
         }
 
-        //hashcode
-        if (!vConstructor.containsKey("hashcode")) {
-            vConstructor.put("hashcode", "hashcode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashcode)");
-            vMethods.put("hashcode", "int32_t (*hashcode)(%s);\n");
+        //hashCode
+        if (!vConstructor.containsKey("hashCode")) {
+            vConstructor.put("hashCode", "hashCode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashCode)");
+            vMethods.put("hashCode", "int32_t (*hashCode)(%s);\n");
         }
 
         //equals
@@ -219,6 +219,7 @@ public class PrintHeaderFile extends Visitor {
 
 
         //vtable methods
+        summary.addLine("Class __isa;\n\n");
         Collection<String> vMethodValues = vMethods.values();
         for (String s : vMethodValues) {
             summary.addLine(String.format(s, summary.currentClass.name));
@@ -386,12 +387,15 @@ public class PrintHeaderFile extends Visitor {
 
         //TO RUN: run-main edu.nyu.oop.PrintHeaderFile ***
         // *** a number 0-20, or nothing to run all test cases
+        //NOTE: running a specific file will place it in the output folder.
+        //      running all files will place it in testOutputs/translationOutputs
+
         int start = 0;
         int end = 20;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
-            if (value > 0) {
+            if (value >= 0) {
                 start = value;
                 end = value;
             }
@@ -411,8 +415,6 @@ public class PrintHeaderFile extends Visitor {
                 PrintWriter printerHeader;
 
                 File header;
-                File output;
-                File main;
 
                 // printing the header file
                 PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);

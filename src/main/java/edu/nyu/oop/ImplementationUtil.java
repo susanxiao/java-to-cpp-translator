@@ -30,7 +30,7 @@ public class ImplementationUtil {
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
-            if (value > 0) {
+            if (value >= 0) {
                 start = value;
                 end = value;
             }
@@ -63,9 +63,19 @@ public class ImplementationUtil {
             PrintMainFile.printMainFileSummary mainSummary = new PrintMainFile(newRuntime(), summaryTraversal).getSummary(root);
 
             try {
-                File header = new File(String.format("./output/test%03d/output.h", i));
-                File output = new File(String.format("./output/test%03d/output.cpp", i));
-                File main = new File(String.format("./output/test%03d/main.cpp", i));
+                String headerPath = String.format("./testOutputs/translationOutputs/test%03d/output.h", i);
+                String outputPath = String.format("./testOutputs/translationOutputs/test%03d/output.cpp", i);
+                String mainPath = String.format("./testOutputs/translationOutputs//test%03d/main.cpp", i);
+
+                if (start == end) {
+                    //running a single file will place it in output folder
+                    headerPath = "./output/output.h";
+                    outputPath = "./output/output.cpp";
+                    mainPath = "./output/main.cpp";
+                }
+                File header = new File(headerPath);
+                File output = new File(outputPath);
+                File main = new File(mainPath);
 
                 main.getParentFile().mkdirs();
 
