@@ -20,6 +20,8 @@ namespace inputs {
 
 			static Class __class();
 
+			static __A_VT __vtable;
+
 			static void setFld(A, String);
 			static void almostSetFld(A, String);
 			static String getFld(A);

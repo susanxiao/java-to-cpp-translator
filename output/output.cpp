@@ -21,19 +21,13 @@ namespace inputs{
 		__this->fld = f;
 	}
 
-	void __A::almostSetFld(String f) {
+	void __A::almostSetFld(A __this,String f) {
 		String fld;
 		fld = f;
 	}
 
 	String __A::getFld(A __this) {
 		return  __this->fld;
-	}
-
-	String __A::toString(A __this) {
-		std::ostringstream sout;
-		sout << __this;
-		return new __String(sout.str());
 	}
 
 	Class __A::__class() {

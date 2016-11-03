@@ -46,22 +46,6 @@ public class PrintCppFile extends Visitor {
 //        hashCodeMethod.append("\t}\n\n");
 //        cppImplementation.append(hashCodeMethod);
 
-        boolean toStringGate = true;
-        for(MethodImplementation m : summary.methodList){
-            if(m.name.equals("toString")){
-                toStringGate = false;
-                break;
-            }
-        }
-        StringBuilder toString = new StringBuilder();
-        if(toStringGate){
-            toString.append("\tString __" + className + "::toString(" + className + " __this) {\n" +
-                    "\t\tstd::ostringstream sout;\n" +
-                    "\t\tsout << __this;\n" +
-                    "\t\treturn new __String(sout.str());\n" +
-                    "\t}\n\n");
-        }
-        cppImplementation.append(toString);
         /*
         // adding getMethods because we don't have a way to access variables defined in the class
         // when translating to C++
@@ -353,13 +337,9 @@ public class PrintCppFile extends Visitor {
                         String paramIdentifier = currentNode.getNode(1).getNode(0).getString(0) + " ";
                         String paramName = currentNode.getString(3);
                         if (numberParameters > 0) {
-                            if (!summary.currentMethodName.startsWith("set") && paramName.equals("__this")) {
-
-                            } else {
                                 parameter += paramIdentifier;
                                 parameter += paramName + ",";
                                 cppImplementation.append(parameter);
-                            }
                         } else {
                             parameter += paramIdentifier;
                             parameter += paramName;

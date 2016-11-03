@@ -75,7 +75,7 @@ public class AstMutatorTest {
         ImplementationUtil.prettyPrintToFile(new File("testOutputs/mutatedAstOutputs/test005.txt"), node);
     }
 
-    @Ignore @Test
+    @Test
     public void test006() {
         System.out.println("*********************** Test 006 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");

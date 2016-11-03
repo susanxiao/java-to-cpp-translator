@@ -180,8 +180,7 @@ public class PrintMainFile extends Visitor {
                                 if (args.size() > 0) {
                                     for (Object o1 : args) {
                                         argSize--;
-                                        if (currentNode.getNode(0).getName().equals("PrimaryIdentifier")
-                                            && !(currentNode.getNode(0).getString(0).equals(o1))) {
+                                        if (currentNode.getNode(0).getName().equals("PrimaryIdentifier")) {
                                             if (argSize > 0) {
                                                 expressionStatement += o1.toString() + ",";
                                             } else {
@@ -244,9 +243,7 @@ public class PrintMainFile extends Visitor {
                 if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                     expressionStatement += "(";
                     Node argumentsNode = (Node) callExpressionNode.getNode(3);
-                    if(methodName.startsWith("set")){
-                        expressionStatement += argumentsNode.getString(0) + ", ";
-                    }
+                    expressionStatement += argumentsNode.getString(0) + ", ";
                     if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
                         Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
                         String newClassIdentifier = "new ";

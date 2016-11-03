@@ -66,7 +66,6 @@ public class PrintHeaderFile extends Visitor {
         //Construction
         summary.addLine("struct __"+className);
         summary.incScope();
-
         //VPointer
         summary.addLine("__"+className+"_VT* __vptr;\n");
 
@@ -102,6 +101,9 @@ public class PrintHeaderFile extends Visitor {
 
         //Class method that all Objects have
         summary.addLine("static Class __class();\n\n");
+
+        //Vtable declaration
+        summary.addLine("static __"+summary.currentClass.name+"_VT __vtable;\n\n");
 
         //Methods that will be implemented in output.cpp
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
@@ -152,6 +154,7 @@ public class PrintHeaderFile extends Visitor {
 
         //NOTE: this does not handle overloading
         //ensure that the order is the same
+
         TreeMap<String, String> vMethods = new TreeMap<>();
         TreeMap<String, String> vConstructor = new TreeMap<>();
 
