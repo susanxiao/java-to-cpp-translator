@@ -9,8 +9,7 @@ import xtc.util.Runtime;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import static java.lang.System.out;
 
@@ -24,8 +23,6 @@ public class PrintCppFile extends Visitor {
 
     private Runtime runtime;
     private AstTraversal.AstTraversalSummary summaryTraversal;
-
-    StringBuilder cppImplementation = new StringBuilder();
 
     // visitXXX methods
 
@@ -46,11 +43,7 @@ public class PrintCppFile extends Visitor {
         summary.currentClass = summaryTraversal.classes.get(className);
 
         //information for initializer list
-        summary.initializerVariables = new ArrayList<>();
-        summary.initializerValues = new ArrayList<>();
-
-        summary.initializerVariables.add("__vptr");
-        summary.initializerValues.add("&__vtable");
+        summary.initializerList = new HashMap<>();
 
         visitClassBody((GNode) n.getNode(5));
 
@@ -64,7 +57,7 @@ public class PrintCppFile extends Visitor {
         summary.code.append("\n");
 
         //vtable
-        summary.addLine("__"+summary.currentClass.name+"_VT __"+summary.currentClass.name+"::__vtable;\n");
+        summary.addLine("__"+summary.currentClass.name+"_VT __"+summary.currentClass.name+"::__vtable;\n\n");
     }
 
     public void visitClassBody(GNode n) {
@@ -84,7 +77,7 @@ public class PrintCppFile extends Visitor {
             }
         }
         if (!constructorCreated) {
-            summary.addLine("__"+summary.currentClass.name+"::__"+summary.currentClass.name+"() : __vptr(&__vtable) {};\n");
+            summary.addLine("__"+summary.currentClass.name+"::__"+summary.currentClass.name+"() : __vptr(&__vtable) {};\n\n");
         }
     }
 
@@ -94,17 +87,18 @@ public class PrintCppFile extends Visitor {
                 Node fieldNode = (Node) o;
                 if (fieldNode.getName().equals("Declarators")) {
                     Node declarator = fieldNode.getNode(0);
-                    summary.initializerVariables.add(declarator.getString(0));
+                    String declaredValue = null;
                     Object o1 = declarator.get(2);
                     if (o1 != null && o1 instanceof Node) {
                         Node assignment = (Node) o1;
                         if (assignment.getName().equals("NewClassExpression")) {
                             Node qualifiedIdentifier = assignment.getNode(2);
                             String className = qualifiedIdentifier.getString(0);
+                            Node argumentsNode = assignment.getNode(3);
 
                             StringBuilder arguments = new StringBuilder();
-                            for (int i = 0; i < assignment.size(); i++) {
-                                Object o2 = assignment.get(i);
+                            for (int i = 0; i < argumentsNode.size(); i++) {
+                                Object o2 = argumentsNode.get(i);
                                 if (o2 instanceof Node) {
                                     if (i > 0)
                                         arguments.append(", ");
@@ -116,10 +110,12 @@ public class PrintCppFile extends Visitor {
                                     //TODO: other cases here
                                 }
                             }
-                            summary.initializerValues.add("new "+className+"("+arguments.toString()+")");
+                            declaredValue = "new "+className+"("+arguments.toString()+")";
                         }
                         //TODO: other cases here too
                     }
+
+                    summary.initializerList.put(declarator.getString(0), declaredValue);
                 }
             }
         }
@@ -128,174 +124,111 @@ public class PrintCppFile extends Visitor {
     public void visitConstructorDeclaration(GNode n) {
         String constructorName = n.getString(2);
         Node formalParameters = n.getNode(3);
-        Node block = n.getNode(5);
+        Node constructorBlock = n.getNode(5);
 
         StringBuilder constructor = new StringBuilder("__"+constructorName+"::__"+constructorName+"(");
         for (int i = 0; i < formalParameters.size(); i++) {
             Object o = formalParameters.get(i);
             if (o instanceof Node) {
                 Node formalParameter = (Node) o;
-                if (formalParameter.getName().equals("FormalParameter"))
-                for (Object o1 : formalParameter) {
-                    if (o1 instanceof Node) {
-                        Node type = (Node) o1;
-                        if (type.getName().equals("Type")) {
-                            String typeString = type.getNode(0).getString(0);
-                            if (i > 0)
-                                constructor.append(", ");
-                            constructor.append(typeString+" ");
+                if (formalParameter.getName().equals("FormalParameter")) {
+                    for (Object o1 : formalParameter) {
+                        if (o1 instanceof Node) {
+                            Node type = (Node) o1;
+                            if (type.getName().equals("Type")) {
+                                String typeString = type.getNode(0).getString(0);
+                                if (i > 0)
+                                    constructor.append(", ");
+                                constructor.append(typeString + " ");
+                            }
+                        } else if (o1 instanceof String) {
+                            String variableName = (String) o1;
+                            constructor.append(variableName);
                         }
-                    }
-                    else if (o1 instanceof String) {
-                        String variableName = (String) o1;
-                        constructor.append(variableName);
-                        summary.initializerValues.add(variableName);
                     }
                 }
             }
         }
-        constructor.append(") :\n");
-        for (int i = 0; i < summary.initializerVariables.size(); i++) {
-            if (i > 0)
-                constructor.append(",\n");
-            for (int j = 0; j < summary.scope + 1; j++) {
-                constructor.append("\t");
-            }
-            constructor.append(summary.initializerVariables.get(i)+"("+summary.initializerValues.get(i)+")");
-        }
+        constructor.append(") : %s"); //this is the placeholder for the initializer list
 
-        summary.addLine(constructor.toString()+"\n");
-        for (int i = 0 ; i < summary.scope; i++)
-            summary.code.append("\t");
+        summary.addLine(constructor.toString());
 
         summary.incScope();
-
-        for (Object o : block) {
-            /*if (o instanceof Node) {
-                Node currentNode = (Node) o;
-                if (currentNode.getName().equals("ExpressionStatement")) {
-                    for (Object o1 : currentNode) {
-                        if (o1 instanceof Node) {
-                            Node currentNode1 = (Node) o1;
-                            if (currentNode1.getName().equals("Expression")) {
-                                blockStrings += "\n\t\t";
-                                if (currentNode1.getNode(0).getName().equals("PrimaryIdentifier")
-                                        && currentNode1.getNode(2).getName().equals("NewClassExpression")) {
-
-                                    String primaryIdentifier = currentNode1.getNode(0).getString(0);
-                                    Node newClassExpression = currentNode1.getNode(2);
-                                    String newClassType = newClassExpression.getNode(2).getString(0);
-                                    Node newClassExpressionArgs = newClassExpression.getNode(3);
-                                    String qualifiedIdentifier = newClassExpression.getNode(2).getString(0);
-
-                                    int argsSize = newClassExpressionArgs.size();
-                                    if (newClassExpressionArgs.size() > 0) {
-                                        if(summary.superClassName == null) {
-                                            blockStrings += primaryIdentifier + " = ";
-                                        }else{
-                                            boolean gateParent = true;
-                                            for(FieldDeclaration curr : summary.currentFieldDeclarationList){
-                                                if(primaryIdentifier.equals(curr.variableName)){
-                                                    blockStrings += primaryIdentifier + " = ";
-                                                    gateParent = false;
-                                                }
-                                            }
-                                            if(gateParent){
-                                                blockStrings += "parent." + primaryIdentifier + " = ";
-                                            }
-                                        }
-                                        for (Object arg : newClassExpressionArgs) {
-                                            argsSize--;
-                                            if (arg instanceof Node) {
-                                                Node currentArg = (Node) arg;
-                                                if (currentArg.getName().equals("StringLiteral")) {
-                                                    blockStrings += "new " + qualifiedIdentifier + "("
-                                                            + currentArg.getString(0) + ");";
-                                                } else if (currentArg.getNode(0) instanceof Node) {
-
-                                                    if (currentArg.getNode(0).getName().equals("StringLiteral")) {
-                                                        if (argsSize > 0) {
-                                                            blockStrings += currentArg.getNode(0).getString(0) + ",";
-                                                        } else {
-                                                            blockStrings += currentArg.getNode(0).getString(0);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else if (currentNode1.getNode(0).getName().equals("PrimaryIdentifier")) {
-                                    blockStrings += currentNode1.getNode(0).getString(0);
-                                    if(currentNode1.getNode(2).getName().equals("ThisExpression")){
-                                        blockStrings += " = this;\n";
-                                    }
-                                } else if (currentNode1.getNode(0).getName().equals("SelectionExpression")) {
-                                    if (currentNode1.getNode(0).getNode(0).getName().equals("ThisExpression")) {
-                                        blockStrings += currentNode1.getNode(0).getString(1);
-                                    }
-                                    blockStrings += "(";
-                                    blockStrings += currentNode1.getNode(2).getString(0);
-                                    blockStrings += ")";
-                                }
-
-                            }
-                        }
-                    }
-                }
-            }*/
-        }
-        summary.decScope();
-        /*//constructor += blockStrings;
-        constructor += "  {\n";
-
-        // initializer block
-        blockStrings += "\n\t\t";
-        for (Object o : block) {
+        for (Object o : constructorBlock) {
             if (o instanceof Node) {
                 Node currentNode = (Node) o;
                 if (currentNode.getName().equals("ExpressionStatement")) {
-                    for (Object o1 : currentNode) {
-                        if (o1 instanceof Node) {
-                            Node currentNode2 = (Node) o1;
-                            if (currentNode2.getName().equals("CallExpression")) {
-                                if (currentNode2.getNode(0).getNode(0).getString(0).equals("cout")) {
-                                    blockStrings += "cout << ";
-                                }
-                                if (currentNode2.getString(2).equals("endl")) {
-                                    Node args = currentNode2.getNode(3);
-                                    for (Object o3 : args) {
-                                        if (o3 instanceof Node) {
-                                            Node currentNode3 = (Node) o3;
-                                            if (currentNode3.getName().equals("PrimaryIdentifier")) {
-                                                String primaryIdentifier = currentNode3.getString(0);
-                                                if(summary.superClassName == null) {
-                                                    blockStrings += primaryIdentifier + "->data ";
-                                                }else{
-                                                    boolean gateParent = true;
-                                                    for(FieldDeclaration curr : summary.currentFieldDeclarationList){
-                                                        if(primaryIdentifier.equals(curr.variableName)){
-                                                            blockStrings += primaryIdentifier + "->data ";
-                                                            gateParent = false;
-                                                        }
-                                                    }
-                                                    if(gateParent){
-                                                        blockStrings += "parent." + primaryIdentifier + "->data ";
-                                                    }
-                                                }
-                                            }
-                                        }
+                    Node expression = currentNode.getNode(0);
+                    Node expressionChild = expression.getNode(0);
+                    if (expressionChild.getName().equals("SelectionExpression")) {
+                        Node selectionChild = expressionChild.getNode(0);
+                        if (selectionChild.getName().equals("ThisExpression")) {
+                            String variableName = expressionChild.getString(1);
+                            String operator = expression.getString(1);
+                            Node expressionPrimaryIdentifier = expression.getNode(2);
+                            String variableValue = expressionPrimaryIdentifier.getString(0);
+
+                            if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                summary.initializerList.put(variableName, variableValue);
+                            else
+                                summary.addLine("this->" + variableName + " " + operator + " " + variableValue + ";\n");
+                        }
+                    }
+                    else if (expressionChild.getName().equals("PrimaryIdentifier")) {
+                        String variableName = expressionChild.getString(0);
+                        String operator = expression.getString(1);
+                        Node primarySibling = expression.getNode(2);
+                        if (primarySibling.getName().equals("PrimaryIdentifier")) {
+                            String variableValue = primarySibling.getString(0);
+                            if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                summary.initializerList.put(variableName, variableValue);
+                            else
+                                summary.addLine(variableName + " " + operator + " "+variableValue + ";\n");
+                        }
+                        else if (primarySibling.getName().equals("NewClassExpression")) {
+                            String className = primarySibling.getNode(2).getString(0);
+                            Node argumentsNode = primarySibling.getNode(3);
+
+                            StringBuilder arguments = new StringBuilder("(");
+                            for (int i = 0; i < argumentsNode.size(); i++) {
+                                Object o1 = argumentsNode.get(i);
+
+                                if (o1 instanceof Node) {
+                                    if (i > 0)
+                                        arguments.append(", ");
+
+                                    Node argument = (Node) o1;
+                                    if (argument.getName().equals("StringLiteral")) {
+                                        String value = argument.getString(0);
+                                        arguments.append(value);
                                     }
-                                    blockStrings += "<< endl;\n";
                                 }
                             }
+                            arguments.append(")");
 
-
+                            if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                summary.initializerList.put(variableName, "new "+className+arguments.toString());
+                            else
+                                summary.addLine(variableName + " " + operator + " new "+className+arguments.toString()+";\n");
                         }
                     }
                 }
             }
         }
-       */
+        summary.decScope();
+
+        Set<Map.Entry<String, String>> initializerSet = summary.initializerList.entrySet();
+        StringBuilder initializers = new StringBuilder("__vptr(&__vtable)");
+
+        for (Map.Entry<String, String> entry : initializerSet) {
+            if (entry.getValue() != null) {
+                initializers.append(",\n");
+                for (int i = 0; i < summary.scope + 2; i++)
+                    initializers.append("\t");
+                initializers.append(entry.getKey() + "(" + entry.getValue() + ")");
+            }
+        }
+        summary.code = new StringBuilder(String.format(summary.code.toString(), initializers.toString()));
     }
 
     public void visitMethodDeclaration(GNode n) {
@@ -307,7 +240,10 @@ public class PrintCppFile extends Visitor {
         StringBuilder methodSignature = new StringBuilder();
 
         Node methodType = n.getNode(2);
-        String returnType = methodType.getNode(0).getString(0);
+        String returnType = (methodType.getName().equals("VoidType") ? "void" : methodType.getNode(0).getString(0));
+        if (returnType.equals("int"))
+            returnType = "int32_t";
+
         String methodName = n.getString(3);
 
         methodSignature.append(returnType+" __"+summary.currentClass.name+"::"+methodName+"(");
@@ -330,107 +266,68 @@ public class PrintCppFile extends Visitor {
         }
         methodSignature.append(")");
         summary.addLine(methodSignature.toString());
-        summary.incScope();
 
+        summary.incScope();
         Node methodBlock = n.getNode(7);
 
+        HashSet<String> localVariables = new HashSet<>();
         for (Object o : methodBlock) {
             GNode currentNode = (GNode) o;
-            /*if (currentNode.getName().equals("FieldDeclaration")) {
-                String fieldDeclaration = "\t\t";
-                // type
-                fieldDeclaration += currentNode.getNode(1).getNode(0).getString(0) + " ";
-                // field
-                if (currentNode.getNode(2).getName().equals("Declarators")) {
-                    Node declaratorsNode = currentNode.getNode(2);
-                    fieldDeclaration += declaratorsNode.getNode(0).getString(0);
+            if (currentNode.getName().equals("FieldDeclaration")) {
+                Node type = currentNode.getNode(1);
+                String staticType = type.getNode(0).getString(0);
+                Node declarator = currentNode.getNode(2).getNode(0);
+                String variableName = declarator.getString(0);
+                Node declaratorChild = declarator.getNode(2);
+
+                localVariables.add(variableName);
+
+                if (declaratorChild == null) {
+                   summary.addLine(staticType+ " "+variableName+";\n");
                 }
-                cppImplementation.append(fieldDeclaration + ";\n");
+                else {
+                    //TODO
+                }
             } else if (currentNode.getName().equals("ExpressionStatement")) {
-                String expressionStatement = "\t\t";
-                if (currentNode.getNode(0).getNode(0).getName().equals("PrimaryIdentifier")) {
-                    String currentPrimaryIdentifier = currentNode.getNode(0).getNode(0).getString(0);
-                    if (summary.thisGate && summary.currentMethodName.startsWith("set")) {
-                        expressionStatement += "__this->";
-                        expressionStatement += currentPrimaryIdentifier;
-                    } else {
-                        expressionStatement += currentPrimaryIdentifier;
+                Node expression = currentNode.getNode(0);
+                if (expression.getNode(0).getName().equals("PrimaryIdentifier")) {
+                    String variableName = expression.getNode(0).getString(0);
+                    String operation = expression.getString(1);
+                    if (expression.getNode(2).getName().equals("PrimaryIdentifier")) {
+                        String assignment = expression.getNode(2).getString(0);
+                        if (!localVariables.contains(variableName) && summary.initializerList.containsKey(variableName))
+                            summary.addLine("__this->"+variableName+" "+operation+" "+assignment+";\n");
+                        else
+                            summary.addLine(variableName+" "+operation+" "+assignment+";\n");
                     }
-                    if (currentNode.getNode(0).getNode(2).getName().equals("PrimaryIdentifier")) {
-                        expressionStatement += " = " + currentNode.getNode(0).getNode(2).getString(0);
-                    }
+                    //TODO: else
                 }
-                cppImplementation.append(expressionStatement + ";\n");
             } else if (currentNode.getName().equals("ReturnStatement")) {
                 visitReturnStatement(currentNode);
-                return;
-            }*/
+            }
         }
-
         summary.decScope();
     }
 
     public void visitReturnStatement(GNode n) {
-
-
-/*        String returnStatement = "\t\treturn";
-
-        String returnStatementString = "";
-        String returnPrimaryIdentifier = "";
-
-        String identifier = "";
-
         for (Object o : n) {
             Node currentNode = (Node) o;
             if (currentNode.getName().equals("NewClassExpression")) {
-                for (Object o1 : currentNode) {
-                    if (o1 instanceof Node) {
-                        Node currentNodeO1 = (Node) o1;
-                        if (currentNodeO1.getName().equals("QualifiedIdentifier")) {
-                            identifier = currentNodeO1.getString(0);
-                        } else if (currentNodeO1.getName().equals("Arguments")) {
-                            if (currentNodeO1.size() > 0) {
-                                for (Object argument : currentNodeO1) {
-                                    Node currentArgument = (Node) argument;
-                                    if (currentArgument.getNode(0).getName().equals("StringLiteral")) {
-                                        if (identifier.equals("__String")) {
-                                            returnStatementString = "\t\tstd::ostringstream sout;\n";
-                                            returnStatementString += "\t\tsout << ";
-                                            returnStatementString += currentArgument.getNode(0).getString(0) + ";\n";
-                                            returnStatementString += "\t\treturn new __String(sout.str());\n\t}\n";
-                                            cppImplementation.append(returnStatementString + "\n\n");
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                //TODO:
             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
-                if (summary.thisGate) {
-                    returnPrimaryIdentifier += "\t\treturn  __this->" + currentNode.getString(0) + ";";
-                    cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
-                    return;
-                } else {
-                    returnPrimaryIdentifier += "\t\treturn " + currentNode.getString(0) + ";";
-                    cppImplementation.append(returnPrimaryIdentifier + "\n\t}\n\n");
-                    return;
-                }
+                String variable = currentNode.getString(0);
+                if (summary.initializerList.containsKey(variable))
+                    summary.addLine("return __this->"+variable+";\n");
+                else
+                    summary.addLine("return "+variable+";\n");
             } else if (currentNode.getName().equals("StringLiteral")) {
-                returnStatementString = "\t\tstd::ostringstream sout;\n";
-                returnStatementString += "\t\tsout << ";
-                returnStatementString += currentNode.getString(0) + ";\n";
-                returnStatementString += "\t\treturn new __String(sout.str());\n\t}\n";
-                cppImplementation.append(returnStatementString + "\n\n");
-                return;
+                String value = currentNode.getString(0);
+                summary.addLine("return new __String("+value+");\n");
             }
-        }*/
-
-
+        }
     }
 
-    // visitMethod
+    // visit method
     public void visit(Node n) {
         for (Object o : n) {
             if (o instanceof Node) {
@@ -449,8 +346,7 @@ public class PrintCppFile extends Visitor {
         StringBuilder code;
         int scope;
         ClassImplementation currentClass;
-        ArrayList<String> initializerVariables;
-        ArrayList<String> initializerValues;
+        HashMap<String, String> initializerList;
 
         public cppFileSummary() {
             code = new StringBuilder(
@@ -542,7 +438,6 @@ public class PrintCppFile extends Visitor {
                 // get the mutated tree
                 AstMutator visitor1 = new AstMutator(ImplementationUtil.newRuntime());
                 visitor1.mutate(node);
-                ImplementationUtil.prettyPrintAst(node);
 
                 // get the summary of the cpp implementations
                 PrintCppFile visitor = new PrintCppFile(ImplementationUtil.newRuntime(), summaryTraversal);

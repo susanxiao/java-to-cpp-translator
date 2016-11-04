@@ -416,7 +416,6 @@ public class PrintHeaderFile extends Visitor {
                 // printing the header file
                 PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-                out.println(summary.code.toString());
 
                 header = new File("testOutputs/printHeaderOutputs/v2", String.format("Test%03d", i));
                 header.getParentFile().mkdirs();
