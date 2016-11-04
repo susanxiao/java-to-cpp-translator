@@ -1,17 +1,9 @@
 Summary
-print main.cpp -> test000 -> test007
-print output.cpp -> test000 -> test008
-print output.h -> test000 -> test020
 
-Working translations
-Test000 -> good
-Test001 -> good
-Test002 -> not sure
-Test003 -> good
-Test004 -> good
-Test005 -> good
-Test006 -> good
-Test007 -> good
-Test008 -> good
-Test009 -> not sure
-Test010 -> no
+printMain:
+
+printHeader: test007
+printCpp: test007
+->Need to fix inheritance of fields in printHeader + printCpp
+
+Full Translation from test000->test006
