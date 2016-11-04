@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static java.lang.System.out;
 
@@ -18,7 +19,7 @@ import static java.lang.System.out;
  */
 public class PrintCppFile extends Visitor {
 
-    private PrintCppFile.printCppFileSummary summary = new PrintCppFile.printCppFileSummary();
+    private cppFileSummary summary = new cppFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
@@ -27,125 +28,150 @@ public class PrintCppFile extends Visitor {
     StringBuilder cppImplementation = new StringBuilder();
 
     // visitXXX methods
+
+    public void visitPackageDeclaration(GNode n) {
+        Node qualifiedIdentifier = n.getNode(1);
+        if (qualifiedIdentifier != null) {
+            for (int i = 0; i < qualifiedIdentifier.size(); i++) {
+                summary.addNamespace(qualifiedIdentifier.getString(i));
+            }
+        }
+    }
+
     public void visitClassDeclaration(GNode n) {
         if (n.getString(1).contains("Test")) {
             return;
         }
         String className = n.getString(1);
-        summary.currentClassName = className;
-        summary.methodList = summaryTraversal.classes.get(className).methods;
-        summary.currentFieldDeclarationList = summaryTraversal.classes.get(className).declarations;
-        summary.superClassName = summaryTraversal.classes.get(className).superClassName;
+        summary.currentClass = summaryTraversal.classes.get(className);
+
+        //information for initializer list
+        summary.initializerVariables = new ArrayList<>();
+        summary.initializerValues = new ArrayList<>();
+
+        summary.initializerVariables.add("__vptr");
+        summary.initializerValues.add("&__vtable");
 
         visitClassBody((GNode) n.getNode(5));
 
-//        StringBuilder hashCodeMethod = new StringBuilder();
-//        hashCodeMethod.append("\tint32_t __" + summary.currentClassName + "::hashCode(");
-//        hashCodeMethod.append(summary.currentClassName + " __this){\n");
-//        hashCodeMethod.append("\t\treturn 5;\n");
-//        hashCodeMethod.append("\t}\n\n");
-//        cppImplementation.append(hashCodeMethod);
+        //__class() method
+        summary.addLine("Class __" + summary.currentClass.name + "::__class()");
+        summary.incScope();
+        summary.addLine("static Class k =\n");
+        summary.addLine("new __Class(__rt::literal(\"class inputs.javalang." + summary.currentClass.name + "\"), (Class) __rt::null());\n");
+        summary.addLine("return k;\n");
+        summary.decScope();
+        summary.code.append("\n");
 
-        /*
-        // adding getMethods because we don't have a way to access variables defined in the class
-        // when translating to C++
-        StringBuilder getMethods = new StringBuilder();
-        if (summary.currentFieldDeclarationList.size() != 0) {
-            for (FieldDeclaration currentDeclaration : summary.currentFieldDeclarationList) {
-                String type;
-                if (currentDeclaration.staticType.equals("int")) {
-                    type = "int32_t";
-                } else {
-                    type = currentDeclaration.staticType;
-                }
-                getMethods.append("\t" + type + " __" + className + "::get" + currentDeclaration.variableName + "("
-                        + summary.currentClassName + " __this)" + "{\n");
-                getMethods.append("\t\t" + "return __this->" + currentDeclaration.variableName + ";");
-                getMethods.append("\n\t}\n\n");
-            }
-        }
-
-        cppImplementation.append(getMethods);
-        */
-
-        cppImplementation.append("\tClass __" + summary.currentClassName + "::__class() {\n" +
-                "\t\tstatic Class k =\n" +
-                "\t\t\tnew __Class(__rt::literal(\"class inputs.javalang." + summary.currentClassName + "\"), (Class) __rt::null());\n" +
-                " \t\treturn k;\n" +
-                "\t}\n\n");
-
+        //vtable
+        summary.addLine("__"+summary.currentClass.name+"_VT __"+summary.currentClass.name+"::__vtable;\n");
     }
 
     public void visitClassBody(GNode n) {
-        boolean constructorGate = false;
+        boolean constructorCreated = false;
         for (Object methods : n) {
             GNode currentMethod = (GNode) methods;
-            if (currentMethod.getName().equals("ConstructorDeclaration")) {
-                constructorGate = true;
+            if (currentMethod.getName().equals("FieldDeclaration")) {
+                visitFieldDeclaration(currentMethod);
+            }
+            else if (currentMethod.getName().equals("ConstructorDeclaration")) {
                 visitConstructorDeclaration(currentMethod);
+                constructorCreated = true;
+                summary.code.append("\n");
             } else if (currentMethod.getName().equals("MethodDeclaration")) {
-                if (!constructorGate) {
-                    String constructor = "";
-                    constructor += "\n\t__" + summary.currentClassName + "::";
-                    constructor += "__" + summary.currentClassName + "(" + ")";
-                    constructor += "  :  __vptr(&__vtable) {}";
-                    cppImplementation.append(constructor + "\n\n");
-                    cppImplementation.append("\t__" + summary.currentClassName);
-                    cppImplementation.append("_VT __" + summary.currentClassName + "::__vtable;\n\n");
-                }
                 visitMethodDeclaration(currentMethod);
+                summary.code.append("\n");
+            }
+        }
+        if (!constructorCreated) {
+            summary.addLine("__"+summary.currentClass.name+"::__"+summary.currentClass.name+"() : __vptr(&__vtable) {};\n");
+        }
+    }
+
+    public void visitFieldDeclaration(GNode n) {
+        for (Object o : n) {
+            if (o instanceof Node) {
+                Node fieldNode = (Node) o;
+                if (fieldNode.getName().equals("Declarators")) {
+                    Node declarator = fieldNode.getNode(0);
+                    summary.initializerVariables.add(declarator.getString(0));
+                    Object o1 = declarator.get(2);
+                    if (o1 != null && o1 instanceof Node) {
+                        Node assignment = (Node) o1;
+                        if (assignment.getName().equals("NewClassExpression")) {
+                            Node qualifiedIdentifier = assignment.getNode(2);
+                            String className = qualifiedIdentifier.getString(0);
+
+                            StringBuilder arguments = new StringBuilder();
+                            for (int i = 0; i < assignment.size(); i++) {
+                                Object o2 = assignment.get(i);
+                                if (o2 instanceof Node) {
+                                    if (i > 0)
+                                        arguments.append(", ");
+
+                                    Node argument = (Node) o2;
+                                    if (argument.getName().equals("StringLiteral")) {
+                                        arguments.append(argument.getString(0));
+                                    }
+                                    //TODO: other cases here
+                                }
+                            }
+                            summary.initializerValues.add("new "+className+"("+arguments.toString()+")");
+                        }
+                        //TODO: other cases here too
+                    }
+                }
             }
         }
     }
 
     public void visitConstructorDeclaration(GNode n) {
-
-        String constructorDeclaration = n.getString(2);
+        String constructorName = n.getString(2);
         Node formalParameters = n.getNode(3);
         Node block = n.getNode(5);
 
-        String constructor = "";
-        constructor += "\n\t__" + constructorDeclaration + "::";
-        constructor += "__" + constructorDeclaration + "(";
-
-        String constructorArguments = "";
-
-        if (formalParameters.size() > 0) {
-            for (Object o : formalParameters) {
-                if (o instanceof Node) {
-                    Node currentNode = (Node) o;
-                    for (Object o1 : currentNode) {
-                        if (o1 instanceof Node) {
-                            Node currentNode1 = (Node) o1;
-                            if (currentNode1.getName().equals("Type")) {
-                                String type = currentNode1.getNode(0).getString(0);
-                                /*
-                                if(type.equals("String")){
-                                    type = "std::string";
-                                }
-                                */
-                                constructorArguments += type + " ";
-                            }
-                        } else {
-                            if (o1 != null) {
-                                constructorArguments += o1.toString();
-                            }
+        StringBuilder constructor = new StringBuilder("__"+constructorName+"::__"+constructorName+"(");
+        for (int i = 0; i < formalParameters.size(); i++) {
+            Object o = formalParameters.get(i);
+            if (o instanceof Node) {
+                Node formalParameter = (Node) o;
+                if (formalParameter.getName().equals("FormalParameter"))
+                for (Object o1 : formalParameter) {
+                    if (o1 instanceof Node) {
+                        Node type = (Node) o1;
+                        if (type.getName().equals("Type")) {
+                            String typeString = type.getNode(0).getString(0);
+                            if (i > 0)
+                                constructor.append(", ");
+                            constructor.append(typeString+" ");
                         }
                     }
-                } else {
-
+                    else if (o1 instanceof String) {
+                        String variableName = (String) o1;
+                        constructor.append(variableName);
+                        summary.initializerValues.add(variableName);
+                    }
                 }
             }
         }
+        constructor.append(") :\n");
+        for (int i = 0; i < summary.initializerVariables.size(); i++) {
+            if (i > 0)
+                constructor.append(",\n");
+            for (int j = 0; j < summary.scope + 1; j++) {
+                constructor.append("\t");
+            }
+            constructor.append(summary.initializerVariables.get(i)+"("+summary.initializerValues.get(i)+")");
+        }
 
-        constructor += constructorArguments;
-        constructor += ")";
+        summary.addLine(constructor.toString()+"\n");
+        for (int i = 0 ; i < summary.scope; i++)
+            summary.code.append("\t");
 
-        constructor += " : __vptr(&__vtable)";
+        summary.incScope();
 
-        String blockStrings = "";
         for (Object o : block) {
-            if (o instanceof Node) {
+            /*if (o instanceof Node) {
                 Node currentNode = (Node) o;
                 if (currentNode.getName().equals("ExpressionStatement")) {
                     for (Object o1 : currentNode) {
@@ -216,11 +242,10 @@ public class PrintCppFile extends Visitor {
                         }
                     }
                 }
-            }
-
+            }*/
         }
-
-        //constructor += blockStrings;
+        summary.decScope();
+        /*//constructor += blockStrings;
         constructor += "  {\n";
 
         // initializer block
@@ -270,92 +295,48 @@ public class PrintCppFile extends Visitor {
                 }
             }
         }
-       // constructor += initializerBlock;
-        if (summary.currentFieldDeclarationList.size() > 0) {
-            for (FieldDeclaration o1 : summary.currentFieldDeclarationList) {
-                if (o1.staticType.equals("String")) {
-                    if (!(o1.stringLiteral == null)) {
-                        blockStrings += o1.variableName + " = new __String(" + o1.stringLiteral + ");\n";
-                        continue;
-                    }
-                }
-            }
-        }
-
-        constructor += blockStrings;
-
-        constructor += "\n\t}";
-
-        cppImplementation.append(constructor + "\n\n");
-
-        cppImplementation.append("\t__" + summary.currentClassName + "_VT __" + summary.currentClassName + "::__vtable;\n\n");
+       */
     }
 
     public void visitMethodDeclaration(GNode n) {
 
-        String type = "";
-        String methodName = "";
-        if (n.getNode(2).getName().equals("Type")) {
-            type = n.getNode(2).getNode(0).getString(0);
-            summary.qualifiedIdentifier = type;
-            methodName = n.getString(3);
-        } else if (n.getNode(2).getName().equals("VoidType")) {
-            type = "void";
-            methodName = n.getString(3);
-        }
+        //String __A::getFld(A __this) {
+        //return  __this->fld;
+        //}
 
-        summary.currentMethodName = methodName;
+        StringBuilder methodSignature = new StringBuilder();
 
+        Node methodType = n.getNode(2);
+        String returnType = methodType.getNode(0).getString(0);
+        String methodName = n.getString(3);
 
-        cppImplementation.append("\t" + type + " ");
-        cppImplementation.append("__" + summary.currentClassName + "::" + methodName + "(");
+        methodSignature.append(returnType+" __"+summary.currentClass.name+"::"+methodName+"(");
 
-        if (n.getNode(4).getName().equals("Arguments")) {
-            int numberArgs = n.getNode(4).size();
-            if (n.getNode(4).size() > 0) {
-                for (Object argument : n.getNode(4)) {
-                    numberArgs--;
-                    if (numberArgs > 0) {
-                        cppImplementation.append(argument.toString() + ",");
-                    } else {
-                        cppImplementation.append(argument.toString());
-                    }
-                }
-            } else {
-                cppImplementation.append(summary.currentClassName + " __this");
-            }
-        } else if (n.getNode(4).getName().equals("FormalParameters")) {
-            int numberParameters = n.getNode(4).size();
-            Node formalParameters = n.getNode(4);
-            for (Object o : formalParameters) {
-                if (o instanceof Node) {
-                    Node currentNode = (Node) o;
-                    String parameter = "";
-                    if (currentNode.getName().equals("FormalParameter")) {
-                        summary.thisGate = true;
-                        numberParameters--;
-                        String paramIdentifier = currentNode.getNode(1).getNode(0).getString(0) + " ";
-                        String paramName = currentNode.getString(3);
-                        if (numberParameters > 0) {
-                                parameter += paramIdentifier;
-                                parameter += paramName + ",";
-                                cppImplementation.append(parameter);
-                        } else {
-                            parameter += paramIdentifier;
-                            parameter += paramName;
-                            cppImplementation.append(parameter);
-                        }
-                    }
+        Node formalParameters = n.getNode(4);
+        for (int i = 0 ; i < formalParameters.size(); i++) {
+            Object o = formalParameters.get(i);
+            if (o instanceof Node) {
+                Node formalParameter = (Node) o;
+                if (formalParameter.getName().equals("FormalParameter")) {
+                    Node paramType = formalParameter.getNode(1);
+                    String className = paramType.getNode(0).getString(0);
+                    String paramName = formalParameter.getString(3);
+
+                    if (i > 0)
+                        methodSignature.append(", ");
+                    methodSignature.append(className + " "+paramName);
                 }
             }
         }
-
-        cppImplementation.append(") {\n");
+        methodSignature.append(")");
+        summary.addLine(methodSignature.toString());
+        summary.incScope();
 
         Node methodBlock = n.getNode(7);
+
         for (Object o : methodBlock) {
             GNode currentNode = (GNode) o;
-            if (currentNode.getName().equals("FieldDeclaration")) {
+            /*if (currentNode.getName().equals("FieldDeclaration")) {
                 String fieldDeclaration = "\t\t";
                 // type
                 fieldDeclaration += currentNode.getNode(1).getNode(0).getString(0) + " ";
@@ -383,16 +364,16 @@ public class PrintCppFile extends Visitor {
             } else if (currentNode.getName().equals("ReturnStatement")) {
                 visitReturnStatement(currentNode);
                 return;
-            }
+            }*/
         }
-        summary.thisGate = false;
-        cppImplementation.append("\t}\n\n");
+
+        summary.decScope();
     }
 
     public void visitReturnStatement(GNode n) {
 
 
-        String returnStatement = "\t\treturn";
+/*        String returnStatement = "\t\treturn";
 
         String returnStatementString = "";
         String returnPrimaryIdentifier = "";
@@ -444,7 +425,7 @@ public class PrintCppFile extends Visitor {
                 cppImplementation.append(returnStatementString + "\n\n");
                 return;
             }
-        }
+        }*/
 
 
     }
@@ -464,65 +445,65 @@ public class PrintCppFile extends Visitor {
         this.summaryTraversal = summaryTraversal;
     }
 
-    static class printCppFileSummary {
-        String currentClassName;
-        String filePrinted;
-        String qualifiedIdentifier;
-        boolean thisGate = false;
-        int numberParameters;
-        String currentMethodName;
-        ArrayList<FieldDeclaration> currentFieldDeclarationList;
-        String superClassName;
-        ArrayList<MethodImplementation> methodList;
+    static class cppFileSummary {
+        StringBuilder code;
+        int scope;
+        ClassImplementation currentClass;
+        ArrayList<String> initializerVariables;
+        ArrayList<String> initializerValues;
+
+        public cppFileSummary() {
+            code = new StringBuilder(
+                    "#include \"output.h\"\n" +
+                    "#include <sstream>\n\n" +
+                    "using namespace java::lang;\n" +
+                    "using namespace std;\n");
+            scope = 0;
+        }
+        public void addNamespace(String name) {
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+
+            code.append("namespace "+name);
+            incScope();
+        }
+
+        public void closeNamespace() {
+            scope--;
+
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+            code.append("}\n");
+        }
+
+        public void incScope() {
+            code.append(" {\n");
+            scope++;
+        }
+
+        public void decScope() {
+            scope--;
+
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+            code.append("};\n");
+        }
+
+        public void addLine(String line) {
+            for (int i = 0; i < scope; i++)
+                code.append("\t");
+
+            code.append(line);
+        }
 
     }
 
-    public printCppFileSummary getSummary(GNode n) {
-        StringBuilder s1 = new StringBuilder();
-        s1.append("\n//------------------\n\n");
-        s1.append("#include \"output.h\"\n");
-        s1.append("#include <sstream>\n\n");
-        s1.append("using namespace java::lang;\nusing namespace std;\n");
-        // get the namespace
-        Node packageNode = n.getNode(0).getNode(1);
-        String namespace = "";
-        int namespaceCounter = 0;
-        for (Object packageName : packageNode) {
-            for (int i = 0; i < namespaceCounter; i++) {
-                namespace += "\t";
-            }
-            namespace += "namespace " + packageName.toString() + "{\n";
-            namespaceCounter += 1;
+    public cppFileSummary getSummary(GNode n) {
+        visit(n);
+
+        while (summary.scope > 0) {
+            summary.closeNamespace();
         }
-        s1.append(namespace);
-
-
-        // visit the class declarations
-        for (Object o : n) {
-            GNode currentClass = (GNode) o;
-            if (currentClass.getName().equals("ClassDeclaration")) {
-                visitClassDeclaration(currentClass);
-            }
-        }
-
-        s1.append(cppImplementation);
-
-
-        // close the namespace
-        s1.append("\n");
-        String closeNamespace = "";
-        while (namespaceCounter > 0) {
-            for (int i = 0; i < namespaceCounter - 1; i++) {
-                closeNamespace += ("\t");
-            }
-            closeNamespace += "}\n";
-            namespaceCounter--;
-        }
-        s1.append(closeNamespace);
-        s1.append("\n//------------------\n\n");
-        out.println(s1.toString());
-
-        summary.filePrinted = s1.toString();
 
         return summary;
     }
@@ -565,16 +546,14 @@ public class PrintCppFile extends Visitor {
 
                 // get the summary of the cpp implementations
                 PrintCppFile visitor = new PrintCppFile(ImplementationUtil.newRuntime(), summaryTraversal);
-                printCppFileSummary summaryCpp = visitor.getSummary(node);
+                cppFileSummary summaryCpp = visitor.getSummary(node);
 
-                String outputCppFile = "";
-                outputCppFile += summaryCpp.filePrinted;
-
-                output = new File("testOutputs/PrintCppFile", String.format("Test%03d", i));
+                output = new File("testOutputs/printCppFile/v2", String.format("Test%03d", i));
+                output.getParentFile().mkdirs();
                 output.createNewFile();
 
                 printerOutput = new PrintWriter(output);
-                printerOutput.println(outputCppFile);
+                printerOutput.println(summaryCpp.code.toString());
                 printerOutput.flush();
                 printerOutput.close();
                 out.println("output " + i + " printed\n");

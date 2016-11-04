@@ -356,7 +356,6 @@ public class PrintHeaderFile extends Visitor {
 
             code.append(line);
         }
-
     }
 
 
@@ -403,7 +402,6 @@ public class PrintHeaderFile extends Visitor {
         for (int i = start; i <= end; i++) {
             String test = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
 
-            out.println(test);
             GNode node = (GNode) ImplementationUtil.loadTestFile(test);
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);

@@ -56,7 +56,7 @@ public class ImplementationUtil {
 
             // PHASE 5: create the cpp code
             //TODO: this one
-            PrintCppFile.printCppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(root);
+            PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(root);
 
             // PHASE 5: create the main code
             //TODO: finish this one
@@ -86,7 +86,7 @@ public class ImplementationUtil {
                 out.println("Printed "+header.getPath());
 
                 FileWriter printOutput = new FileWriter(output);
-                printOutput.write(cppSummary.filePrinted);
+                printOutput.write(cppSummary.code.toString());
                 printOutput.flush();
                 printOutput.close();
                 out.println("Printed "+header.getPath());
