@@ -4,12 +4,13 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test011 {
+	namespace test010 {
 		void __A::setA(A __this, String x) {
-			this->a = x;
+			__this->a = x;
 		};
 
 		void __A::printOther(A __this, A other) {
+			cout << other->__vptr->toString(other)->data << endl;
 		};
 
 		String __A::toString(A __this) {

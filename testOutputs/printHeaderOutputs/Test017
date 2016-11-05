@@ -6,53 +6,43 @@ using namespace java::lang;
 
 namespace inputs {
 	namespace test017 {
+		struct __A;
+		struct __A_VT;
 
 
-	struct __A;
-	struct __A_VT;
+		typedef __A* A;
 
-	typedef __A* A;
+		struct __A {
+			__A_VT* __vptr;
+			A self;
 
-	struct __A
-	{
+			__A(int32_t x);
 
-	A self;
+			static Class __class();
 
-	__A_VT* __vptr;
+			static __A_VT __vtable;
 
-	__A(int32_t x);
+			static A self(A);
+		};
 
-	static Class __class();
+		struct __A_VT {
+			Class __isa;
 
-	static int32_t hashCode(A);
+			bool (*equals)(A, Object);
+			Class (*getClass)(A);
+			int32_t (*hashCode)(A);
+			A (*self)(A);
+			String (*toString)(A);
 
-	static __A_VT __vtable;
-
-	static A self(A);
-
-	};
-
-	struct __A_VT
-	{
-
-	Class __isa;
-	A (*self)(A);
-	int32_t (*hashCode)(A);
-	Class (*getClass)(A);
-	bool (*equals)(A,Object);
-
-	__A_VT()
-	: __isa(__A::__class()),
-		self(&__A::self),
-		hashCode((int32_t(*)(A))&__Object::hashCode),
-		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals),
-		toString(&__A::toString)
-		{}
-
-	};
-
-
+			__A_VT()
+			: __isa(__A::__class()),
+			equals((bool(*)(A, Object))&__Object::equals),
+			getClass((Class(*)(A))&__Object::getClass),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
+			self(&__A::self),
+			toString((String(*)(A))&__Object::toString)
+			{}
+		};
 
 	}
 }

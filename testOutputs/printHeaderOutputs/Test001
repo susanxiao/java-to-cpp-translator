@@ -6,50 +6,40 @@ using namespace java::lang;
 
 namespace inputs {
 	namespace test001 {
+		struct __A;
+		struct __A_VT;
 
 
-	struct __A;
-	struct __A_VT;
+		typedef __A* A;
 
-	typedef __A* A;
+		struct __A {
+			__A_VT* __vptr;
 
-	struct __A
-	{
+			__A();
 
-	__A_VT* __vptr;
+			static Class __class();
 
-	__A();
+			static __A_VT __vtable;
 
-	static Class __class();
+			static String toString(A);
+		};
 
-	static int32_t hashCode(A);
+		struct __A_VT {
+			Class __isa;
 
-	static __A_VT __vtable;
+			bool (*equals)(A, Object);
+			Class (*getClass)(A);
+			int32_t (*hashCode)(A);
+			String (*toString)(A);
 
-	static String toString(A);
-
-	};
-
-	struct __A_VT
-	{
-
-	Class __isa;
-	String (*toString)(A);
-	int32_t (*hashCode)(A);
-	Class (*getClass)(A);
-	bool (*equals)(A,Object);
-
-	__A_VT()
-	: __isa(__A::__class()),
-		toString(&__A::toString),
-		hashCode((int32_t(*)(A))&__Object::hashCode),
-		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals)
-		{}
-
-	};
-
-
+			__A_VT()
+			: __isa(__A::__class()),
+			equals((bool(*)(A, Object))&__Object::equals),
+			getClass((Class(*)(A))&__Object::getClass),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
+			toString(&__A::toString)
+			{}
+		};
 
 	}
 }

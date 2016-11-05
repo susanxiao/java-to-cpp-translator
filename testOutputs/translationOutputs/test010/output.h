@@ -32,6 +32,8 @@ namespace inputs {
 
 			static Class __class();
 
+			static __A_VT __vtable;
+
 			static void setA(A, String);
 			static void printOther(A, A);
 			static String toString(A);
@@ -60,13 +62,14 @@ namespace inputs {
 
 		struct __B1 {
 			__B1_VT* __vptr;
+			String a;
 			String b;
 
 			__B1();
 
-			__A parent;
-
 			static Class __class();
+
+			static __B1_VT __vtable;
 
 		};
 
@@ -85,21 +88,22 @@ namespace inputs {
 			equals((bool(*)(B1, Object))&__Object::equals),
 			getClass((Class(*)(B1))&__Object::getClass),
 			hashCode((int32_t(*)(B1))&__Object::hashCode),
-			printOther((void(*)(B1))&__A::printOther),
-			setA((void(*)(B1))&__A::setA),
+			printOther((void(*)(B1, A))&__A::printOther),
+			setA((void(*)(B1, String))&__A::setA),
 			toString((String(*)(B1))&__A::toString)
 			{}
 		};
 
 		struct __B2 {
 			__B2_VT* __vptr;
+			String a;
 			String b;
 
 			__B2();
 
-			__A parent;
-
 			static Class __class();
+
+			static __B2_VT __vtable;
 
 		};
 
@@ -118,21 +122,23 @@ namespace inputs {
 			equals((bool(*)(B2, Object))&__Object::equals),
 			getClass((Class(*)(B2))&__Object::getClass),
 			hashCode((int32_t(*)(B2))&__Object::hashCode),
-			printOther((void(*)(B2))&__A::printOther),
-			setA((void(*)(B2))&__A::setA),
+			printOther((void(*)(B2, A))&__A::printOther),
+			setA((void(*)(B2, String))&__A::setA),
 			toString((String(*)(B2))&__A::toString)
 			{}
 		};
 
 		struct __C {
 			__C_VT* __vptr;
+			String a;
+			String b;
 			String c;
 
 			__C();
 
-			__B1 parent;
-
 			static Class __class();
+
+			static __C_VT __vtable;
 
 		};
 
@@ -151,10 +157,11 @@ namespace inputs {
 			equals((bool(*)(C, Object))&__Object::equals),
 			getClass((Class(*)(C))&__Object::getClass),
 			hashCode((int32_t(*)(C))&__Object::hashCode),
-			printOther((void(*)(C))&__A::printOther),
-			setA((void(*)(C))&__A::setA),
+			printOther((void(*)(C, A))&__A::printOther),
+			setA((void(*)(C, String))&__A::setA),
 			toString((String(*)(C))&__A::toString)
 			{}
 		};
+
 	}
 }

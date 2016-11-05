@@ -24,6 +24,8 @@ namespace inputs {
 
 			static Class __class();
 
+			static __A_VT __vtable;
+
 			static void printOther(A, A);
 		};
 
@@ -48,11 +50,13 @@ namespace inputs {
 
 		struct __B {
 			__B_VT* __vptr;
+			A some;
+
 			__B();
 
-			__A parent;
-
 			static Class __class();
+
+			static __B_VT __vtable;
 
 			static void printOther(B, A);
 			static String toString(B);
@@ -76,5 +80,6 @@ namespace inputs {
 			toString(&__B::toString)
 			{}
 		};
+
 	}
 }

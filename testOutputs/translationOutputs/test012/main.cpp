@@ -30,13 +30,13 @@ int main(void)
 
 	c->__vptr->setA(c, new __String("C"));
 
-	a->__vptr->printOther(a);
+	a->__vptr->printOther(a, a);
 
-	a->__vptr->printOther(b1);
+	a->__vptr->printOther(a, b1);
 
-	a->__vptr->printOther(b2);
+	a->__vptr->printOther(a, b2);
 
-	a->__vptr->printOther(c);
+	a->__vptr->printOther(a, c);
 
 	return 0;
 }

@@ -6,59 +6,49 @@ using namespace java::lang;
 
 namespace inputs {
 	namespace test006 {
+		struct __A;
+		struct __A_VT;
 
 
-	struct __A;
-	struct __A_VT;
+		typedef __A* A;
 
-	typedef __A* A;
+		struct __A {
+			__A_VT* __vptr;
+			String fld;
 
-	struct __A
-	{
+			__A();
 
-	String fld;
+			static Class __class();
 
-	__A_VT* __vptr;
+			static __A_VT __vtable;
 
-	__A();
+			static void setFld(A, String);
+			static void almostSetFld(A, String);
+			static String getFld(A);
+		};
 
-	static Class __class();
+		struct __A_VT {
+			Class __isa;
 
-	static int32_t hashCode(A);
+			void (*almostSetFld)(A, String);
+			bool (*equals)(A, Object);
+			Class (*getClass)(A);
+			String (*getFld)(A);
+			int32_t (*hashCode)(A);
+			void (*setFld)(A, String);
+			String (*toString)(A);
 
-	static __A_VT __vtable;
-
-	static void setFld(A,String);
-	static void almostSetFld(String);
-	static String getFld(A);
-
-	};
-
-	struct __A_VT
-	{
-
-	Class __isa;
-	void (*setFld)(A,String);
-	void (*almostSetFld)(String);
-	String (*getFld)(A);
-	int32_t (*hashCode)(A);
-	Class (*getClass)(A);
-	bool (*equals)(A,Object);
-
-	__A_VT()
-	: __isa(__A::__class()),
-		setFld(&__A::setFld),
-		almostSetFld(&__A::almostSetFld),
-		getFld(&__A::getFld),
-		hashCode((int32_t(*)(A))&__Object::hashCode),
-		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals),
-		toString(&__A::toString)
-		{}
-
-	};
-
-
+			__A_VT()
+			: __isa(__A::__class()),
+			almostSetFld(&__A::almostSetFld),
+			equals((bool(*)(A, Object))&__Object::equals),
+			getClass((Class(*)(A))&__Object::getClass),
+			getFld(&__A::getFld),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
+			setFld(&__A::setFld),
+			toString((String(*)(A))&__Object::toString)
+			{}
+		};
 
 	}
 }

@@ -20,6 +20,8 @@ namespace inputs {
 
 			static Class __class();
 
+			static __A_VT __vtable;
+
 		};
 
 		struct __A_VT {
@@ -38,5 +40,6 @@ namespace inputs {
 			toString((String(*)(A))&__Object::toString)
 			{}
 		};
+
 	}
 }

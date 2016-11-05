@@ -1,85 +1,61 @@
-
-//------------------
-
 #include "output.h"
 #include <sstream>
 
 using namespace java::lang;
 using namespace std;
-namespace inputs{
-	namespace test011{
+namespace inputs {
+	namespace test011 {
+		void __A::setA(A __this, String x) {
+			__this->a = x;
+		};
 
-	__A::__A()  :  __vptr(&__vtable) {}
+		void __A::printOther(A __this, A other) {
+			cout << other->__vptr->a->data << endl;
+		};
 
-	__A_VT __A::__vtable;
+		String __A::toString(A __this) {
+			return __this->a;
+		};
 
-	void __A::setA(A __this,String x) {
-		__this->a = x;
-	}
+		__A::__A() : __vptr(&__vtable) {};
 
-
-	__A::__A()  :  __vptr(&__vtable) {}
-
-	__A_VT __A::__vtable;
-
-	void __A::printOther(A other) {
-		;
-	}
-
-
-	__A::__A()  :  __vptr(&__vtable) {}
-
-	__A_VT __A::__vtable;
-
-	String __A::toString(A __this) {
-		return  __this->a;
-	}
-
-	Class __A::__class() {
-		static Class k =
+		Class __A::__class() {
+			static Class k =
 			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
- 		return k;
-	}
+			return k;
+		};
 
-	String __B1::toString(B1 __this) {
-		std::ostringstream sout;
-		sout << __this;
-		return new __String(sout.str());
-	}
+		__A_VT __A::__vtable;
 
-	Class __B1::__class() {
-		static Class k =
+		__B1::__B1() : __vptr(&__vtable) {};
+
+		Class __B1::__class() {
+			static Class k =
 			new __Class(__rt::literal("class inputs.javalang.B1"), (Class) __rt::null());
- 		return k;
-	}
+			return k;
+		};
 
-	String __B2::toString(B2 __this) {
-		std::ostringstream sout;
-		sout << __this;
-		return new __String(sout.str());
-	}
+		__B1_VT __B1::__vtable;
 
-	Class __B2::__class() {
-		static Class k =
+		__B2::__B2() : __vptr(&__vtable) {};
+
+		Class __B2::__class() {
+			static Class k =
 			new __Class(__rt::literal("class inputs.javalang.B2"), (Class) __rt::null());
- 		return k;
-	}
+			return k;
+		};
 
-	String __C::toString(C __this) {
-		std::ostringstream sout;
-		sout << __this;
-		return new __String(sout.str());
-	}
+		__B2_VT __B2::__vtable;
 
-	Class __C::__class() {
-		static Class k =
+		__C::__C() : __vptr(&__vtable) {};
+
+		Class __C::__class() {
+			static Class k =
 			new __Class(__rt::literal("class inputs.javalang.C"), (Class) __rt::null());
- 		return k;
-	}
+			return k;
+		};
 
+		__C_VT __C::__vtable;
 
 	}
 }
-
-//------------------
-

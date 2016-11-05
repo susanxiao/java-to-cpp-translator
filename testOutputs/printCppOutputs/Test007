@@ -4,12 +4,10 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test016 {
-		void __A::printOther(A __this, A other) {
-			cout << other->__vptr->toString(other)->data << endl;
+	namespace test007 {
+		__A::__A() : __vptr(&__vtable),
+				a(new __String("A")) {
 		};
-
-		__A::__A() : __vptr(&__vtable) {};
 
 		Class __A::__class() {
 			static Class k =
@@ -19,14 +17,10 @@ namespace inputs {
 
 		__A_VT __A::__vtable;
 
-		void __B::printOther(B __this, A other) {
-			cout << other->__vptr->toString(other)->data << endl;
+		__B::__B() : __vptr(&__vtable),
+				a(new __String("A")),
+				b(new __String("B")) {
 		};
-
-		String __B::toString(B __this) {
-		};
-
-		__B::__B() : __vptr(&__vtable) {};
 
 		Class __B::__class() {
 			static Class k =
@@ -38,3 +32,4 @@ namespace inputs {
 
 	}
 }
+

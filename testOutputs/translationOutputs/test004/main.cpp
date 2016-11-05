@@ -15,7 +15,7 @@ int main(void)
 {
 
 	A a = new __A(new __String("A"));
-	cout << a->__vptr->getFld()->data << endl;
+	cout << a->__vptr->getFld(a)->data << endl;
 
 	return 0;
 }

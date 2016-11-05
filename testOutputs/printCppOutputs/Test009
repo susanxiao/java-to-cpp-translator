@@ -4,12 +4,9 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test017 {
-		__A::__A(int x) : __vptr(&__vtable) {
-		};
-
-		A __A::self(A __this) {
-			return __this->self;
+	namespace test009 {
+		__A::__A() : __vptr(&__vtable),
+				self(this) {
 		};
 
 		Class __A::__class() {

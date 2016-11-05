@@ -1,16 +1,9 @@
-
-//------------------
-
 #include "output.h"
 #include <sstream>
 
 using namespace java::lang;
 using namespace std;
-namespace inputs{
-	namespace test018{
-
+namespace inputs {
+	namespace test018 {
 	}
 }
-
-//------------------
-

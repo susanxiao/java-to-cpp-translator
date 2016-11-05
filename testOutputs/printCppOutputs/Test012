@@ -6,10 +6,11 @@ using namespace std;
 namespace inputs {
 	namespace test012 {
 		void __A::setA(A __this, String x) {
-			this->a = x;
+			__this->a = x;
 		};
 
 		void __A::printOther(A __this, A other) {
+			cout << other->__vptr->myToString(other)->data << endl;
 		};
 
 		String __A::myToString(A __this) {

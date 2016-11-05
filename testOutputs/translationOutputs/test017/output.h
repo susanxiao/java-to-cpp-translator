@@ -20,6 +20,8 @@ namespace inputs {
 
 			static Class __class();
 
+			static __A_VT __vtable;
+
 			static A self(A);
 		};
 
@@ -41,5 +43,6 @@ namespace inputs {
 			toString((String(*)(A))&__Object::toString)
 			{}
 		};
+
 	}
 }

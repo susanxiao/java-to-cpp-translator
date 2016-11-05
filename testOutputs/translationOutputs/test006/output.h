@@ -14,11 +14,13 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String fld = "A";
+			String fld;
 
 			__A();
 
 			static Class __class();
+
+			static __A_VT __vtable;
 
 			static void setFld(A, String);
 			static void almostSetFld(A, String);
@@ -47,5 +49,6 @@ namespace inputs {
 			toString((String(*)(A))&__Object::toString)
 			{}
 		};
+
 	}
 }

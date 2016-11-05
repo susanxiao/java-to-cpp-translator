@@ -4,8 +4,9 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test015 {
+	namespace test014 {
 		void __A::printOther(A __this, A other) {
+			cout << other->__vptr->toString(other)->data << endl;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};
@@ -17,22 +18,6 @@ namespace inputs {
 		};
 
 		__A_VT __A::__vtable;
-
-		void __B::printOther(B __this, A other) {
-		};
-
-		String __B::toString(B __this) {
-		};
-
-		__B::__B() : __vptr(&__vtable) {};
-
-		Class __B::__class() {
-			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.B"), (Class) __rt::null());
-			return k;
-		};
-
-		__B_VT __B::__vtable;
 
 	}
 }

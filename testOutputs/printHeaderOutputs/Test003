@@ -6,53 +6,43 @@ using namespace java::lang;
 
 namespace inputs {
 	namespace test003 {
+		struct __A;
+		struct __A_VT;
 
 
-	struct __A;
-	struct __A_VT;
+		typedef __A* A;
 
-	typedef __A* A;
+		struct __A {
+			__A_VT* __vptr;
+			String fld;
 
-	struct __A
-	{
+			__A(String f);
 
-	String fld;
+			static Class __class();
 
-	__A_VT* __vptr;
+			static __A_VT __vtable;
 
-	__A(String f);
+			static String getFld(A);
+		};
 
-	static Class __class();
+		struct __A_VT {
+			Class __isa;
 
-	static int32_t hashCode(A);
+			bool (*equals)(A, Object);
+			Class (*getClass)(A);
+			String (*getFld)(A);
+			int32_t (*hashCode)(A);
+			String (*toString)(A);
 
-	static __A_VT __vtable;
-
-	static String getFld(A);
-
-	};
-
-	struct __A_VT
-	{
-
-	Class __isa;
-	String (*getFld)(A);
-	int32_t (*hashCode)(A);
-	Class (*getClass)(A);
-	bool (*equals)(A,Object);
-
-	__A_VT()
-	: __isa(__A::__class()),
-		getFld(&__A::getFld),
-		hashCode((int32_t(*)(A))&__Object::hashCode),
-		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals),
-		toString(&__A::toString)
-		{}
-
-	};
-
-
+			__A_VT()
+			: __isa(__A::__class()),
+			equals((bool(*)(A, Object))&__Object::equals),
+			getClass((Class(*)(A))&__Object::getClass),
+			getFld(&__A::getFld),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
+			toString((String(*)(A))&__Object::toString)
+			{}
+		};
 
 	}
 }

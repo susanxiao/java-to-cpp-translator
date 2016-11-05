@@ -14,9 +14,12 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
+
 			__A();
 
 			static Class __class();
+
+			static __A_VT __vtable;
 
 			static String toString(A);
 		};
@@ -37,5 +40,6 @@ namespace inputs {
 			toString(&__A::toString)
 			{}
 		};
+
 	}
 }

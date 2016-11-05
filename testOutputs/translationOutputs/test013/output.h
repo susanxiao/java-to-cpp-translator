@@ -20,6 +20,8 @@ namespace inputs {
 
 			static Class __class();
 
+			static __A_VT __vtable;
+
 			static void setA(A, String);
 			static void printOther(A, A);
 		};
@@ -44,5 +46,6 @@ namespace inputs {
 			toString((String(*)(A))&__Object::toString)
 			{}
 		};
+
 	}
 }

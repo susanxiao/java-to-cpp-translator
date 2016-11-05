@@ -4,11 +4,14 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test014 {
-		void __A::printOther(A __this, A other) {
+	namespace test017 {
+		__A::__A(int x) : __vptr(&__vtable),
+				self(this) {
 		};
 
-		__A::__A() : __vptr(&__vtable) {};
+		A __A::self(A __this) {
+			return __this->self;
+		};
 
 		Class __A::__class() {
 			static Class k =
