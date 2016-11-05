@@ -113,6 +113,26 @@ CompilationUnit(
     ),
     null,
     ClassBody(
+      FieldDeclaration(
+        Modifiers(
+          Modifier(
+            "public"
+          )
+        ),
+        Type(
+          QualifiedIdentifier(
+            "A"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
+            "some",
+            null,
+            null
+          )
+        )
+      ),
       MethodDeclaration(
         Modifiers(
           Modifier(

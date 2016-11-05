@@ -14,8 +14,8 @@ using namespace inputs::test004;
 int main(void)
 {
 
-	A a = new __A("A");
-	cout << a->__vptr->getFld(a)->data  << endl;
+	A a = new __A(new __String("A"));
+	cout << a->__vptr->getFld()->data << endl;
 
 	return 0;
 }

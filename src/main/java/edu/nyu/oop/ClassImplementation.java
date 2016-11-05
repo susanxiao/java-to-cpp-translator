@@ -23,8 +23,10 @@ public class ClassImplementation {
     public ClassImplementation(ClassImplementation superClass, String name, String modifier) {
         if(superClass != null){
             this.superClassName = superClass.name;
+            this.superClass = superClass;
         }else{
             this.superClassName = null;
+            this.superClass = superClass;
         }
 
         this.name = name;
@@ -72,8 +74,17 @@ public class ClassImplementation {
             MethodImplementation m = methods.get(i);
             if (name.equals(m.name)) return m;
         }
-        if (superClass == null) return null;
-        else return superClass.findMethod(name);
+        return null;
+
+    }
+
+    public MethodImplementation deepFindMethod(String name) {
+        MethodImplementation method = findMethod(name);
+        if (method == null) {
+            if (superClass == null) return null;
+            else return superClass.deepFindMethod(name);
+        }
+        else return method;
     }
 
     public void addPackage(String name) {

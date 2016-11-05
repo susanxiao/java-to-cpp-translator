@@ -16,7 +16,9 @@ namespace inputs {
 	struct __A
 	{
 
-	std::string a;
+	String a;
+
+	__A_VT* __vptr;
 
 	__A();
 
@@ -24,11 +26,9 @@ namespace inputs {
 
 	static int32_t hashCode(A);
 
-	__A_VT* __vptr;
-
 	static __A_VT __vtable;
 
-	static void setA(String);
+	static void setA(A,String);
 	static void printOther(A);
 
 	};
@@ -37,7 +37,7 @@ namespace inputs {
 	{
 
 	Class __isa;
-	void (*setA)(A);
+	void (*setA)(A,String);
 	void (*printOther)(A);
 	int32_t (*hashCode)(A);
 	Class (*getClass)(A);
@@ -47,9 +47,10 @@ namespace inputs {
 	: __isa(__A::__class()),
 		setA(&__A::setA),
 		printOther(&__A::printOther),
-		hashCode(&__A::hashCode),
+		hashCode((int32_t(*)(A))&__Object::hashCode),
 		getClass((Class(*)(A)) &__Object::getClass),
-		equals((bool(*)(A,Object)) &__Object::equals)
+		equals((bool(*)(A,Object)) &__Object::equals),
+		toString(&__A::toString)
 		{}
 
 	};

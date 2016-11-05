@@ -20,14 +20,17 @@ import static java.lang.System.out;
 public class AstMutator extends Visitor {
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private Runtime runtime;
-    boolean debug = false;
     private AstMutator.AstMutatorSummary summary = new AstMutator.AstMutatorSummary();
 
     public void visitClassDeclaration(GNode n) {
         summary.currentClass = n.getString(1);
         for (Object o : n)
-            if (o instanceof Node)
-                visit((Node) o);
+            if (o instanceof Node) {
+                if (((Node) o).getName().equals("ClassBody"))
+                    visitClassBody(n, GNode.cast(o));
+                else
+                   dispatch((Node) o);
+            }
     }
 
     public void visitMethodDeclaration(GNode n) {
@@ -185,12 +188,14 @@ public class AstMutator extends Visitor {
 
                 String callExpressionString = n.getString(2);
 
+                boolean cout = false;
                 if ((primaryIdentifierString != null && primaryIdentifierString.equals("System"))
                         && (selectionExpressionString != null && selectionExpressionString.equals("out"))
                         && (callExpressionString != null && callExpressionString.equals("println"))) {
                     primaryIdentifier.set(0, "cout");
                     selectionExpression.set(1, null);
                     n.set(2, "endl");
+                    cout = true;
                 }
 
                 for (int i = 3; i < n.size(); i++) {
@@ -198,82 +203,80 @@ public class AstMutator extends Visitor {
                     if (o2 instanceof Node) {
                         if (((Node) o2).getName().equals("Arguments")) {
                             if (((Node) o2).size() > 0) {
-                                Node argument = ((Node) o2).getNode(0);
+                                GNode argument = ((Node) o2).getGeneric(0);
                                 if (argument.getName().equals("CallExpression")) {
-                                    Node selectionExpression1 = argument.getNode(0);
-                                    if (selectionExpression1 != null) {
-                                        if (selectionExpression1.getName().equals("SelectionExpression")) {
-                                            Node primaryIdentifier1 = selectionExpression1.getNode(0);
+                                    //TODO: check if argument is ultimately String type
+                                    Node callExpressionChild = argument.getNode(0);
+                                    if (callExpressionChild != null) {
+                                        if (callExpressionChild.getName().equals("SelectionExpression")) {
+                                            Node primaryIdentifier1 = callExpressionChild.getNode(0);
 
                                             GNode arguments = argument.getGeneric(3);
                                             if (!arguments.hasVariable()) {
                                                 arguments = GNode.ensureVariable(arguments);
                                             }
 
-                                            if (arguments.size() > 0) {
-                                                arguments.add(arguments.get(arguments.size() - 1));
-                                                for (int j = arguments.size() - 2; j > 0; j--) {
-                                                    arguments.set(j, arguments.get(j - 1));
-                                                }
-                                                arguments.set(0, primaryIdentifier1.getString(0));
-                                            } else
-                                                arguments.add(primaryIdentifier1.getString(0));
+                                            arguments.add(0, primaryIdentifier1.getString(0));
 
                                             argument.set(3, arguments);
                                             visitArguments(arguments);
-                                        } else if (selectionExpression1.getName().equals("PrimaryIdentifier")) {
-                                            String primaryIdentifier1 = selectionExpression1.getString(0);
+                                        } else if (callExpressionChild.getName().equals("PrimaryIdentifier")) {
+                                            String primaryIdentifier1 = callExpressionChild.getString(0);
                                             GNode arguments = argument.getGeneric(3);
                                             if (!arguments.hasVariable()) {
                                                 arguments = GNode.ensureVariable(arguments);
                                             }
 
-                                            if (arguments.size() > 0) {
-                                                arguments.add(arguments.get(arguments.size() - 1));
-                                                for (int j = arguments.size() - 2; j > 0; j--) {
-                                                    arguments.set(j, arguments.get(j - 1));
-                                                }
-                                                arguments.set(0, primaryIdentifier1);
-                                            } else
-                                                arguments.add(primaryIdentifier1);
+                                            arguments.add(0, primaryIdentifier1);
 
+                                            ArrayList<GNode> currentClassFields = summary.fieldDeclarations.get(summary.currentClass);
+                                            if (currentClassFields != null) {
+                                                for (int j = 0; j < currentClassFields.size(); j++) {
+                                                    if (currentClassFields.get(j).getNode(2).getNode(0).getString(0).equals(primaryIdentifier1)) { //Node represents the primary identifier name
+                                                        if (currentClassFields.get(j).getNode(1).getNode(0).getString(0).equals("String")) {//field type is String
+                                                            arguments.add("data");
+                                                        }
+                                                    }
+                                                }
+                                            }
                                             argument.set(3, arguments);
                                             visitArguments(arguments);
                                         }
                                     }
-                                    /*else {
-                                        String primaryIdentifier1 = null;
-                                        for (int j = 0; j < argument.size(); j++) {
-                                            Object o3 = argument.get(j);
-                                            if (o3 instanceof Node) {
-                                                if (((Node) o3).getName().equals("PrimaryIdentifier")) {
-                                                    primaryIdentifier1 = ((Node) o3).getString(0);
-                                                }
-                                                else if (((Node) o3).getName().equals("Arguments")) {
-                                                    if (primaryIdentifier1 == null)
-                                                        primaryIdentifier1 = "__this";
-                                                    GNode arguments = GNode.cast(o3);
+                                }
+                                else if (argument.getName().equals("SelectionExpression")) {
+                                    String primaryIdentifier1 = argument.getNode(0).getString(0);
 
-                                                    if (!arguments.hasVariable()) {
-                                                        arguments = GNode.ensureVariable(arguments);
+                                    String currentObjectClass = summary.objects.get(primaryIdentifier1);
+                                    ArrayList<GNode> currentClassFields = summary.fieldDeclarations.get(currentObjectClass);
+                                    if (currentClassFields != null) {
+                                        for (int j = 0; j < currentClassFields.size(); j++) {
+                                            if (currentClassFields.get(j).getNode(2).getNode(0).getString(0).equals(primaryIdentifier1)) { //Node represents the primary identifier name
+                                                if (currentClassFields.get(j).getNode(1).getNode(0).getString(0).equals("String")) {//field type is String
+
+                                                    if (!argument.hasVariable()) {
+                                                        argument = GNode.ensureVariable(argument);
+                                                        ((Node) o2).set(0, argument);
                                                     }
-
-                                                    if (arguments.size() > 0) {
-                                                        arguments.add(arguments.get(arguments.size() - 1));
-                                                        for (int k = arguments.size() - 2; k > 0; k--) {
-                                                            arguments.set(k, arguments.get(k - 1));
-                                                        }
-                                                        arguments.set(0, primaryIdentifier1);
-                                                    } else
-                                                        arguments.add(primaryIdentifier1);
-
-                                                    argument.set(j, arguments);
+                                                    argument.add("data");
                                                 }
-                                                else
-                                                    visit((Node) o);
                                             }
                                         }
-                                    }*/
+                                    }
+                                }
+                                else if (argument.getName().equals("PrimaryIdentifier")) {
+                                    String primaryIdentifier1 = argument.getString(0);
+
+                                    String currentObjectClass = summary.objects.get(primaryIdentifier1);
+                                    if (currentObjectClass != null && currentObjectClass.equals("String")) {
+                                        GNode argumentsNode = GNode.cast(o2);
+                                        if (!argumentsNode.hasVariable()) {
+                                            argumentsNode = GNode.ensureVariable(argumentsNode);
+                                            n.set(i, argumentsNode);
+                                        }
+                                        if (argumentsNode.size() == 1 || !argumentsNode.getString(argumentsNode.size() - 1).equals("data"))
+                                            argumentsNode.add("data");
+                                    }
                                 }
                             }
                         }
@@ -394,6 +397,9 @@ public class AstMutator extends Visitor {
 
                         expression.set(i, newClassExpression);
                     }
+                    else if (((Node) o).getName().equals("NewClassExpression") && ((Node) o).getNode(2).getString(0).equals("__String")) {
+                        //skip these
+                    }
                     else visit((Node) o);
                 }
             }
@@ -412,6 +418,52 @@ public class AstMutator extends Visitor {
                     visitReturnStatement(n, i);
                 else if (((Node) o).getName().equals("ExpressionStatement"))
                     visitExpressionStatement(GNode.cast(o));
+                else
+                    visit((Node) o);
+            }
+        }
+    }
+
+    public void visitConstructorDeclaration(GNode n) {
+        for (Object o : n) {
+            if (o instanceof Node) {
+                if (((Node) o).getName().equals("Block"))
+                    visitConstructorBlock(n, GNode.cast(o));
+                else
+                    visit((Node) o);
+            }
+        }
+    }
+
+    public void visitConstructorBlock(GNode parent, GNode n) {
+        if (summary.currentClassExtends != null && summary.constructorBodies.get(summary.currentClassExtends) != null) {
+            if (!n.hasVariable()) {
+                n = GNode.ensureVariable(n);
+                parent.set(5, n); //is block always index 5
+            }
+
+            //add the gnodes from constructorBodies
+            n.addAll(0, summary.constructorBodies.get(summary.currentClassExtends));
+        }
+
+
+        for (int i = 0; i < n.size(); i++) {
+            Object o = n.get(i);
+            if (o instanceof Node) {
+                if (((Node) o).getName().equals("FieldDeclaration")) {
+                    if (!summary.constructorBodies.containsKey(summary.currentClass))
+                        summary.constructorBodies.put(summary.currentClass, new ArrayList<GNode>());
+                    summary.constructorBodies.get(summary.currentClass).add(GNode.cast(o));
+
+                    visitFieldDeclaration(GNode.cast(o));
+                }
+                else if (((Node) o).getName().equals("ExpressionStatement")) {
+                    if (!summary.constructorBodies.containsKey(summary.currentClass))
+                        summary.constructorBodies.put(summary.currentClass, new ArrayList<GNode>());
+                    summary.constructorBodies.get(summary.currentClass).add(GNode.cast(o));
+
+                    visitExpressionStatement(GNode.cast(o));
+                }
                 else
                     visit((Node) o);
             }
@@ -458,6 +510,44 @@ public class AstMutator extends Visitor {
         }
     }
 
+    public void visitExtension(GNode n) {
+        summary.currentClassExtends = n.getNode(0).getNode(0).getString(0);
+    }
+
+    public void visitClassBody(GNode parent, GNode n) {
+        if (summary.currentClassExtends != null) {
+            ArrayList<GNode> superClassFields = summary.fieldDeclarations.get(summary.currentClassExtends);
+
+            if (superClassFields != null) {
+                //add superClass fields to the arraylist
+                if (summary.fieldDeclarations.get(summary.currentClass) == null)
+                    summary.fieldDeclarations.put(summary.currentClass, new ArrayList<GNode>());
+
+                summary.fieldDeclarations.get(summary.currentClass).addAll(superClassFields);
+
+                //add the GNodes to the classBody
+                if (!n.hasVariable()) {
+                    n = GNode.ensureVariable(n);
+                    parent.set(5, n); //is class body always index 5
+                }
+                n.addAll(0, summary.fieldDeclarations.get(summary.currentClassExtends));
+            }
+        }
+
+        for (Object o : n) {
+            if (o instanceof Node) {
+                if (((Node) o).getName().equals("FieldDeclaration")) {
+                    if (summary.fieldDeclarations.get(summary.currentClass) == null)
+                        summary.fieldDeclarations.put(summary.currentClass, new ArrayList<GNode>());
+                    summary.fieldDeclarations.get(summary.currentClass).add(GNode.cast(o));
+                }
+
+                dispatch((Node) o);
+            }
+        }
+        summary.currentClassExtends = null; //reset for next class
+    }
+
     /**
      * visit method
      */
@@ -474,21 +564,15 @@ public class AstMutator extends Visitor {
         this.runtime = runtime;
     }
 
-    public AstMutator.AstMutatorSummary getMutator(Node n) {
-
+    public void mutate(Node n) {
         super.dispatch(n);
-
-        if (debug) {
-            out.println("\n");
-            out.println("DEBUGGING IS ON");
-
-        }
-
-        return summary;
     }
 
-    static class AstMutatorSummary {
+    private static class AstMutatorSummary {
+        String currentClassExtends;
         String currentClass;
+        HashMap<String, ArrayList<GNode>> constructorBodies = new HashMap<>();
+        HashMap<String, ArrayList<GNode>> fieldDeclarations = new HashMap<>();
         HashMap<String, String> objects = new HashMap<>();
 
     }

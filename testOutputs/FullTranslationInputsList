@@ -1,17 +1,34 @@
-Summary
-print main.cpp -> test000 -> test007
-print output.cpp -> test000 -> test008
-print output.h -> test000 -> test020
+Test009:
+	printMain: should not do '->data'
 
-Working translations
-Test000 -> good
-Test001 -> good
-Test002 -> not sure
-Test003 -> good
-Test004 -> good
-Test005 -> good
-Test006 -> good
-Test007 -> good
-Test008 -> good
-Test009 -> not sure
-Test010 -> no
+Test010
+Test011
+Test012:
+	printMain: need to cast b1, b2, c
+
+Test013
+Test014:
+	output is blank (should not do '->data' in printCpp? not sure)
+
+Test015
+Test016:
+	printMain: need to cast other
+	printHeader: output is blank (should not do '->data'? not sure)
+
+Test017:
+	printMain: methods are missing "(a)" as parameter
+		   "__vptr->" missing in front of self(a)
+		   constructor missing "(5)" as parameter
+		   self(var) and self(method) cannot be named the same
+
+Test018:
+	printMain: int should be int32_t
+		   should x be moved to somewhere else since it is global
+
+Test019:
+	printMain: int should be int32_t
+
+Test020:
+	how is this supposed to be
+
+Full Translation from test000->test008

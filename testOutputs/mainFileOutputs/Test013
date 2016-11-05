@@ -18,7 +18,7 @@ int main(void)
 
 	A other = a;
 
-	other->__vptr->setA("A");
+	other->__vptr->setA(other, new __String("A"));
 
 	a->__vptr->printOther(other);
 

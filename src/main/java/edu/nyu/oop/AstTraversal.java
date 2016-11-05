@@ -21,9 +21,7 @@ public class AstTraversal extends Visitor {
 
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private Runtime runtime;
-    boolean debug = false;
     private AstTraversalSummary summary = new AstTraversalSummary();
-
 
     /**
      * visitXXX methods
@@ -40,7 +38,7 @@ public class AstTraversal extends Visitor {
     public void visitClassDeclaration(GNode n) {
 
         String name = n.getString(1);
-        String superClassName = "";
+        String superClassName = null;
         String modifier = "";
 
         for (Object o : n) {
@@ -72,14 +70,7 @@ public class AstTraversal extends Visitor {
                 }
             }
         }
-        if (superClassName != "") {
-            //TODO: we may need to add all classes first before attempting to extend
-            /*
-            Node type = n.getNode(0);
-            Node qualifiedIdentifier = type.getNode(0);
-            String superClassName = qualifiedIdentifier.getString(0);
-            ClassImplementation superClass = summary.findClass(superClassName);
-            */
+        if (superClassName != null) {
             ClassImplementation superClass = summary.findClass(superClassName);
             summary.addClass(superClass, name, modifier);
         } else {
@@ -100,9 +91,7 @@ public class AstTraversal extends Visitor {
                 } else if (currentNode.getName().equals("FieldDeclaration")) {
                     visitFieldDeclaration((GNode) o);
                 } else {
-                    if (o != null) {
-                        //TODO: If class body contains fields or constructor
-                    }
+                    //TODO
                 }
             }
         }
@@ -603,19 +592,8 @@ public class AstTraversal extends Visitor {
         this.runtime = runtime;
     }
 
-
     public AstTraversalSummary getTraversal(Node n) {
-
         super.dispatch(n);
-
-        if (debug) {
-            out.println("\n");
-            out.println("DEBUGGING IS ON");
-            for (ClassImplementation c : summary.classes.values()) {
-                out.println(c.toString());
-            }
-        }
-
         return summary;
     }
 

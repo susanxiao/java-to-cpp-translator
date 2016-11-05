@@ -74,7 +74,8 @@ CompilationUnit(
               Arguments(
                 PrimaryIdentifier(
                   "a"
-                )
+                ),
+                "data"
               )
             )
           )
@@ -106,6 +107,22 @@ CompilationUnit(
         ),
         Declarators(
           Declarator(
+            "a",
+            null,
+            null
+          )
+        )
+      ),
+      FieldDeclaration(
+        Modifiers(),
+        Type(
+          QualifiedIdentifier(
+            "String"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
             "b",
             null,
             null
@@ -123,6 +140,45 @@ CompilationUnit(
         FormalParameters(),
         null,
         Block(
+          ExpressionStatement(
+            Expression(
+              PrimaryIdentifier(
+                "a"
+              ),
+              "=",
+              NewClassExpression(
+                null,
+                null,
+                QualifiedIdentifier(
+                  "__String"
+                ),
+                Arguments(
+                  StringLiteral(
+                    "\"A\""
+                  )
+                ),
+                null
+              )
+            )
+          ),
+          ExpressionStatement(
+            CallExpression(
+              SelectionExpression(
+                PrimaryIdentifier(
+                  "cout"
+                ),
+                null
+              ),
+              null,
+              "endl",
+              Arguments(
+                PrimaryIdentifier(
+                  "a"
+                ),
+                "data"
+              )
+            )
+          ),
           ExpressionStatement(
             Expression(
               PrimaryIdentifier(
@@ -178,7 +234,8 @@ CompilationUnit(
               Arguments(
                 PrimaryIdentifier(
                   "a"
-                )
+                ),
+                "data"
               )
             )
           )

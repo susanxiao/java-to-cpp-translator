@@ -7,12 +7,8 @@ CompilationUnit(
     )
   ),
   ClassDeclaration(
-    Modifiers(
-      Modifier(
-        "public"
-      )
-    ),
-    "Test020",
+    Modifiers(),
+    "A",
     null,
     null,
     null,
@@ -36,7 +32,7 @@ CompilationUnit(
             Modifiers(),
             Type(
               QualifiedIdentifier(
-                "Test020"
+                "A"
               ),
               null
             ),
@@ -54,7 +50,20 @@ CompilationUnit(
             )
           )
         )
-      ),
+      )
+    )
+  ),
+  ClassDeclaration(
+    Modifiers(
+      Modifier(
+        "public"
+      )
+    ),
+    "Test020",
+    null,
+    null,
+    null,
+    ClassBody(
       MethodDeclaration(
         Modifiers(
           Modifier(
@@ -137,10 +146,14 @@ CompilationUnit(
               "endl",
               Arguments(
                 CallExpression(
-                  null,
+                  PrimaryIdentifier(
+                    "A"
+                  ),
                   null,
                   "x",
-                  Arguments()
+                  Arguments(
+                    "A"
+                  )
                 )
               )
             )
