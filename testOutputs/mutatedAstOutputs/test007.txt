@@ -125,6 +125,27 @@ CompilationUnit(
           ExpressionStatement(
             Expression(
               PrimaryIdentifier(
+                "a"
+              ),
+              "=",
+              NewClassExpression(
+                null,
+                null,
+                QualifiedIdentifier(
+                  "__String"
+                ),
+                Arguments(
+                  StringLiteral(
+                    "\"A\""
+                  )
+                ),
+                null
+              )
+            )
+          ),
+          ExpressionStatement(
+            Expression(
+              PrimaryIdentifier(
                 "b"
               ),
               "=",
@@ -240,7 +261,8 @@ CompilationUnit(
                   PrimaryIdentifier(
                     "b"
                   ),
-                  "a"
+                  "a",
+                  "data"
                 )
               )
             )
@@ -260,7 +282,8 @@ CompilationUnit(
                   PrimaryIdentifier(
                     "b"
                   ),
-                  "b"
+                  "b",
+                  "data"
                 )
               )
             )

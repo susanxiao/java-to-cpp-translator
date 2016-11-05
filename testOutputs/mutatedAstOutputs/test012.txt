@@ -208,6 +208,22 @@ CompilationUnit(
         ),
         Declarators(
           Declarator(
+            "a",
+            null,
+            null
+          )
+        )
+      ),
+      FieldDeclaration(
+        Modifiers(),
+        Type(
+          QualifiedIdentifier(
+            "String"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
             "b",
             null,
             null
@@ -240,6 +256,22 @@ CompilationUnit(
         ),
         Declarators(
           Declarator(
+            "a",
+            null,
+            null
+          )
+        )
+      ),
+      FieldDeclaration(
+        Modifiers(),
+        Type(
+          QualifiedIdentifier(
+            "String"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
             "b",
             null,
             null
@@ -262,6 +294,54 @@ CompilationUnit(
     ),
     null,
     ClassBody(
+      FieldDeclaration(
+        Modifiers(),
+        Type(
+          QualifiedIdentifier(
+            "String"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
+            "a",
+            null,
+            null
+          )
+        )
+      ),
+      FieldDeclaration(
+        Modifiers(),
+        Type(
+          QualifiedIdentifier(
+            "String"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
+            "a",
+            null,
+            null
+          )
+        )
+      ),
+      FieldDeclaration(
+        Modifiers(),
+        Type(
+          QualifiedIdentifier(
+            "String"
+          ),
+          null
+        ),
+        Declarators(
+          Declarator(
+            "b",
+            null,
+            null
+          )
+        )
+      ),
       FieldDeclaration(
         Modifiers(),
         Type(
