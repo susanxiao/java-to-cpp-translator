@@ -9,12 +9,16 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test008;
+using namespace inputs::test020;
 
 int main(void)
 {
 
-	B b = new __B();
+	int x;
+
+	x = 3;
+
+	cout << A::x()->data << endl;
 
 	return 0;
 }

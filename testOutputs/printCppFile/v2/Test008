@@ -6,8 +6,8 @@ using namespace std;
 namespace inputs {
 	namespace test008 {
 		__A::__A() : __vptr(&__vtable),
-					a(new __String("A");
-) {
+				a(new __String("A")) {
+			cout << a << endl;
 		};
 
 		Class __A::__class() {
@@ -19,9 +19,11 @@ namespace inputs {
 		__A_VT __A::__vtable;
 
 		__B::__B() : __vptr(&__vtable),
-					b(new __String("B");
-) {
+				a(new __String("A")),
+				b(new __String("B")) {
+			cout << a << endl;
 			a = new __String("B");
+			cout << a << endl;
 		};
 
 		Class __B::__class() {

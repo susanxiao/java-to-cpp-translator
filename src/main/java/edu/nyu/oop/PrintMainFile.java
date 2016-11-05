@@ -193,6 +193,9 @@ public class PrintMainFile extends Visitor {
                                                 expressionStatement += o1.toString();
                                             }
                                         }
+                                        else if (o1 instanceof String) {
+                                            expressionStatement += o1.toString();
+                                        }
                                     }
                                 }
                                 expressionStatement += ")";

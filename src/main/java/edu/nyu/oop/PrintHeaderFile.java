@@ -71,21 +71,21 @@ public class PrintHeaderFile extends Visitor {
 
         //Global Declarations
         TreeMap<String, String> declarationsMap = new TreeMap<>(); //TreeMap will sort based on var name so initList in cpp will be the same order
-        if (summary.currentClass.declarations.size() > 0) {
-            ClassImplementation currentClass = summary.currentClass;
-            while (currentClass != null) {
-                for (FieldDeclaration currentDeclaration : currentClass.declarations) {
-                    String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                    declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
-                }
-                currentClass = currentClass.superClass;
+        ClassImplementation currentClass = summary.currentClass;
+        while (currentClass != null) {
+            for (FieldDeclaration currentDeclaration : currentClass.declarations) {
+                String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
+                declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
             }
-
-            Collection<String> declarations = declarationsMap.values();
-            for (String s : declarations)
-                summary.addLine(s + ";\n");
-            summary.code.append("\n");
+            currentClass = currentClass.superClass;
         }
+
+        Collection<String> declarations = declarationsMap.values();
+
+        for (String s : declarations) {
+            summary.addLine(s + ";\n");
+        }
+        summary.code.append("\n");
 
 
         //Constructors
@@ -176,14 +176,20 @@ public class PrintHeaderFile extends Visitor {
             for (int i = 0; i < superClass.methods.size(); i++) {
                 MethodImplementation currentMethod = superClass.methods.get(i);
                 if (!vConstructor.containsKey(currentMethod.name)) { //if it already exists, it is the overwriting method
-                    vConstructor.put(currentMethod.name,
-                            currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)(" + summary.currentClass.name + "))&__" + superClass.name + "::" + currentMethod.name + ")");
+                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*"+currentMethod.name+")");
 
-                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*"+currentMethod.name+")(%s");
+                    StringBuilder parameters = new StringBuilder("(%s");
                     for (ParameterImplementation p : currentMethod.parameters)
-                        method.append(", "+p.type);
-                    method.append(");\n");
+                        parameters.append(", "+p.type);
+                    parameters.append(")");
+
+                    method.append(parameters.toString()+";\n");
                     vMethods.put(currentMethod.name, method.toString());
+
+                    String paramString = String.format(parameters.toString(), summary.currentClass.name);
+                    vConstructor.put(currentMethod.name,
+                            currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethod.name + ")");
+
                 }
             }
             superClass = superClass.superClass;

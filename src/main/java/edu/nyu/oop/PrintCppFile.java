@@ -158,58 +158,82 @@ public class PrintCppFile extends Visitor {
             if (o instanceof Node) {
                 Node currentNode = (Node) o;
                 if (currentNode.getName().equals("ExpressionStatement")) {
-                    Node expression = currentNode.getNode(0);
-                    Node expressionChild = expression.getNode(0);
-                    if (expressionChild.getName().equals("SelectionExpression")) {
-                        Node selectionChild = expressionChild.getNode(0);
-                        if (selectionChild.getName().equals("ThisExpression")) {
-                            String variableName = expressionChild.getString(1);
-                            String operator = expression.getString(1);
-                            Node expressionPrimaryIdentifier = expression.getNode(2);
-                            String variableValue = expressionPrimaryIdentifier.getString(0);
+                    Node expressionStatementChild = currentNode.getNode(0);
+                    if (expressionStatementChild.getName().equals("Expression")) {
+                        Node expressionChild = expressionStatementChild.getNode(0);
+                        if (expressionChild.getName().equals("SelectionExpression")) {
+                            Node selectionChild = expressionChild.getNode(0);
+                            if (selectionChild.getName().equals("ThisExpression")) {
+                                String variableName = expressionChild.getString(1);
+                                String operator = expressionStatementChild.getString(1);
+                                Node expressionPrimaryIdentifier = expressionStatementChild.getNode(2);
+                                String variableValue = expressionPrimaryIdentifier.getString(0);
 
-                            if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
-                                summary.initializerList.put(variableName, variableValue);
-                            else
-                                summary.addLine("this->" + variableName + " " + operator + " " + variableValue + ";\n");
-                        }
-                    }
-                    else if (expressionChild.getName().equals("PrimaryIdentifier")) {
-                        String variableName = expressionChild.getString(0);
-                        String operator = expression.getString(1);
-                        Node primarySibling = expression.getNode(2);
-                        if (primarySibling.getName().equals("PrimaryIdentifier")) {
-                            String variableValue = primarySibling.getString(0);
-                            if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
-                                summary.initializerList.put(variableName, variableValue);
-                            else
-                                summary.addLine(variableName + " " + operator + " "+variableValue + ";\n");
-                        }
-                        else if (primarySibling.getName().equals("NewClassExpression")) {
-                            String className = primarySibling.getNode(2).getString(0);
-                            Node argumentsNode = primarySibling.getNode(3);
+                                if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                    summary.initializerList.put(variableName, variableValue);
+                                else
+                                    summary.addLine("this->" + variableName + " " + operator + " " + variableValue + ";\n");
+                            }
+                        } else if (expressionChild.getName().equals("PrimaryIdentifier")) {
+                            String variableName = expressionChild.getString(0);
+                            String operator = expressionStatementChild.getString(1);
+                            Node primarySibling = expressionStatementChild.getNode(2);
+                            if (primarySibling.getName().equals("PrimaryIdentifier")) {
+                                String variableValue = primarySibling.getString(0);
+                                if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                    summary.initializerList.put(variableName, variableValue);
+                                else
+                                    summary.addLine(variableName + " " + operator + " " + variableValue + ";\n");
+                            }
+                            else if (primarySibling.getName().equals("ThisExpression")) {
+                                if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                    summary.initializerList.put(variableName, "this");
+                                else
+                                    summary.addLine(variableName + " " + operator + " this;\n");
+                            }
+                            else if (primarySibling.getName().equals("NewClassExpression")) {
+                                String className = primarySibling.getNode(2).getString(0);
+                                Node argumentsNode = primarySibling.getNode(3);
 
-                            StringBuilder arguments = new StringBuilder("(");
-                            for (int i = 0; i < argumentsNode.size(); i++) {
-                                Object o1 = argumentsNode.get(i);
+                                StringBuilder arguments = new StringBuilder("(");
+                                for (int i = 0; i < argumentsNode.size(); i++) {
+                                    Object o1 = argumentsNode.get(i);
 
-                                if (o1 instanceof Node) {
-                                    if (i > 0)
-                                        arguments.append(", ");
+                                    if (o1 instanceof Node) {
+                                        if (i > 0)
+                                            arguments.append(", ");
 
-                                    Node argument = (Node) o1;
-                                    if (argument.getName().equals("StringLiteral")) {
-                                        String value = argument.getString(0);
-                                        arguments.append(value);
+                                        Node argument = (Node) o1;
+                                        if (argument.getName().equals("StringLiteral")) {
+                                            String value = argument.getString(0);
+                                            arguments.append(value);
+                                        }
                                     }
                                 }
-                            }
-                            arguments.append(")");
+                                arguments.append(")");
 
-                            if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
-                                summary.initializerList.put(variableName, "new "+className+arguments.toString());
-                            else
-                                summary.addLine(variableName + " " + operator + " new "+className+arguments.toString()+";\n");
+                                if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
+                                    summary.initializerList.put(variableName, "new " + className + arguments.toString());
+                                else
+                                    summary.addLine(variableName + " " + operator + " new " + className + arguments.toString() + ";\n");
+                            }
+                        }
+                    }
+                    else if (expressionStatementChild.getName().equals("CallExpression")) {
+                        String primaryIdentifier = expressionStatementChild.getNode(0).getNode(0).getString(0);
+                        if (primaryIdentifier.equals("cout")) {
+                            StringBuilder line = new StringBuilder("cout << ");
+                            Node arguments = expressionStatementChild.getNode(3);
+                            Node argumentsPrimaryIdentifier = arguments.getNode(0);
+                            line.append(argumentsPrimaryIdentifier.getString(0));
+                            for (int i = 1; i < arguments.size(); i++) {
+                                String field = arguments.getString(i);
+                                line.append("->"+field);
+                            }
+                            if (expressionStatementChild.getString(2) != null) {
+                                line.append(" << "+expressionStatementChild.getString(2));
+                            }
+                            summary.addLine(line.toString()+";\n");
                         }
                     }
                 }
@@ -289,18 +313,82 @@ public class PrintCppFile extends Visitor {
                     //TODO
                 }
             } else if (currentNode.getName().equals("ExpressionStatement")) {
-                Node expression = currentNode.getNode(0);
-                if (expression.getNode(0).getName().equals("PrimaryIdentifier")) {
-                    String variableName = expression.getNode(0).getString(0);
-                    String operation = expression.getString(1);
-                    if (expression.getNode(2).getName().equals("PrimaryIdentifier")) {
-                        String assignment = expression.getNode(2).getString(0);
+                Node expressionStatementChild = currentNode.getNode(0);
+                if (expressionStatementChild.getNode(0).getName().equals("PrimaryIdentifier")) {
+                    String variableName = expressionStatementChild.getNode(0).getString(0);
+                    String operation = expressionStatementChild.getString(1);
+                    if (expressionStatementChild.getNode(2).getName().equals("PrimaryIdentifier")) {
+                        String assignment = expressionStatementChild.getNode(2).getString(0);
                         if (!localVariables.contains(variableName) && summary.initializerList.containsKey(variableName))
                             summary.addLine("__this->"+variableName+" "+operation+" "+assignment+";\n");
                         else
                             summary.addLine(variableName+" "+operation+" "+assignment+";\n");
                     }
                     //TODO: else
+                }
+                else if (expressionStatementChild.getName().equals("CallExpression")) {
+                    String primaryIdentifier = expressionStatementChild.getNode(0).getNode(0).getString(0);
+                    if (primaryIdentifier.equals("cout")) {
+                        StringBuilder line = new StringBuilder("cout << ");
+                        Node arguments = expressionStatementChild.getNode(3);
+                        if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
+                            Node argumentsPrimaryIdentifier = arguments.getNode(0);
+                            line.append(argumentsPrimaryIdentifier.getString(0)+"->__vptr");
+                            for (int i = 1; i < arguments.size(); i++) {
+                                String field = arguments.getString(i);
+                                line.append("->" + field);
+                            }
+                            if (expressionStatementChild.getString(2) != null) {
+                                line.append(" << " + expressionStatementChild.getString(2));
+                            }
+                            summary.addLine(line.toString() + ";\n");
+                        }
+                        else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
+                            Node selectionExpression = arguments.getNode(0);
+                            Node argumentsPrimaryIdentifier = selectionExpression.getNode(0);
+                            line.append(argumentsPrimaryIdentifier.getString(0)+"->__vptr");
+                            for (int i = 1; i < selectionExpression.size(); i++) {
+                                String field = selectionExpression.getString(i);
+                                line.append("->"+field);
+                            }
+                            line.append("->data");
+                            if (expressionStatementChild.getString(2) != null) {
+                                line.append(" << " + expressionStatementChild.getString(2));
+                            }
+                            summary.addLine(line.toString() + ";\n");
+
+                        }
+                        else if (arguments.getNode(0).getName().equals("CallExpression")) {
+                            Node callExpression= arguments.getNode(0);
+                            Node argumentsPrimaryIdentifier = callExpression.getNode(0);
+
+                            line.append(argumentsPrimaryIdentifier.getString(0)+"->__vptr");
+
+                            for (int i = 1; i < callExpression.size(); i++) {
+                                if (callExpression.get(i) instanceof String) {
+                                    String field = callExpression.getString(i);
+                                    line.append("->" + field);
+                                }
+                                else if (callExpression.get(i) instanceof Node) {
+                                    if (callExpression.getNode(i).getName().equals("Arguments")) {
+                                        line.append("(");
+                                        for (int j = 0; j < callExpression.getNode(i).size(); j++) {
+                                            if (j > 0)
+                                                line.append(",");
+                                            String field = callExpression.getNode(i).getString(j);
+                                            line.append(field);
+                                        }
+                                        line.append(")");
+                                    }
+                                }
+                            }
+                            line.append("->data");
+                            if (expressionStatementChild.getString(2) != null) {
+                                line.append(" << " + expressionStatementChild.getString(2));
+                            }
+                            summary.addLine(line.toString() + ";\n");
+                        }
+                    }
                 }
             } else if (currentNode.getName().equals("ReturnStatement")) {
                 visitReturnStatement(currentNode);

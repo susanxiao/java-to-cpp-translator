@@ -4,10 +4,12 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test008 {
-		__A::__A() : __vptr(&__vtable),
-				a(new __String("A")) {
+	namespace test020 {
+		int32_t __A::x() {
+			return 3;
 		};
+
+		__A::__A() : __vptr(&__vtable) {};
 
 		Class __A::__class() {
 			static Class k =
@@ -16,20 +18,6 @@ namespace inputs {
 		};
 
 		__A_VT __A::__vtable;
-
-		__B::__B() : __vptr(&__vtable),
-				a(new __String("A")),
-				b(new __String("B")) {
-			a = new __String("B");
-		};
-
-		Class __B::__class() {
-			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.B"), (Class) __rt::null());
-			return k;
-		};
-
-		__B_VT __B::__vtable;
 
 	}
 }

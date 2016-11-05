@@ -1,9 +1,34 @@
-Summary
+Test009:
+	printMain: should not do '->data'
 
-printMain:
-printHeader:
-printCpp:
-	replace A = "A" with A = "B" in constructor body
-	add handling for expression statement
+Test010
+Test011
+Test012:
+	printMain: need to cast b1, b2, c
 
-Full Translation from test000->test007
+Test013
+Test014:
+	output is blank (should not do '->data' in printCpp? not sure)
+
+Test015
+Test016:
+	printMain: need to cast other
+	printHeader: output is blank (should not do '->data'? not sure)
+
+Test017:
+	printMain: methods are missing "(a)" as parameter
+		   "__vptr->" missing in front of self(a)
+		   constructor missing "(5)" as parameter
+		   self(var) and self(method) cannot be named the same
+
+Test018:
+	printMain: int should be int32_t
+		   should x be moved to somewhere else since it is global
+
+Test019:
+	printMain: int should be int32_t
+
+Test020:
+	how is this supposed to be
+
+Full Translation from test000->test008

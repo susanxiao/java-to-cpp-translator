@@ -74,7 +74,8 @@ CompilationUnit(
               Arguments(
                 PrimaryIdentifier(
                   "a"
-                )
+                ),
+                "data"
               )
             )
           )
@@ -173,7 +174,8 @@ CompilationUnit(
               Arguments(
                 PrimaryIdentifier(
                   "a"
-                )
+                ),
+                "data"
               )
             )
           ),
@@ -232,7 +234,8 @@ CompilationUnit(
               Arguments(
                 PrimaryIdentifier(
                   "a"
-                )
+                ),
+                "data"
               )
             )
           )

@@ -89,13 +89,13 @@ public class ImplementationUtil {
                 printOutput.write(cppSummary.code.toString());
                 printOutput.flush();
                 printOutput.close();
-                out.println("Printed "+header.getPath());
+                out.println("Printed "+output.getPath());
 
                 FileWriter printMain = new FileWriter(main);
                 printMain.write(mainSummary.filePrinted);
                 printMain.flush();
                 printMain.close();
-                out.println("Printed "+header.getPath());
+                out.println("Printed "+main.getPath());
 
             } catch (IOException e) {
                 e.printStackTrace();
