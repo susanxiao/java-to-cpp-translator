@@ -4,7 +4,7 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test007 {
+	namespace test008 {
 		__A::__A() : __vptr(&__vtable),
 				a(new __String("A")) {
 		};
@@ -18,7 +18,9 @@ namespace inputs {
 		__A_VT __A::__vtable;
 
 		__B::__B() : __vptr(&__vtable),
+				a(new __String("A")),
 				b(new __String("B")) {
+			a = new __String("B");
 		};
 
 		Class __B::__class() {

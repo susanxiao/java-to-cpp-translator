@@ -1,9 +1,9 @@
 Summary
 
 printMain:
+printHeader:
+printCpp:
+	replace A = "A" with A = "B" in constructor body
+	add handling for expression statement
 
-printHeader: test007
-printCpp: test007
-->Need to fix inheritance of fields in printHeader + printCpp
-
-Full Translation from test000->test006
+Full Translation from test000->test007

@@ -136,8 +136,14 @@ public class PrintMainFile extends Visitor {
                             fieldDeclaration += " = " + primaryIdentifier + ";\n";
                         } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(0).getString(0);
-                            String field = currentDeclarator.getNode(2).getString(1);
-                            fieldDeclaration += " = " + primaryIdentifier + "." + field + ";\n";
+                            fieldDeclaration += " = " + primaryIdentifier;
+
+                            for (int i = 1; i < currentDeclarator.getNode(2).size(); i++) {
+                                String field = currentDeclarator.getNode(2).getString(i);
+                                fieldDeclaration += "->"+field;
+                            }
+                            fieldDeclaration += ";\n";
+
                         } else {
                             fieldDeclaration += ";\n";
                         }
@@ -199,7 +205,10 @@ public class PrintMainFile extends Visitor {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
                                 expressionStatement += currentNode.getNode(0).getString(0);
-                                expressionStatement += "." + currentNode.getString(1);
+                                for (int i = 1; i < currentNode.size(); i++) {
+                                    String field = currentNode.getString(i);
+                                    expressionStatement += "->"+field;
+                                }
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
                                 expressionStatement += currentNode.getString(0);
                                 // we have to determine if the parent should be used when accessing the dataString
@@ -266,8 +275,12 @@ public class PrintMainFile extends Visitor {
                     Node currNode = (Node) o;
                     if (currNode.getName().equals("SelectionExpression")) {
                         String varName = currNode.getNode(0).getString(0);
-                        String field = currNode.getString(1);
-                        expressionStatement += varName + "." + field;
+                        expressionStatement += varName;
+
+                        for (int i = 1; i < currNode.size(); i++) {
+                            String field = currNode.getString(i);
+                            expressionStatement += "->"+field;
+                        }
                     } else if (currNode.getName().equals("PrimaryIdentifier")) {
                         expressionStatement += currNode.getString(0);
                     } else if (currNode.getName().equals("CastExpression")) {

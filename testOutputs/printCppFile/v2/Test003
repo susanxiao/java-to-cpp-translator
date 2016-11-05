@@ -6,7 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test003 {
 		__A::__A(String f) : __vptr(&__vtable),
-					fld(f) {
+				fld(f) {
 		};
 
 		String __A::getFld(A __this) {
