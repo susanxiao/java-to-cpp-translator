@@ -47,6 +47,7 @@ namespace inputs {
 
 		struct __B {
 			__B_VT* __vptr;
+			String a;
 			String b;
 
 			__B();

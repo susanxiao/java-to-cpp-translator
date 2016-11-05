@@ -70,13 +70,23 @@ public class PrintHeaderFile extends Visitor {
         summary.addLine("__"+className+"_VT* __vptr;\n");
 
         //Global Declarations
+        TreeMap<String, String> declarationsMap = new TreeMap<>(); //TreeMap will sort based on var name so initList in cpp will be the same order
         if (summary.currentClass.declarations.size() > 0) {
-            for (FieldDeclaration currentDeclaration : summary.currentClass.declarations) {
-                String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                summary.addLine(type+" "+currentDeclaration.variableName+";\n");
+            ClassImplementation currentClass = summary.currentClass;
+            while (currentClass != null) {
+                for (FieldDeclaration currentDeclaration : currentClass.declarations) {
+                    String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
+                    declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
+                }
+                currentClass = currentClass.superClass;
             }
+
+            Collection<String> declarations = declarationsMap.values();
+            for (String s : declarations)
+                summary.addLine(s + ";\n");
             summary.code.append("\n");
         }
+
 
         //Constructors
         if (summary.currentClass.constructors.size() > 0) {
@@ -369,16 +379,6 @@ public class PrintHeaderFile extends Visitor {
 
 
         return summary;
-    }
-
-    public static void removeMethod(ArrayList<MethodImplementation> methods, String name) {
-        for (int i = 0; i < methods.size(); i++) {
-            MethodImplementation currentMethod = methods.get(i);
-            if (currentMethod.name.equals(name)) {
-                methods.remove(i);
-                return;
-            }
-        }
     }
 
     public static void main(String[] args) {

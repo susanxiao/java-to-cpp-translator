@@ -6,8 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test007 {
 		__A::__A() : __vptr(&__vtable),
-					a(new __String("A");
-) {
+				a(new __String("A")) {
 		};
 
 		Class __A::__class() {

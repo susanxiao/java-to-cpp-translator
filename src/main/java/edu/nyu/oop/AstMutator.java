@@ -20,14 +20,17 @@ import static java.lang.System.out;
 public class AstMutator extends Visitor {
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private Runtime runtime;
-    boolean debug = false;
     private AstMutator.AstMutatorSummary summary = new AstMutator.AstMutatorSummary();
 
     public void visitClassDeclaration(GNode n) {
         summary.currentClass = n.getString(1);
         for (Object o : n)
-            if (o instanceof Node)
-                visit((Node) o);
+            if (o instanceof Node) {
+                if (((Node) o).getName().equals("ClassBody"))
+                    visitClassBody(n, GNode.cast(o));
+                else
+                   dispatch((Node) o);
+            }
     }
 
     public void visitMethodDeclaration(GNode n) {
@@ -458,6 +461,42 @@ public class AstMutator extends Visitor {
         }
     }
 
+    public void visitExtension(GNode n) {
+        summary.currentClassExtends = n.getNode(0).getNode(0).getString(0);
+    }
+
+    public void visitClassBody(GNode parent, GNode n) {
+        if (summary.currentClassExtends != null) {
+            ArrayList<GNode> superClassFields = summary.fieldDeclarations.get(summary.currentClassExtends);
+
+            //add superClass fields to the arraylist
+            if (summary.fieldDeclarations.get(summary.currentClass) == null)
+                summary.fieldDeclarations.put(summary.currentClass, new ArrayList<GNode>());
+
+            summary.fieldDeclarations.get(summary.currentClass).addAll(superClassFields);
+
+            //add the GNodes to the classBody
+            if (!n.hasVariable()) {
+                n = GNode.ensureVariable(n);
+                parent.set(5, n); //is class body always index 5
+            }
+            n.addAll(0, summary.fieldDeclarations.get(summary.currentClassExtends));
+        }
+
+        for (Object o : n) {
+            if (o instanceof Node) {
+                if (((Node) o).getName().equals("FieldDeclaration")) {
+                    if (summary.fieldDeclarations.get(summary.currentClass) == null)
+                        summary.fieldDeclarations.put(summary.currentClass, new ArrayList<GNode>());
+                    summary.fieldDeclarations.get(summary.currentClass).add(GNode.cast(o));
+                }
+
+                dispatch((Node) o);
+            }
+        }
+        summary.currentClassExtends = null; //reset for next class
+    }
+
     /**
      * visit method
      */
@@ -475,13 +514,13 @@ public class AstMutator extends Visitor {
     }
 
     public void mutate(Node n) {
-
         super.dispatch(n);
-
     }
 
-    static class AstMutatorSummary {
+    private static class AstMutatorSummary {
+        String currentClassExtends;
         String currentClass;
+        HashMap<String, ArrayList<GNode>> fieldDeclarations = new HashMap<>();
         HashMap<String, String> objects = new HashMap<>();
 
     }
