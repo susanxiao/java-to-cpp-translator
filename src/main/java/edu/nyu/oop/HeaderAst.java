@@ -1,8 +1,10 @@
 package edu.nyu.oop;
 
 import xtc.tree.GNode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 
 import static edu.nyu.oop.AstTraversal.*;
@@ -12,16 +14,33 @@ import static edu.nyu.oop.AstTraversal.*;
  */
 public class HeaderAst {
 
-    static GNode ConstructHeaderAst(AstTraversalSummary summary) {
+    static HeaderAstSummary getHeaderAst(AstTraversalSummary summary) {
+        GNode parent = null;
+        HeaderAstSummary constructionSummary = new HeaderAstSummary();
+        constructionSummary = ConstructHeaderAst(summary, parent, constructionSummary);
+        return constructionSummary;
+    }
 
-        // TODO: TESTING INFORMATION
+    static class HeaderAstSummary {
+        // we have to have the headerNode in the summary so that we are able to return it
+        GNode parent = null;
+
+        // testing information so that we can perform unit testing
+        // when obtaining testing information the test class will not be tracked
+        // this is because we do not include the test class inside of the .h file
         int numberClasses = 0;
+        TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
 
+
+    }
+
+    static HeaderAstSummary ConstructHeaderAst(AstTraversalSummary summary, GNode parent,
+                                               HeaderAstSummary summaryConstruction) {
 
         HashMap<String, ClassImplementation> classes = summary.classes;
         ArrayList<String> keys = summary.classNames;
 
-        GNode parent = GNode.create("Header");
+        parent = GNode.create("Header");
 
         // Nodes
         GNode currentClassNode;
@@ -37,10 +56,14 @@ public class HeaderAst {
 
         // Cycles through the classes
         for (Object key : keys) {
-            numberClasses++;
             // This is the current class Node that is being implemented
             ClassImplementation currentClass = classes.get(key);
             currentClassNode = GNode.create(currentClass.name);
+
+            if (!currentClass.name.contains("Test")) {
+                summaryConstruction.numberClasses++;
+            }
+
             headerDeclaration = GNode.create("HeaderDeclaration");
             currentClassNode.add(0, headerDeclaration);
 
@@ -97,7 +120,9 @@ public class HeaderAst {
 
             // Cycle through the methods
             // TODO: Main method does not list the methods?
+            int methodCount = 0;
             for (MethodImplementation currentMethod : currentClass.methods) {
+                methodCount++;
                 DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
                 dataLayoutNode.add(DataLayoutMethodDeclarationNode);
                 // TODO: Method Implementation needs modifiers
@@ -112,6 +137,9 @@ public class HeaderAst {
                 for (ParameterImplementation param : currentMethod.parameters) {
                     ParametersNode.add(param.toString());
                 }
+            }
+            if (!currentClass.name.contains("Test")) {
+                summaryConstruction.classMethodCounts.put(currentClass.name,methodCount);
             }
 
             // HardCoded Methods?
@@ -245,7 +273,8 @@ public class HeaderAst {
             // Add the currentClassNode to the parent Node
             parent.add(currentClassNode);
         }
-        return parent;
+        summaryConstruction.parent = parent;
+        return summaryConstruction;
     }
 
 }

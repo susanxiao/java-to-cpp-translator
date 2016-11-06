@@ -411,7 +411,7 @@ public class PrintHeaderFile extends Visitor {
             GNode node = (GNode) ImplementationUtil.loadTestFile(test);
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-            GNode parentNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
+            GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
             //LoadFileImplementations.prettyPrintAst(parentNode);
 
             try {

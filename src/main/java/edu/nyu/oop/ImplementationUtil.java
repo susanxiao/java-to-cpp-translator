@@ -27,6 +27,7 @@ public class ImplementationUtil {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 0;
+        start = end = 1;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
@@ -45,7 +46,8 @@ public class ImplementationUtil {
             AstTraversal.AstTraversalSummary summaryTraversal = visitor1.getTraversal(root);
 
             // PHASE 2: construct the c++ header Ast
-            GNode headerNode = HeaderAst.ConstructHeaderAst(summaryTraversal);
+            GNode headerNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+            //prettyPrintAst(headerNode);
 
             // PHASE 3: create the header code
             //TODO: check this one
