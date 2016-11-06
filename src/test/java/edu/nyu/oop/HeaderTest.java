@@ -10,7 +10,7 @@ import static java.lang.System.out;
 /**
  * Created by Garrett on 10/24/16.
  */
-public class printHeaderFileTest {
+public class HeaderTest {
 
     boolean debug = true;
     // unit tests that failed are commented out

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import static java.lang.System.out;
 
@@ -40,7 +41,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitClassBody(GNode n) {
-        for (Object o: n) {
+        for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("FieldDeclaration")) {
@@ -67,7 +68,8 @@ public class PrintMainFile extends Visitor {
                     visitExpressionStatement(currentNode);
                 }
             }
-        } mainImplementation.append("\t}\n\n");
+        }
+        mainImplementation.append("\t}\n\n");
     }
 
     public void visitMethodDeclaration(GNode n) {
@@ -100,6 +102,13 @@ public class PrintMainFile extends Visitor {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
                     String variable = currentDeclarator.getString(0);
+
+                    // parent
+                    summary.classVariables.remove(type);
+                    summary.classVariables.put(variable, type);
+                    out.println(summary.classVariables.keySet());
+
+
                     fieldDeclaration += variable;
                     if (currentDeclarator.getNode(2) != null) {
                         if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
@@ -108,8 +117,8 @@ public class PrintMainFile extends Visitor {
                             fieldDeclaration += qualifiedIdentifier;
 
                             // have to add the class and variable to a list so that we can use inheritance
-                            summary.classNames.add(type);
-                            summary.variables.add(variable);
+                            summary.classNames.add(variable);
+                            summary.variables.add(type);
 
                             Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
                             if (declaratorArgs.size() > 0) {
@@ -140,7 +149,7 @@ public class PrintMainFile extends Visitor {
 
                             for (int i = 1; i < currentDeclarator.getNode(2).size(); i++) {
                                 String field = currentDeclarator.getNode(2).getString(i);
-                                fieldDeclaration += "->"+field;
+                                fieldDeclaration += "->" + field;
                             }
                             fieldDeclaration += ";\n";
 
@@ -177,7 +186,9 @@ public class PrintMainFile extends Visitor {
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
                                     expressionStatement += "->" + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
-                                } else { expressionStatement += currentNode.getNode(0).getString(0); }
+                                } else {
+                                    expressionStatement += currentNode.getNode(0).getString(0);
+                                }
                                 // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
                                 expressionStatement += "->__vptr->" + method + "(";
@@ -192,8 +203,7 @@ public class PrintMainFile extends Visitor {
                                             } else {
                                                 expressionStatement += o1.toString();
                                             }
-                                        }
-                                        else if (o1 instanceof String) {
+                                        } else if (o1 instanceof String) {
                                             expressionStatement += o1.toString();
                                         }
                                     }
@@ -208,9 +218,19 @@ public class PrintMainFile extends Visitor {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
                                 expressionStatement += currentNode.getNode(0).getString(0);
+                                String key = currentNode.getNode(0).getString(0);
+                                boolean gateParent;
                                 for (int i = 1; i < currentNode.size(); i++) {
+                                    gateParent = true;
                                     String field = currentNode.getString(i);
-                                    expressionStatement += "->"+field;
+                                    // check if parent should be used
+                                    String className = summary.classVariables.get(key);
+                                    for (FieldDeclaration dec : summaryTraversal.classes.get(className).declarations) {
+                                        if(dec.variableName.equals(field) || field.equals("data"))
+                                            gateParent = false;
+                                    }
+                                    expressionStatement += gateParent ? "->parent." + field : "->" + field;
+
                                 }
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
                                 expressionStatement += currentNode.getString(0);
@@ -263,10 +283,11 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += newClassIdentifier;
                         expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
                         expressionStatement += ")";
-                    }
-                    else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
+                    } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         expressionStatement += argumentsNode.getNode(1).getString(0);
-                    } else { expressionStatement += argumentsNode.getString(0); }
+                    } else {
+                        expressionStatement += argumentsNode.getString(0);
+                    }
                     expressionStatement += ");";
                 }
             }
@@ -282,7 +303,7 @@ public class PrintMainFile extends Visitor {
 
                         for (int i = 1; i < currNode.size(); i++) {
                             String field = currNode.getString(i);
-                            expressionStatement += "->"+field;
+                            expressionStatement += "->" + field;
                         }
                     } else if (currNode.getName().equals("PrimaryIdentifier")) {
                         expressionStatement += currNode.getString(0);
@@ -293,8 +314,11 @@ public class PrintMainFile extends Visitor {
                     } else if (currNode.getName().equals("IntegerLiteral")) {
                         expressionStatement += currNode.getString(0);
                     }
-                } else { expressionStatement += " " + o.toString() + " "; }
-            } expressionStatement += ";";
+                } else {
+                    expressionStatement += " " + o.toString() + " ";
+                }
+            }
+            expressionStatement += ";";
         }
         mainImplementation.append(expressionStatement + "\n\n");
     }
@@ -312,6 +336,8 @@ public class PrintMainFile extends Visitor {
         String filePrinted;
         ArrayList<String> classNames = new ArrayList<String>();
         ArrayList<String> variables = new ArrayList<String>();
+        TreeMap<String, String> classVariables = new TreeMap<>();
+
     }
 
     public PrintMainFile.printMainFileSummary getSummary(GNode n) {
@@ -376,8 +402,8 @@ public class PrintMainFile extends Visitor {
     public static void main(String[] args) {
         //TO RUN: run-main edu.nyu.oop.PrintMainFile ***
         // *** a number 0-20, or nothing to run all test cases
-        int start = 0;
-        int end = 20;
+        int start = 7;
+        int end = 7;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

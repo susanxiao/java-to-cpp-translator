@@ -82,6 +82,10 @@ public class PrintHeaderFile extends Visitor {
                 declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
             }
             currentClass = currentClass.superClass;
+            if(currentClass != null){
+                declarationsMap.put("parentPointer", "__" + currentClass.name + " parent");
+            }
+            break;
         }
 
         summary.classDeclarationCounts.put(summary.currentClass.name, declarationsCounter);
