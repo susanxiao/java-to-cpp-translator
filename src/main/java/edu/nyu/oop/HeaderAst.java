@@ -15,9 +15,8 @@ import static edu.nyu.oop.AstTraversal.*;
 public class HeaderAst {
 
     static HeaderAstSummary getHeaderAst(AstTraversalSummary summary) {
-        GNode parent = null;
         HeaderAstSummary constructionSummary = new HeaderAstSummary();
-        constructionSummary = ConstructHeaderAst(summary, parent, constructionSummary);
+        constructionSummary = ConstructHeaderAst(summary, constructionSummary);
         return constructionSummary;
     }
 
@@ -34,13 +33,12 @@ public class HeaderAst {
 
     }
 
-    static HeaderAstSummary ConstructHeaderAst(AstTraversalSummary summary, GNode parent,
-                                               HeaderAstSummary summaryConstruction) {
+    static HeaderAstSummary ConstructHeaderAst(AstTraversalSummary summary,HeaderAstSummary summaryConstruction) {
 
         HashMap<String, ClassImplementation> classes = summary.classes;
         ArrayList<String> keys = summary.classNames;
 
-        parent = GNode.create("Header");
+        GNode parent = GNode.create("Header");
 
         // Nodes
         GNode currentClassNode;

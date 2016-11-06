@@ -37,6 +37,9 @@ public class PrintHeaderFile extends Visitor {
     public void visitHeaderDeclaration(GNode n) {
         String className = n.getString(0);
 
+        if (!className.contains("Test")) {
+            summary.classCount++;
+        }
 
         if (summary.scope == 0) {
             String[] namespaces = n.getString(1).split("_");
@@ -46,8 +49,7 @@ public class PrintHeaderFile extends Visitor {
             }
 
             summary.code.append("%s\n%s\n"); // will be replaced by forwardDeclaration and typeDef
-        }
-        else {
+        } else {
             summary.code.append("\n");
         }
 
@@ -57,28 +59,32 @@ public class PrintHeaderFile extends Visitor {
         summary.currentClass = summaryTraversal.classes.get(className);
 
         //Object and VTable Forward Declaration
-        summary.addForwardDeclaration("struct __"+className+";\n");
-        summary.addForwardDeclaration("struct __"+className+"_VT;\n\n");
+        summary.addForwardDeclaration("struct __" + className + ";\n");
+        summary.addForwardDeclaration("struct __" + className + "_VT;\n\n");
 
         //Typedef
-        summary.addTypeDef("typedef __"+className+"* "+className+";\n");
+        summary.addTypeDef("typedef __" + className + "* " + className + ";\n");
 
         //Construction
-        summary.addLine("struct __"+className);
+        summary.addLine("struct __" + className);
         summary.incScope();
         //VPointer
-        summary.addLine("__"+className+"_VT* __vptr;\n");
+        summary.addLine("__" + className + "_VT* __vptr;\n");
 
         //Global Declarations
         TreeMap<String, String> declarationsMap = new TreeMap<>(); //TreeMap will sort based on var name so initList in cpp will be the same order
         ClassImplementation currentClass = summary.currentClass;
+        int declarationsCounter = 0;
         while (currentClass != null) {
             for (FieldDeclaration currentDeclaration : currentClass.declarations) {
+                declarationsCounter += 1;
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
                 declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
             }
             currentClass = currentClass.superClass;
         }
+
+        summary.classDeclarationCounts.put(summary.currentClass.name, declarationsCounter);
 
         Collection<String> declarations = declarationsMap.values();
 
@@ -91,14 +97,14 @@ public class PrintHeaderFile extends Visitor {
         //Constructors
         if (summary.currentClass.constructors.size() > 0) {
             for (ConstructorImplementation currentConstructor : summary.currentClass.constructors) {
-                StringBuilder constructor = new StringBuilder("__"+className+"(");
+                StringBuilder constructor = new StringBuilder("__" + className + "(");
 
                 for (int i = 0; i < currentConstructor.parameters.size(); i++) {
                     if (i > 0)
                         constructor.append(", ");
                     ParameterImplementation currentParameter = currentConstructor.parameters.get(i);
                     String type = (currentParameter.type.equals("int") ? "int32_t" : currentParameter.type);
-                    constructor.append(type+" "+currentParameter.name);
+                    constructor.append(type + " " + currentParameter.name);
                 }
 
                 constructor.append(");\n");
@@ -113,27 +119,33 @@ public class PrintHeaderFile extends Visitor {
         summary.addLine("static Class __class();\n\n");
 
         //Vtable declaration
-        summary.addLine("static __"+summary.currentClass.name+"_VT __vtable;\n\n");
+        summary.addLine("static __" + summary.currentClass.name + "_VT __vtable;\n\n");
 
         //Methods that will be implemented in output.cpp
+        int classMethodCount = 0;
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
+            classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
-            StringBuilder method = new StringBuilder("static "+type+" "+currentMethod.name+"("+summary.currentClass.name);
+            StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name + "(" + summary.currentClass.name);
             for (ParameterImplementation currentParameter : currentMethod.parameters) {
-                method.append(", "+currentParameter.type);
+                method.append(", " + currentParameter.type);
             }
             method.append(");\n");
 
             summary.addLine(method.toString());
         }
 
+        // adding the number of methods that are going to be implemented by the
+        // the class so that we can perform unit testing
+        summary.classMethodCounts.put(summary.currentClass.name, classMethodCount);
+
         summary.decScope();
         summary.code.append("\n");
         //End Construction
 
         //VTable construction
-        summary.addLine("struct __"+className+"_VT");
+        summary.addLine("struct __" + className + "_VT");
         summary.incScope();
 
         for (Object o : n) {
@@ -176,14 +188,14 @@ public class PrintHeaderFile extends Visitor {
             for (int i = 0; i < superClass.methods.size(); i++) {
                 MethodImplementation currentMethod = superClass.methods.get(i);
                 if (!vConstructor.containsKey(currentMethod.name)) { //if it already exists, it is the overwriting method
-                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*"+currentMethod.name+")");
+                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")");
 
                     StringBuilder parameters = new StringBuilder("(%s");
                     for (ParameterImplementation p : currentMethod.parameters)
-                        parameters.append(", "+p.type);
+                        parameters.append(", " + p.type);
                     parameters.append(")");
 
-                    method.append(parameters.toString()+";\n");
+                    method.append(parameters.toString() + ";\n");
                     vMethods.put(currentMethod.name, method.toString());
 
                     String paramString = String.format(parameters.toString(), summary.currentClass.name);
@@ -225,9 +237,9 @@ public class PrintHeaderFile extends Visitor {
             //replace any superclass methods
             vConstructor.put(currentMethod.name, currentMethod.name + "(&__" + summary.currentClass.name + "::" + currentMethod.name + ")");
 
-            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*"+currentMethod.name+")(%s");
+            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")(%s");
             for (ParameterImplementation p : currentMethod.parameters)
-                method.append(", "+p.type);
+                method.append(", " + p.type);
             method.append(");\n");
             vMethods.put(currentMethod.name, method.toString());
         }
@@ -263,25 +275,25 @@ public class PrintHeaderFile extends Visitor {
         //Modifiers
         Node modifiers = n.getNode(0);
         for (int i = 0; i < modifiers.size(); i++) {
-            method.append(modifiers.getString(i)+" ");
+            method.append(modifiers.getString(i) + " ");
         }
 
         //return type
-        method.append(n.getString(1)+" ");
+        method.append(n.getString(1) + " ");
 
         //name
         String name = n.getString(2);
         if (name.equals("__isa"))
-            method.append(name+";\n");
+            method.append(name + ";\n");
         else {
-            method.append("(*"+name+")");
+            method.append("(*" + name + ")");
 
             //parameters
             Node parameters = n.getNode(4);
 
-            method.append("("+summary.currentClass.name);
+            method.append("(" + summary.currentClass.name);
             for (int i = 0; i < parameters.size(); i++) {
-                method.append(", "+parameters.getString(i).replace("__", ""));
+                method.append(", " + parameters.getString(i).replace("__", ""));
             }
             method.append(");\n");
         }
@@ -304,6 +316,13 @@ public class PrintHeaderFile extends Visitor {
     }
 
     static class headerFileSummary {
+
+        // testing information so that we can perform unit testing
+        int classCount = 0;
+        TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
+        TreeMap<String, Integer> classDeclarationCounts = new TreeMap<>();
+
+
         StringBuilder forwardDeclarations;
         StringBuilder typeDef;
         StringBuilder code;
@@ -315,10 +334,10 @@ public class PrintHeaderFile extends Visitor {
             typeDef = new StringBuilder();
 
             code = new StringBuilder(
-                      "#pragma once\n"
-                    + "#include <iostream>\n"
-                    + "#include \"java_lang.h\"\n\n"
-                    + "using namespace java::lang;\n\n"
+                    "#pragma once\n"
+                            + "#include <iostream>\n"
+                            + "#include \"java_lang.h\"\n\n"
+                            + "using namespace java::lang;\n\n"
             );
             scope = 0;
         }
@@ -341,7 +360,7 @@ public class PrintHeaderFile extends Visitor {
             for (int i = 0; i < scope; i++)
                 code.append("\t");
 
-            code.append("namespace "+name);
+            code.append("namespace " + name);
             incScope();
         }
 
@@ -382,7 +401,6 @@ public class PrintHeaderFile extends Visitor {
         while (summary.scope > 0) {
             summary.closeNamespace();
         }
-
 
         return summary;
     }
