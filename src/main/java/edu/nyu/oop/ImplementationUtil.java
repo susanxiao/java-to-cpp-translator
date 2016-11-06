@@ -27,7 +27,7 @@ public class ImplementationUtil {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 0;
-        start = end = 10;
+        start = end = 12;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

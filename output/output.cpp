@@ -4,16 +4,16 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test010 {
+	namespace test012 {
 		void __A::setA(A __this, String x) {
 			__this->a = x;
 		};
 
 		void __A::printOther(A __this, A other) {
-			cout << other->__vptr->toString(other)->data << endl;
+			cout << other->__vptr->myToString(other)->data << endl;
 		};
 
-		String __A::toString(A __this) {
+		String __A::myToString(A __this) {
 			return __this->a;
 		};
 
@@ -46,6 +46,10 @@ namespace inputs {
 		};
 
 		__B2_VT __B2::__vtable;
+
+		String __C::myToString(C __this) {
+			return new __String("still C");
+		};
 
 		__C::__C() : __vptr(&__vtable) {};
 

@@ -5,7 +5,7 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test010 {
+	namespace test012 {
 		struct __A;
 		struct __A_VT;
 
@@ -36,7 +36,7 @@ namespace inputs {
 
 			static void setA(A, String);
 			static void printOther(A, A);
-			static String toString(A);
+			static String myToString(A);
 		};
 
 		struct __A_VT {
@@ -45,6 +45,7 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			int32_t (*hashCode)(A);
+			String (*myToString)(A);
 			void (*printOther)(A, A);
 			void (*setA)(A, String);
 			String (*toString)(A);
@@ -54,9 +55,10 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			hashCode((int32_t(*)(A))&__Object::hashCode),
+			myToString(&__A::myToString),
 			printOther(&__A::printOther),
 			setA(&__A::setA),
-			toString(&__A::toString)
+			toString((String(*)(A))&__Object::toString)
 			{}
 		};
 
@@ -79,6 +81,7 @@ namespace inputs {
 			bool (*equals)(B1, Object);
 			Class (*getClass)(B1);
 			int32_t (*hashCode)(B1);
+			String (*myToString)(B1);
 			void (*printOther)(B1, A);
 			void (*setA)(B1, String);
 			String (*toString)(B1);
@@ -88,9 +91,10 @@ namespace inputs {
 			equals((bool(*)(B1, Object))&__Object::equals),
 			getClass((Class(*)(B1))&__Object::getClass),
 			hashCode((int32_t(*)(B1))&__Object::hashCode),
+			myToString((String(*)(B1))&__A::myToString),
 			printOther((void(*)(B1, A))&__A::printOther),
 			setA((void(*)(B1, String))&__A::setA),
-			toString((String(*)(B1))&__A::toString)
+			toString((String(*)(B1))&__Object::toString)
 			{}
 		};
 
@@ -113,6 +117,7 @@ namespace inputs {
 			bool (*equals)(B2, Object);
 			Class (*getClass)(B2);
 			int32_t (*hashCode)(B2);
+			String (*myToString)(B2);
 			void (*printOther)(B2, A);
 			void (*setA)(B2, String);
 			String (*toString)(B2);
@@ -122,9 +127,10 @@ namespace inputs {
 			equals((bool(*)(B2, Object))&__Object::equals),
 			getClass((Class(*)(B2))&__Object::getClass),
 			hashCode((int32_t(*)(B2))&__Object::hashCode),
+			myToString((String(*)(B2))&__A::myToString),
 			printOther((void(*)(B2, A))&__A::printOther),
 			setA((void(*)(B2, String))&__A::setA),
-			toString((String(*)(B2))&__A::toString)
+			toString((String(*)(B2))&__Object::toString)
 			{}
 		};
 
@@ -139,6 +145,7 @@ namespace inputs {
 
 			static __C_VT __vtable;
 
+			static String myToString(C);
 		};
 
 		struct __C_VT {
@@ -147,6 +154,7 @@ namespace inputs {
 			bool (*equals)(C, Object);
 			Class (*getClass)(C);
 			int32_t (*hashCode)(C);
+			String (*myToString)(C);
 			void (*printOther)(C, A);
 			void (*setA)(C, String);
 			String (*toString)(C);
@@ -156,9 +164,10 @@ namespace inputs {
 			equals((bool(*)(C, Object))&__Object::equals),
 			getClass((Class(*)(C))&__Object::getClass),
 			hashCode((int32_t(*)(C))&__Object::hashCode),
+			myToString(&__C::myToString),
 			printOther((void(*)(C, A))&__A::printOther),
 			setA((void(*)(C, String))&__A::setA),
-			toString((String(*)(C))&__A::toString)
+			toString((String(*)(C))&__Object::toString)
 			{}
 		};
 

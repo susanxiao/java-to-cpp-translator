@@ -9,7 +9,7 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test010;
+using namespace inputs::test012;
 
 int main(void)
 {
