@@ -13,6 +13,7 @@ import java.lang.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Created by Garrett on 10/12/16.
@@ -594,10 +595,30 @@ public class AstTraversal extends Visitor {
 
     public AstTraversalSummary getTraversal(Node n) {
         super.dispatch(n);
+
+        // updating the testing information for unit testing
+
+        // obtain the number of class names so we can check that the correct amount of classes
+        // were traversed
+        summary.classCount = summary.classNames.size();
+
+        // obtain the number of methods for each class so we can check that the correct number of
+        // methods were traversed for each class
+        for(String className : summary.classNames){
+            summary.currentClass = summary.classes.get(className);
+            summary.classMethodCounts.put(className, summary.currentClass.methods.size());
+        }
+
+
         return summary;
     }
 
     static class AstTraversalSummary {
+
+        // summary testing information so that we can perform unit testing
+        int classCount;
+        TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
+
 
         HashMap<String, ClassImplementation> classes = new HashMap<>();
         ArrayList<String> classNames = new ArrayList<>();
