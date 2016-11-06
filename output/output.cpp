@@ -10,7 +10,7 @@ namespace inputs {
 		};
 
 		void __A::printOther(A __this, A other) {
-			cout << __this->__vptr->toString(__this)->data << endl;
+			cout << other->__vptr->toString(other)->data << endl;
 		};
 
 		String __A::toString(A __this) {

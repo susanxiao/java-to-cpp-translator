@@ -16,9 +16,9 @@ int main(void)
 
 	B b = new __B();
 
-	cout << b->a->data << endl;
+	cout << b->parent.a << endl;
 
-	cout << b->b->data << endl;
+	cout << b->b << endl;
 
 	return 0;
 }

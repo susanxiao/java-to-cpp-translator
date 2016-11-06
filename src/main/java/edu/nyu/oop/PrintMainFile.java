@@ -106,7 +106,6 @@ public class PrintMainFile extends Visitor {
                     // parent
                     summary.classVariables.remove(type);
                     summary.classVariables.put(variable, type);
-                    out.println(summary.classVariables.keySet());
 
 
                     fieldDeclaration += variable;
@@ -270,12 +269,14 @@ public class PrintMainFile extends Visitor {
                 Node callExpressionNode = n.getNode(0);
                 String methodName = callExpressionNode.getString(2);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
+                primaryIdentifer = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
                 expressionStatement += methodName;
                 if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                     expressionStatement += "(";
                     Node argumentsNode = (Node) callExpressionNode.getNode(3);
                     expressionStatement += argumentsNode.getString(0) + ", ";
+                    String argument1 = argumentsNode.getString(0);
                     if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
                         Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
                         String newClassIdentifier = "new ";
@@ -284,7 +285,12 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
                         expressionStatement += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
-                        expressionStatement += argumentsNode.getNode(1).getString(0);
+                        String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
+                        if(summary.classVariables.get(primaryIdentifer) == summary.classVariables.get(primaryIdentifier1)){
+                            expressionStatement += argumentsNode.getNode(1).getString(0);
+                        }else{
+                            expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
+                        }
                     } else {
                         expressionStatement += argumentsNode.getString(0);
                     }
@@ -404,6 +410,7 @@ public class PrintMainFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 7;
         int end = 7;
+        start = end = 10;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
