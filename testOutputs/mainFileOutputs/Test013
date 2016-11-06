@@ -20,7 +20,7 @@ int main(void)
 
 	other->__vptr->setA(other, new __String("A"));
 
-	a->__vptr->printOther(other);
+	a->__vptr->printOther(a, other);
 
 	return 0;
 }

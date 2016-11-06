@@ -647,7 +647,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "b1"
+                  "(A)b1"
                 )
               )
             )
@@ -664,7 +664,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "b2"
+                  "(A)b2"
                 )
               )
             )
@@ -681,7 +681,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "c"
+                  "(A)c"
                 )
               )
             )

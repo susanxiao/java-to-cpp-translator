@@ -532,7 +532,8 @@ public class AstMutator extends Visitor {
         summary.currentClassExtends = n.getNode(0).getNode(0).getString(0);
         HashMap<String, ArrayList<String>> superClassMethods = summary.methods.get(summary.currentClassExtends);
         HashMap<String, ArrayList<String>> subClassMethods = new HashMap<>();
-        subClassMethods.putAll(superClassMethods);
+        if (superClassMethods != null)
+            subClassMethods.putAll(superClassMethods);
         summary.methods.put(summary.currentClass, subClassMethods);
     }
 

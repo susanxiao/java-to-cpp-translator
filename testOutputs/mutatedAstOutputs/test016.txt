@@ -362,7 +362,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "other"
+                  "(A)other"
                 )
               )
             )

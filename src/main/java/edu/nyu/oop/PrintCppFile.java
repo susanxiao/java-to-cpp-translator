@@ -531,7 +531,7 @@ public class PrintCppFile extends Visitor {
                 PrintCppFile visitor = new PrintCppFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 cppFileSummary summaryCpp = visitor.getSummary(node);
 
-                output = new File("testOutputs/printCppFile/v2", String.format("Test%03d", i));
+                output = new File("testOutputs/printCppOutputs", String.format("Test%03d", i));
                 output.getParentFile().mkdirs();
                 output.createNewFile();
 

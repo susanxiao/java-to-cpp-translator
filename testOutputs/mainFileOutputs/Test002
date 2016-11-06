@@ -18,7 +18,7 @@ int main(void)
 
 	Object o = (Object) a;
 
-	cout << o->__vptr->toString()->data << endl;
+	cout << o->__vptr->toString(o)->data << endl;
 
 	return 0;
 }

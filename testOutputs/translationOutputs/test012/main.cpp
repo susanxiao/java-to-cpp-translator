@@ -32,11 +32,11 @@ int main(void)
 
 	a->__vptr->printOther(a, a);
 
-	a->__vptr->printOther(a, b1);
+	a->__vptr->printOther(a, (A)b1);
 
-	a->__vptr->printOther(a, b2);
+	a->__vptr->printOther(a, (A)b2);
 
-	a->__vptr->printOther(a, c);
+	a->__vptr->printOther(a, (A)c);
 
 	return 0;
 }
