@@ -127,17 +127,26 @@ public class PrintHeaderFile extends Visitor {
 
         //Methods that will be implemented in output.cpp
         int classMethodCount = 0;
+        boolean toStringGate = true;
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
             classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
             StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name + "(" + summary.currentClass.name);
+            if(currentMethod.name.equals("toString")){
+                toStringGate = false;
+            }
             for (ParameterImplementation currentParameter : currentMethod.parameters) {
                 method.append(", " + currentParameter.type);
             }
             method.append(");\n");
 
             summary.addLine(method.toString());
+        }
+
+        if(toStringGate){
+            String toStringMethod = "static String toString(" + summary.currentClass.name + ");\n";
+            summary.addLine(toStringMethod);
         }
 
         // adding the number of methods that are going to be implemented by the
@@ -231,7 +240,7 @@ public class PrintHeaderFile extends Visitor {
 
         //toString
         if (!vConstructor.containsKey("toString")) {
-            vConstructor.put("toString", "toString((String(*)(" + summary.currentClass.name + "))&__Object::toString)");
+            vConstructor.put("toString", "toString(&__" + summary.currentClass.name + "::toString)");
             vMethods.put("toString", "String (*toString)(%s);\n");
         }
 

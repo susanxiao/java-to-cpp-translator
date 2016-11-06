@@ -43,6 +43,7 @@ public class PrintCppFile extends Visitor {
         if (n.getString(1).contains("Test")) {
             return;
         }
+        summary.toStringGate = true;
         summary.numberClasses += 1;
         summary.currentClassMethodCount = 0;
 
@@ -51,7 +52,7 @@ public class PrintCppFile extends Visitor {
         summary.currentClassLocation = summary.classLocation + summary.currentClass.name;
 
 
-                //information for initializer list
+        //information for initializer list
         summary.initializerList = new HashMap<>();
 
         visitClassBody((GNode) n.getNode(5));
@@ -89,6 +90,16 @@ public class PrintCppFile extends Visitor {
         }
         if (!constructorCreated) {
             summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable) {};\n\n");
+        }
+        if(summary.toStringGate){
+            StringBuilder s = new StringBuilder();
+            s.append("\n\t\tString __" + summary.currentClass.name + "::toString(" + summary.currentClass.name + " __this){\n");
+            s.append("\t\t\tClass k = __this->__vptr->getClass(__this);\n"+
+                    "\t\t\tstd::ostringstream sout;\n" +
+                    "\t\t\tsout << k->__vptr->getName(k)->data\n" +
+                    "\t\t\t\t << '@' << std::hex << (uintptr_t) __this;\n" +
+                    "\t\t\treturn new __String(sout.str());\n\t\t}\n");
+            summary.code.append(s.toString() + "\n");
         }
     }
 
@@ -303,6 +314,10 @@ public class PrintCppFile extends Visitor {
 
         String methodName = n.getString(3);
 
+        if (methodName.equals("toString")) {
+            summary.toStringGate = false;
+        }
+
         methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
 
         Node formalParameters = n.getNode(4);
@@ -465,6 +480,9 @@ public class PrintCppFile extends Visitor {
         int currentClassMethodCount = 0;
         TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
 
+        // random Gates for control
+        boolean toStringGate;
+
 
         StringBuilder code;
         int scope;
@@ -537,6 +555,8 @@ public class PrintCppFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 12;
+
+        start = end = 9;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
