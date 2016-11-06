@@ -15,7 +15,7 @@ namespace inputs {
 		struct __A {
 			__A_VT* __vptr;
 			A self;
-
+            String selfHolder;
 			__A();
 
 			static Class __class();

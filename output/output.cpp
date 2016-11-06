@@ -5,8 +5,10 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test009 {
+	    // inputs.test009.A@326cbb2d
+
 		__A::__A() : __vptr(&__vtable) {
-			self = this;
+			self = (A) this;
 		};
 
 		Class __A::__class() {
