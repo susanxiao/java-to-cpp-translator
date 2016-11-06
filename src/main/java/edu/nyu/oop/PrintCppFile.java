@@ -39,6 +39,10 @@ public class PrintCppFile extends Visitor {
         if (n.getString(1).contains("Test")) {
             return;
         }
+
+        summary.numberClasses += 1;
+        summary.currentClassMethodCount = 0;
+
         String className = n.getString(1);
         summary.currentClass = summaryTraversal.classes.get(className);
 
@@ -58,6 +62,9 @@ public class PrintCppFile extends Visitor {
 
         //vtable
         summary.addLine("__"+summary.currentClass.name+"_VT __"+summary.currentClass.name+"::__vtable;\n\n");
+
+        summary.classMethodCounts.put(summary.currentClass.name, summary.currentClassMethodCount);
+
     }
 
     public void visitClassBody(GNode n) {
@@ -257,9 +264,7 @@ public class PrintCppFile extends Visitor {
 
     public void visitMethodDeclaration(GNode n) {
 
-        //String __A::getFld(A __this) {
-        //return  __this->fld;
-        //}
+        summary.currentClassMethodCount++;
 
         StringBuilder methodSignature = new StringBuilder();
 
@@ -431,6 +436,13 @@ public class PrintCppFile extends Visitor {
     }
 
     static class cppFileSummary {
+
+        // testing information so that we can perform unit testing
+        int numberClasses = 0;
+        int currentClassMethodCount = 0;
+        TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
+
+
         StringBuilder code;
         int scope;
         ClassImplementation currentClass;
