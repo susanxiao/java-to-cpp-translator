@@ -31,7 +31,11 @@ public class PrintCppFile extends Visitor {
         if (qualifiedIdentifier != null) {
             for (int i = 0; i < qualifiedIdentifier.size(); i++) {
                 summary.addNamespace(qualifiedIdentifier.getString(i));
+                if (i > 0)
+                    summary.classLocation += ".";
+                summary.classLocation += qualifiedIdentifier.getString(i);
             }
+            summary.classLocation += ".";
         }
     }
 
@@ -39,14 +43,15 @@ public class PrintCppFile extends Visitor {
         if (n.getString(1).contains("Test")) {
             return;
         }
-
         summary.numberClasses += 1;
         summary.currentClassMethodCount = 0;
 
         String className = n.getString(1);
         summary.currentClass = summaryTraversal.classes.get(className);
+        summary.currentClassLocation = summary.classLocation + summary.currentClass.name;
 
-        //information for initializer list
+
+                //information for initializer list
         summary.initializerList = new HashMap<>();
 
         visitClassBody((GNode) n.getNode(5));
@@ -55,7 +60,7 @@ public class PrintCppFile extends Visitor {
         summary.addLine("Class __" + summary.currentClass.name + "::__class()");
         summary.incScope();
         summary.addLine("static Class k =\n");
-        summary.addLine("new __Class(__rt::literal(\"class inputs.javalang." + summary.currentClass.name + "\"), (Class) __rt::null());\n");
+        summary.addLine("new __Class(__rt::literal(\"" + summary.currentClassLocation + "\"), (Class) __rt::null());\n");
         summary.addLine("return k;\n");
         summary.decScope();
         summary.code.append("\n");
@@ -465,6 +470,8 @@ public class PrintCppFile extends Visitor {
         int scope;
         ClassImplementation currentClass;
         HashMap<String, String> initializerList;
+        String classLocation = "";
+        String currentClassLocation = "";
 
         public cppFileSummary() {
             code = new StringBuilder(
@@ -530,6 +537,7 @@ public class PrintCppFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 9;
         int end = 9;
+        start = end = 9;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

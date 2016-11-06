@@ -104,7 +104,7 @@ public class PrintMainFile extends Visitor {
                     String variable = currentDeclarator.getString(0);
 
                     // parent
-                    summary.classVariables.remove(type);
+                    summary.classVariables.remove(variable);
                     summary.classVariables.put(variable, type);
 
 
@@ -286,7 +286,10 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                        if(summary.classVariables.get(primaryIdentifer) == summary.classVariables.get(primaryIdentifier1)){
+                        out.println("Testing");
+                        out.println(summary.classVariables.get(primaryIdentifer));
+                        out.println(summary.classVariables.get(primaryIdentifier1));
+                        if(summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))){
                             expressionStatement += argumentsNode.getNode(1).getString(0);
                         }else{
                             expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
@@ -410,7 +413,7 @@ public class PrintMainFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 7;
         int end = 7;
-        start = end = 10;
+        start = end = 13;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
