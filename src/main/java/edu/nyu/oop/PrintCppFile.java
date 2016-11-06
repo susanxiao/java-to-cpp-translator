@@ -346,7 +346,7 @@ public class PrintCppFile extends Visitor {
                         else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
                             Node selectionExpression = arguments.getNode(0);
                             Node argumentsPrimaryIdentifier = selectionExpression.getNode(0);
-                            line.append(argumentsPrimaryIdentifier.getString(0)+"->__vptr");
+                            line.append(argumentsPrimaryIdentifier.getString(0));
                             for (int i = 1; i < selectionExpression.size(); i++) {
                                 String field = selectionExpression.getString(i);
                                 line.append("->"+field);

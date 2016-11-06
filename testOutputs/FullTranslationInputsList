@@ -1,18 +1,12 @@
 Test009:
 	printMain: should not do '->data'
 
-Test010
-Test011
-Test012:
-	printMain: need to cast b1, b2, c
-
 Test013
 Test014:
 	output is blank (should not do '->data' in printCpp? not sure)
 
 Test015
 Test016:
-	printMain: need to cast other
 	printHeader: output is blank (should not do '->data'? not sure)
 
 Test017:
@@ -31,4 +25,4 @@ Test019:
 Test020:
 	how is this supposed to be
 
-Full Translation from test000->test008
+Full Translation from test000->test008, test010-012

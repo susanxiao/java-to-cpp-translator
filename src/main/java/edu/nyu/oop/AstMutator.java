@@ -56,15 +56,24 @@ public class AstMutator extends Visitor {
                     formalParameter.add("__this");
                     formalParameter.add(null);
 
-                   if (formalParameters.size() > 0) {
-                        formalParameters.add(formalParameters.get(formalParameters.size() - 1));
-                        for (int j = formalParameters.size() - 2; j > 0 ; j--) {
-                            formalParameters.set(j, formalParameters.get(j - 1));
+                    formalParameters.add(0, formalParameter);
+
+                    ArrayList<String> parameters = new ArrayList<>();
+                    String methodName = n.getString(3);
+                    for (Object o1 : formalParameters) {
+                        if (o1 instanceof Node) {
+                            Node param = (Node) o1;
+                            String classType = param.getNode(1).getNode(0).getString(0);
+                            parameters.add(classType);
                         }
-                        formalParameters.set(0, formalParameter);
+                    }
+                    HashMap<String, ArrayList<String>> currentMethod = new HashMap<>();
+                    currentMethod.put(methodName, parameters);
+                    if (summary.methods.get(summary.currentClass) == null) {
+                        summary.methods.put(summary.currentClass, currentMethod);
                     }
                     else
-                        formalParameters.add(formalParameter);
+                        summary.methods.get(summary.currentClass).put(methodName, parameters);
                 }
                 else
                     visit((Node) o);
@@ -310,17 +319,26 @@ public class AstMutator extends Visitor {
                         arguments = GNode.ensureVariable(arguments);
                     }
 
-                    if (arguments.size() > 0) {
-                        arguments.add(arguments.get(arguments.size() - 1));
-                        for (int i = arguments.size() - 2; i > 0; i--) {
-                            arguments.set(i, arguments.get(i - 1));
-                        }
-                        arguments.set(0, primaryIdentifier.getString(0));
-                    }
-                    else
-                        arguments.add(primaryIdentifier.getString(0));
+                    arguments.add(0, primaryIdentifier.getString(0));
 
                     n.set(3, arguments);
+
+                    String methodName = n.getString(2);
+                    String primaryClass = summary.objects.get(primaryIdentifier.getString(0));
+                    ArrayList<String> parameters = summary.methods.get(primaryClass).get(methodName);
+                    for (int i = 0; i < arguments.size(); i++) {
+                        Object o1 = arguments.get(i);
+                        if (o1 instanceof Node) {
+                            if (((Node) o1).getName().equals("PrimaryIdentifier")) {
+                                String secondaryType = ((Node) o1).getString(0);
+                                String secondaryClass = summary.objects.get(secondaryType);
+                                if (!parameters.get(i).equals(secondaryClass)) {
+                                    ((Node) o1).set(0, "("+parameters.get(i)+")"+secondaryType);
+                                }
+                            }
+                        }
+                    }
+
                     visitArguments(arguments);
                 }
             }
@@ -512,6 +530,10 @@ public class AstMutator extends Visitor {
 
     public void visitExtension(GNode n) {
         summary.currentClassExtends = n.getNode(0).getNode(0).getString(0);
+        HashMap<String, ArrayList<String>> superClassMethods = summary.methods.get(summary.currentClassExtends);
+        HashMap<String, ArrayList<String>> subClassMethods = new HashMap<>();
+        subClassMethods.putAll(superClassMethods);
+        summary.methods.put(summary.currentClass, subClassMethods);
     }
 
     public void visitClassBody(GNode parent, GNode n) {
@@ -573,6 +595,7 @@ public class AstMutator extends Visitor {
         String currentClass;
         HashMap<String, ArrayList<GNode>> constructorBodies = new HashMap<>();
         HashMap<String, ArrayList<GNode>> fieldDeclarations = new HashMap<>();
+        HashMap<String, HashMap<String, ArrayList<String>>> methods = new HashMap<>();
         HashMap<String, String> objects = new HashMap<>();
 
     }

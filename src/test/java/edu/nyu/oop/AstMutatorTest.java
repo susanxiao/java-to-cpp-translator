@@ -110,7 +110,7 @@ public class AstMutatorTest {
         ImplementationUtil.prettyPrintToFile(new File("testOutputs/mutatedAstOutputs/test009.txt"), node);
     }
 
-    @Ignore @Test
+    @Test
     public void test010() {
         System.out.println("*********************** Test 010 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
@@ -155,7 +155,7 @@ public class AstMutatorTest {
         ImplementationUtil.prettyPrintToFile(new File("testOutputs/mutatedAstOutputs/test014.txt"), node);
     }
 
-    @Test
+    @Ignore @Test
     public void test015() {
         System.out.println("*********************** Test 015 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test015/Test015.java");
