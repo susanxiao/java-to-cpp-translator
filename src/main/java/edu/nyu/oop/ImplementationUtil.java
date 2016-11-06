@@ -28,7 +28,7 @@ public class ImplementationUtil {
         int start = 0;
         int end = 0;
 
-        start = end = 9;
+        start = end = 12;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

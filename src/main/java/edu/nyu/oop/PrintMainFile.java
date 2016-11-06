@@ -228,7 +228,7 @@ public class PrintMainFile extends Visitor {
                                         if(dec.variableName.equals(field) || field.equals("data"))
                                             gateParent = false;
                                     }
-                                    expressionStatement += gateParent ? "->parent." + field : "->" + field;
+                                    expressionStatement += gateParent ? "->parent." + field + "->data": "->" + field + "->data";
 
                                 }
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
