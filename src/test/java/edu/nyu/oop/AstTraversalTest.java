@@ -12,8 +12,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class AstTraversalTest {
 
-    boolean debug = false;
-
     @BeforeClass
     public static void beforeClass() {
         System.out.println("Executing AstTraversal");
@@ -23,11 +21,7 @@ public class AstTraversalTest {
     public void test000() {
         System.out.println("*********************** Test 000 ***********************");
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile("/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test000/Test000.java");
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 1);
@@ -38,11 +32,7 @@ public class AstTraversalTest {
     public void test001() {
         System.out.println("*********************** Test 001 ***********************");
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile("/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test001/Test001.java");
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 2);
@@ -54,11 +44,7 @@ public class AstTraversalTest {
     public void test002() {
         System.out.println("*********************** Test 002 ***********************");
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile("/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test002/Test002.java");
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 2);
@@ -69,13 +55,8 @@ public class AstTraversalTest {
     @Test
     public void test003() {
         System.out.println("*********************** Test 003 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test003/Test003.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test003/Test003.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test003/Test003.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 2);
@@ -86,13 +67,8 @@ public class AstTraversalTest {
     @Test
     public void test004() {
         System.out.println("*********************** Test 004 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test004/Test004.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test004/Test004.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test004/Test004.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 2);
@@ -103,13 +79,8 @@ public class AstTraversalTest {
     @Test
     public void test005() {
         System.out.println("*********************** Test 005 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test005/Test005.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test005/Test005.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test005/Test005.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 3);
@@ -121,13 +92,8 @@ public class AstTraversalTest {
     @Test
     public void test006() {
         System.out.println("*********************** Test 006 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test006/Test006.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 2);
@@ -138,13 +104,8 @@ public class AstTraversalTest {
     @Test
     public void test007() {
         System.out.println("*********************** Test 007 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test007/Test007.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 3);
@@ -156,13 +117,8 @@ public class AstTraversalTest {
     @Test
     public void test008() {
         System.out.println("*********************** Test 008 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test008/Test008.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 3);
@@ -174,13 +130,8 @@ public class AstTraversalTest {
     @Test
     public void test009() {
         System.out.println("*********************** Test 009 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test009/Test009.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 2);
@@ -191,13 +142,8 @@ public class AstTraversalTest {
     @Test
     public void test010() {
         System.out.println("*********************** Test 010 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test010/Test010.java";
         GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
-        }
+        node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
         assert (summary.classCount == 5);

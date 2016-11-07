@@ -102,23 +102,15 @@ public class PrintMainFile extends Visitor {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
                     String variable = currentDeclarator.getString(0);
-
-                    // parent
-                    summary.classVariables.remove(variable);
                     summary.classVariables.put(variable, type);
-
-
                     fieldDeclaration += variable;
                     if (currentDeclarator.getNode(2) != null) {
                         if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
                             fieldDeclaration += " = new ";
                             String qualifiedIdentifier = currentDeclarator.getNode(2).getNode(2).getString(0);
                             fieldDeclaration += qualifiedIdentifier;
-
-                            // have to add the class and variable to a list so that we can use inheritance
                             summary.classNames.add(variable);
                             summary.variables.add(type);
-
                             Node declaratorArgs = currentDeclarator.getNode(2).getNode(3);
                             if (declaratorArgs.size() > 0) {
                                 fieldDeclaration += "(";
