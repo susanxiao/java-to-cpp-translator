@@ -289,9 +289,9 @@ public class PrintMainFile extends Visitor {
                         out.println("Testing");
                         out.println(summary.classVariables.get(primaryIdentifer));
                         out.println(summary.classVariables.get(primaryIdentifier1));
-                        if(summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))){
+                        if(summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
                             expressionStatement += argumentsNode.getNode(1).getString(0);
-                        }else{
+                        } else {
                             expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
                         }
                     } else {
@@ -358,8 +358,8 @@ public class PrintMainFile extends Visitor {
         s1.append("#include \"java_lang.h\"\n\n");
         s1.append("#include \"output.h\"\n");
         s1.append("\n" +
-                "using namespace java::lang;\n" +
-                "using namespace std;\n");
+                  "using namespace java::lang;\n" +
+                  "using namespace std;\n");
         s1.append("using namespace ");
 
         for (Object o : n) {

@@ -28,7 +28,7 @@ public class ImplementationUtil {
         int start = 0;
         int end = 0;
 
-        start = end = 12;
+        start = end = 14;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
@@ -120,8 +120,7 @@ public class ImplementationUtil {
             if (value >= 0 && value <= 20)
                 return value;
             else return -1;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return -1;
         }
     }

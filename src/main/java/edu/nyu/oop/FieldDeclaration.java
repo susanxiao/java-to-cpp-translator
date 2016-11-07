@@ -63,8 +63,7 @@ public class FieldDeclaration extends MethodStatement {
             s.append(" = " + primaryIdentifier);
         } else if (stringLiteral != null) {
             s.append(" = " + stringLiteral);
-        }
-        else if (assignment != null) {
+        } else if (assignment != null) {
             s.append(" = "+assignment.toString());
         }
 
@@ -73,7 +72,7 @@ public class FieldDeclaration extends MethodStatement {
 
     @Override
     //TODO: Modify this
-    public String toCpp(){
+    public String toCpp() {
         StringBuilder s = new StringBuilder();
 
 

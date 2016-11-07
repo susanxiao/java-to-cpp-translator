@@ -1,9 +1,8 @@
-Test009:
-	printMain: should not do '->data'
-
-Test013
 Test014:
 	output is blank (should not do '->data' in printCpp? not sure)
+	  - is is a Null pointer exception I was trying to do a try catch but ran
+	    out of time.
+	    For example try { ... } catch (RuntimeException &e){ ... }
 
 Test015
 Test016:

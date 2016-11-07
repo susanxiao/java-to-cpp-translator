@@ -4,17 +4,9 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test012 {
-		void __A::setA(A __this, String x) {
-			__this->a = x;
-		};
-
+	namespace test014 {
 		void __A::printOther(A __this, A other) {
-			cout << other->__vptr->myToString(other)->data << endl;
-		};
-
-		String __A::myToString(A __this) {
-			return __this->a;
+			cout << other->__vptr->toString(other)->data << endl;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};
@@ -30,72 +22,11 @@ namespace inputs {
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test012.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test014.A"), (Class) __rt::null());
 			return k;
 		};
 
 		__A_VT __A::__vtable;
-
-		__B1::__B1() : __vptr(&__vtable) {};
-
-
-		String __B1::toString(B1 __this){
-			Class k = __this->__vptr->getClass(__this);
-			std::ostringstream sout;
-			sout << k->__vptr->getName(k)->data
-				 << '@' << std::hex << (uintptr_t) __this;
-			return new __String(sout.str());
-		}
-
-		Class __B1::__class() {
-			static Class k =
-			new __Class(__rt::literal("inputs.test012.B1"), (Class) __rt::null());
-			return k;
-		};
-
-		__B1_VT __B1::__vtable;
-
-		__B2::__B2() : __vptr(&__vtable) {};
-
-
-		String __B2::toString(B2 __this){
-			Class k = __this->__vptr->getClass(__this);
-			std::ostringstream sout;
-			sout << k->__vptr->getName(k)->data
-				 << '@' << std::hex << (uintptr_t) __this;
-			return new __String(sout.str());
-		}
-
-		Class __B2::__class() {
-			static Class k =
-			new __Class(__rt::literal("inputs.test012.B2"), (Class) __rt::null());
-			return k;
-		};
-
-		__B2_VT __B2::__vtable;
-
-		String __C::myToString(C __this) {
-			return new __String("still C");
-		};
-
-		__C::__C() : __vptr(&__vtable) {};
-
-
-		String __C::toString(C __this){
-			Class k = __this->__vptr->getClass(__this);
-			std::ostringstream sout;
-			sout << k->__vptr->getName(k)->data
-				 << '@' << std::hex << (uintptr_t) __this;
-			return new __String(sout.str());
-		}
-
-		Class __C::__class() {
-			static Class k =
-			new __Class(__rt::literal("inputs.test012.C"), (Class) __rt::null());
-			return k;
-		};
-
-		__C_VT __C::__vtable;
 
 	}
 }

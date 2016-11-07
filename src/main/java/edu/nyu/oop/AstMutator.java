@@ -59,11 +59,9 @@ public class AstMutator extends Visitor {
                             formalParameters.set(j, formalParameters.get(j - 1));
                         }
                         formalParameters.set(0, formalParameter);
-                    }
-                    else
+                    } else
                         formalParameters.add(formalParameter);
-                }
-                else
+                } else
                     visit((Node) o);
             }
         }
@@ -103,8 +101,7 @@ public class AstMutator extends Visitor {
                                 //primaryIdentifier.set(0, "(" + staticType + ") " + primaryIdentifierString);
                             }
                         } else visitDeclarators(n.getGeneric(2));
-                    }
-                    else visitDeclarators(n.getGeneric(2));
+                    } else visitDeclarators(n.getGeneric(2));
                 }
             }
         }
@@ -134,8 +131,7 @@ public class AstMutator extends Visitor {
                     String type = node.getNode(2).getString(0);
                     visitNewClassExpression(GNode.cast(node));
                     summary.objects.put(varName, type);
-                }
-                else if (node.getName().equals("StringLiteral")) {
+                } else if (node.getName().equals("StringLiteral")) {
                     if (!declarator.hasVariable()) {
                         declarator = GNode.ensureVariable(declarator);
                         parent.set(declaratorIndex, declarator);
@@ -157,8 +153,7 @@ public class AstMutator extends Visitor {
                     newClassExpression.add(4, null);
 
                     declarator.set(2, newClassExpression);
-                }
-                else {
+                } else {
                     visit((Node) o);
                 }
             }
@@ -276,23 +271,20 @@ public class AstMutator extends Visitor {
                                     }*/
                                 }
                             }
-                        }
-                        else
+                        } else
                             visit((Node) o2);
                     }
 
                 }
 
-            }
-            else if (((Node) o).getName().equals("PrimaryIdentifier")) {
+            } else if (((Node) o).getName().equals("PrimaryIdentifier")) {
                 Node primaryIdentifier = (Node) o;
                 Object fieldsObj = n.get(1);
                 if (fieldsObj == null) {
                     GNode fields = GNode.create("Fields");
                     fields.add(0, "__vptr");
                     n.set(1, fields);
-                }
-                else {
+                } else {
                     GNode fields = n.getGeneric(1);
                     if (!fields.hasVariable()) {
                         fields = GNode.ensureVariable(fields);
@@ -313,18 +305,15 @@ public class AstMutator extends Visitor {
                             arguments.set(i, arguments.get(i - 1));
                         }
                         arguments.set(0, primaryIdentifier.getString(0));
-                    }
-                    else
+                    } else
                         arguments.add(primaryIdentifier.getString(0));
 
                     n.set(3, arguments);
                     visitArguments(arguments);
                 }
-            }
-            else if (((Node) o).getName().equals("Arguments")) {
+            } else if (((Node) o).getName().equals("Arguments")) {
                 visitArguments(n.getGeneric(3));
-            }
-            else visit((Node) o);
+            } else visit((Node) o);
         }
     }
 
@@ -355,8 +344,7 @@ public class AstMutator extends Visitor {
                     newClassExpression.add(4, null);
 
                     parent.set(i, newClassExpression);
-                }
-                else if (argument.getName().equals("CallExpression"))
+                } else if (argument.getName().equals("CallExpression"))
                     visitCallExpression(argument);
                 else {
                     visit((Node) o);
@@ -393,12 +381,10 @@ public class AstMutator extends Visitor {
                         newClassExpression.add(4, null);
 
                         expression.set(i, newClassExpression);
-                    }
-                    else visit((Node) o);
+                    } else visit((Node) o);
                 }
             }
-        }
-        else if (expression.getName().equals("CallExpression")) visitCallExpression(expression);
+        } else if (expression.getName().equals("CallExpression")) visitCallExpression(expression);
         else visit(expression);
     }
 
@@ -474,7 +460,7 @@ public class AstMutator extends Visitor {
         this.runtime = runtime;
     }
 
-    public void mutate(GNode n){
+    public void mutate(GNode n) {
         super.dispatch(n);
     }
 

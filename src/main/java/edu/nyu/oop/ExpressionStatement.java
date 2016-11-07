@@ -75,8 +75,8 @@ public class ExpressionStatement extends MethodStatement {
 
         if (checkSystemOutPrint.equals("Systemoutprintln")) {
             s.append("cout << ");
-            for(ExpressionStatement currentStatement : arguments){
-                if(currentStatement.method != null){
+            for(ExpressionStatement currentStatement : arguments) {
+                if(currentStatement.method != null) {
                     s.append(currentStatement.primaryIdentifier);
                     s.append("->__vptr->");
                     s.append(currentStatement.method + "(" + currentStatement.primaryIdentifier + ")->data");

@@ -45,14 +45,13 @@ public class AstTraversal extends Visitor {
         for (Object o : n) {
             if (o instanceof Node) {
                 Node classNode = (Node) o;
-                if(classNode.getName().equals("Modifiers")){
-                    for(Object o1 : classNode){
-                        if(o1 instanceof Node){
+                if(classNode.getName().equals("Modifiers")) {
+                    for(Object o1 : classNode) {
+                        if(o1 instanceof Node) {
                             modifier = classNode.getNode(0).getString(0);
                         }
                     }
-                }
-                else if (classNode.getName().equals("Extension")) {
+                } else if (classNode.getName().equals("Extension")) {
                     for (Object o1 : classNode) {
                         if (o1 instanceof Node) {
                             Node extensionNode = (Node) o1;
@@ -263,8 +262,7 @@ public class AstTraversal extends Visitor {
                                 if (o1 instanceof Node) {
                                     String primaryIdentifier = ((Node) o1).getString(0);
                                     assignment.primaryIdentifier = primaryIdentifier;
-                                }
-                                else if (o1 instanceof String) {
+                                } else if (o1 instanceof String) {
                                     if (assignment.fields == null)
                                         assignment.fields = new ArrayList<>();
                                     assignment.fields.add((String) o1);
@@ -333,8 +331,7 @@ public class AstTraversal extends Visitor {
                                                                 if (callExpressionNodeArgs.getName().equals("PrimaryIdentifier")) {
                                                                     String argPrimaryIdentifier = callExpressionNodeArgs.getString(0);
                                                                     currentArgument.primaryIdentifier = argPrimaryIdentifier;
-                                                                }
-                                                                else if (callExpressionNodeArgs.getName().equals("SelectionExpression")) {
+                                                                } else if (callExpressionNodeArgs.getName().equals("SelectionExpression")) {
                                                                     for (Object o5 : callExpressionNodeArgs) {
                                                                         if (o5 instanceof Node) {
                                                                             Node selectionExpressionArgs = (Node) o5;
@@ -342,8 +339,7 @@ public class AstTraversal extends Visitor {
                                                                                 String argPrimaryIdentifier = selectionExpressionArgs.getString(0);
                                                                                 currentArgument.primaryIdentifier = argPrimaryIdentifier;
                                                                             }
-                                                                        }
-                                                                        else if (o5 instanceof String) {
+                                                                        } else if (o5 instanceof String) {
                                                                             if (currentArgument.fields == null)
                                                                                 currentArgument.fields = new ArrayList<>();
                                                                             currentArgument.fields.add((String) o5);
@@ -356,12 +352,10 @@ public class AstTraversal extends Visitor {
                                                                 }
                                                             }
                                                         }
-                                                    }
-                                                    else if (argumentsNode.getName().equals("PrimaryIdentifier")) {
+                                                    } else if (argumentsNode.getName().equals("PrimaryIdentifier")) {
                                                         String primaryIdentifier = argumentsNode.getString(0);
                                                         currentArgument.primaryIdentifier = primaryIdentifier;
-                                                    }
-                                                    else if (argumentsNode.getName().equals("SelectionExpression")) {
+                                                    } else if (argumentsNode.getName().equals("SelectionExpression")) {
                                                         for (Object o4 : argumentsNode) {
                                                             if (o4 instanceof Node) {
                                                                 Node selectionExpressionArgs = (Node) o4;
@@ -369,8 +363,7 @@ public class AstTraversal extends Visitor {
                                                                     String argPrimaryIdentifier = selectionExpressionArgs.getString(0);
                                                                     currentArgument.primaryIdentifier = argPrimaryIdentifier;
                                                                 }
-                                                            }
-                                                            else if (o4 instanceof String) {
+                                                            } else if (o4 instanceof String) {
                                                                 if (currentArgument.fields == null)
                                                                     currentArgument.fields = new ArrayList<>();
                                                                 currentArgument.fields.add((String) o4);
@@ -406,8 +399,7 @@ public class AstTraversal extends Visitor {
                         }
                     }
                     summary.currentMethod.addMethodStatement(currentStatement);
-                }
-                else if (current.getName().equals(("ReturnStatement"))) {
+                } else if (current.getName().equals(("ReturnStatement"))) {
                     ReturnStatement currentStatement = new ReturnStatement();
                     Node returnType = current.getNode(0);
                     if (returnType.getName().equals("StringLiteral")) {
@@ -421,7 +413,7 @@ public class AstTraversal extends Visitor {
                     }
 
                     summary.currentMethod.addMethodStatement(currentStatement);
-                }else{
+                } else {
 
                 }
             }
@@ -529,15 +521,13 @@ public class AstTraversal extends Visitor {
                                         currentStatement.literalAssignment = assignmentString;
                                     }
                                 }
-                            }
-                            else if (expressionStatementNode.getName().equals("CallExpression")) {
+                            } else if (expressionStatementNode.getName().equals("CallExpression")) {
                                 Node selectionExpression = expressionStatementNode.getNode(0);
                                 for (Object o2 : selectionExpression) {
                                     if (o2 instanceof Node) {
                                         String primaryIdentifier = ((Node) o2).getString(0);
                                         currentStatement.primaryIdentifier = primaryIdentifier;
-                                    }
-                                    else if (o2 instanceof String) {
+                                    } else if (o2 instanceof String) {
                                         if (currentStatement.fields == null)
                                             currentStatement.fields = new ArrayList<>();
                                         String field = (String) o2;
@@ -557,8 +547,7 @@ public class AstTraversal extends Visitor {
                                         if (o2 instanceof Node) {
                                             String primaryIdentifier = ((Node) o2).getString(0);
                                             currentArgument.primaryIdentifier = primaryIdentifier;
-                                        }
-                                        else if (o2 instanceof String) {
+                                        } else if (o2 instanceof String) {
                                             //is this a field in primary identifier, or second argument, or...
                                         }
                                         currentStatement.arguments.add(currentArgument);
@@ -604,7 +593,7 @@ public class AstTraversal extends Visitor {
 
         // obtain the number of methods for each class so we can check that the correct number of
         // methods were traversed for each class
-        for(String className : summary.classNames){
+        for(String className : summary.classNames) {
             summary.currentClass = summary.classes.get(className);
             summary.classMethodCounts.put(className, summary.currentClass.methods.size());
         }

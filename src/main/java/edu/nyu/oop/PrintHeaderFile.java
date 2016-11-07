@@ -82,7 +82,7 @@ public class PrintHeaderFile extends Visitor {
                 declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
             }
             currentClass = currentClass.superClass;
-            if(currentClass != null){
+            if(currentClass != null) {
                 declarationsMap.put("parentPointer", "__" + currentClass.name + " parent");
             }
             break;
@@ -133,7 +133,7 @@ public class PrintHeaderFile extends Visitor {
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
             StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name + "(" + summary.currentClass.name);
-            if(currentMethod.name.equals("toString")){
+            if(currentMethod.name.equals("toString")) {
                 toStringGate = false;
             }
             for (ParameterImplementation currentParameter : currentMethod.parameters) {
@@ -144,7 +144,7 @@ public class PrintHeaderFile extends Visitor {
             summary.addLine(method.toString());
         }
 
-        if(toStringGate){
+        if(toStringGate) {
             String toStringMethod = "static String toString(" + summary.currentClass.name + ");\n";
             summary.addLine(toStringMethod);
         }
@@ -213,7 +213,7 @@ public class PrintHeaderFile extends Visitor {
 
                     String paramString = String.format(parameters.toString(), summary.currentClass.name);
                     vConstructor.put(currentMethod.name,
-                            currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethod.name + ")");
+                                     currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethod.name + ")");
 
                 }
             }
@@ -347,10 +347,10 @@ public class PrintHeaderFile extends Visitor {
             typeDef = new StringBuilder();
 
             code = new StringBuilder(
-                    "#pragma once\n"
-                            + "#include <iostream>\n"
-                            + "#include \"java_lang.h\"\n\n"
-                            + "using namespace java::lang;\n\n"
+                "#pragma once\n"
+                + "#include <iostream>\n"
+                + "#include \"java_lang.h\"\n\n"
+                + "using namespace java::lang;\n\n"
             );
             scope = 0;
         }

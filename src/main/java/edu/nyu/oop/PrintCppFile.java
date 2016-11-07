@@ -91,14 +91,14 @@ public class PrintCppFile extends Visitor {
         if (!constructorCreated) {
             summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable) {};\n\n");
         }
-        if(summary.toStringGate){
+        if(summary.toStringGate) {
             StringBuilder s = new StringBuilder();
             s.append("\n\t\tString __" + summary.currentClass.name + "::toString(" + summary.currentClass.name + " __this){\n");
             s.append("\t\t\tClass k = __this->__vptr->getClass(__this);\n"+
-                    "\t\t\tstd::ostringstream sout;\n" +
-                    "\t\t\tsout << k->__vptr->getName(k)->data\n" +
-                    "\t\t\t\t << '@' << std::hex << (uintptr_t) __this;\n" +
-                    "\t\t\treturn new __String(sout.str());\n\t\t}\n");
+                     "\t\t\tstd::ostringstream sout;\n" +
+                     "\t\t\tsout << k->__vptr->getName(k)->data\n" +
+                     "\t\t\t\t << '@' << std::hex << (uintptr_t) __this;\n" +
+                     "\t\t\treturn new __String(sout.str());\n\t\t}\n");
             summary.code.append(s.toString() + "\n");
         }
     }
@@ -493,10 +493,10 @@ public class PrintCppFile extends Visitor {
 
         public cppFileSummary() {
             code = new StringBuilder(
-                    "#include \"output.h\"\n" +
-                            "#include <sstream>\n\n" +
-                            "using namespace java::lang;\n" +
-                            "using namespace std;\n");
+                "#include \"output.h\"\n" +
+                "#include <sstream>\n\n" +
+                "using namespace java::lang;\n" +
+                "using namespace std;\n");
             scope = 0;
         }
 

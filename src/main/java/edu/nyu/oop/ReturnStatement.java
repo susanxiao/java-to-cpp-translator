@@ -22,7 +22,7 @@ public class ReturnStatement extends MethodStatement {
             s.append(nonLiteralValue);
         }
 
-        if(literalValue != null){
+        if(literalValue != null) {
             s.append(literalValue);
         }
 
@@ -31,7 +31,7 @@ public class ReturnStatement extends MethodStatement {
     }
 
     @Override
-    public String toCpp(){
+    public String toCpp() {
         StringBuilder s = new StringBuilder();
         return s.toString();
     }

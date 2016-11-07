@@ -21,17 +21,17 @@ public class ClassImplementation {
     ArrayList<FieldDeclaration> declarations;
 
     public ClassImplementation(ClassImplementation superClass, String name, String modifier) {
-        if(superClass != null){
+        if(superClass != null) {
             this.superClassName = superClass.name;
             this.superClass = superClass;
-        }else{
+        } else {
             this.superClassName = null;
             this.superClass = superClass;
         }
 
         this.name = name;
 
-        if(modifier != ""){
+        if(modifier != "") {
             this.modifier = modifier;
         }
 
@@ -83,8 +83,7 @@ public class ClassImplementation {
         if (method == null) {
             if (superClass == null) return null;
             else return superClass.deepFindMethod(name);
-        }
-        else return method;
+        } else return method;
     }
 
     public void addPackage(String name) {
@@ -115,7 +114,7 @@ public class ClassImplementation {
 
         /** Modifier **/
 
-        if(modifier != null){
+        if(modifier != null) {
             s.append("Modifier\n\t");
             s.append(modifier + "\n");
         }
@@ -134,7 +133,7 @@ public class ClassImplementation {
 
         /** Declarations **/
         s.append("Declarations:\n");
-        for(FieldDeclaration declaration : declarations){
+        for(FieldDeclaration declaration : declarations) {
             s.append("\t" + declaration.toString() + "\n");
         }
 
