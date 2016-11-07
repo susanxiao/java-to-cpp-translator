@@ -26,6 +26,7 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
+			static String toString(A);
 		};
 
 		struct __A_VT {
@@ -41,7 +42,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			hashCode((int32_t(*)(A))&__Object::hashCode),
-			toString((String(*)(A))&__Object::toString)
+			toString(&__A::toString)
 			{}
 		};
 
@@ -56,6 +57,7 @@ namespace inputs {
 
 			static __B_VT __vtable;
 
+			static String toString(B);
 		};
 
 		struct __B_VT {
@@ -71,7 +73,7 @@ namespace inputs {
 			equals((bool(*)(B, Object))&__Object::equals),
 			getClass((Class(*)(B))&__Object::getClass),
 			hashCode((int32_t(*)(B))&__Object::hashCode),
-			toString((String(*)(B))&__Object::toString)
+			toString(&__B::toString)
 			{}
 		};
 

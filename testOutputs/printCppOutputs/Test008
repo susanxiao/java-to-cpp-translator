@@ -10,6 +10,15 @@ namespace inputs {
 			cout << a->data << endl;
 		};
 
+
+		String __A::toString(A __this){
+			Class k = __this->__vptr->getClass(__this);
+			std::ostringstream sout;
+			sout << k->__vptr->getName(k)->data
+				 << '@' << std::hex << (uintptr_t) __this;
+			return new __String(sout.str());
+		}
+
 		Class __A::__class() {
 			static Class k =
 			new __Class(__rt::literal("inputs.test008.A"), (Class) __rt::null());
@@ -23,6 +32,15 @@ namespace inputs {
 			parent.a = new __String("B");
 			cout << parent.a->data << endl;
 		};
+
+
+		String __B::toString(B __this){
+			Class k = __this->__vptr->getClass(__this);
+			std::ostringstream sout;
+			sout << k->__vptr->getName(k)->data
+				 << '@' << std::hex << (uintptr_t) __this;
+			return new __String(sout.str());
+		}
 
 		Class __B::__class() {
 			static Class k =

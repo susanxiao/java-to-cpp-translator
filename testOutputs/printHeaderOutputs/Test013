@@ -24,6 +24,7 @@ namespace inputs {
 
 			static void setA(A, String);
 			static void printOther(A, A);
+			static String toString(A);
 		};
 
 		struct __A_VT {
@@ -43,7 +44,7 @@ namespace inputs {
 			hashCode((int32_t(*)(A))&__Object::hashCode),
 			printOther(&__A::printOther),
 			setA(&__A::setA),
-			toString((String(*)(A))&__Object::toString)
+			toString(&__A::toString)
 			{}
 		};
 

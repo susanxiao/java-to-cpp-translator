@@ -25,6 +25,7 @@ namespace inputs {
 			static void setFld(A, String);
 			static void almostSetFld(A, String);
 			static String getFld(A);
+			static String toString(A);
 		};
 
 		struct __A_VT {
@@ -46,7 +47,7 @@ namespace inputs {
 			getFld(&__A::getFld),
 			hashCode((int32_t(*)(A))&__Object::hashCode),
 			setFld(&__A::setFld),
-			toString((String(*)(A))&__Object::toString)
+			toString(&__A::toString)
 			{}
 		};
 

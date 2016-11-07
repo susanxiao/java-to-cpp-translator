@@ -37,6 +37,7 @@ namespace inputs {
 			static void setA(A, String);
 			static void printOther(A, A);
 			static String myToString(A);
+			static String toString(A);
 		};
 
 		struct __A_VT {
@@ -58,7 +59,7 @@ namespace inputs {
 			myToString(&__A::myToString),
 			printOther(&__A::printOther),
 			setA(&__A::setA),
-			toString((String(*)(A))&__Object::toString)
+			toString(&__A::toString)
 			{}
 		};
 
@@ -73,6 +74,7 @@ namespace inputs {
 
 			static __B1_VT __vtable;
 
+			static String toString(B1);
 		};
 
 		struct __B1_VT {
@@ -94,7 +96,7 @@ namespace inputs {
 			myToString((String(*)(B1))&__A::myToString),
 			printOther((void(*)(B1, A))&__A::printOther),
 			setA((void(*)(B1, String))&__A::setA),
-			toString((String(*)(B1))&__Object::toString)
+			toString(&__B1::toString)
 			{}
 		};
 
@@ -109,6 +111,7 @@ namespace inputs {
 
 			static __B2_VT __vtable;
 
+			static String toString(B2);
 		};
 
 		struct __B2_VT {
@@ -130,7 +133,7 @@ namespace inputs {
 			myToString((String(*)(B2))&__A::myToString),
 			printOther((void(*)(B2, A))&__A::printOther),
 			setA((void(*)(B2, String))&__A::setA),
-			toString((String(*)(B2))&__Object::toString)
+			toString(&__B2::toString)
 			{}
 		};
 
@@ -146,6 +149,7 @@ namespace inputs {
 			static __C_VT __vtable;
 
 			static String myToString(C);
+			static String toString(C);
 		};
 
 		struct __C_VT {
@@ -167,7 +171,7 @@ namespace inputs {
 			myToString(&__C::myToString),
 			printOther((void(*)(C, A))&__A::printOther),
 			setA((void(*)(C, String))&__A::setA),
-			toString((String(*)(C))&__Object::toString)
+			toString(&__C::toString)
 			{}
 		};
 

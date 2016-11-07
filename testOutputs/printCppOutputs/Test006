@@ -22,6 +22,15 @@ namespace inputs {
 			return __this->fld;
 		};
 
+
+		String __A::toString(A __this){
+			Class k = __this->__vptr->getClass(__this);
+			std::ostringstream sout;
+			sout << k->__vptr->getName(k)->data
+				 << '@' << std::hex << (uintptr_t) __this;
+			return new __String(sout.str());
+		}
+
 		Class __A::__class() {
 			static Class k =
 			new __Class(__rt::literal("inputs.test006.A"), (Class) __rt::null());

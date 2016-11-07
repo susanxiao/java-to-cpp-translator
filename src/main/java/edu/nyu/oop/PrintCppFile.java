@@ -554,9 +554,7 @@ public class PrintCppFile extends Visitor {
         //TO RUN: run-main edu.nyu.oop.PrintCppFile ***
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
-        int end = 12;
-
-        start = end = 9;
+        int end = 13;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

@@ -29,6 +29,15 @@ namespace inputs {
 
 		__B1::__B1() : __vptr(&__vtable) {};
 
+
+		String __B1::toString(B1 __this){
+			Class k = __this->__vptr->getClass(__this);
+			std::ostringstream sout;
+			sout << k->__vptr->getName(k)->data
+				 << '@' << std::hex << (uintptr_t) __this;
+			return new __String(sout.str());
+		}
+
 		Class __B1::__class() {
 			static Class k =
 			new __Class(__rt::literal("inputs.test010.B1"), (Class) __rt::null());
@@ -39,6 +48,15 @@ namespace inputs {
 
 		__B2::__B2() : __vptr(&__vtable) {};
 
+
+		String __B2::toString(B2 __this){
+			Class k = __this->__vptr->getClass(__this);
+			std::ostringstream sout;
+			sout << k->__vptr->getName(k)->data
+				 << '@' << std::hex << (uintptr_t) __this;
+			return new __String(sout.str());
+		}
+
 		Class __B2::__class() {
 			static Class k =
 			new __Class(__rt::literal("inputs.test010.B2"), (Class) __rt::null());
@@ -48,6 +66,15 @@ namespace inputs {
 		__B2_VT __B2::__vtable;
 
 		__C::__C() : __vptr(&__vtable) {};
+
+
+		String __C::toString(C __this){
+			Class k = __this->__vptr->getClass(__this);
+			std::ostringstream sout;
+			sout << k->__vptr->getName(k)->data
+				 << '@' << std::hex << (uintptr_t) __this;
+			return new __String(sout.str());
+		}
 
 		Class __C::__class() {
 			static Class k =

@@ -71,6 +71,7 @@ namespace inputs {
 
 			static __B1_VT __vtable;
 
+			static String toString(B1);
 		};
 
 		struct __B1_VT {
@@ -105,6 +106,7 @@ namespace inputs {
 
 			static __B2_VT __vtable;
 
+			static String toString(B2);
 		};
 
 		struct __B2_VT {
@@ -139,6 +141,7 @@ namespace inputs {
 
 			static __C_VT __vtable;
 
+			static String toString(C);
 		};
 
 		struct __C_VT {
