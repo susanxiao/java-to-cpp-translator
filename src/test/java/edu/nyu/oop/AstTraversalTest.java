@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class AstTraversalTest {
 
-    boolean debug = true;
+    boolean debug = false;
 
     @BeforeClass
     public static void beforeClass() {

@@ -13,7 +13,7 @@ import static java.lang.System.out;
  */
 public class CppTest {
 
-    boolean debug = true;
+    boolean debug = false;
     // unit tests that failed are commented out
     // these units tests are based on the java Test input file
 

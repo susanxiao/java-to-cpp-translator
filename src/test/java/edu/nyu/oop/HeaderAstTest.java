@@ -13,7 +13,7 @@ import static java.lang.System.out;
 public class HeaderAstTest {
 
 
-    boolean debug = true;
+    boolean debug = false;
 
     @BeforeClass
     public static void beforeClass() {
