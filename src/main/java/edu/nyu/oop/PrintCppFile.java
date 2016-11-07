@@ -92,14 +92,14 @@ public class PrintCppFile extends Visitor {
             summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable) {};\n\n");
         }
         if(summary.toStringGate) {
-            StringBuilder s = new StringBuilder();
-            s.append("\n\t\tString __" + summary.currentClass.name + "::toString(" + summary.currentClass.name + " __this){\n");
-            s.append("\t\t\tClass k = __this->__vptr->getClass(__this);\n"+
-                     "\t\t\tstd::ostringstream sout;\n" +
-                     "\t\t\tsout << k->__vptr->getName(k)->data\n" +
-                     "\t\t\t\t << '@' << std::hex << (uintptr_t) __this;\n" +
-                     "\t\t\treturn new __String(sout.str());\n\t\t}\n");
-            summary.code.append(s.toString() + "\n");
+            summary.addLine("String __" + summary.currentClass.name + "::toString(" + summary.currentClass.name + " __this)");
+            summary.incScope();
+            summary.addLine("Class k = __this->__vptr->getClass(__this);\n");
+            summary.addLine("std::ostringstream sout;\n");
+            summary.addLine("sout << k->__vptr->getName(k)->data\n");
+            summary.addLine("\t<< '@' << std::hex << (uintptr_t) __this;\n");
+            summary.addLine("return new __String(sout.str());\n");
+            summary.decScope();
         }
     }
 
@@ -554,7 +554,7 @@ public class PrintCppFile extends Visitor {
         //TO RUN: run-main edu.nyu.oop.PrintCppFile ***
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
-        int end = 13;
+        int end = 20;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

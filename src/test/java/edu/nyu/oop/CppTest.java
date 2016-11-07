@@ -25,13 +25,9 @@ public class CppTest {
     @Test
     public void test000() {
         out.println("*********************** Test 000 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test000/Test000.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test000/Test000.java");
-        }
+        String path = "./src/test/java/inputs/test000/Test000.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
+
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
@@ -52,13 +48,9 @@ public class CppTest {
     @Test
     public void test001() {
         out.println("*********************** Test 001 ***********************");
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test001/Test001.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test001/Test001.java");
-        }
+        String path = "./src/test/java/inputs/test001/Test001.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
+
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
@@ -78,13 +70,8 @@ public class CppTest {
     public void test002() {
         out.println("*********************** Test 002 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test002/Test002.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test002/Test002.java");
-        }
+        String path = "./src/test/java/inputs/test002/Test002.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -104,13 +91,8 @@ public class CppTest {
     public void test003() {
         System.out.println("*********************** Test 003 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test003/Test003.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test003/Test003.java");
-        }
+        String path = "./src/test/java/inputs/test003/Test003.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -130,13 +112,8 @@ public class CppTest {
     public void test004() {
         System.out.println("*********************** Test 004 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test004/Test004.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test004/Test004.java");
-        }
+        String path = "./src/test/java/inputs/test004/Test004.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -156,13 +133,8 @@ public class CppTest {
     public void test005() {
         System.out.println("*********************** Test 005 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test005/Test005.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test005/Test005.java");
-        }
+        String path = "./src/test/java/inputs/test005/Test005.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -184,13 +156,8 @@ public class CppTest {
     public void test006() {
         System.out.println("*********************** Test 006 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test006/Test006.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test006/Test006.java");
-        }
+        String path = "./src/test/java/inputs/test006/Test006.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -211,13 +178,8 @@ public class CppTest {
     public void test007() {
         System.out.println("*********************** Test 007 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test007/Test007.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test007/Test007.java");
-        }
+        String path = "./src/test/java/inputs/test007/Test007.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -239,13 +201,8 @@ public class CppTest {
     public void test008() {
         System.out.println("*********************** Test 008 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test008/Test008.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test008/Test008.java");
-        }
+        String path = "./src/test/java/inputs/test008/Test008.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -266,13 +223,8 @@ public class CppTest {
     public void test009() {
         System.out.println("*********************** Test 009 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test009/Test009.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test009/Test009.java");
-        }
+        String path = "./src/test/java/inputs/test009/Test009.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
@@ -292,13 +244,8 @@ public class CppTest {
     public void test010() {
         System.out.println("*********************** Test 010 ***********************");
 
-        String path = "/Users/Garrett/Desktop/OOP/inClass/translator-5Tran/src/test/java/inputs/test010/Test010.java";
-        GNode node;
-        if (debug) {
-            node = (GNode) XtcTestUtils.loadTestFile(path);
-        } else {
-            node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test010/Test010.java");
-        }
+        String path = "./src/test/java/inputs/test010/Test010.java";
+        GNode node = (GNode) XtcTestUtils.loadTestFile(path);
 
         AstTraversal visitorTraversal = new AstTraversal(newRuntime());
         AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);

@@ -28,8 +28,6 @@ public class ImplementationUtil {
         int start = 0;
         int end = 0;
 
-        start = end = 14;
-
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
@@ -51,18 +49,15 @@ public class ImplementationUtil {
             //prettyPrintAst(headerNode);
 
             // PHASE 3: create the header code
-            //TODO: check this one
             PrintHeaderFile.headerFileSummary headerFileSummary = new PrintHeaderFile(newRuntime(), summaryTraversal).getSummary(headerNode);
 
             // PHASE 4: mutate the traversed tree
             new AstMutator(newRuntime()).mutate(root);
 
             // PHASE 5: create the cpp code
-            //TODO: this one
             PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(root);
 
             // PHASE 5: create the main code
-            //TODO: finish this one
             PrintMainFile.printMainFileSummary mainSummary = new PrintMainFile(newRuntime(), summaryTraversal).getSummary(root);
 
             try {
