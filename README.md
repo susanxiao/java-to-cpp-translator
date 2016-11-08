@@ -13,6 +13,31 @@ Example command to execute translator from Sbt
 
 ```runxtc -printJavaAst src/test/java/inputs/Test000/Test000.java ```
 
+#5Tran
+----------
+
+Support limited unit testing sbt test-only command on the file
+AstTraversalTest 0-10
+CppTest 0-10
+HeaderAstTest 0-10
+HeaderTest 0-10
+
+Support printing the output.h, output.cpp, and main.cpp files individualy
+run-main edu.nyu.oop.PrintHeaderFile [number]
+run-main edu.nyu.oop.PrintCppFile [number]
+run-main edu.nyu.oop.PrintMainFile [number]
+
+Support printing the output.h, output.cpp, and main.cpp together (Implementation)
+run-main edu.nyu.oop.ImplementationUtil [number]
+
+Support inputs
+Phase 1 0-20
+Phase 2 0-20
+Phase 3 0-20
+Phase 4 0-13
+Phase 5 0-13
+
+
 ```
 Project Map
 -----------
