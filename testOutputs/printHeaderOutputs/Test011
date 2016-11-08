@@ -164,7 +164,6 @@ namespace inputs {
 			toString((String(*)(C))&__A::toString)
 			{}
 		};
-
 	}
 }
 

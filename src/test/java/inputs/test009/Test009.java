@@ -8,9 +8,6 @@ class A {
     }
 }
 
-class B {
-
-}
 
 public class Test009 {
     public static void main(String[] args) {

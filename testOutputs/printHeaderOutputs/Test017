@@ -23,6 +23,7 @@ namespace inputs {
 			static __A_VT __vtable;
 
 			static A self(A);
+			static String toString(A);
 		};
 
 		struct __A_VT {
@@ -40,10 +41,9 @@ namespace inputs {
 			getClass((Class(*)(A))&__Object::getClass),
 			hashCode((int32_t(*)(A))&__Object::hashCode),
 			self(&__A::self),
-			toString((String(*)(A))&__Object::toString)
+			toString(&__A::toString)
 			{}
 		};
-
 	}
 }
 

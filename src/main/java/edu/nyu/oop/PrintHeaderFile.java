@@ -443,7 +443,7 @@ public class PrintHeaderFile extends Visitor {
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
             GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
-            //LoadFileImplementations.prettyPrintAst(parentNode);
+            //ImplementationUtil.prettyPrintAst(parentNode);
 
             try {
                 PrintWriter printerHeader;

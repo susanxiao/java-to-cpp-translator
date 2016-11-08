@@ -50,7 +50,6 @@ namespace inputs {
 			toString(&__A::toString)
 			{}
 		};
-
 	}
 }
 

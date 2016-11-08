@@ -1,13 +1,14 @@
 package edu.nyu.oop;
 
+import sun.jvm.hotspot.jdi.MethodImpl;
 import xtc.tree.GNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.lang.reflect.Method;
+import java.util.*;
 
 
 import static edu.nyu.oop.AstTraversal.*;
+import static java.lang.System.out;
 
 /**
  * Created by Garrett on 10/24/16.
@@ -57,6 +58,10 @@ public class HeaderAst {
             // This is the current class Node that is being implemented
             ClassImplementation currentClass = classes.get(key);
             currentClassNode = GNode.create(currentClass.name);
+
+            if (currentClass.name.contains("Test")) {
+                continue;
+            }
 
             if (!currentClass.name.contains("Test")) {
                 summaryConstruction.numberClasses++;
@@ -117,25 +122,62 @@ public class HeaderAst {
             // DATA LAYOUT
 
             // Cycle through the methods
-            // TODO: Main method does not list the methods?
+            TreeMap<String, ArrayList<String>> methods = new TreeMap<>();
+            Set methodNames = new TreeSet();
+
+            ClassImplementation superClass = currentClass.superClass;
+            StringBuilder currM = new StringBuilder();
+            ArrayList<String> currentMethod1 = new ArrayList<String>();
+            while(superClass != null) {
+                for (MethodImplementation m : superClass.methods) {
+                    currentMethod1 = new ArrayList<String>();
+                    currentMethod1.add(m.name);
+                    if(methodNames.contains(m.name))
+                        continue;
+                    currentMethod1.add(m.returnType);
+                    currentMethod1.add(superClass.name);
+                    currentMethod1.add("Parameters");
+                    for(ParameterImplementation param : m.parameters){
+                        currentMethod1.add(param.toString());
+                    }
+                    methodNames.add(m.name);
+                    methods.put(m.name, currentMethod1);
+                }
+                superClass = superClass.superClass;
+            }
             int methodCount = 0;
-            for (MethodImplementation currentMethod : currentClass.methods) {
+            for(MethodImplementation m : currentClass.methods){
                 methodCount++;
+                currentMethod1 = new ArrayList<String>();
+                currentMethod1.add(m.returnType);
+                currentMethod1.add(m.name);
+                currentMethod1.add(currentClass.name);
+                currentMethod1.add("Parameters");
+                for(ParameterImplementation param : m.parameters){
+                    currentMethod1.add(param.toString());
+                }
+                methodNames.add(m.name);
+                methods.put(m.name, currentMethod1);
+            }
+
+            for(Object name : methodNames){
+                String mName = (String) name;
                 DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
                 dataLayoutNode.add(DataLayoutMethodDeclarationNode);
-                // TODO: Method Implementation needs modifiers
-                ModifiersNode = GNode.create("Modifiers");
-                //ModifiersNode.add(currentMethod.modifer);
                 DataLayoutMethodDeclarationNode.add(ModifiersNode);
-                DataLayoutMethodDeclarationNode.add(currentMethod.returnType);
-                DataLayoutMethodDeclarationNode.add(currentMethod.name);
-                DataLayoutMethodDeclarationNode.add(currentClass.name);
+                ModifiersNode = GNode.create("Modifiers");
+                DataLayoutMethodDeclarationNode.add(ModifiersNode);
+                DataLayoutMethodDeclarationNode.add(methods.get(mName).get(0));
+                DataLayoutMethodDeclarationNode.add(methods.get(mName).get(1));
+                DataLayoutMethodDeclarationNode.add(methods.get(mName).get(2));
                 ParametersNode = GNode.create("Parameters");
                 DataLayoutMethodDeclarationNode.add(ParametersNode);
-                for (ParameterImplementation param : currentMethod.parameters) {
-                    ParametersNode.add(param.toString());
+                for(int i = 4; i < methods.get(mName).size(); i++){
+                    String type = methods.get(mName).get(i);
+                    ParametersNode.add(type.substring(0, type.indexOf(" ")));
                 }
             }
+
             if (!currentClass.name.contains("Test")) {
                 summaryConstruction.classMethodCounts.put(currentClass.name,methodCount);
             }
@@ -205,8 +247,9 @@ public class HeaderAst {
             VTableMethodDeclarationNode.add(ParametersNode);
 
             // Cycle methods
-            for (MethodImplementation currentMethod : currentClass.methods) {
 
+            for(Object name : methodNames){
+                String mName = (String) name;
                 VTableMethodDeclarationNode = GNode.create("VTableMethodDeclaration");
                 VTableNode.add(VTableMethodDeclarationNode);
 
@@ -219,15 +262,16 @@ public class HeaderAst {
                 }
                 */
 
-                VTableMethodDeclarationNode.add(currentMethod.returnType);
-                VTableMethodDeclarationNode.add(currentMethod.name);
-                VTableMethodDeclarationNode.add(currentClass.name);
+                VTableMethodDeclarationNode.add(methods.get(mName).get(0));
+                VTableMethodDeclarationNode.add(methods.get(mName).get(1));
+                VTableMethodDeclarationNode.add(methods.get(mName).get(2));
 
 
                 ParametersNode = GNode.create("Parameters");
                 VTableMethodDeclarationNode.add(ParametersNode);
-                for (ParameterImplementation param : currentMethod.parameters) {
-                    ParametersNode.add(param.type);
+                for(int i = 4; i < methods.get(mName).size(); i++){
+                    String type = methods.get(mName).get(i);
+                    ParametersNode.add(type.substring(0, type.indexOf(" ")));
                 }
 
             }
