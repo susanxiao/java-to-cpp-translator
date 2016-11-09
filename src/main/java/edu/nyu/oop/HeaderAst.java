@@ -59,9 +59,6 @@ public class HeaderAst {
             ClassImplementation currentClass = classes.get(key);
             currentClassNode = GNode.create(currentClass.name);
 
-            if (currentClass.name.contains("Test")) {
-                continue;
-            }
 
             if (!currentClass.name.contains("Test")) {
                 summaryConstruction.numberClasses++;

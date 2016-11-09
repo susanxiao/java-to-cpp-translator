@@ -426,7 +426,7 @@ public class PrintHeaderFile extends Visitor {
         //      running all files will place it in testOutputs/translationOutputs
 
         int start = 0;
-        int end = 20;
+        int end = 0;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
@@ -443,7 +443,7 @@ public class PrintHeaderFile extends Visitor {
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
             GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
-            //ImplementationUtil.prettyPrintAst(parentNode);
+            ImplementationUtil.prettyPrintAst(parentNode);
 
             try {
                 PrintWriter printerHeader;
@@ -461,6 +461,7 @@ public class PrintHeaderFile extends Visitor {
                 printerHeader.println(summary.code.toString());
                 printerHeader.flush();
                 printerHeader.close();
+                out.println(summary.code.toString());
                 out.println("header " + i + " printed\n");
 
 
