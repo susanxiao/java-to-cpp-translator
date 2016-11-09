@@ -1,14 +1,10 @@
 package edu.nyu.oop;
 
-import sun.jvm.hotspot.jdi.MethodImpl;
 import xtc.tree.GNode;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
-
 import static edu.nyu.oop.AstTraversal.*;
-import static java.lang.System.out;
 
 /**
  * Created by Garrett on 10/24/16.
