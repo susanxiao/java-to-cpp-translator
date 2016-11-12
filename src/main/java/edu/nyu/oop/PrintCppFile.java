@@ -43,7 +43,6 @@ public class PrintCppFile extends Visitor {
         if (n.getString(1).contains("Test")) {
             return;
         }
-        summary.toStringGate = true;
         summary.numberClasses += 1;
         summary.currentClassMethodCount = 0;
 
@@ -90,16 +89,6 @@ public class PrintCppFile extends Visitor {
         }
         if (!constructorCreated) {
             summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable) {};\n\n");
-        }
-        if(summary.toStringGate) {
-            summary.addLine("String __" + summary.currentClass.name + "::toString(" + summary.currentClass.name + " __this)");
-            summary.incScope();
-            summary.addLine("Class k = __this->__vptr->getClass(__this);\n");
-            summary.addLine("std::ostringstream sout;\n");
-            summary.addLine("sout << k->__vptr->getName(k)->data\n");
-            summary.addLine("\t<< '@' << std::hex << (uintptr_t) __this;\n");
-            summary.addLine("return new __String(sout.str());\n");
-            summary.decScope();
         }
     }
 
@@ -314,10 +303,6 @@ public class PrintCppFile extends Visitor {
 
         String methodName = n.getString(3);
 
-        if (methodName.equals("toString")) {
-            summary.toStringGate = false;
-        }
-
         methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
 
         Node formalParameters = n.getNode(4);
@@ -479,10 +464,6 @@ public class PrintCppFile extends Visitor {
         int numberClasses = 0;
         int currentClassMethodCount = 0;
         TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
-
-        // random Gates for control
-        boolean toStringGate;
-
 
         StringBuilder code;
         int scope;

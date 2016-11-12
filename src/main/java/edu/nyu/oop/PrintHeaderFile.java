@@ -7,7 +7,7 @@ import xtc.util.Runtime;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.*;
 
 import static java.lang.System.out;
 
@@ -16,8 +16,6 @@ import xtc.tree.Visitor;
 import java.lang.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.TreeMap;
 
 
 /**
@@ -72,7 +70,7 @@ public class PrintHeaderFile extends Visitor {
         summary.addLine("__" + className + "_VT* __vptr;\n");
 
         //Global Declarations
-        TreeMap<String, String> declarationsMap = new TreeMap<>(); //TreeMap will sort based on var name so initList in cpp will be the same order
+        TreeMap<String, String> declarationsMap = new TreeMap<>(); //sorted based key
         ClassImplementation currentClass = summary.currentClass;
         int declarationsCounter = 0;
         while (currentClass != null) {
@@ -127,26 +125,18 @@ public class PrintHeaderFile extends Visitor {
 
         //Methods that will be implemented in output.cpp
         int classMethodCount = 0;
-        boolean toStringGate = true;
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
             classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
             StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name + "(" + summary.currentClass.name);
-            if(currentMethod.name.equals("toString")) {
-                toStringGate = false;
-            }
+
             for (ParameterImplementation currentParameter : currentMethod.parameters) {
                 method.append(", " + currentParameter.type);
             }
             method.append(");\n");
 
             summary.addLine(method.toString());
-        }
-
-        if(toStringGate) {
-            String toStringMethod = "static String toString(" + summary.currentClass.name + ");\n";
-            summary.addLine(toStringMethod);
         }
 
         // adding the number of methods that are going to be implemented by the
@@ -190,15 +180,27 @@ public class PrintHeaderFile extends Visitor {
         //NOTE: this does not handle overloading
         //ensure that the order is the same
 
-        TreeMap<String, String> vMethods = new TreeMap<>();
-        TreeMap<String, String> vConstructor = new TreeMap<>();
+        LinkedHashMap<String, String> vMethods = new LinkedHashMap<>();
+        LinkedHashMap<String, String> vConstructor = new LinkedHashMap<>();
 
-        //populate the treemaps
+        //populate the maps
+
+         //Non superclass methods
+        for (int i = summary.currentClass.methods.size() - 1; i >= 0; i--) {
+            MethodImplementation currentMethod = summary.currentClass.methods.get(i);
+            vConstructor.put(currentMethod.name, currentMethod.name + "(&__" + summary.currentClass.name + "::" + currentMethod.name + ")");
+
+            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")(%s");
+            for (ParameterImplementation p : currentMethod.parameters)
+                method.append(", " + p.type);
+            method.append(");\n");
+            vMethods.put(currentMethod.name, method.toString());
+        }
 
         //superclass methods
         ClassImplementation superClass = summary.currentClass.superClass;
         while (superClass != null) {
-            for (int i = 0; i < superClass.methods.size(); i++) {
+            for (int i = superClass.methods.size() - 1; i >= 0; i--) {
                 MethodImplementation currentMethod = superClass.methods.get(i);
                 if (!vConstructor.containsKey(currentMethod.name)) { //if it already exists, it is the overwriting method
                     StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")");
@@ -220,16 +222,10 @@ public class PrintHeaderFile extends Visitor {
             superClass = superClass.superClass;
         }
 
-        //hashCode
-        if (!vConstructor.containsKey("hashCode")) {
-            vConstructor.put("hashCode", "hashCode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashCode)");
-            vMethods.put("hashCode", "int32_t (*hashCode)(%s);\n");
-        }
-
-        //equals
-        if (!vConstructor.containsKey("equals")) {
-            vConstructor.put("equals", "equals((bool(*)(" + summary.currentClass.name + ", Object))&__Object::equals)");
-            vMethods.put("equals", "bool (*equals)(%s, Object);\n");
+        //toString
+        if (!vConstructor.containsKey("toString")) {
+            vConstructor.put("toString", "toString((String(*)(" + summary.currentClass.name + "))&__Object::toString)");
+            vMethods.put("toString", "String (*toString)(%s);\n");
         }
 
         //getClass
@@ -238,30 +234,26 @@ public class PrintHeaderFile extends Visitor {
             vMethods.put("getClass", "Class (*getClass)(%s);\n");
         }
 
-        //toString
-        if (!vConstructor.containsKey("toString")) {
-            vConstructor.put("toString", "toString(&__" + summary.currentClass.name + "::toString)");
-            vMethods.put("toString", "String (*toString)(%s);\n");
+        //equals
+        if (!vConstructor.containsKey("equals")) {
+            vConstructor.put("equals", "equals((bool(*)(" + summary.currentClass.name + ", Object))&__Object::equals)");
+            vMethods.put("equals", "bool (*equals)(%s, Object);\n");
         }
 
-        //Non superclass methods
-        for (int i = 0; i < summary.currentClass.methods.size(); i++) {
-            MethodImplementation currentMethod = summary.currentClass.methods.get(i);
-            //replace any superclass methods
-            vConstructor.put(currentMethod.name, currentMethod.name + "(&__" + summary.currentClass.name + "::" + currentMethod.name + ")");
-
-            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")(%s");
-            for (ParameterImplementation p : currentMethod.parameters)
-                method.append(", " + p.type);
-            method.append(");\n");
-            vMethods.put(currentMethod.name, method.toString());
+        //hashCode
+        if (!vConstructor.containsKey("hashCode")) {
+            vConstructor.put("hashCode", "hashCode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashCode)");
+            vMethods.put("hashCode", "int32_t (*hashCode)(%s);\n");
         }
 
+
+        //TODO: these need to be added backwards
 
         //vtable methods
         summary.addLine("Class __isa;\n\n");
-        Collection<String> vMethodValues = vMethods.values();
-        for (String s : vMethodValues) {
+        ArrayList<String> vMethodValues = new ArrayList<>(vMethods.values());
+        for (int i = vMethodValues.size() - 1; i >= 0; i--) {
+            String s = vMethodValues.get(i);
             summary.addLine(String.format(s, summary.currentClass.name));
         }
         summary.code.append("\n");
@@ -271,8 +263,9 @@ public class PrintHeaderFile extends Visitor {
         summary.addLine("__" + summary.currentClass.name + "_VT()\n");
         summary.addLine(": __isa(__" + summary.currentClass.name + "::" + "__class())");
 
-        Collection<String> vConstructorValues = vConstructor.values();
-        for (String s : vConstructorValues) {
+        ArrayList<String> vConstructorValues = new ArrayList<>(vConstructor.values());
+        for (int i = vConstructorValues.size() - 1; i >= 0; i--) {
+            String s = vConstructorValues.get(i);
             summary.code.append(",\n");
             summary.addLine(s);
         }

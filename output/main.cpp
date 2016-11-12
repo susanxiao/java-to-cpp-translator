@@ -9,18 +9,34 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test013;
+using namespace inputs::test010;
 
 int main(void)
 {
 
 	A a = new __A();
 
-	A other = a;
+	a->__vptr->setA(a, new __String("A"));
 
-	other->__vptr->setA(other, new __String("A"));
+	B1 b1 = new __B1();
 
-	a->__vptr->printOther(a, other);
+	b1->__vptr->setA(b1, new __String("B1"));
+
+	B2 b2 = new __B2();
+
+	b2->__vptr->setA(b2, new __String("B2"));
+
+	C c = new __C();
+
+	c->__vptr->setA(c, new __String("C"));
+
+	a->__vptr->printOther(a, a);
+
+	a->__vptr->printOther(a, (A) b1);
+
+	a->__vptr->printOther(a, (A) b2);
+
+	a->__vptr->printOther(a, (A) c);
 
 	return 0;
 }
