@@ -18,7 +18,7 @@ sudo g++ testOutputs/translationOutputs/test013/main.cpp testOutputs/translation
 echo "Compiled 0->13"
 
 echo ""
-echo "Directing output to std_output_.txt"
+echo "Directing output to std_output.txt"
 sudo testOutputs/translationOutputs/test000/a.out > testOutputs/translationOutputs/test000/std_output.txt;
 sudo testOutputs/translationOutputs/test001/a.out > testOutputs/translationOutputs/test001/std_output.txt;
 sudo testOutputs/translationOutputs/test002/a.out > testOutputs/translationOutputs/test002/std_output.txt;
@@ -33,7 +33,7 @@ sudo testOutputs/translationOutputs/test010/a.out > testOutputs/translationOutpu
 sudo testOutputs/translationOutputs/test011/a.out > testOutputs/translationOutputs/test011/std_output.txt;
 sudo testOutputs/translationOutputs/test012/a.out > testOutputs/translationOutputs/test012/std_output.txt;
 sudo testOutputs/translationOutputs/test013/a.out > testOutputs/translationOutputs/test013/std_output.txt;
-echo "Directed output to std_output_.txt"
+echo "Directed output to std_output.txt"
 
 
 

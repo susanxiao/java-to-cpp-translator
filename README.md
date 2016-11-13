@@ -37,7 +37,7 @@ Example command to execute translator from Sbt
     - Phase 4 0-13
     - Phase 5 0-13
 
-- Support testing inputs (9 and 13 not may converted correctly)
+- Support testing inputs
     - bash bashScript.sh;
         - compiles all the C++ generated code
     - cd src/test/java; bash bashScript2.sh; cd ..; cd ..; cd ..;
