@@ -49,6 +49,14 @@ compilec := """g++ output/main.cpp output/java_lang.cpp output/output.cpp -o out
 val execc = TaskKey[Unit]("execc", "Execute the generated C++.")
 execc := """output/a.out""".!
 
+// Compile C++ generated code
+val compile_cpp1 = TaskKey[Unit]("compile_cpp1", "Compile the generated C++.")
+compile_cpp1 := """sudo bash bashScript.sh"""
+
+// Redirect C++ generated code
+val compile_cpp2 = TaskKey[Unit]("compile_cpp2", "Redirect the generated C++.")
+compile_cpp2 := """sudo bash src/test/java/bashScript.sh"""
+
 // Shortcut for exectuting our root xtc Tool
 val runxtc = inputKey[Unit]("Run a command on your Boot class.")
 runxtc := Def.inputTaskDyn {
