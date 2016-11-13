@@ -38,11 +38,10 @@ Example command to execute translator from Sbt
     - Phase 5 0-13
 
 - Support testing inputs
-    - bash bashScript.sh;
+    - bash bashScript.sh; (from shell)
         - compiles all the C++ generated code
-    - cd src/test/java; bash bashScript2.sh; cd ..; cd ..; cd ..;
-        - Redirects outputs to files
-    - run StdOutputChecking.java
+        - Redirects outputs to files   
+    - run-main edu.nyu.oop.StdOutputChecking (from SBT)
         - outputs result of the translation on the inputs
 
 
