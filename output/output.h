@@ -80,6 +80,5 @@ namespace inputs {
 			toString(&__B::toString)
 			{}
 		};
-
 	}
 }

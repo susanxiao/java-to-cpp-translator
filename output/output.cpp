@@ -36,6 +36,5 @@ namespace inputs {
 		};
 
 		__B_VT __B::__vtable;
-
 	}
 }
