@@ -218,6 +218,13 @@ public class PrintHeaderFile extends Visitor {
                                      currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethod.name + ")");
 
                 }
+                else { //if it already exists, we need to move its location to where the superclass holds it
+                    String key = currentMethod.name;
+                    String constructorValue = vConstructor.remove(key);
+                    String methodValue = vMethods.remove(key);
+                    vConstructor.put(key, constructorValue);
+                    vMethods.put(key, methodValue);
+                }
             }
             superClass = superClass.superClass;
         }
@@ -227,11 +234,25 @@ public class PrintHeaderFile extends Visitor {
             vConstructor.put("toString", "toString((String(*)(" + summary.currentClass.name + "))&__Object::toString)");
             vMethods.put("toString", "String (*toString)(%s);\n");
         }
+        else {
+            String key = "toString";
+            String constructorValue = vConstructor.remove(key);
+            String methodValue = vMethods.remove(key);
+            vConstructor.put(key, constructorValue);
+            vMethods.put(key, methodValue);
+        }
 
         //getClass
         if (!vConstructor.containsKey("getClass")) {
             vConstructor.put("getClass", "getClass((Class(*)(" + summary.currentClass.name + "))&__Object::getClass)");
             vMethods.put("getClass", "Class (*getClass)(%s);\n");
+        }
+        else {
+            String key = "getClass";
+            String constructorValue = vConstructor.remove(key);
+            String methodValue = vMethods.remove(key);
+            vConstructor.put(key, constructorValue);
+            vMethods.put(key, methodValue);
         }
 
         //equals
@@ -239,11 +260,25 @@ public class PrintHeaderFile extends Visitor {
             vConstructor.put("equals", "equals((bool(*)(" + summary.currentClass.name + ", Object))&__Object::equals)");
             vMethods.put("equals", "bool (*equals)(%s, Object);\n");
         }
+        else {
+            String key = "equals";
+            String constructorValue = vConstructor.remove(key);
+            String methodValue = vMethods.remove(key);
+            vConstructor.put(key, constructorValue);
+            vMethods.put(key, methodValue);
+        }
 
         //hashCode
         if (!vConstructor.containsKey("hashCode")) {
             vConstructor.put("hashCode", "hashCode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashCode)");
             vMethods.put("hashCode", "int32_t (*hashCode)(%s);\n");
+        }
+        else {
+            String key = "hashCode";
+            String constructorValue = vConstructor.remove(key);
+            String methodValue = vMethods.remove(key);
+            vConstructor.put(key, constructorValue);
+            vMethods.put(key, methodValue);
         }
 
         //vtable methods

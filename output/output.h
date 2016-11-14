@@ -68,17 +68,18 @@ namespace inputs {
 			int32_t (*hashCode)(B);
 			bool (*equals)(B, Object);
 			Class (*getClass)(B);
-			void (*printOther)(B, A);
 			String (*toString)(B);
+			void (*printOther)(B, A);
 
 			__B_VT()
 			: __isa(__B::__class()),
 			hashCode((int32_t(*)(B))&__Object::hashCode),
 			equals((bool(*)(B, Object))&__Object::equals),
 			getClass((Class(*)(B))&__Object::getClass),
-			printOther(&__B::printOther),
-			toString(&__B::toString)
+			toString(&__B::toString),
+			printOther(&__B::printOther)
 			{}
 		};
+
 	}
 }

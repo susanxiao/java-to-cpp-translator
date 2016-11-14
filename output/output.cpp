@@ -24,7 +24,7 @@ namespace inputs {
 		};
 
 		String __B::toString(B __this) {
-			return __this->parent.some->__vptr->toString(some);
+			return __this->parent.some->__vptr->toString(__this->parent.some);
 		};
 
 		__B::__B() : __vptr(&__vtable) {};
@@ -36,5 +36,6 @@ namespace inputs {
 		};
 
 		__B_VT __B::__vtable;
+
 	}
 }

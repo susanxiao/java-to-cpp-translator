@@ -1,10 +1,9 @@
 Test014:
-	output is blank
-	  - is a Null pointer exception I was trying to do a try catch but ran
-	    out of time.
-	    For example try { ... } catch (RuntimeException &e){ ... }
+	TODO: implement try { ... } catch (RuntimeException &e){ ... }
 
-Test015
+Test015:
+	TODO: in A's printOther, we need some way to check if "other" is a cast object
+		e.g. call (B) other -> vptr -> toString((B) other)
 Test016:
 	printHeader: output is blank
 
