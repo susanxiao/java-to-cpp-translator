@@ -20,7 +20,7 @@ int main(void)
 
 	other->some = (B) a;
 
-	a->__vptr->printOther(a, (A)other);
+	a->__vptr->printOther(a, (A) other);
 
 	return 0;
 }

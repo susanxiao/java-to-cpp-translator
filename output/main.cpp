@@ -9,7 +9,7 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test015;
+using namespace inputs::test016;
 
 int main(void)
 {
@@ -18,7 +18,7 @@ int main(void)
 
 	B other = new __B();
 
-	other->parent.some = a;
+	other->some = (B) a;
 
 	a->__vptr->printOther(a, (A) other);
 

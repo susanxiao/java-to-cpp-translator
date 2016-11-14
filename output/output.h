@@ -5,7 +5,7 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test015 {
+	namespace test016 {
 		struct __A;
 		struct __A_VT;
 
@@ -18,7 +18,6 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			A some;
 
 			__A();
 
@@ -51,6 +50,7 @@ namespace inputs {
 		struct __B {
 			__B_VT* __vptr;
 			__A parent;
+			B some;
 
 			__B();
 

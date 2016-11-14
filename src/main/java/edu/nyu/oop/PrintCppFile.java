@@ -448,7 +448,7 @@ public class PrintCppFile extends Visitor {
                         break;
                     }
                 }
-                StringBuilder line = new StringBuilder("return " + (parentGate ? "__this->parent."+primaryIdentifier : primaryIdentifier));
+                StringBuilder line = new StringBuilder("return " + (parentGate ? "__this->parent."+primaryIdentifier : "__this->"+primaryIdentifier));
                 for (int i = 1; i < currentNode.size(); i++) {
                     Object o1 = currentNode.get(i);
                     if (o1 instanceof Node) {
@@ -471,7 +471,7 @@ public class PrintCppFile extends Visitor {
                                         break;
                                     }
                                 }
-                                line.append(parentGate ? "__this->parent." + currentChild.getString(j) : currentChild.getString(j));
+                                line.append(parentGate ? "__this->parent." + currentChild.getString(j) : "__this->"+currentChild.getString(j));
                             }
                             line.append(")");
                         }
