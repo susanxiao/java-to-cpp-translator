@@ -439,6 +439,40 @@ public class PrintCppFile extends Visitor {
             } else if (currentNode.getName().equals("StringLiteral")) {
                 String value = currentNode.getString(0);
                 summary.addLine("return new __String(" + value + ");\n");
+            } else if (currentNode.getName().equals("CallExpression")) {
+                String primaryIdentifier = currentNode.getNode(0).getString(0);
+                boolean parentGate = true; //if true, we need to call parent Object to get its field
+                for (FieldDeclaration f : summary.currentClass.declarations) {
+                    if (f.variableName.equals(primaryIdentifier)) {
+                        parentGate = false;
+                        break;
+                    }
+                }
+                StringBuilder line = new StringBuilder("return " + (parentGate ? "parent."+primaryIdentifier : primaryIdentifier));
+                for (int i = 1; i < currentNode.size(); i++) {
+                    Object o1 = currentNode.get(i);
+                    if (o1 instanceof Node) {
+                        Node currentChild = (Node) o1;
+                        if (currentChild.getName().equals("Fields")) {
+                            for (int j = 0; j < currentChild.size(); j++) {
+                                line.append("->"+currentChild.getString(j));
+                            }
+                        }
+                        else if (currentChild.getName().equals("Arguments")) {
+                            line.append("(");
+                            for (int j = 0; j < currentChild.size(); j++) {
+                                if (j > 0)
+                                    line.append(",");
+                                line.append(currentChild.getString(j));
+                            }
+                            line.append(")");
+                        }
+                    }
+                    else if (o1 instanceof String) {
+                        line.append("->"+(String) o1);
+                    }
+                }
+                summary.addLine(line+";\n");
             }
         }
     }
