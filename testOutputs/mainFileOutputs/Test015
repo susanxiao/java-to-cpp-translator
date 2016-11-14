@@ -18,9 +18,9 @@ int main(void)
 
 	B other = new __B();
 
-	other->some = a;
+	other->parent.some = a;
 
-	a->__vptr->printOther(a, (A)other);
+	a->__vptr->printOther(a, (A) other);
 
 	return 0;
 }

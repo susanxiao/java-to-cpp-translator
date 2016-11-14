@@ -160,12 +160,10 @@ public class PrintMainFile extends Visitor {
     public void visitExpressionStatement(GNode n) {
         String expressionStatement = "\t";
         if (n.getNode(0).getName().equals("CallExpression")) {
-            String primaryIdentifer = "";
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
-                //n.getNode(0).getNode(0).getNode(0).getName().equals("PrimaryIdentifier");
                 if (n.getNode(0).getNode(0).getNode(0).getString(0).equals("cout")) {
                     expressionStatement += n.getNode(0).getNode(0).getNode(0).getString(0) + " << ";
-                    primaryIdentifer = n.getNode(0).getNode(0).getNode(0).getString(0);
+                    String primaryIdentifer = n.getNode(0).getNode(0).getNode(0).getString(0);
                     Node arguments = n.getNode(0).getNode(3);
                     for (Object o : arguments) {
                         if (o instanceof Node) {
@@ -208,15 +206,15 @@ public class PrintMainFile extends Visitor {
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
-                                expressionStatement += currentNode.getNode(0).getString(0);
-                                String key = currentNode.getNode(0).getString(0);
-                                boolean gateParent;
+                                String key = currentNode.getNode(0).getString(0); //primary identifier
+                                expressionStatement += key;
+
                                 for (int i = 1; i < currentNode.size(); i++) {
-                                    gateParent = true;
+                                    boolean gateParent = true;
                                     String field = currentNode.getString(i);
                                     // check if parent should be used
-                                    String className = summary.classVariables.get(key);
-                                    for (FieldDeclaration dec : summaryTraversal.classes.get(className).declarations) {
+                                    String className = summary.classVariables.get(key); //class of primary identifier
+                                    for (FieldDeclaration dec : summaryTraversal.findClass(className).declarations) {
                                         if(dec.variableName.equals(field) || field.equals("data"))
                                             gateParent = false;
                                     }
@@ -229,14 +227,10 @@ public class PrintMainFile extends Visitor {
                                 if (currentNode.size() - 1 > 0) { //when the primary identifier has more children than just a variable name, parent usage becomes important
                                     String variable = currentNode.getNode(0).getString(0);
                                     String dataString = currentNode.getString(1);
-                                    String classVar = "";
                                     boolean gateParent = true;
                                     for (int i = 0; i < summary.classNames.size(); i++) {
-                                        out.println(summary.variables.get(i));
-                                        out.println(variable);
                                         if (summary.variables.get(i).equals(variable)) {
-                                            classVar = summary.classNames.get(i);
-                                            out.println(classVar);
+                                            String classVar = summary.classNames.get(i);
                                             for (int j = 0; i < summary.classNames.size(); i++) {
                                                 if (summary.classNames.get(i).equals(classVar) && summary.variables.get(i).equals(dataString)) {
                                                     gateParent = false;
@@ -261,16 +255,15 @@ public class PrintMainFile extends Visitor {
                 Node callExpressionNode = n.getNode(0);
                 String methodName = callExpressionNode.getString(2);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
-                primaryIdentifer = callExpressionNode.getNode(0).getString(0);
+                String primaryIdentifer = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
                 expressionStatement += methodName;
                 if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                     expressionStatement += "(";
-                    Node argumentsNode = (Node) callExpressionNode.getNode(3);
+                    Node argumentsNode = callExpressionNode.getNode(3);
                     expressionStatement += argumentsNode.getString(0) + ", ";
-                    String argument1 = argumentsNode.getString(0);
                     if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
-                        Node newClassExpressionNode = (Node) argumentsNode.getNode(1);
+                        Node newClassExpressionNode = argumentsNode.getNode(1);
                         String newClassIdentifier = "new ";
                         newClassIdentifier += newClassExpressionNode.getNode(2).getString(0) + "(";
                         expressionStatement += newClassIdentifier;
@@ -278,9 +271,6 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                        out.println("Testing");
-                        out.println(summary.classVariables.get(primaryIdentifer));
-                        out.println(summary.classVariables.get(primaryIdentifier1));
                         if(summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
                             expressionStatement += argumentsNode.getNode(1).getString(0);
                         } else {
@@ -303,8 +293,15 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += varName;
 
                         for (int i = 1; i < currNode.size(); i++) {
+                            boolean gateParent = true;
                             String field = currNode.getString(i);
-                            expressionStatement += "->" + field;
+                            // check if parent should be used
+                            String className = summary.classVariables.get(varName); //class of primary identifier
+                            for (FieldDeclaration dec : summaryTraversal.findClass(className).declarations) {
+                                if(dec.variableName.equals(field))
+                                    gateParent = false;
+                            }
+                            expressionStatement += gateParent ? "->parent." + field : "->" + field;
                         }
                     } else if (currNode.getName().equals("PrimaryIdentifier")) {
                         expressionStatement += currNode.getString(0);
@@ -392,7 +389,7 @@ public class PrintMainFile extends Visitor {
 
         s1.append("\n\n//------------------\n\n");
 
-        out.println(s1.toString());
+        //out.println(s1.toString());
 
         summary.filePrinted = s1.toString();
 
@@ -436,7 +433,7 @@ public class PrintMainFile extends Visitor {
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                ImplementationUtil.prettyPrintAst(node);
+                //ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;

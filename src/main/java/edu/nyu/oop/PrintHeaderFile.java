@@ -245,7 +245,7 @@ public class PrintHeaderFile extends Visitor {
             vConstructor.put("hashCode", "hashCode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashCode)");
             vMethods.put("hashCode", "int32_t (*hashCode)(%s);\n");
         }
-        
+
         //vtable methods
         summary.addLine("Class __isa;\n\n");
         ArrayList<String> vMethodValues = new ArrayList<>(vMethods.values());
