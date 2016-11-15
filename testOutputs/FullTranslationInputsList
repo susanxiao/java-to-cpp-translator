@@ -2,11 +2,9 @@ Test014:
 	TODO: implement try { ... } catch (RuntimeException &e){ ... }
 
 Test017:
-	printMain: methods are missing "(a)" as parameter
-		   "__vptr->" missing in front of self(a)
-		   constructor missing "(5)" as parameter
-		   self(var) and self(method) cannot be named the same
+	TODO: add "var" in front of all variables, or "m" in front of all methods. some way to distinguish between var and methods
 
+///these are all strange and static
 Test018:
 	printMain: int should be int32_t
 		   should x be moved to somewhere else since it is global
@@ -16,5 +14,3 @@ Test019:
 
 Test020:
 	how is this supposed to be
-
-Full Translation from test000->test003

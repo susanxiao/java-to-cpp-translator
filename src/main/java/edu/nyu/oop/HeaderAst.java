@@ -116,14 +116,12 @@ public class HeaderAst {
 
             // Cycle through the methods
             TreeMap<String, ArrayList<String>> methods = new TreeMap<>();
-            Set methodNames = new TreeSet();
+            Set<String> methodNames = new TreeSet<>();
 
             ClassImplementation superClass = currentClass.superClass;
-            StringBuilder currM = new StringBuilder();
-            ArrayList<String> currentMethod1 = new ArrayList<String>();
             while(superClass != null) {
                 for (MethodImplementation m : superClass.methods) {
-                    currentMethod1 = new ArrayList<String>();
+                    ArrayList<String> currentMethod1 = new ArrayList<>();
                     currentMethod1.add(m.name);
                     if(methodNames.contains(m.name))
                         continue;
@@ -141,7 +139,7 @@ public class HeaderAst {
             int methodCount = 0;
             for(MethodImplementation m : currentClass.methods){
                 methodCount++;
-                currentMethod1 = new ArrayList<String>();
+                ArrayList<String> currentMethod1 = new ArrayList<>();
                 currentMethod1.add(m.returnType);
                 currentMethod1.add(m.name);
                 currentMethod1.add(currentClass.name);

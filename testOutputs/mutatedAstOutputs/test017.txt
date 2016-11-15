@@ -206,11 +206,24 @@ CompilationUnit(
                     ),
                     null,
                     "self",
-                    Arguments()
+                    Arguments(
+                      "a"
+                    )
                   ),
                   null,
                   "toString",
-                  Arguments()
+                  Arguments(
+                    CallExpression(
+                      PrimaryIdentifier(
+                        "a"
+                      ),
+                      null,
+                      "self",
+                      Arguments(
+                        "a"
+                      )
+                    )
+                  )
                 )
               )
             )

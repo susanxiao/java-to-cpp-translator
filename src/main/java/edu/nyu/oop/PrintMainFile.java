@@ -97,7 +97,7 @@ public class PrintMainFile extends Visitor {
         fieldDeclaration += type + " ";
 
         if (n.getNode(2).getName().equals("Declarators")) {
-            Node declaratorsNode = (Node) n.getNode(2);
+            Node declaratorsNode = n.getNode(2);
             for (Object o : declaratorsNode) {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
@@ -119,6 +119,9 @@ public class PrintMainFile extends Visitor {
                                         Node currentArg = (Node) arg;
                                         if (currentArg.getName().equals("StringLiteral")) {
                                             fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
+                                        }
+                                        else if (currentArg.getName().equals("IntegerLiteral")) {
+                                            fieldDeclaration += currentArg.getString(0);
                                         }
                                     }
                                     fieldDeclaration += ");";
@@ -174,7 +177,14 @@ public class PrintMainFile extends Visitor {
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "->" + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "()";
+                                    expressionStatement += "->__vptr->" + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "(";
+                                    Node arguments1 = currentNode.getNode(0).getNode(3);
+                                    for (int i = 0; i < arguments1.size(); i++) {
+                                        if (i > 0)
+                                            expressionStatement += ", ";
+                                        expressionStatement += arguments1.getString(i);
+                                    }
+                                    expressionStatement += ")";
                                 } else {
                                     expressionStatement += currentNode.getNode(0).getString(0);
                                 }
@@ -191,6 +201,27 @@ public class PrintMainFile extends Visitor {
                                                 expressionStatement += o1.toString() + ",";
                                             } else {
                                                 expressionStatement += o1.toString();
+                                            }
+                                        } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
+                                            Node callExpression = currentNode.getNode(0);
+                                            String primaryIdentifier = callExpression.getNode(0).getString(0);
+
+                                            expressionStatement += primaryIdentifier+"->__vptr";
+                                            for (int i = 1; i < callExpression.size(); i++) {
+                                                Object o2 = callExpression.get(i);
+                                                if (o2 instanceof String) {
+                                                    expressionStatement += "->"+((String) o2);
+                                                }
+                                                else if (o2 instanceof Node) {
+                                                    Node arguments1 = (Node) o2;
+                                                    expressionStatement += "(";
+                                                    for (int j = 0; j < arguments1.size(); j++) {
+                                                        if (j > 0)
+                                                            expressionStatement += ", ";
+                                                        expressionStatement+= arguments1.getString(j);
+                                                    }
+                                                    expressionStatement += ")";
+                                                }
                                             }
                                         } else if (o1 instanceof String) {
                                             expressionStatement += o1.toString();

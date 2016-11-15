@@ -196,9 +196,10 @@ public class AstMutator extends Visitor {
                                 Node argument = ((Node) o2).getNode(0);
                                 if (argument.getName().equals("CallExpression")) {
                                     Node selectionExpression1 = argument.getNode(0);
+                                    Node callExpressionArgument = null;
                                     if (selectionExpression1 != null) {
                                         if (selectionExpression1.getName().equals("SelectionExpression")) {
-                                            Node primaryIdentifier1 = selectionExpression1.getNode(0);
+                                            callExpressionArgument = selectionExpression1.getNode(0);
 
                                             GNode arguments = argument.getGeneric(3);
                                             if (!arguments.hasVariable()) {
@@ -210,14 +211,14 @@ public class AstMutator extends Visitor {
                                                 for (int j = arguments.size() - 2; j > 0; j--) {
                                                     arguments.set(j, arguments.get(j - 1));
                                                 }
-                                                arguments.set(0, primaryIdentifier1.getString(0));
+                                                arguments.set(0, callExpressionArgument.getString(0));
                                             } else
-                                                arguments.add(primaryIdentifier1.getString(0));
+                                                arguments.add(callExpressionArgument.getString(0));
 
                                             argument.set(3, arguments);
                                             visitArguments(arguments);
                                         } else if (selectionExpression1.getName().equals("PrimaryIdentifier")) {
-                                            String primaryIdentifier1 = selectionExpression1.getString(0);
+                                            String primaryIdentifier2 = selectionExpression1.getString(0);
                                             GNode arguments = argument.getGeneric(3);
                                             if (!arguments.hasVariable()) {
                                                 arguments = GNode.ensureVariable(arguments);
@@ -228,13 +229,41 @@ public class AstMutator extends Visitor {
                                                 for (int j = arguments.size() - 2; j > 0; j--) {
                                                     arguments.set(j, arguments.get(j - 1));
                                                 }
-                                                arguments.set(0, primaryIdentifier1);
+                                                arguments.set(0, primaryIdentifier2);
                                             } else
-                                                arguments.add(primaryIdentifier1);
+                                                arguments.add(primaryIdentifier2);
 
                                             argument.set(3, arguments);
                                             visitArguments(arguments);
                                         }
+                                        else if (selectionExpression1.getName().equals("CallExpression")) {
+                                            callExpressionArgument = selectionExpression1;
+                                            Node primaryIdentifier1 = selectionExpression1.getNode(0);
+                                            for (int j = 1; j < selectionExpression1.size(); j++) {
+                                                Object o3 = selectionExpression1.get(j);
+                                                if (o3 instanceof Node) {
+                                                    GNode callChild = GNode.cast(o3);
+                                                    if (callChild.getName().equals("Arguments")) {
+                                                        if (!callChild.hasVariable()) {
+                                                            callChild = GNode.ensureVariable(callChild);
+                                                            selectionExpression1.set(j, callChild);
+                                                        }
+                                                        if (primaryIdentifier1 != null)
+                                                            callChild.add(primaryIdentifier1.getString(0));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    GNode arguments = argument.getGeneric(3);
+                                    if (arguments != null && arguments.getName().equals("Arguments")) {
+                                        if (!arguments.hasVariable()) {
+                                            arguments = GNode.ensureVariable(arguments);
+                                            argument.set(3, arguments);
+                                        }
+                                        if (callExpressionArgument != null)
+                                            arguments.add(0, callExpressionArgument);
                                     }
                                     /*else {
                                         String primaryIdentifier1 = null;

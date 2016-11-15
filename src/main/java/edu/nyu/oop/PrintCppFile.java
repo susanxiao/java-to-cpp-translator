@@ -150,7 +150,7 @@ public class PrintCppFile extends Visitor {
                                 String typeString = type.getNode(0).getString(0);
                                 if (i > 0)
                                     constructor.append(", ");
-                                constructor.append(typeString + " ");
+                                constructor.append(typeString.equals("int") ? "int32_t " : typeString + " ");
                             }
                         } else if (o1 instanceof String) {
                             String variableName = (String) o1;
@@ -197,11 +197,11 @@ public class PrintCppFile extends Visitor {
                                     summary.addLine(variableName + " " + operator + " " + variableValue + ";\n");
                             } else if (primarySibling.getName().equals("ThisExpression")) {
                                 if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null) {
-                                    if (formalParameters.size() > 0) {
-                                        //summary.initializerList.put(variableName, "this");
-                                    } else {
+                                    /* if (formalParameters.size() > 0) {
+                                        summary.initializerList.put(variableName, "this");
+                                    } else { */
                                         summary.addLine(variableName + " " + operator + " this;\n");
-                                    }
+                                   // }
                                 } else
                                     summary.addLine(variableName + " " + operator + " this;\n");
                             } else if (primarySibling.getName().equals("NewClassExpression")) {
