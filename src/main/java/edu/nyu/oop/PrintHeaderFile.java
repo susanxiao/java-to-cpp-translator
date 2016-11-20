@@ -77,7 +77,7 @@ public class PrintHeaderFile extends Visitor {
             for (FieldDeclaration currentDeclaration : currentClass.declarations) {
                 declarationsCounter += 1;
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
+                declarationsMap.put(currentDeclaration.variableName, type + " _" + currentDeclaration.variableName);
             }
             currentClass = currentClass.superClass;
             if(currentClass != null) {

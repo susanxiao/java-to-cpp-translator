@@ -10,7 +10,7 @@ import static java.lang.System.out;
 public class StdOutputChecking {
     public static void main(String[] args) {
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i <= 20; i++) {
             String path1 = String.format("./testOutputs/translationOutputs/test%03d/std_output.txt", i);
             String path2 = String.format("./src/test/java/inputs/test%03d/std_output_input.txt", i);
             String inputName = String.format("test%03d", i);
@@ -42,13 +42,13 @@ public class StdOutputChecking {
                     equal = "Location? (Passes)";
                     break;
                 case 14:
-                    equal = "NullPointerException? (Passes)(returns the location of NullPointerException uses try{}catch{})";
+                    equal = "NullPointerException? (Passes)(returns the location of NullPointerException)";
                     break;
                 case 15:
                     equal = "Location? (Passes)";
                     break;
                 case 16:
-                    equal = "ThrowClassCastException? (Fails)(returns the location of the class)";
+                    equal = "ThrowClassCastException? (Passes)(returns the location of ClassCastException)";
                     break;
                 }
                 if(i > 16) {
