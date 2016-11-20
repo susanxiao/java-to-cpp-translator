@@ -7,14 +7,14 @@ TEST005-> Passes
 TEST006-> Passes
 TEST007-> Passes
 TEST008-> Passes
-TEST009-> Location testing? (Passes)
+TEST009-> Location? (Passes)
 TEST010-> Passes
 TEST011-> Passes
 TEST012-> Passes
-TEST013-> Location testing? (Passes)
+TEST013-> Location? (Passes)
 TEST014-> NullPointerException? (Fails)
-TEST015-> Fails
-TEST016-> Passes
-TEST017-> Fails
-TEST018-> Passes
-TEST019-> Fails
+TEST015-> Location? (Passes)
+TEST016-> ThrowClassCastException? (Fails)(returns the location of the class)
+TEST017-> Fails (Need to check the results manually)
+TEST018-> Fails (Need to check the results manually)
+TEST019-> Fails (Need to check the results manually)
