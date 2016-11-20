@@ -14,7 +14,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			A self;
+			A _self;
 
 			__A(int32_t x);
 
@@ -28,19 +28,19 @@ namespace inputs {
 		struct __A_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(A);
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
-			int32_t (*hashCode)(A);
-			A (*self)(A);
 			String (*toString)(A);
+			A (*self)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
-			hashCode((int32_t(*)(A))&__Object::hashCode),
-			self(&__A::self),
-			toString((String(*)(A))&__Object::toString)
+			toString((String(*)(A))&__Object::toString),
+			self(&__A::self)
 			{}
 		};
 

@@ -10,21 +10,21 @@ namespace inputs {
 		};
 
 		void __A::setFld(A __this, String f) {
-			__this->fld = f;
+			__this->_fld = f;
 		};
 
 		void __A::almostSetFld(A __this, String f) {
 			String fld;
-			fld = f;
+			_fld = f;
 		};
 
 		String __A::getFld(A __this) {
-			return __this->fld;
+			return __this->_fld;
 		};
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test006.A"), (Class) __rt::null());
 			return k;
 		};
 

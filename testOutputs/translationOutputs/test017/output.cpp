@@ -5,17 +5,17 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test017 {
-		__A::__A(int x) : __vptr(&__vtable),
-				self(this) {
+		__A::__A(int32_t x) : __vptr(&__vtable) {
+			_self = this;
 		};
 
 		A __A::self(A __this) {
-			return __this->self;
+			return __this->_self;
 		};
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test017.A"), (Class) __rt::null());
 			return k;
 		};
 

@@ -13,7 +13,7 @@ namespace inputs {
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test002.A"), (Class) __rt::null());
 			return k;
 		};
 

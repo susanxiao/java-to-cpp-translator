@@ -1,4 +1,7 @@
 A
-B1
-B2
-still C
+java.lang.ClassCastException
+	at inputs.test012.A
+java.lang.ClassCastException
+	at inputs.test012.A
+java.lang.ClassCastException
+	at inputs.test012.A

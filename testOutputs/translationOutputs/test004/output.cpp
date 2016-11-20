@@ -10,12 +10,12 @@ namespace inputs {
 		};
 
 		String __A::getFld(A __this) {
-			return __this->fld;
+			return __this->_fld;
 		};
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test004.A"), (Class) __rt::null());
 			return k;
 		};
 

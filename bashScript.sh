@@ -18,7 +18,7 @@ sudo g++ testOutputs/translationOutputs/test013/main.cpp testOutputs/translation
 sudo g++ testOutputs/translationOutputs/test014/main.cpp testOutputs/translationOutputs/test014/java_lang.cpp testOutputs/translationOutputs/test014/output.cpp -o testOutputs/translationOutputs/test014/a.out ;
 sudo g++ testOutputs/translationOutputs/test015/main.cpp testOutputs/translationOutputs/test015/java_lang.cpp testOutputs/translationOutputs/test015/output.cpp -o testOutputs/translationOutputs/test015/a.out ;
 sudo g++ testOutputs/translationOutputs/test016/main.cpp testOutputs/translationOutputs/test016/java_lang.cpp testOutputs/translationOutputs/test016/output.cpp -o testOutputs/translationOutputs/test016/a.out ;
-# sudo g++ testOutputs/translationOutputs/test017/main.cpp testOutputs/translationOutputs/test017/java_lang.cpp testOutputs/translationOutputs/test017/output.cpp -o testOutputs/translationOutputs/test017/a.out ;
+sudo g++ testOutputs/translationOutputs/test017/main.cpp testOutputs/translationOutputs/test017/java_lang.cpp testOutputs/translationOutputs/test017/output.cpp -o testOutputs/translationOutputs/test017/a.out ;
 # sudo g++ testOutputs/translationOutputs/test018/main.cpp testOutputs/translationOutputs/test018/java_lang.cpp testOutputs/translationOutputs/test018/output.cpp -o testOutputs/translationOutputs/test018/a.out ;
 # sudo g++ testOutputs/translationOutputs/test019/main.cpp testOutputs/translationOutputs/test019/java_lang.cpp testOutputs/translationOutputs/test019/output.cpp -o testOutputs/translationOutputs/test019/a.out ;
 # sudo g++ testOutputs/translationOutputs/test020/main.cpp testOutputs/translationOutputs/test020/java_lang.cpp testOutputs/translationOutputs/test020/output.cpp -o testOutputs/translationOutputs/test020/a.out ;
@@ -43,7 +43,7 @@ sudo testOutputs/translationOutputs/test013/a.out > testOutputs/translationOutpu
 sudo testOutputs/translationOutputs/test014/a.out > testOutputs/translationOutputs/test014/std_output.txt;
 sudo testOutputs/translationOutputs/test015/a.out > testOutputs/translationOutputs/test015/std_output.txt;
 sudo testOutputs/translationOutputs/test016/a.out > testOutputs/translationOutputs/test016/std_output.txt;
-# sudo testOutputs/translationOutputs/test017/a.out > testOutputs/translationOutputs/test017/std_output.txt;
+sudo testOutputs/translationOutputs/test017/a.out > testOutputs/translationOutputs/test017/std_output.txt;
 # sudo testOutputs/translationOutputs/test018/a.out > testOutputs/translationOutputs/test018/std_output.txt;
 # sudo testOutputs/translationOutputs/test019/a.out > testOutputs/translationOutputs/test019/std_output.txt;
 # sudo testOutputs/translationOutputs/test020/a.out > testOutputs/translationOutputs/test020/std_output.txt;
@@ -70,7 +70,7 @@ sudo javac inputs/test013/Test013.java; java inputs/test013/Test013 > inputs/tes
 sudo javac inputs/test014/Test014.java; java inputs/test014/Test014 > inputs/test014/std_output_input.txt;
 sudo javac inputs/test015/Test015.java; java inputs/test015/Test015 > inputs/test015/std_output_input.txt;
 sudo javac inputs/test016/Test016.java; java inputs/test016/Test016 > inputs/test016/std_output_input.txt;
-# sudo javac inputs/test017/Test017.java; java inputs/test017/Test017 > inputs/test017/std_output_input.txt;
+sudo javac inputs/test017/Test017.java; java inputs/test017/Test017 > inputs/test017/std_output_input.txt;
 # sudo javac inputs/test018/Test018.java; java inputs/test018/Test018 > inputs/test018/std_output_input.txt;
 # sudo javac inputs/test019/Test019.java; java inputs/test019/Test019 > inputs/test019/std_output_input.txt;
 # sudo javac inputs/test020/Test020.java; java inputs/test020/Test020 > inputs/test020/std_output_input.txt;

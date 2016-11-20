@@ -6,7 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test011 {
 		void __A::setA(A __this, String x) {
-			__this->a = x;
+			__this->_a = x;
 		};
 
 		void __A::printOther(A __this, A other) {
@@ -14,14 +14,14 @@ namespace inputs {
 		};
 
 		String __A::toString(A __this) {
-			return __this->a;
+			return __this->_a;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test011.A"), (Class) __rt::null());
 			return k;
 		};
 
@@ -31,7 +31,7 @@ namespace inputs {
 
 		Class __B1::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.B1"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test011.B1"), (Class) __rt::null());
 			return k;
 		};
 
@@ -41,7 +41,7 @@ namespace inputs {
 
 		Class __B2::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.B2"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test011.B2"), (Class) __rt::null());
 			return k;
 		};
 
@@ -51,7 +51,7 @@ namespace inputs {
 
 		Class __C::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.C"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test011.C"), (Class) __rt::null());
 			return k;
 		};
 

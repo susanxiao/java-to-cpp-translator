@@ -31,25 +31,26 @@ namespace inputs {
 		struct __A_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(A);
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
-			int32_t (*hashCode)(A);
-			void (*printOther)(A, A);
 			String (*toString)(A);
+			void (*printOther)(A, A);
 
 			__A_VT()
 			: __isa(__A::__class()),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
-			hashCode((int32_t(*)(A))&__Object::hashCode),
-			printOther(&__A::printOther),
-			toString((String(*)(A))&__Object::toString)
+			toString((String(*)(A))&__Object::toString),
+			printOther(&__A::printOther)
 			{}
 		};
 
 		struct __B {
 			__B_VT* __vptr;
-			B some;
+			__A parent;
+			B _some;
 
 			__B();
 
@@ -64,19 +65,19 @@ namespace inputs {
 		struct __B_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(B);
 			bool (*equals)(B, Object);
 			Class (*getClass)(B);
-			int32_t (*hashCode)(B);
-			void (*printOther)(B, A);
 			String (*toString)(B);
+			void (*printOther)(B, A);
 
 			__B_VT()
 			: __isa(__B::__class()),
+			hashCode((int32_t(*)(B))&__Object::hashCode),
 			equals((bool(*)(B, Object))&__Object::equals),
 			getClass((Class(*)(B))&__Object::getClass),
-			hashCode((int32_t(*)(B))&__Object::hashCode),
-			printOther(&__B::printOther),
-			toString(&__B::toString)
+			toString(&__B::toString),
+			printOther(&__B::printOther)
 			{}
 		};
 

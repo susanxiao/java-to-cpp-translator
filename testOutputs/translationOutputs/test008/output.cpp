@@ -5,30 +5,28 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test008 {
-		__A::__A() : __vptr(&__vtable),
-				a(new __String("A")) {
+		__A::__A() : __vptr(&__vtable) {
+			a = new __String("A");
 			cout << a->data << endl;
 		};
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test008.A"), (Class) __rt::null());
 			return k;
 		};
 
 		__A_VT __A::__vtable;
 
-		__B::__B() : __vptr(&__vtable),
-				a(new __String("A")),
-				b(new __String("B")) {
-			cout << a->data << endl;
-			a = new __String("B");
-			cout << a->data << endl;
+		__B::__B() : __vptr(&__vtable) {
+			b = new __String("B");
+			parent.a = new __String("B");
+			cout << parent._a->data << endl;
 		};
 
 		Class __B::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.B"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test008.B"), (Class) __rt::null());
 			return k;
 		};
 

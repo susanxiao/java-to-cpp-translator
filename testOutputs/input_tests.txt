@@ -8,9 +8,9 @@ TEST006-> Passes
 TEST007-> Passes
 TEST008-> Passes
 TEST009-> Location? (Passes)
-TEST010-> Passes
+TEST010-> Fails
 TEST011-> Passes
-TEST012-> Passes
+TEST012-> Fails
 TEST013-> Location? (Passes)
 TEST014-> NullPointerException? (Passes)(returns the location of NullPointerException)
 TEST015-> Location? (Passes)
