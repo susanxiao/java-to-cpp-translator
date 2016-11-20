@@ -14,7 +14,7 @@ public class MethodImplementation {
     ArrayList<MethodStatement> implementation;
 
     public MethodImplementation(String name) {
-        this.name = name;
+        this.name = "_" + name;
         parameters = new ArrayList<>();
         implementation = new ArrayList<>();
     }

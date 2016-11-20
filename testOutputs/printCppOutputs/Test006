@@ -10,26 +10,17 @@ namespace inputs {
 		};
 
 		void __A::setFld(A __this, String f) {
-			__this->fld = f;
+			__this->_fld = f;
 		};
 
 		void __A::almostSetFld(A __this, String f) {
 			String fld;
-			fld = f;
+			_fld = f;
 		};
 
 		String __A::getFld(A __this) {
-			return __this->fld;
+			return __this->_fld;
 		};
-
-
-		String __A::toString(A __this){
-			Class k = __this->__vptr->getClass(__this);
-			std::ostringstream sout;
-			sout << k->__vptr->getName(k)->data
-				 << '@' << std::hex << (uintptr_t) __this;
-			return new __String(sout.str());
-		}
 
 		Class __A::__class() {
 			static Class k =

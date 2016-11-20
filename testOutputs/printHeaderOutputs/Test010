@@ -26,7 +26,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String a;
+			String _a;
 
 			__A();
 
@@ -42,27 +42,27 @@ namespace inputs {
 		struct __A_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(A);
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
-			int32_t (*hashCode)(A);
-			void (*printOther)(A, A);
-			void (*setA)(A, String);
 			String (*toString)(A);
+			void (*setA)(A, String);
+			void (*printOther)(A, A);
 
 			__A_VT()
 			: __isa(__A::__class()),
+			hashCode((int32_t(*)(A))&__Object::hashCode),
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
-			hashCode((int32_t(*)(A))&__Object::hashCode),
-			printOther(&__A::printOther),
+			toString(&__A::toString),
 			setA(&__A::setA),
-			toString(&__A::toString)
+			printOther(&__A::printOther)
 			{}
 		};
 
 		struct __B1 {
 			__B1_VT* __vptr;
-			String b;
+			String _b;
 			__A parent;
 
 			__B1();
@@ -71,33 +71,32 @@ namespace inputs {
 
 			static __B1_VT __vtable;
 
-			static String toString(B1);
 		};
 
 		struct __B1_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(B1);
 			bool (*equals)(B1, Object);
 			Class (*getClass)(B1);
-			int32_t (*hashCode)(B1);
-			void (*printOther)(B1, A);
-			void (*setA)(B1, String);
 			String (*toString)(B1);
+			void (*setA)(B1, String);
+			void (*printOther)(B1, A);
 
 			__B1_VT()
 			: __isa(__B1::__class()),
+			hashCode((int32_t(*)(B1))&__Object::hashCode),
 			equals((bool(*)(B1, Object))&__Object::equals),
 			getClass((Class(*)(B1))&__Object::getClass),
-			hashCode((int32_t(*)(B1))&__Object::hashCode),
-			printOther((void(*)(B1, A))&__A::printOther),
+			toString((String(*)(B1))&__A::toString),
 			setA((void(*)(B1, String))&__A::setA),
-			toString((String(*)(B1))&__A::toString)
+			printOther((void(*)(B1, A))&__A::printOther)
 			{}
 		};
 
 		struct __B2 {
 			__B2_VT* __vptr;
-			String b;
+			String _b;
 			__A parent;
 
 			__B2();
@@ -106,33 +105,32 @@ namespace inputs {
 
 			static __B2_VT __vtable;
 
-			static String toString(B2);
 		};
 
 		struct __B2_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(B2);
 			bool (*equals)(B2, Object);
 			Class (*getClass)(B2);
-			int32_t (*hashCode)(B2);
-			void (*printOther)(B2, A);
-			void (*setA)(B2, String);
 			String (*toString)(B2);
+			void (*setA)(B2, String);
+			void (*printOther)(B2, A);
 
 			__B2_VT()
 			: __isa(__B2::__class()),
+			hashCode((int32_t(*)(B2))&__Object::hashCode),
 			equals((bool(*)(B2, Object))&__Object::equals),
 			getClass((Class(*)(B2))&__Object::getClass),
-			hashCode((int32_t(*)(B2))&__Object::hashCode),
-			printOther((void(*)(B2, A))&__A::printOther),
+			toString((String(*)(B2))&__A::toString),
 			setA((void(*)(B2, String))&__A::setA),
-			toString((String(*)(B2))&__A::toString)
+			printOther((void(*)(B2, A))&__A::printOther)
 			{}
 		};
 
 		struct __C {
 			__C_VT* __vptr;
-			String c;
+			String _c;
 			__B1 parent;
 
 			__C();
@@ -141,29 +139,29 @@ namespace inputs {
 
 			static __C_VT __vtable;
 
-			static String toString(C);
 		};
 
 		struct __C_VT {
 			Class __isa;
 
+			int32_t (*hashCode)(C);
 			bool (*equals)(C, Object);
 			Class (*getClass)(C);
-			int32_t (*hashCode)(C);
-			void (*printOther)(C, A);
-			void (*setA)(C, String);
 			String (*toString)(C);
+			void (*setA)(C, String);
+			void (*printOther)(C, A);
 
 			__C_VT()
 			: __isa(__C::__class()),
+			hashCode((int32_t(*)(C))&__Object::hashCode),
 			equals((bool(*)(C, Object))&__Object::equals),
 			getClass((Class(*)(C))&__Object::getClass),
-			hashCode((int32_t(*)(C))&__Object::hashCode),
-			printOther((void(*)(C, A))&__A::printOther),
+			toString((String(*)(C))&__A::toString),
 			setA((void(*)(C, String))&__A::setA),
-			toString((String(*)(C))&__A::toString)
+			printOther((void(*)(C, A))&__A::printOther)
 			{}
 		};
+
 	}
 }
 

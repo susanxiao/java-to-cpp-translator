@@ -14,8 +14,8 @@ using namespace inputs::test017;
 int main(void)
 {
 
-	A a = new __A();
-	cout << a->self()->__vptr->toString()->data << endl;
+	A a = new __A(5);
+	cout << a->__vptr->self(a)->__vptr->toString(a->__vptr->self(a))->data << endl;
 
 	return 0;
 }

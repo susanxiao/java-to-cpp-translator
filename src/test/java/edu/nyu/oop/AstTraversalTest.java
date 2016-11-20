@@ -161,60 +161,82 @@ public class AstTraversalTest {
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test011/Test011.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-    }
+        assert (summary.classCount == 5);
+        assert (summary.classMethodCounts.get("A").equals(3));
+        assert (summary.classMethodCounts.get("B1").equals(0));
+        assert (summary.classMethodCounts.get("B2").equals(0));
+        assert (summary.classMethodCounts.get("C").equals(0));
+        assert (summary.classMethodCounts.get("Test011").equals(1));    }
 
-    @Ignore
     @Test
     public void test012() {
         System.out.println("*********************** Test 012 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test012/Test012.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        assert (summary.classCount == 5);
+        assert (summary.classMethodCounts.get("A").equals(3));
+        assert (summary.classMethodCounts.get("B1").equals(0));
+        assert (summary.classMethodCounts.get("B2").equals(0));
+        assert (summary.classMethodCounts.get("C").equals(1));
+        assert (summary.classMethodCounts.get("Test012").equals(1));
     }
 
-    @Ignore
     @Test
     public void test013() {
         System.out.println("*********************** Test 013 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test013/Test013.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        assert (summary.classCount == 2);
+        assert (summary.classMethodCounts.get("A").equals(2));
+        assert (summary.classMethodCounts.get("Test013").equals(1));
     }
 
-    @Ignore
     @Test
     public void test014() {
         System.out.println("*********************** Test 014 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test014/Test014.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        assert (summary.classCount == 2);
+        assert (summary.classMethodCounts.get("A").equals(1));
+        assert (summary.classMethodCounts.get("Test014").equals(1));
     }
 
-    @Ignore
     @Test
     public void test015() {
         System.out.println("*********************** Test 015 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test015/Test015.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        assert (summary.classCount == 3);
+        assert (summary.classMethodCounts.get("A").equals(1));
+        assert (summary.classMethodCounts.get("B").equals(2));
+        assert (summary.classMethodCounts.get("Test015").equals(1));
     }
 
-    @Ignore
     @Test
     public void test016() {
         System.out.println("*********************** Test 016 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test016/Test016.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        assert (summary.classCount == 3);
+        assert (summary.classMethodCounts.get("A").equals(1));
+        assert (summary.classMethodCounts.get("B").equals(2));
+        assert (summary.classMethodCounts.get("Test016").equals(1));
     }
 
-    @Ignore
     @Test
     public void test017() {
         System.out.println("*********************** Test 017 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test017/Test017.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
+        assert (summary.classCount == 2);
+        assert (summary.classMethodCounts.get("A").equals(2));
+        assert (summary.classMethodCounts.get("Test017").equals(1));
     }
 
     @Ignore

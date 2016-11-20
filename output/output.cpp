@@ -6,11 +6,11 @@ using namespace std;
 namespace inputs {
 	namespace test017 {
 		__A::__A(int32_t x) : __vptr(&__vtable) {
-			_self = this;
+			self = this;
 		};
 
 		A __A::self(A __this) {
-			return __this->_self;
+			return __this->self;
 		};
 
 		Class __A::__class() {

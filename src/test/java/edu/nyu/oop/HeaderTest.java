@@ -12,9 +12,6 @@ import static java.lang.System.out;
  */
 public class HeaderTest {
 
-    boolean debug = false;
-    // unit tests that failed are commented out
-    // these units tests are based on the java Test input file
 
     @BeforeClass
     public static void beforeClass() {
@@ -34,7 +31,6 @@ public class HeaderTest {
         assert (summary.classCount == 0);
     }
 
-    @Ignore
     @Test
     public void test001() {
         out.println("*********************** Test 001 ***********************");
@@ -64,7 +60,6 @@ public class HeaderTest {
         assert (summary.classMethodCounts.get("A") == 1);
     }
 
-    @Ignore
     @Test
     public void test003() {
         System.out.println("*********************** Test 003 ***********************");
@@ -80,7 +75,6 @@ public class HeaderTest {
         assert (summary.classDeclarationCounts.get("A") == 1);
     }
 
-    @Ignore
     @Test
     public void test004() {
         System.out.println("*********************** Test 004 ***********************");
@@ -96,7 +90,6 @@ public class HeaderTest {
         assert (summary.classDeclarationCounts.get("A") == 1);
     }
 
-    @Ignore
     @Test
     public void test005() {
         System.out.println("*********************** Test 005 ***********************");
@@ -114,7 +107,6 @@ public class HeaderTest {
         assert (summary.classDeclarationCounts.get("B") == 0);
     }
 
-    @Ignore
     @Test
     public void test006() {
         System.out.println("*********************** Test 006 ***********************");
@@ -131,7 +123,6 @@ public class HeaderTest {
 
     }
 
-    @Ignore
     @Test
     public void test007() {
         System.out.println("*********************** Test 007 ***********************");
@@ -202,7 +193,6 @@ public class HeaderTest {
         assert (summary.classDeclarationCounts.get("C") == 1);
     }
 
-    @Ignore
     @Test
     public void test011() {
         System.out.println("*********************** Test 011 ***********************");
@@ -212,9 +202,17 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        assert (summary.classCount == 5);
+        assert (summary.classMethodCounts.get("A") == 3);
+        assert (summary.classDeclarationCounts.get("A") == 1);
+        assert (summary.classMethodCounts.get("B1") == 0);
+        assert (summary.classDeclarationCounts.get("B1") == 1);
+        assert (summary.classMethodCounts.get("B2") == 0);
+        assert (summary.classDeclarationCounts.get("B2") == 1);
+        assert (summary.classMethodCounts.get("C") == 0);
+        assert (summary.classDeclarationCounts.get("C") == 1);
     }
 
-    @Ignore
     @Test
     public void test012() {
         System.out.println("*********************** Test 012 ***********************");
@@ -224,9 +222,17 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        assert (summary.classCount == 5);
+        assert (summary.classMethodCounts.get("A") == 3);
+        assert (summary.classDeclarationCounts.get("A") == 1);
+        assert (summary.classMethodCounts.get("B1") == 0);
+        assert (summary.classDeclarationCounts.get("B1") == 1);
+        assert (summary.classMethodCounts.get("B2") == 0);
+        assert (summary.classDeclarationCounts.get("B2") == 1);
+        assert (summary.classMethodCounts.get("C") == 1);
+        assert (summary.classDeclarationCounts.get("C") == 1);
     }
 
-    @Ignore
     @Test
     public void test013() {
         System.out.println("*********************** Test 013 ***********************");
@@ -236,9 +242,11 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-    }
+        assert (summary.classCount == 2);
+        assert (summary.classMethodCounts.get("A") == 2);
+        assert (summary.classDeclarationCounts.get("A") == 1);
+      }
 
-    @Ignore
     @Test
     public void test014() {
         System.out.println("*********************** Test 014 ***********************");
@@ -248,9 +256,11 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        assert (summary.classCount == 2);
+        assert (summary.classMethodCounts.get("A") == 1);
+        assert (summary.classDeclarationCounts.get("A") == 1);
     }
 
-    @Ignore
     @Test
     public void test015() {
         System.out.println("*********************** Test 015 ***********************");
@@ -260,9 +270,13 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        assert (summary.classCount == 3);
+        assert (summary.classMethodCounts.get("A") == 1);
+        assert (summary.classDeclarationCounts.get("A") == 1);
+        assert (summary.classMethodCounts.get("B") == 2);
+        assert (summary.classDeclarationCounts.get("B") == 0);
     }
 
-    @Ignore
     @Test
     public void test016() {
         System.out.println("*********************** Test 016 ***********************");
@@ -272,9 +286,13 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        assert (summary.classCount == 3);
+        assert (summary.classMethodCounts.get("A") == 1);
+        assert (summary.classDeclarationCounts.get("A") == 0);
+        assert (summary.classMethodCounts.get("B") == 2);
+        assert (summary.classDeclarationCounts.get("B") == 1);
     }
 
-    @Ignore
     @Test
     public void test017() {
         System.out.println("*********************** Test 017 ***********************");
@@ -284,6 +302,9 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        assert (summary.classCount == 2);
+        assert (summary.classMethodCounts.get("A") == 2);
+        assert (summary.classDeclarationCounts.get("A") == 1);
     }
 
     @Ignore

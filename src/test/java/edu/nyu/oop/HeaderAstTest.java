@@ -13,8 +13,6 @@ import static java.lang.System.out;
 public class HeaderAstTest {
 
 
-    boolean debug = false;
-
     @BeforeClass
     public static void beforeClass() {
         out.println("Executing HeaderAst");
@@ -43,7 +41,6 @@ public class HeaderAstTest {
         assert (n.classMethodCounts.get("A") == 1);
     }
 
-    @Ignore
     @Test
     public void test002() {
         out.println("*********************** Test 002 ***********************");
@@ -161,81 +158,89 @@ public class HeaderAstTest {
 
     }
 
-    @Ignore
     @Test
     public void test011() {
         System.out.println("*********************** Test 011 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test011/Test011.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        //XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 5);
+        assert (n.classMethodCounts.get("A") == 3);
+        assert (n.classMethodCounts.get("B1") == 0);
+        assert (n.classMethodCounts.get("B2") == 0);
+        assert (n.classMethodCounts.get("C") == 0);
     }
 
-    @Ignore
     @Test
     public void test012() {
         System.out.println("*********************** Test 012 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test012/Test012.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 5);
+        assert (n.classMethodCounts.get("A") == 3);
+        assert (n.classMethodCounts.get("B1") == 0);
+        assert (n.classMethodCounts.get("B2") == 0);
+        assert (n.classMethodCounts.get("C") == 1);
     }
 
-    @Ignore
     @Test
     public void test013() {
         System.out.println("*********************** Test 013 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test013/Test013.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        //XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 2);
+        assert (n.classMethodCounts.get("A") == 2);
     }
 
-    @Ignore
     @Test
     public void test014() {
         System.out.println("*********************** Test 014 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test014/Test014.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        //XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 2);
+        assert (n.classMethodCounts.get("A") == 1);
     }
 
-    @Ignore
     @Test
     public void test015() {
         System.out.println("*********************** Test 015 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test015/Test015.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        //XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 3);
+        assert (n.classMethodCounts.get("A") == 1);
+        assert (n.classMethodCounts.get("B") == 2);
     }
 
-    @Ignore
     @Test
     public void test016() {
         System.out.println("*********************** Test 016 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test016/Test016.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        //XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 3);
+        assert (n.classMethodCounts.get("A") == 1);
+        assert (n.classMethodCounts.get("B") == 2);
     }
 
-    @Ignore
     @Test
     public void test017() {
         System.out.println("*********************** Test 017 ***********************");
         GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test017/Test017.java");
         AstTraversal visitor = new AstTraversal(XtcTestUtils.newRuntime());
         AstTraversal.AstTraversalSummary summary = visitor.getTraversal(node);
-        GNode n = HeaderAst.getHeaderAst(summary).parent;
-        //XtcTestUtils.prettyPrintAst(n);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summary);
+        assert (n.numberClasses == 2);
+        assert (n.classMethodCounts.get("A") == 2);
     }
 
     @Ignore

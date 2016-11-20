@@ -50,8 +50,11 @@ public class StdOutputChecking {
                 case 16:
                     equal = "ThrowClassCastException? (Passes)(returns the location of ClassCastException)";
                     break;
+                case 17:
+                    equal = "Location? (Passes)";
+                    break;
                 }
-                if(i > 16) {
+                if(i > 17) {
                     equal = "Fails (Need to check the results manually)";
                 }
                 s.append(inputName.toUpperCase() + "-> " + equal + "\n");

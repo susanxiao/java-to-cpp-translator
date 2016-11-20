@@ -14,7 +14,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			A _self;
+			A self;
 
 			__A(int32_t x);
 
@@ -22,7 +22,7 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static A self(A);
+			static A _self(A);
 		};
 
 		struct __A_VT {
@@ -32,7 +32,7 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			A (*self)(A);
+			A (*_self)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -40,7 +40,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			self(&__A::self)
+			_self(&__A::_self)
 			{}
 		};
 

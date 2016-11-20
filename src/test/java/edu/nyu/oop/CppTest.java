@@ -44,7 +44,6 @@ public class CppTest {
 
     }
 
-    @Ignore
     @Test
     public void test001() {
         out.println("*********************** Test 001 ***********************");
@@ -265,7 +264,6 @@ public class CppTest {
 
     }
 
-    @Ignore
     @Test
     public void test011() {
         System.out.println("*********************** Test 011 ***********************");
@@ -275,9 +273,16 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 4);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
+        assert (cppSummary.classMethodCounts.get("B1") == summary.classMethodCounts.get("B1"));
+        assert (cppSummary.classMethodCounts.get("B2") == summary.classMethodCounts.get("B2"));
+        assert (cppSummary.classMethodCounts.get("C") == summary.classMethodCounts.get("C"));
     }
 
-    @Ignore
     @Test
     public void test012() {
         System.out.println("*********************** Test 012 ***********************");
@@ -287,9 +292,16 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 4);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
+        assert (cppSummary.classMethodCounts.get("B1") == summary.classMethodCounts.get("B1"));
+        assert (cppSummary.classMethodCounts.get("B2") == summary.classMethodCounts.get("B2"));
+        assert (cppSummary.classMethodCounts.get("C") == summary.classMethodCounts.get("C"));
     }
 
-    @Ignore
     @Test
     public void test013() {
         System.out.println("*********************** Test 013 ***********************");
@@ -299,9 +311,13 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 2);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
     }
 
-    @Ignore
     @Test
     public void test014() {
         System.out.println("*********************** Test 014 ***********************");
@@ -311,9 +327,14 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 2);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
     }
 
-    @Ignore
     @Test
     public void test015() {
         System.out.println("*********************** Test 015 ***********************");
@@ -323,9 +344,14 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 3);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
+        assert (cppSummary.classMethodCounts.get("B") == summary.classMethodCounts.get("B"));
     }
 
-    @Ignore
     @Test
     public void test016() {
         System.out.println("*********************** Test 016 ***********************");
@@ -335,9 +361,14 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 3);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
+        assert (cppSummary.classMethodCounts.get("B") == summary.classMethodCounts.get("B"));
     }
 
-    @Ignore
     @Test
     public void test017() {
         System.out.println("*********************** Test 017 ***********************");
@@ -347,6 +378,11 @@ public class CppTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+        new AstMutator(newRuntime()).mutate(node);
+        PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(node);
+
+        assert (cppSummary.numberClasses == 2);
+        assert (cppSummary.classMethodCounts.get("A") == summary.classMethodCounts.get("A"));
     }
 
     @Ignore
