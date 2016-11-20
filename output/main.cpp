@@ -9,18 +9,18 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test019;
+using namespace inputs::test015;
 
 int main(void)
 {
 
-	int x;
+	A a = new __A();
 
-	int x;
+	B other = new __B();
 
-	x = 3;
+	other->parent.some = a;
 
-	cout << x << endl;
+	a->__vptr->printOther(a, (A) other);
 
 	return 0;
 }

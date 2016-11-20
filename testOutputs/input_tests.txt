@@ -1,0 +1,20 @@
+TEST000-> Passes
+TEST001-> Passes
+TEST002-> Passes
+TEST003-> Passes
+TEST004-> Passes
+TEST005-> Passes
+TEST006-> Passes
+TEST007-> Passes
+TEST008-> Passes
+TEST009-> Location testing? (Passes)
+TEST010-> Passes
+TEST011-> Passes
+TEST012-> Passes
+TEST013-> Location testing? (Passes)
+TEST014-> NullPointerException? (Fails)
+TEST015-> Fails
+TEST016-> Passes
+TEST017-> Fails
+TEST018-> Passes
+TEST019-> Fails
