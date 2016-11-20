@@ -6,6 +6,18 @@ using namespace std;
 namespace inputs {
 	namespace test014 {
 		void __A::printOther(A __this, A other) {
+				try {
+		std::stringstream ss;
+		ss << other;
+		std::string tmp = ss.str();
+		int count = 0
+		for(int i = 0; i < tmp.length(); i++){
+			if(tmp[i] != 0){ count += 1; }
+		}
+		if(count == 2 || count == 1){ throw java::lang::NullPointerException(); }
+	}catch(const NullPointerException &ex)
+	{ cout << "NullPointerException()" << endl; }
+
 			cout << other->__vptr->toString(other)->data << endl;
 		};
 
@@ -13,7 +25,7 @@ namespace inputs {
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("class inputs.javalang.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test014.A"), (Class) __rt::null());
 			return k;
 		};
 

@@ -12,7 +12,7 @@ TEST010-> Passes
 TEST011-> Passes
 TEST012-> Passes
 TEST013-> Location? (Passes)
-TEST014-> NullPointerException? (Fails)
+TEST014-> NullPointerException? (Passes)(returns the location of NullPointerException uses try{}catch{})
 TEST015-> Location? (Passes)
 TEST016-> ThrowClassCastException? (Fails)(returns the location of the class)
 TEST017-> Fails (Need to check the results manually)

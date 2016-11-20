@@ -185,7 +185,7 @@ public class PrintHeaderFile extends Visitor {
 
         //populate the maps
 
-         //Non superclass methods
+        //Non superclass methods
         for (int i = summary.currentClass.methods.size() - 1; i >= 0; i--) {
             MethodImplementation currentMethod = summary.currentClass.methods.get(i);
             vConstructor.put(currentMethod.name, currentMethod.name + "(&__" + summary.currentClass.name + "::" + currentMethod.name + ")");
@@ -217,8 +217,7 @@ public class PrintHeaderFile extends Visitor {
                     vConstructor.put(currentMethod.name,
                                      currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethod.name + ")");
 
-                }
-                else { //if it already exists, we need to move its location to where the superclass holds it
+                } else { //if it already exists, we need to move its location to where the superclass holds it
                     String key = currentMethod.name;
                     String constructorValue = vConstructor.remove(key);
                     String methodValue = vMethods.remove(key);
@@ -233,8 +232,7 @@ public class PrintHeaderFile extends Visitor {
         if (!vConstructor.containsKey("toString")) {
             vConstructor.put("toString", "toString((String(*)(" + summary.currentClass.name + "))&__Object::toString)");
             vMethods.put("toString", "String (*toString)(%s);\n");
-        }
-        else {
+        } else {
             String key = "toString";
             String constructorValue = vConstructor.remove(key);
             String methodValue = vMethods.remove(key);
@@ -246,8 +244,7 @@ public class PrintHeaderFile extends Visitor {
         if (!vConstructor.containsKey("getClass")) {
             vConstructor.put("getClass", "getClass((Class(*)(" + summary.currentClass.name + "))&__Object::getClass)");
             vMethods.put("getClass", "Class (*getClass)(%s);\n");
-        }
-        else {
+        } else {
             String key = "getClass";
             String constructorValue = vConstructor.remove(key);
             String methodValue = vMethods.remove(key);
@@ -259,8 +256,7 @@ public class PrintHeaderFile extends Visitor {
         if (!vConstructor.containsKey("equals")) {
             vConstructor.put("equals", "equals((bool(*)(" + summary.currentClass.name + ", Object))&__Object::equals)");
             vMethods.put("equals", "bool (*equals)(%s, Object);\n");
-        }
-        else {
+        } else {
             String key = "equals";
             String constructorValue = vConstructor.remove(key);
             String methodValue = vMethods.remove(key);
@@ -272,8 +268,7 @@ public class PrintHeaderFile extends Visitor {
         if (!vConstructor.containsKey("hashCode")) {
             vConstructor.put("hashCode", "hashCode((int32_t(*)(" + summary.currentClass.name + "))&__Object::hashCode)");
             vMethods.put("hashCode", "int32_t (*hashCode)(%s);\n");
-        }
-        else {
+        } else {
             String key = "hashCode";
             String constructorValue = vConstructor.remove(key);
             String methodValue = vMethods.remove(key);

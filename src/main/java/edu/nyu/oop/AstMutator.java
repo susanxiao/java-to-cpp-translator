@@ -235,8 +235,7 @@ public class AstMutator extends Visitor {
 
                                             argument.set(3, arguments);
                                             visitArguments(arguments);
-                                        }
-                                        else if (selectionExpression1.getName().equals("CallExpression")) {
+                                        } else if (selectionExpression1.getName().equals("CallExpression")) {
                                             callExpressionArgument = selectionExpression1;
                                             Node primaryIdentifier1 = selectionExpression1.getNode(0);
                                             for (int j = 1; j < selectionExpression1.size(); j++) {

@@ -119,8 +119,7 @@ public class PrintMainFile extends Visitor {
                                         Node currentArg = (Node) arg;
                                         if (currentArg.getName().equals("StringLiteral")) {
                                             fieldDeclaration += "new __String(" + currentArg.getString(0) + ")";
-                                        }
-                                        else if (currentArg.getName().equals("IntegerLiteral")) {
+                                        } else if (currentArg.getName().equals("IntegerLiteral")) {
                                             fieldDeclaration += currentArg.getString(0);
                                         }
                                     }
@@ -211,8 +210,7 @@ public class PrintMainFile extends Visitor {
                                                 Object o2 = callExpression.get(i);
                                                 if (o2 instanceof String) {
                                                     expressionStatement += "->"+((String) o2);
-                                                }
-                                                else if (o2 instanceof Node) {
+                                                } else if (o2 instanceof Node) {
                                                     Node arguments1 = (Node) o2;
                                                     expressionStatement += "(";
                                                     for (int j = 0; j < arguments1.size(); j++) {

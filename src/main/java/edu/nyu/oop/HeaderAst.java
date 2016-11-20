@@ -128,7 +128,7 @@ public class HeaderAst {
                     currentMethod1.add(m.returnType);
                     currentMethod1.add(superClass.name);
                     currentMethod1.add("Parameters");
-                    for(ParameterImplementation param : m.parameters){
+                    for(ParameterImplementation param : m.parameters) {
                         currentMethod1.add(param.toString());
                     }
                     methodNames.add(m.name);
@@ -137,21 +137,21 @@ public class HeaderAst {
                 superClass = superClass.superClass;
             }
             int methodCount = 0;
-            for(MethodImplementation m : currentClass.methods){
+            for(MethodImplementation m : currentClass.methods) {
                 methodCount++;
                 ArrayList<String> currentMethod1 = new ArrayList<>();
                 currentMethod1.add(m.returnType);
                 currentMethod1.add(m.name);
                 currentMethod1.add(currentClass.name);
                 currentMethod1.add("Parameters");
-                for(ParameterImplementation param : m.parameters){
+                for(ParameterImplementation param : m.parameters) {
                     currentMethod1.add(param.toString());
                 }
                 methodNames.add(m.name);
                 methods.put(m.name, currentMethod1);
             }
 
-            for(Object name : methodNames){
+            for(Object name : methodNames) {
                 String mName = (String) name;
                 DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
                 dataLayoutNode.add(DataLayoutMethodDeclarationNode);
@@ -163,7 +163,7 @@ public class HeaderAst {
                 DataLayoutMethodDeclarationNode.add(methods.get(mName).get(2));
                 ParametersNode = GNode.create("Parameters");
                 DataLayoutMethodDeclarationNode.add(ParametersNode);
-                for(int i = 4; i < methods.get(mName).size(); i++){
+                for(int i = 4; i < methods.get(mName).size(); i++) {
                     String type = methods.get(mName).get(i);
                     ParametersNode.add(type.substring(0, type.indexOf(" ")));
                 }
@@ -239,7 +239,7 @@ public class HeaderAst {
 
             // Cycle methods
 
-            for(Object name : methodNames){
+            for(Object name : methodNames) {
                 String mName = (String) name;
                 VTableMethodDeclarationNode = GNode.create("VTableMethodDeclaration");
                 VTableNode.add(VTableMethodDeclarationNode);
@@ -260,7 +260,7 @@ public class HeaderAst {
 
                 ParametersNode = GNode.create("Parameters");
                 VTableMethodDeclarationNode.add(ParametersNode);
-                for(int i = 4; i < methods.get(mName).size(); i++){
+                for(int i = 4; i < methods.get(mName).size(); i++) {
                     String type = methods.get(mName).get(i);
                     ParametersNode.add(type.substring(0, type.indexOf(" ")));
                 }
