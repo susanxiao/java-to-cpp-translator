@@ -362,6 +362,7 @@ public class PrintCppFile extends Visitor {
                     if (primaryIdentifier.equals("cout")) {
                         StringBuilder line = new StringBuilder("cout << ");
                         Node arguments = expressionStatementChild.getNode(3);
+                        String param = arguments.getNode(0).getNode(0).getString(0);
                         if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
                             Node argumentsPrimaryIdentifier = arguments.getNode(0);
                             line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");
@@ -372,6 +373,8 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
+                            String classCastException = summary.checkClassCast(param, summary.currentClass.name,
+                                    summary.classLocation, line.toString());
                             summary.addLine(line.toString() + ";\n");
                         } else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
                             Node selectionExpression = arguments.getNode(0);
@@ -385,13 +388,13 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
-                            summary.addLine(line.toString() + ";\n");
+                            String lineExceptions = "";
+                            lineExceptions += line;
+                            summary.addLine(lineExceptions.toString() + ";\n");
 
                         } else if (arguments.getNode(0).getName().equals("CallExpression")) {
                             Node callExpression = arguments.getNode(0);
                             Node argumentsPrimaryIdentifier = callExpression.getNode(0);
-                            String nullPointer = cppFileSummary.checkNull(argumentsPrimaryIdentifier.getString(0), summary.currentClass.name,
-                                                 methodName, summary.classLocation.toString());
                             line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");
 
                             for (int i = 1; i < callExpression.size(); i++) {
@@ -415,8 +418,20 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
-                            summary.addLine(nullPointer + "\n");
-                            summary.addLine(line.toString() + ";\n");
+                            String nullException = cppFileSummary.checkNull(param, summary.currentClass.name,
+                                    methodName, summary.classLocation, line.toString());
+                            String classException = summary.checkClassCast(param, summary.currentClass.name,
+                                    summary.classLocation, line.toString());
+                            String tryCatchComplete = "";
+                            tryCatchComplete += summary.tryStart();
+                            tryCatchComplete += nullException;
+                            tryCatchComplete += classException;
+                            tryCatchComplete += summary.tryEnd(line.toString());
+                            tryCatchComplete += summary.catchNullPointer(param,summary.currentClass.name,
+                                    summary.classLocation, methodName);
+                            tryCatchComplete += summary.catchClassCast(param, summary.currentClass.name,
+                                    summary.classLocation);
+                            summary.addLine(tryCatchComplete + "\n");
                         }
                     }
                 }
@@ -516,10 +531,10 @@ public class PrintCppFile extends Visitor {
 
         public cppFileSummary() {
             code = new StringBuilder(
-                "#include \"output.h\"\n" +
-                "#include <sstream>\n\n" +
-                "using namespace java::lang;\n" +
-                "using namespace std;\n");
+                    "#include \"output.h\"\n" +
+                            "#include <sstream>\n\n" +
+                            "using namespace java::lang;\n" +
+                            "using namespace std;\n");
             scope = 0;
         }
 
@@ -559,9 +574,22 @@ public class PrintCppFile extends Visitor {
             code.append(line);
         }
 
-        public static String checkNull(String param, String className, String methodName, String classLocation) {
+        public static String tryStart() {
             StringBuilder s = new StringBuilder();
-            s.append("\n\t\t\ttry {\n\t\t\t\tstd::stringstream ss;\n");
+            s.append("\n\t\t\ttry {");
+            return s.toString();
+        }
+
+        public static String tryEnd(String line) {
+            StringBuilder s = new StringBuilder();
+            s.append("\t\t\t\t" + line + ";\n");
+            s.append("\t\t\t}\n");
+            return s.toString();
+        }
+
+        public static String checkNull(String param, String className, String methodName, String classLocation, String line) {
+            StringBuilder s = new StringBuilder();
+            s.append("\n\t\t\t\tstd::stringstream ss;\n");
             s.append("\t\t\t\tss << " + param + ";\n");
             s.append("\t\t\t\tstd::string tmp = ss.str();\n");
             s.append("\t\t\t\tint count = 0;\n");
@@ -569,14 +597,36 @@ public class PrintCppFile extends Visitor {
             s.append("\t\t\t\t\tif(tmp[i] != '0'){ count += 1; }\n");
             s.append("\t\t\t\t}\n");
             s.append("\t\t\t\tif(count == 2 || count == 1){ throw java::lang::NullPointerException(); }\n");
-            s.append("\t\t\t}");
-            s.append("catch(const NullPointerException &ex){");
-            s.append("\n\t\t\t\tcout << \"java.lang.NullPointerException\" << endl;");
-            s.append("\n\t\t\t\tcout << \"\tat " + classLocation + "" + className + "." + methodName + "\" << endl;");
-            s.append("\n\t\t\t}\n\n");
             return s.toString();
         }
 
+        public static String checkClassCast(String param, String className, String classLocation, String line) {
+            StringBuilder s = new StringBuilder();
+            s.append("\t\t\t\tClass k = " + param + "->__vptr->getClass(" + param+ ");\n");
+            s.append("\t\t\t\tstd::string paramClass = k->__vptr->getName(k)->data;\n");
+            s.append("\t\t\t\tClass thisK = __this->__vptr->getClass(__this);\n");
+            s.append("\t\t\t\tstd::string thisClass = thisK->__vptr->getName(thisK)->data;\n");
+            s.append("\t\t\t\tif(paramClass != thisClass){ throw java::lang::ClassCastException();}\n");
+            return s.toString();
+        }
+
+        public static String catchNullPointer(String param, String className, String classLocation, String methodName) {
+            StringBuilder s = new StringBuilder();
+            s.append("\t\t\tcatch(const NullPointerException &ex){");
+            s.append("\n\t\t\t\tcout << \"java.lang.NullPointerException\" << endl;");
+            s.append("\n\t\t\t\tcout << \"\tat " + classLocation + "" + className + "." + methodName + "\" << endl;");
+            s.append("\n\t\t\t}\n");
+            return s.toString();
+        }
+
+        public static String catchClassCast(String param, String className, String classLocation) {
+            StringBuilder s = new StringBuilder();
+            s.append("\t\t\tcatch(const ClassCastException &ex){");
+            s.append("\n\t\t\t\tcout << \"java.lang.ClassCastException\" << endl;");
+            s.append("\n\t\t\t\tcout << \"\tat " + classLocation + "" + className + "\" << endl;");
+            s.append("\n\t\t\t}\n");
+            return s.toString();
+        }
     }
 
     public cppFileSummary getSummary(GNode n) {
@@ -596,7 +646,7 @@ public class PrintCppFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
-        start = end = 14;
+        start = end = 16;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

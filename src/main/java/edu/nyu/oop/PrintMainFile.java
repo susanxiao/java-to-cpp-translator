@@ -365,6 +365,12 @@ public class PrintMainFile extends Visitor {
         ArrayList<String> variables = new ArrayList<String>();
         TreeMap<String, String> classVariables = new TreeMap<>();
 
+        ArrayList<String> checkCast() {
+            ArrayList<String> result = new ArrayList<String>();
+            return result;
+        }
+
+
     }
 
     public PrintMainFile.printMainFileSummary getSummary(GNode n) {
@@ -431,6 +437,7 @@ public class PrintMainFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
+        start = end = 16;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
@@ -462,7 +469,7 @@ public class PrintMainFile extends Visitor {
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                //ImplementationUtil.prettyPrintAst(node);
+                ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;
