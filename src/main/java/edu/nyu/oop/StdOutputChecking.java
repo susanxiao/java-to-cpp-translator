@@ -36,22 +36,22 @@ public class StdOutputChecking {
                 String equal = std_output.toString().equals(std_output_input.toString()) ? "Passes" : "Fails";
                 switch (i) {
                     case 9:
-                        equal = "Location? (Passes)(Check)";
+                        equal = "Location? (Passes)(needs to be checked manually)";
                         break;
                     case 13:
-                        equal = "Location? (Passes)";
+                        equal = "Location? (Passes)(needs to be checked manually)";
                         break;
                     case 14:
-                        equal = "NullPointerException? (Passes)(returns the location of NullPointerException)(Check)";
+                        equal = "NullPointerException? (Passes)(returns the location of NullPointerException)(needs to be checked manually)";
                         break;
                     case 15:
-                        equal = "Location? (Passes)(Check)";
+                        equal = "Location? (Passes)(needs to be checked manually)";
                         break;
                     case 16:
-                        equal = "ClassCastException? (Fails)(returns the location of ClassCastException)(Check)";
+                        equal = "ClassCastException? (Fails)(returns the location of ClassCastException)(needs to be checked manually)";
                         break;
                     case 17:
-                        equal = "Location? (Passes)(Check)";
+                        equal = "Location? (Passes)(needs to be checked manually)";
                         break;
                 }
                 if (i > 17) {
