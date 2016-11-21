@@ -16,7 +16,7 @@ Example command to execute translator from Sbt
 #5Tran
 ----------
 
-- Support unit testing )sbt test-only)
+- Support unit testing (sbt test-only)
     - AstTraversalTest 0-17
     - CppTest 0-17
     - HeaderAstTest 0-17
@@ -42,7 +42,7 @@ Example command to execute translator from Sbt
     - bash bashScript.sh; (from shell)
         - compiles all the C++ generated code
         - Redirects outputs to files   
-    - run-main edu.nyu.oop.StdOutputChecking (from SBT)(some of these should be checked manaully after significant code change)
+    - run-main edu.nyu.oop.StdOutputChecking (from SBT)
         - outputs result of the translation on the inputs
 
 
