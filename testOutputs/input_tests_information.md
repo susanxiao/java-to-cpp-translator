@@ -12,8 +12,8 @@
     - HeaderAstTest (0-17)
     - HeaderTest (0-17)
 
-# Test010 and Test012 fail due to ClassCastException being triggered 
-- I have commented out throw ClassCastException and have left the structure
+# Test010 and Test012 fail due to wrong ClassCastException logic
+- I have commented out throw ClassCastException and have left the structure. Test010 and Test012 pass. Test016 fails.
 - B extends A
     - Can cast B to A, but can't cast A to B
         - How do we check this in the output.cpp file?
