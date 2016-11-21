@@ -16,11 +16,11 @@ Example command to execute translator from Sbt
 #5Tran
 ----------
 
-- Support limited unit testing sbt test-only command on the file
-    - AstTraversalTest 0-10
-    - CppTest 0-10
-    - HeaderAstTest 0-10
-    - HeaderTest 0-10
+- Support unit testing )sbt test-only)
+    - AstTraversalTest 0-17
+    - CppTest 0-17
+    - HeaderAstTest 0-17
+    - HeaderTest 0-17
 
 - Support printing the output.h, output.cpp, and main.cpp files individualy
     - run-main edu.nyu.oop.PrintHeaderFile [number]
@@ -34,14 +34,15 @@ Example command to execute translator from Sbt
     - Phase 1 0-20
     - Phase 2 0-20
     - Phase 3 0-20
-    - Phase 4 0-13
-    - Phase 5 0-13
+    - Phase 4 0-15 and 17
+    - Phase 5 0-15 and 17
 
 - Support testing inputs
+    - run ImplementationUtil over the entire range of inputs. This gets the updated .h .cpp files.
     - bash bashScript.sh; (from shell)
         - compiles all the C++ generated code
         - Redirects outputs to files   
-    - run-main edu.nyu.oop.StdOutputChecking (from SBT)
+    - run-main edu.nyu.oop.StdOutputChecking (from SBT)(some of these should be checked manaully after significant code change)
         - outputs result of the translation on the inputs
 
 
