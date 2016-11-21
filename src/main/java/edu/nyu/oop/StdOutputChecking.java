@@ -48,7 +48,7 @@ public class StdOutputChecking {
                         equal = "Location? (Passes)(Check)";
                         break;
                     case 16:
-                        equal = "ClassCastException? (Passes)(returns the location of ClassCastException)(Check)";
+                        equal = "ClassCastException? (Fails)(returns the location of ClassCastException)(Check)";
                         break;
                     case 17:
                         equal = "Location? (Passes)(Check)";

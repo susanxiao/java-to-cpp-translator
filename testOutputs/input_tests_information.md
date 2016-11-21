@@ -1,26 +1,19 @@
 # General Information
 - try{..}catch(...) added
     - need to review/check the placements
-- added '_' in front of variables 
-    - output.h file easy fix
-        - changed in field declarations
-    - output.cpp
-        - need to review/check the placements
-    - main.cpp 
-        - need to review/check the placements
         
 # Unit testing
 - Information
     - currently in the testing implementation methodCounts counts constructors as methods. 
         - change so that methodCounts does not count constructors as methods if time allows.
-    - All tests pass based upon this implementation.
 - Testing
     - AstTraversalTest (0-17)
     - CppTest (0-17)
     - HeaderAstTest (0-17)
     - HeaderTest (0-17)
 
-# Test010 and Test012 fail due to ClassCastException being triggered
+# Test010 and Test012 fail due to ClassCastException being triggered 
+- I have commented out throw ClassCastException and have left the structure
 - B extends A
     - Can cast B to A, but can't cast A to B
         - How do we check this in the output.cpp file?
