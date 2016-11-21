@@ -5,7 +5,7 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test020 {
-		int32_t __A::x(A __this) {
+		int32_t __A::methodX(A __this) {
 		};
 
 		__A::__A() : __vptr(&__vtable) {};

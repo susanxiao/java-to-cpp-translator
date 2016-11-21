@@ -5,11 +5,11 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test013 {
-		void __A::setA(A __this, String x) {
-			__this->_a = x;
+		void __A::methodSetA(A __this, String x) {
+			__this->a = x;
 		};
 
-		void __A::printOther(A __this, A other) {
+		void __A::methodPrintOther(A __this, A other) {
 			
 			try {
 				std::stringstream ss;
@@ -24,12 +24,12 @@ namespace inputs {
 				std::string paramClass = k->__vptr->getName(k)->data;
 				Class thisK = __this->__vptr->getClass(__this);
 				std::string thisClass = thisK->__vptr->getName(thisK)->data;
-				if(paramClass != thisClass){ throw java::lang::ClassCastException();}
+				//if(paramClass != thisClass){ throw java::lang::ClassCastException();}
 				cout << other->__vptr->toString(other)->data << endl;
 			}
 			catch(const NullPointerException &ex){
 				cout << "java.lang.NullPointerException" << endl;
-				cout << "	at inputs.test013.A.printOther" << endl;
+				cout << "	at inputs.test013.A.methodPrintOther" << endl;
 			}
 			catch(const ClassCastException &ex){
 				cout << "java.lang.ClassCastException" << endl;

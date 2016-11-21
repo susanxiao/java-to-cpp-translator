@@ -35,26 +35,26 @@ public class StdOutputChecking {
                 }
                 String equal = std_output.toString().equals(std_output_input.toString()) ? "Passes" : "Fails";
                 switch (i) {
-                case 9:
-                    equal = "Location? (Passes)";
-                    break;
-                case 13:
-                    equal = "Location? (Passes)";
-                    break;
-                case 14:
-                    equal = "NullPointerException? (Passes)(returns the location of NullPointerException)";
-                    break;
-                case 15:
-                    equal = "Location? (Passes)";
-                    break;
-                case 16:
-                    equal = "ThrowClassCastException? (Passes)(returns the location of ClassCastException)";
-                    break;
-                case 17:
-                    equal = "Location? (Passes)";
-                    break;
+                    case 9:
+                        equal = "Location? (Passes)(Check)";
+                        break;
+                    case 13:
+                        equal = "Location? (Passes)";
+                        break;
+                    case 14:
+                        equal = "NullPointerException? (Passes)(returns the location of NullPointerException)(Check)";
+                        break;
+                    case 15:
+                        equal = "Location? (Passes)(Check)";
+                        break;
+                    case 16:
+                        equal = "ClassCastException? (Passes)(returns the location of ClassCastException)(Check)";
+                        break;
+                    case 17:
+                        equal = "Location? (Passes)(Check)";
+                        break;
                 }
-                if(i > 17) {
+                if (i > 17) {
                     equal = "Fails (Need to check the results manually)";
                 }
                 s.append(inputName.toUpperCase() + "-> " + equal + "\n");

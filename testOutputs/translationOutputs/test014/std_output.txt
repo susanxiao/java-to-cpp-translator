@@ -1,0 +1,2 @@
+java.lang.NullPointerException
+	at inputs.test014.A.methodPrintOther

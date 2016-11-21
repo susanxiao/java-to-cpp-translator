@@ -1,7 +1,4 @@
 A
-java.lang.ClassCastException
-	at inputs.test010.A
-java.lang.ClassCastException
-	at inputs.test010.A
-java.lang.ClassCastException
-	at inputs.test010.A
+B1
+B2
+C

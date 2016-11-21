@@ -18,9 +18,9 @@ int main(void)
 
 	A other = a;
 
-	other->__vptr->setA(other, new __String("A"));
+	other->__vptr->methodSetA(other, new __String("A"));
 
-	a->__vptr->printOther(a, other);
+	a->__vptr->methodPrintOther(a, other);
 
 	return 0;
 }

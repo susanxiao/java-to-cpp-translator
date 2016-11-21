@@ -4,7 +4,9 @@
 - added '_' in front of variables 
     - output.h file easy fix
         - changed in field declarations
-    - output.cpp (iffy)
+    - output.cpp
+        - need to review/check the placements
+    - main.cpp 
         - need to review/check the placements
         
 # Unit testing
@@ -17,6 +19,12 @@
     - CppTest (0-17)
     - HeaderAstTest (0-17)
     - HeaderTest (0-17)
+
+# Test010 and Test012 fail due to ClassCastException being triggered
+- B extends A
+    - Can cast B to A, but can't cast A to B
+        - How do we check this in the output.cpp file?
+        - Same logic applies to Test016
 
 # These are all strange and static (18-20)
 - Test018:

@@ -20,7 +20,7 @@ int main(void)
 
 	other->parent.some = a;
 
-	a->__vptr->printOther(a, (A) other);
+	a->__vptr->methodPrintOther(a, (A) other);
 
 	return 0;
 }

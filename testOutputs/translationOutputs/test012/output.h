@@ -26,7 +26,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String _a;
+			String a;
 
 			__A();
 
@@ -34,9 +34,9 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static void setA(A, String);
-			static void printOther(A, A);
-			static String myToString(A);
+			static void methodSetA(A, String);
+			static void methodPrintOther(A, A);
+			static String methodMyToString(A);
 		};
 
 		struct __A_VT {
@@ -46,9 +46,9 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			void (*setA)(A, String);
-			void (*printOther)(A, A);
-			String (*myToString)(A);
+			void (*methodSetA)(A, String);
+			void (*methodPrintOther)(A, A);
+			String (*methodMyToString)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -56,15 +56,15 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			setA(&__A::setA),
-			printOther(&__A::printOther),
-			myToString(&__A::myToString)
+			methodSetA(&__A::methodSetA),
+			methodPrintOther(&__A::methodPrintOther),
+			methodMyToString(&__A::methodMyToString)
 			{}
 		};
 
 		struct __B1 {
 			__B1_VT* __vptr;
-			String _b;
+			String b;
 			__A parent;
 
 			__B1();
@@ -82,9 +82,9 @@ namespace inputs {
 			bool (*equals)(B1, Object);
 			Class (*getClass)(B1);
 			String (*toString)(B1);
-			void (*setA)(B1, String);
-			void (*printOther)(B1, A);
-			String (*myToString)(B1);
+			void (*methodSetA)(B1, String);
+			void (*methodPrintOther)(B1, A);
+			String (*methodMyToString)(B1);
 
 			__B1_VT()
 			: __isa(__B1::__class()),
@@ -92,15 +92,15 @@ namespace inputs {
 			equals((bool(*)(B1, Object))&__Object::equals),
 			getClass((Class(*)(B1))&__Object::getClass),
 			toString((String(*)(B1))&__Object::toString),
-			setA((void(*)(B1, String))&__A::setA),
-			printOther((void(*)(B1, A))&__A::printOther),
-			myToString((String(*)(B1))&__A::myToString)
+			methodSetA((void(*)(B1, String))&__A::methodSetA),
+			methodPrintOther((void(*)(B1, A))&__A::methodPrintOther),
+			methodMyToString((String(*)(B1))&__A::methodMyToString)
 			{}
 		};
 
 		struct __B2 {
 			__B2_VT* __vptr;
-			String _b;
+			String b;
 			__A parent;
 
 			__B2();
@@ -118,9 +118,9 @@ namespace inputs {
 			bool (*equals)(B2, Object);
 			Class (*getClass)(B2);
 			String (*toString)(B2);
-			void (*setA)(B2, String);
-			void (*printOther)(B2, A);
-			String (*myToString)(B2);
+			void (*methodSetA)(B2, String);
+			void (*methodPrintOther)(B2, A);
+			String (*methodMyToString)(B2);
 
 			__B2_VT()
 			: __isa(__B2::__class()),
@@ -128,15 +128,15 @@ namespace inputs {
 			equals((bool(*)(B2, Object))&__Object::equals),
 			getClass((Class(*)(B2))&__Object::getClass),
 			toString((String(*)(B2))&__Object::toString),
-			setA((void(*)(B2, String))&__A::setA),
-			printOther((void(*)(B2, A))&__A::printOther),
-			myToString((String(*)(B2))&__A::myToString)
+			methodSetA((void(*)(B2, String))&__A::methodSetA),
+			methodPrintOther((void(*)(B2, A))&__A::methodPrintOther),
+			methodMyToString((String(*)(B2))&__A::methodMyToString)
 			{}
 		};
 
 		struct __C {
 			__C_VT* __vptr;
-			String _c;
+			String c;
 			__B1 parent;
 
 			__C();
@@ -145,7 +145,7 @@ namespace inputs {
 
 			static __C_VT __vtable;
 
-			static String myToString(C);
+			static String methodMyToString(C);
 		};
 
 		struct __C_VT {
@@ -155,9 +155,9 @@ namespace inputs {
 			bool (*equals)(C, Object);
 			Class (*getClass)(C);
 			String (*toString)(C);
-			void (*setA)(C, String);
-			void (*printOther)(C, A);
-			String (*myToString)(C);
+			void (*methodSetA)(C, String);
+			void (*methodPrintOther)(C, A);
+			String (*methodMyToString)(C);
 
 			__C_VT()
 			: __isa(__C::__class()),
@@ -165,9 +165,9 @@ namespace inputs {
 			equals((bool(*)(C, Object))&__Object::equals),
 			getClass((Class(*)(C))&__Object::getClass),
 			toString((String(*)(C))&__Object::toString),
-			setA((void(*)(C, String))&__A::setA),
-			printOther((void(*)(C, A))&__A::printOther),
-			myToString(&__C::myToString)
+			methodSetA((void(*)(C, String))&__A::methodSetA),
+			methodPrintOther((void(*)(C, A))&__A::methodPrintOther),
+			methodMyToString(&__C::methodMyToString)
 			{}
 		};
 

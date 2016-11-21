@@ -21,7 +21,7 @@ CompilationUnit(
         ),
         null,
         VoidType(),
-        "printOther",
+        "methodPrintOther",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -121,7 +121,7 @@ CompilationUnit(
         ),
         null,
         VoidType(),
-        "printOther",
+        "methodPrintOther",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -190,7 +190,7 @@ CompilationUnit(
           ),
           null
         ),
-        "toString",
+        "methodToString",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -248,7 +248,7 @@ CompilationUnit(
         ),
         null,
         VoidType(),
-        "main",
+        "methodMain",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -362,7 +362,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "(A)other"
+                  "other"
                 )
               )
             )

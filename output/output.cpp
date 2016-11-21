@@ -5,11 +5,11 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test012 {
-		void __A::setA(A __this, String x) {
-			__this->_a = x;
+		void __A::methodSetA(A __this, String x) {
+			__this->a = x;
 		};
 
-		void __A::printOther(A __this, A other) {
+		void __A::methodPrintOther(A __this, A other) {
 			
 			try {
 				std::stringstream ss;
@@ -24,12 +24,12 @@ namespace inputs {
 				std::string paramClass = k->__vptr->getName(k)->data;
 				Class thisK = __this->__vptr->getClass(__this);
 				std::string thisClass = thisK->__vptr->getName(thisK)->data;
-				if(paramClass != thisClass){ throw java::lang::ClassCastException();}
-				cout << other->__vptr->myToString(other)->data << endl;
+				//if(paramClass != thisClass){ throw java::lang::ClassCastException();}
+				cout << other->__vptr->methodMyToString(other)->data << endl;
 			}
 			catch(const NullPointerException &ex){
 				cout << "java.lang.NullPointerException" << endl;
-				cout << "	at inputs.test012.A.printOther" << endl;
+				cout << "	at inputs.test012.A.methodPrintOther" << endl;
 			}
 			catch(const ClassCastException &ex){
 				cout << "java.lang.ClassCastException" << endl;
@@ -38,8 +38,8 @@ namespace inputs {
 
 		};
 
-		String __A::myToString(A __this) {
-			return __this->_a;
+		String __A::methodMyToString(A __this) {
+			return __this->a;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};
@@ -72,7 +72,7 @@ namespace inputs {
 
 		__B2_VT __B2::__vtable;
 
-		String __C::myToString(C __this) {
+		String __C::methodMyToString(C __this) {
 			return new __String("still C");
 		};
 

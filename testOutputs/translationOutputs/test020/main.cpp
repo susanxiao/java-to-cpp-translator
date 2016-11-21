@@ -18,7 +18,7 @@ int main(void)
 
 	x = 3;
 
-	cout << A->__vptr->x(A)->data << endl;
+	cout << A->__vptr->methodX(A)->data << endl;
 
 	return 0;
 }

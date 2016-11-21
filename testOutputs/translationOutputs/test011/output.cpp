@@ -5,16 +5,16 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test011 {
-		void __A::setA(A __this, String x) {
-			__this->_a = x;
+		void __A::methodSetA(A __this, String x) {
+			__this->a = x;
 		};
 
-		void __A::printOther(A __this, A other) {
+		void __A::methodPrintOther(A __this, A other) {
 			cout << other->a->data << endl;
 		};
 
 		String __A::toString(A __this) {
-			return __this->_a;
+			return __this->a;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};

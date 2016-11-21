@@ -77,7 +77,7 @@ public class PrintHeaderFile extends Visitor {
             for (FieldDeclaration currentDeclaration : currentClass.declarations) {
                 declarationsCounter += 1;
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                declarationsMap.put(currentDeclaration.variableName, type + " _" + currentDeclaration.variableName);
+                declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
             }
             currentClass = currentClass.superClass;
             if(currentClass != null) {
@@ -188,13 +188,29 @@ public class PrintHeaderFile extends Visitor {
         //Non superclass methods
         for (int i = summary.currentClass.methods.size() - 1; i >= 0; i--) {
             MethodImplementation currentMethod = summary.currentClass.methods.get(i);
-            vConstructor.put(currentMethod.name, currentMethod.name + "(&__" + summary.currentClass.name + "::" + currentMethod.name + ")");
+            String currentMethodName = currentMethod.name;
+            if (!(currentMethodName.startsWith("method"))) {
+                switch (currentMethodName) {
+                    case "toString":
+                        break;
+                    case "hashCode":
+                        break;
+                    case "equals":
+                        break;
+                    case "getClass":
+                        break;
+                    default:
+                        currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
 
-            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")(%s");
+                }
+            }
+            vConstructor.put(currentMethodName, currentMethodName + "(&__" + summary.currentClass.name + "::" + currentMethodName + ")");
+
+            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
             for (ParameterImplementation p : currentMethod.parameters)
                 method.append(", " + p.type);
             method.append(");\n");
-            vMethods.put(currentMethod.name, method.toString());
+            vMethods.put(currentMethodName, method.toString());
         }
 
         //superclass methods
@@ -202,8 +218,23 @@ public class PrintHeaderFile extends Visitor {
         while (superClass != null) {
             for (int i = superClass.methods.size() - 1; i >= 0; i--) {
                 MethodImplementation currentMethod = superClass.methods.get(i);
-                if (!vConstructor.containsKey(currentMethod.name)) { //if it already exists, it is the overwriting method
-                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethod.name + ")");
+                String currentMethodName = currentMethod.name;
+                if (!(currentMethodName.startsWith("method"))) {
+                    switch (currentMethodName) {
+                        case "toString":
+                            break;
+                        case "hashCode":
+                            break;
+                        case "equals":
+                            break;
+                        case "getClass":
+                            break;
+                        default:
+                            currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
+                    }
+                }
+                if (!vConstructor.containsKey(currentMethodName)) { //if it already exists, it is the overwriting method
+                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")");
 
                     StringBuilder parameters = new StringBuilder("(%s");
                     for (ParameterImplementation p : currentMethod.parameters)
@@ -211,11 +242,11 @@ public class PrintHeaderFile extends Visitor {
                     parameters.append(")");
 
                     method.append(parameters.toString() + ";\n");
-                    vMethods.put(currentMethod.name, method.toString());
+                    vMethods.put(currentMethodName, method.toString());
 
                     String paramString = String.format(parameters.toString(), summary.currentClass.name);
-                    vConstructor.put(currentMethod.name,
-                                     currentMethod.name + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethod.name + ")");
+                    vConstructor.put(currentMethodName,
+                            currentMethodName + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethodName + ")");
 
                 } else { //if it already exists, we need to move its location to where the superclass holds it
                     String key = currentMethod.name;
@@ -446,7 +477,7 @@ public class PrintHeaderFile extends Visitor {
         //      running all files will place it in testOutputs/translationOutputs
 
         int start = 0;
-        int end = 20;
+        int end = 0;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

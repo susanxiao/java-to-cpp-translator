@@ -6,7 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test009 {
 		__A::__A() : __vptr(&__vtable) {
-			_self = this;
+			self = this;
 		};
 
 		Class __A::__class() {

@@ -9,17 +9,17 @@ namespace inputs {
 				fld(new __String("A")) {
 		};
 
-		void __A::setFld(A __this, String f) {
-			__this->_fld = f;
+		void __A::methodSetFld(A __this, String f) {
+			__this->fld = f;
 		};
 
-		void __A::almostSetFld(A __this, String f) {
+		void __A::methodAlmostSetFld(A __this, String f) {
 			String fld;
-			_fld = f;
+			fld = f;
 		};
 
-		String __A::getFld(A __this) {
-			return __this->_fld;
+		String __A::methodGetFld(A __this) {
+			return __this->fld;
 		};
 
 		Class __A::__class() {

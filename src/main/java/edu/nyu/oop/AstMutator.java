@@ -8,6 +8,7 @@ import xtc.tree.Node;
 import xtc.tree.Visitor;
 import xtc.util.Runtime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,27 @@ public class AstMutator extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n) {
+        // have to make variables and method names disjoint
+
+        String methodNameString = n.getString(3);
+        if (!(methodNameString.startsWith("method"))) {
+            switch (methodNameString) {
+                case "toString":
+                    break;
+                case "hashCode":
+                    break;
+                case "equals":
+                    break;
+                case "getClass":
+                    break;
+                default:
+                    methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
+
+            }
+            GNode methodName = GNode.create(methodNameString);
+            n.set(3, methodName.toString().substring(0, methodNameString.length()));
+        }
+
         for (int i = 0; i < n.size(); i++) {
             Object o = n.get(i);
             if (o instanceof Node) {
@@ -55,7 +77,7 @@ public class AstMutator extends Visitor {
 
                     if (formalParameters.size() > 0) {
                         formalParameters.add(formalParameters.get(formalParameters.size() - 1));
-                        for (int j = formalParameters.size() - 2; j > 0 ; j--) {
+                        for (int j = formalParameters.size() - 2; j > 0; j--) {
                             formalParameters.set(j, formalParameters.get(j - 1));
                         }
                         formalParameters.set(0, formalParameter);
@@ -188,6 +210,7 @@ public class AstMutator extends Visitor {
                     n.set(2, "endl");
                 }
 
+
                 for (int i = 3; i < n.size(); i++) {
                     Object o2 = n.get(i);
                     if (o2 instanceof Node) {
@@ -195,6 +218,7 @@ public class AstMutator extends Visitor {
                             if (((Node) o2).size() > 0) {
                                 Node argument = ((Node) o2).getNode(0);
                                 if (argument.getName().equals("CallExpression")) {
+
                                     Node selectionExpression1 = argument.getNode(0);
                                     Node callExpressionArgument = null;
                                     if (selectionExpression1 != null) {
@@ -218,6 +242,8 @@ public class AstMutator extends Visitor {
                                             argument.set(3, arguments);
                                             visitArguments(arguments);
                                         } else if (selectionExpression1.getName().equals("PrimaryIdentifier")) {
+                                            /// sdjfk;asdfjk
+
                                             String primaryIdentifier2 = selectionExpression1.getString(0);
                                             GNode arguments = argument.getGeneric(3);
                                             if (!arguments.hasVariable()) {
@@ -308,6 +334,7 @@ public class AstMutator extends Visitor {
             } else if (((Node) o).getName().equals("PrimaryIdentifier")) {
                 Node primaryIdentifier = (Node) o;
                 Object fieldsObj = n.get(1);
+
                 if (fieldsObj == null) {
                     GNode fields = GNode.create("Fields");
                     fields.add(0, "__vptr");
@@ -382,9 +409,41 @@ public class AstMutator extends Visitor {
     }
 
     public void visitExpressionStatement(GNode n) {
+
+        // had some problems here will fix at a later date.
+        if (n.getNode(0).getName().equals("CallExpression")) {
+            if (n.getNode(0).getNode(3).getName().equals("Arguments")) {
+                if (n.getNode(0).getNode(3).getNode(0).getName().equals("CallExpression")) {
+
+                    String methodNameString = n.getNode(0).getNode(3).getNode(0).getString(2);
+                    if (!(methodNameString.startsWith("method"))) {
+                        switch (methodNameString) {
+                            case "toString":
+                                break;
+                            case "hashCode":
+                                break;
+                            case "equals":
+                                break;
+                            case "getClass":
+                                break;
+                            default:
+                                methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
+
+                        }
+                        GNode nPrime = (GNode) n.getNode(0).getNode(3).getNode(0);
+                        GNode methodName = GNode.create(methodNameString);
+                        nPrime.set(2, methodName.toString().substring(0, methodNameString.length()));
+
+                    }
+
+                }
+            }
+        }
+
+
         GNode expression = n.getGeneric(0);
         if (expression.getName().equals("Expression")) {
-            for (int i =0; i < expression.size(); i++) {
+            for (int i = 0; i < expression.size(); i++) {
                 Object o = expression.get(i);
                 if (o instanceof Node) {
                     if (((Node) o).getName().equals("StringLiteral")) {
@@ -466,7 +525,7 @@ public class AstMutator extends Visitor {
                 if (((Node) o).getName().equals("QualifiedIdentifier")) {
                     Node qualifiedIdentifier = (Node) o;
                     String dynamicType = qualifiedIdentifier.getString(0);
-                    qualifiedIdentifier.set(0, "__"+dynamicType);
+                    qualifiedIdentifier.set(0, "__" + dynamicType);
                 }
             }
         }
@@ -508,5 +567,12 @@ public class AstMutator extends Visitor {
         String currentClass;
         HashMap<String, String> objects = new HashMap<>();
 
+    }
+
+    public static void main(String[] args) {
+        GNode node = (GNode) ImplementationUtil.loadTestFile("./src/test/java/inputs/test012/Test012.java");
+        AstMutator visitor = new AstMutator(ImplementationUtil.newRuntime());
+        visitor.mutate(node);
+        ImplementationUtil.prettyPrintToFile(new File("testOutputs/mutatedAstOutputs/test012.txt"), node);
     }
 }

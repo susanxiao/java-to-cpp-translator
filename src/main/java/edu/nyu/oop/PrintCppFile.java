@@ -183,7 +183,7 @@ public class PrintCppFile extends Visitor {
                                 if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
                                     summary.initializerList.put(variableName, variableValue);
                                 else
-                                    summary.addLine("this->" + "_" + variableName + " " + operator + " " + variableValue + ";\n");
+                                    summary.addLine("this->" + variableName + " " + operator + " " + variableValue + ";\n");
                             }
                         } else if (expressionChild.getName().equals("PrimaryIdentifier")) {
                             String variableName = expressionChild.getString(0);
@@ -200,10 +200,10 @@ public class PrintCppFile extends Visitor {
                                     /* if (formalParameters.size() > 0) {
                                         summary.initializerList.put(variableName, "this");
                                     } else { */
-                                    summary.addLine("_" + variableName + " " + operator + " this;\n");
+                                    summary.addLine(variableName + " " + operator + " this;\n");
                                     // }
                                 } else
-                                    summary.addLine("_" + variableName + " " + operator + " this;\n");
+                                    summary.addLine(variableName + " " + operator + " this;\n");
                             } else if (primarySibling.getName().equals("NewClassExpression")) {
                                 String className = primarySibling.getNode(2).getString(0);
                                 Node argumentsNode = primarySibling.getNode(3);
@@ -258,7 +258,7 @@ public class PrintCppFile extends Visitor {
                                 if (dec.variableName.equals(blockPrimaryIdentifier))
                                     gateParent = false;
                             }
-                            String statement = gateParent ? "parent._" + blockPrimaryIdentifier + "->data" : blockPrimaryIdentifier + "->data";
+                            String statement = gateParent ? "parent." + blockPrimaryIdentifier + "->data" : blockPrimaryIdentifier + "->data";
 
                             line.append(statement);
                             for (int i = 1; i < arguments.size(); i++) {
@@ -302,6 +302,7 @@ public class PrintCppFile extends Visitor {
             returnType = "int32_t";
 
         String methodName = n.getString(3);
+
 
         methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
 
@@ -352,9 +353,9 @@ public class PrintCppFile extends Visitor {
                     if (expressionStatementChild.getNode(2).getName().equals("PrimaryIdentifier")) {
                         String assignment = expressionStatementChild.getNode(2).getString(0);
                         if (!localVariables.contains(variableName) && summary.initializerList.containsKey(variableName))
-                            summary.addLine("__this->_" + variableName + " " + operation + " " + assignment + ";\n");
+                            summary.addLine("__this->" + variableName + " " + operation + " " + assignment + ";\n");
                         else
-                            summary.addLine("_" + variableName + " " + operation + " " + assignment + ";\n");
+                            summary.addLine(variableName + " " + operation + " " + assignment + ";\n");
                     }
                     //TODO: else
                 } else if (expressionStatementChild.getName().equals("CallExpression")) {
@@ -418,6 +419,8 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
+
+
                             String nullException = cppFileSummary.checkNull(param, summary.currentClass.name,
                                     methodName, summary.classLocation, line.toString());
                             String classException = summary.checkClassCast(param, summary.currentClass.name,
@@ -450,9 +453,9 @@ public class PrintCppFile extends Visitor {
             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
                 String variable = currentNode.getString(0);
                 if (summary.initializerList.containsKey(variable))
-                    summary.addLine("return __this->_" + variable + ";\n");
+                    summary.addLine("return __this->" + variable + ";\n");
                 else
-                    summary.addLine("return _" + variable + ";\n");
+                    summary.addLine("return " + variable + ";\n");
             } else if (currentNode.getName().equals("StringLiteral")) {
                 String value = currentNode.getString(0);
                 summary.addLine("return new __String(" + value + ");\n");
@@ -465,7 +468,7 @@ public class PrintCppFile extends Visitor {
                         break;
                     }
                 }
-                StringBuilder line = new StringBuilder("return " + (parentGate ? "__this->parent._" + primaryIdentifier : "__this->_" + primaryIdentifier));
+                StringBuilder line = new StringBuilder("return " + (parentGate ? "__this->parent." + primaryIdentifier : "__this->" + primaryIdentifier));
                 for (int i = 1; i < currentNode.size(); i++) {
                     Object o1 = currentNode.get(i);
                     if (o1 instanceof Node) {
@@ -487,7 +490,7 @@ public class PrintCppFile extends Visitor {
                                         break;
                                     }
                                 }
-                                line.append(parentGate ? "__this->parent._" + currentChild.getString(j) : "__this->_" + currentChild.getString(j));
+                                line.append(parentGate ? "__this->parent." + currentChild.getString(j) : "__this->" + currentChild.getString(j));
                             }
                             line.append(")");
                         }
@@ -606,7 +609,7 @@ public class PrintCppFile extends Visitor {
             s.append("\t\t\t\tstd::string paramClass = k->__vptr->getName(k)->data;\n");
             s.append("\t\t\t\tClass thisK = __this->__vptr->getClass(__this);\n");
             s.append("\t\t\t\tstd::string thisClass = thisK->__vptr->getName(thisK)->data;\n");
-            s.append("\t\t\t\tif(paramClass != thisClass){ throw java::lang::ClassCastException();}\n");
+            s.append("\t\t\t\t//if(paramClass != thisClass){ throw java::lang::ClassCastException();}\n");
             return s.toString();
         }
 
@@ -646,6 +649,7 @@ public class PrintCppFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
+        start = end = 16;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

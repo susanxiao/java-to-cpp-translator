@@ -176,7 +176,22 @@ public class PrintMainFile extends Visitor {
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
-                                    expressionStatement += "->__vptr->" + currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2) + "(";
+                                    String methodNameCall = currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2);
+                                    if (!methodNameCall.startsWith("method")) {
+                                        switch (methodNameCall) {
+                                            case "toString":
+                                                break;
+                                            case "hashCode":
+                                                break;
+                                            case "equals":
+                                                break;
+                                            case "getClass":
+                                                break;
+                                            default:
+                                                methodNameCall = "method" + methodNameCall.substring(0, 1).toUpperCase() + methodNameCall.substring(1);
+                                        }
+                                    }
+                                    expressionStatement += "->__vptr->" + methodNameCall + "(";
                                     Node arguments1 = currentNode.getNode(0).getNode(3);
                                     for (int i = 0; i < arguments1.size(); i++) {
                                         if (i > 0)
@@ -189,6 +204,20 @@ public class PrintMainFile extends Visitor {
                                 }
                                 // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
+                                if (!(method.startsWith("method"))) {
+                                    switch (method) {
+                                        case "toString":
+                                            break;
+                                        case "hashCode":
+                                            break;
+                                        case "equals":
+                                            break;
+                                        case "getClass":
+                                            break;
+                                        default:
+                                            method = "method" + method.substring(0, 1).toUpperCase() + method.substring(1);
+                                    }
+                                }
                                 expressionStatement += "->__vptr->" + method + "(";
                                 Node args = currentNode.getNode(3);
                                 int argSize = args.size();
@@ -205,18 +234,35 @@ public class PrintMainFile extends Visitor {
                                             Node callExpression = currentNode.getNode(0);
                                             String primaryIdentifier = callExpression.getNode(0).getString(0);
 
-                                            expressionStatement += primaryIdentifier+"->__vptr";
+                                            expressionStatement += primaryIdentifier + "->__vptr";
                                             for (int i = 1; i < callExpression.size(); i++) {
                                                 Object o2 = callExpression.get(i);
                                                 if (o2 instanceof String) {
-                                                    expressionStatement += "->"+((String) o2);
+                                                    String methodNameCallExpression = (String) o2;
+                                                    if (!(methodNameCallExpression.startsWith("method"))) {
+                                                        switch (methodNameCallExpression) {
+                                                            case "toString":
+                                                                break;
+                                                            case "hashCode":
+                                                                break;
+                                                            case "equals":
+                                                                break;
+                                                            case "getClass":
+                                                                break;
+                                                            default:
+                                                                methodNameCallExpression = "method" + methodNameCallExpression.substring(0, 1).toUpperCase()
+                                                                        + methodNameCallExpression.substring(1);
+                                                        }
+                                                    }
+
+                                                    expressionStatement += "->" + methodNameCallExpression;
                                                 } else if (o2 instanceof Node) {
                                                     Node arguments1 = (Node) o2;
                                                     expressionStatement += "(";
                                                     for (int j = 0; j < arguments1.size(); j++) {
                                                         if (j > 0)
                                                             expressionStatement += ", ";
-                                                        expressionStatement+= arguments1.getString(j);
+                                                        expressionStatement += arguments1.getString(j);
                                                     }
                                                     expressionStatement += ")";
                                                 }
@@ -244,10 +290,10 @@ public class PrintMainFile extends Visitor {
                                     // check if parent should be used
                                     String className = summary.classVariables.get(key); //class of primary identifier
                                     for (FieldDeclaration dec : summaryTraversal.findClass(className).declarations) {
-                                        if(dec.variableName.equals(field) || field.equals("data"))
+                                        if (dec.variableName.equals(field) || field.equals("data"))
                                             gateParent = false;
                                     }
-                                    expressionStatement += gateParent ? "->parent." + field + "->data": "->" + field + "->data";
+                                    expressionStatement += gateParent ? "->parent." + field + "->data" : "->" + field + "->data";
 
                                 }
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
@@ -283,6 +329,21 @@ public class PrintMainFile extends Visitor {
             } else {
                 Node callExpressionNode = n.getNode(0);
                 String methodName = callExpressionNode.getString(2);
+                if (!(methodName.startsWith("method"))) {
+                    switch (methodName) {
+                        case "toString":
+                            break;
+                        case "hashCode":
+                            break;
+                        case "equals":
+                            break;
+                        case "getClass":
+                            break;
+                        default:
+                            methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
+
+                    }
+                }
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
                 String primaryIdentifer = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
@@ -300,7 +361,7 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                        if(summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
+                        if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
                             expressionStatement += argumentsNode.getNode(1).getString(0);
                         } else {
                             expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
@@ -327,7 +388,7 @@ public class PrintMainFile extends Visitor {
                             // check if parent should be used
                             String className = summary.classVariables.get(varName); //class of primary identifier
                             for (FieldDeclaration dec : summaryTraversal.findClass(className).declarations) {
-                                if(dec.variableName.equals(field))
+                                if (dec.variableName.equals(field))
                                     gateParent = false;
                             }
                             expressionStatement += gateParent ? "->parent." + field : "->" + field;
@@ -382,8 +443,8 @@ public class PrintMainFile extends Visitor {
         s1.append("#include \"java_lang.h\"\n\n");
         s1.append("#include \"output.h\"\n");
         s1.append("\n" +
-                  "using namespace java::lang;\n" +
-                  "using namespace std;\n");
+                "using namespace java::lang;\n" +
+                "using namespace std;\n");
         s1.append("using namespace ");
 
         for (Object o : n) {
@@ -437,6 +498,7 @@ public class PrintMainFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
+        start = end = 17;
 
         if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);

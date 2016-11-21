@@ -16,13 +16,13 @@ int main(void)
 
 	A a = new __A();
 
-	a->__vptr->almostSetFld(a, new __String("B"));
+	a->__vptr->methodAlmostSetFld(a, new __String("B"));
 
-	cout << a->__vptr->getFld(a)->data << endl;
+	cout << a->__vptr->methodGetFld(a)->data << endl;
 
-	a->__vptr->setFld(a, new __String("B"));
+	a->__vptr->methodSetFld(a, new __String("B"));
 
-	cout << a->__vptr->getFld(a)->data << endl;
+	cout << a->__vptr->methodGetFld(a)->data << endl;
 
 	return 0;
 }

@@ -9,8 +9,8 @@ namespace inputs {
 				fld(f) {
 		};
 
-		String __A::getFld(A __this) {
-			return __this->_fld;
+		String __A::methodGetFld(A __this) {
+			return __this->fld;
 		};
 
 		Class __A::__class() {

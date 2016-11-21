@@ -14,7 +14,14 @@ public class MethodImplementation {
     ArrayList<MethodStatement> implementation;
 
     public MethodImplementation(String name) {
-        this.name = name;
+        String methodName = name;
+        switch(methodName){
+            case "toString":
+                break;
+            default:
+                methodName = "method" + name.substring(0,1).toUpperCase() + name.substring(1);
+        }
+        this.name = methodName;
         parameters = new ArrayList<>();
         implementation = new ArrayList<>();
     }

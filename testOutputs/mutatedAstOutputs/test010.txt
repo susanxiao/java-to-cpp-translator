@@ -37,7 +37,7 @@ CompilationUnit(
         ),
         null,
         VoidType(),
-        "setA",
+        "methodSetA",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -88,7 +88,7 @@ CompilationUnit(
         ),
         null,
         VoidType(),
-        "printOther",
+        "methodPrintOther",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -134,7 +134,7 @@ CompilationUnit(
                     "other"
                   ),
                   null,
-                  "toString",
+                  "methodToString",
                   Arguments(
                     "other"
                   )
@@ -157,7 +157,7 @@ CompilationUnit(
           ),
           null
         ),
-        "toString",
+        "methodToString",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -208,22 +208,6 @@ CompilationUnit(
         ),
         Declarators(
           Declarator(
-            "a",
-            null,
-            null
-          )
-        )
-      ),
-      FieldDeclaration(
-        Modifiers(),
-        Type(
-          QualifiedIdentifier(
-            "String"
-          ),
-          null
-        ),
-        Declarators(
-          Declarator(
             "b",
             null,
             null
@@ -246,22 +230,6 @@ CompilationUnit(
     ),
     null,
     ClassBody(
-      FieldDeclaration(
-        Modifiers(),
-        Type(
-          QualifiedIdentifier(
-            "String"
-          ),
-          null
-        ),
-        Declarators(
-          Declarator(
-            "a",
-            null,
-            null
-          )
-        )
-      ),
       FieldDeclaration(
         Modifiers(),
         Type(
@@ -304,54 +272,6 @@ CompilationUnit(
         ),
         Declarators(
           Declarator(
-            "a",
-            null,
-            null
-          )
-        )
-      ),
-      FieldDeclaration(
-        Modifiers(),
-        Type(
-          QualifiedIdentifier(
-            "String"
-          ),
-          null
-        ),
-        Declarators(
-          Declarator(
-            "a",
-            null,
-            null
-          )
-        )
-      ),
-      FieldDeclaration(
-        Modifiers(),
-        Type(
-          QualifiedIdentifier(
-            "String"
-          ),
-          null
-        ),
-        Declarators(
-          Declarator(
-            "b",
-            null,
-            null
-          )
-        )
-      ),
-      FieldDeclaration(
-        Modifiers(),
-        Type(
-          QualifiedIdentifier(
-            "String"
-          ),
-          null
-        ),
-        Declarators(
-          Declarator(
             "c",
             null,
             null
@@ -382,7 +302,7 @@ CompilationUnit(
         ),
         null,
         VoidType(),
-        "main",
+        "methodMain",
         FormalParameters(
           FormalParameter(
             Modifiers(),
@@ -647,7 +567,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "(A)b1"
+                  "b1"
                 )
               )
             )
@@ -664,7 +584,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "(A)b2"
+                  "b2"
                 )
               )
             )
@@ -681,7 +601,7 @@ CompilationUnit(
               Arguments(
                 "a",
                 PrimaryIdentifier(
-                  "(A)c"
+                  "c"
                 )
               )
             )
