@@ -1,18 +1,3 @@
-Translator
-----------
-
-This README should document its features and any details a user might need to know about your translator.
-
-Use Github Markdown https://help.github.com/articles/github-flavored-markdown/
-
-The Speaker is responsible for it being up to date and accurate.
-
-Don't forget to update xtc.properties with your team and project name.
-
-Example command to execute translator from Sbt
-
-```runxtc -printJavaAst src/test/java/inputs/Test000/Test000.java ```
-
 #5Tran
 ----------
 
@@ -44,7 +29,22 @@ Example command to execute translator from Sbt
         - Redirects outputs to files   
     - run-main edu.nyu.oop.StdOutputChecking (from SBT)
         - outputs result of the translation on the inputs
+        
+        
+Translator
+----------
 
+This README should document its features and any details a user might need to know about your translator.
+
+Use Github Markdown https://help.github.com/articles/github-flavored-markdown/
+
+The Speaker is responsible for it being up to date and accurate.
+
+Don't forget to update xtc.properties with your team and project name.
+
+Example command to execute translator from Sbt
+
+```runxtc -printJavaAst src/test/java/inputs/Test000/Test000.java ```
 
 
 ```
