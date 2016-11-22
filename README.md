@@ -83,6 +83,8 @@
     - Phase 3 0-20
     - Phase 4 0-15 and 17
     - Phase 5 0-15 and 17  
+
+Run "make help" for other Makefile commands
         
 Translator
 ----------
