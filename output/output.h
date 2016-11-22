@@ -5,44 +5,8 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test017 {
-		struct __A;
-		struct __A_VT;
+	namespace test000 {
 
-
-		typedef __A* A;
-
-		struct __A {
-			__A_VT* __vptr;
-			A self;
-
-			__A(int32_t x);
-
-			static Class __class();
-
-			static __A_VT __vtable;
-
-			static A methodSelf(A);
-		};
-
-		struct __A_VT {
-			Class __isa;
-
-			int32_t (*hashCode)(A);
-			bool (*equals)(A, Object);
-			Class (*getClass)(A);
-			String (*toString)(A);
-			A (*methodSelf)(A);
-
-			__A_VT()
-			: __isa(__A::__class()),
-			hashCode((int32_t(*)(A))&__Object::hashCode),
-			equals((bool(*)(A, Object))&__Object::equals),
-			getClass((Class(*)(A))&__Object::getClass),
-			toString((String(*)(A))&__Object::toString),
-			methodSelf(&__A::methodSelf)
-			{}
-		};
 
 	}
 }

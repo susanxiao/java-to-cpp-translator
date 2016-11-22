@@ -28,7 +28,11 @@ public class ImplementationUtil {
         int start = 0;
         int end = 20;
 
-        if (args.length > 0) {
+        if (args.length > 1) {
+            start = ImplementationUtil.getInteger(args[0]);
+            end = ImplementationUtil.getInteger(args[1]);
+        }
+        else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;
@@ -65,12 +69,6 @@ public class ImplementationUtil {
                 String outputPath = String.format("./testOutputs/translationOutputs/test%03d/output.cpp", i);
                 String mainPath = String.format("./testOutputs/translationOutputs//test%03d/main.cpp", i);
 
-                if (start == end) {
-                    //running a single file will place it in output folder
-                    headerPath = "./output/output.h";
-                    outputPath = "./output/output.cpp";
-                    mainPath = "./output/main.cpp";
-                }
                 File header = new File(headerPath);
                 File output = new File(outputPath);
                 File main = new File(mainPath);
@@ -112,7 +110,7 @@ public class ImplementationUtil {
     public static int getInteger(String val) {
         try {
             int value = Integer.parseInt(val);
-            if (value >= 0 && value <= 20)
+            if (value >= 0 && value <= 50)
                 return value;
             else return -1;
         } catch (Exception e) {

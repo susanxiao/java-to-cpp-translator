@@ -651,7 +651,11 @@ public class PrintCppFile extends Visitor {
         int end = 20;
         start = end = 16;
 
-        if (args.length > 0) {
+        if (args.length > 1) {
+            start = ImplementationUtil.getInteger(args[0]);
+            end = ImplementationUtil.getInteger(args[1]);
+        }
+        else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;

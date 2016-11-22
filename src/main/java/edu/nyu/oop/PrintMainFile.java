@@ -498,9 +498,12 @@ public class PrintMainFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
-        start = end = 17;
 
-        if (args.length > 0) {
+        if (args.length > 1) {
+            start = ImplementationUtil.getInteger(args[0]);
+            end = ImplementationUtil.getInteger(args[1]);
+        }
+        else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;
