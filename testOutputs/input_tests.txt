@@ -16,3 +16,6 @@ TEST014-> NullPointerException? (Passes)(returns the location of NullPointerExce
 TEST015-> Location? (Passes)(needs to be checked manually)
 TEST016-> ClassCastException? (Fails)(returns the location of ClassCastException)(needs to be checked manually)
 TEST017-> Location? (Passes)(needs to be checked manually)
+TEST018-> Fails (Need to check the results manually)
+TEST019-> Fails (Need to check the results manually)
+TEST020-> Fails (Need to check the results manually)

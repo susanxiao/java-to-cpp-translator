@@ -14,19 +14,19 @@ mutate astMutate :
 	@echo "Mutated ASTs are in testOutputs/mutatedAstOutputs"
 header printHeader :
 	@echo "Printing output.h file for $(start) to $(end)" ;
-	@sbt "run-main $(packages)PrintHeader 0" ;
+	@sbt "run-main $(packages)PrintHeaderFile $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/printHeaderOutputs"
 cpp printCpp :
 	@echo "Printing output.cpp file for $(start) to $(end)" ;
-	@sbt "run-main $(packages)PrintCpp 0" ;
+	@sbt "run-main $(packages)PrintCppFile $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/printCppOutputs"
 main printMain :
 	@echo "Printing main.cpp file for $(start) to $(end)" ;
-	@sbt "run-main $(packages)PrintMain 0" ;
+	@sbt "run-main $(packages)PrintMainFile $(start) $(end)" ;
 	@echo "main.cpp outputs are in testOutputs/mainFileOutputs"
 translate :
 	@echo "Translating inputs $(start) to $(end)" ;
-	@sbt "run-main $(packages)ImplementationUtil 0" ;
+	@sbt "run-main $(packages)ImplementationUtil $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/translationOutputs"
 compare :
 	@echo "Compiling and outputting C++ code for $(start) to $(end)" ;
@@ -55,4 +55,4 @@ compare :
 	@echo "Checking outputs" ;
 	@sbt "run-main $(packages)StdOutputChecking" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"
-doAll : output compare
+5tran : output compare

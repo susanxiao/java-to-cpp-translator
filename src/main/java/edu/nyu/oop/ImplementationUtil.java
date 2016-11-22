@@ -69,12 +69,6 @@ public class ImplementationUtil {
                 String outputPath = String.format("./testOutputs/translationOutputs/test%03d/output.cpp", i);
                 String mainPath = String.format("./testOutputs/translationOutputs//test%03d/main.cpp", i);
 
-                if (start == end) {
-                    //running a single file will place it in output folder
-                    headerPath = "./output/output.h";
-                    outputPath = "./output/output.cpp";
-                    mainPath = "./output/main.cpp";
-                }
                 File header = new File(headerPath);
                 File output = new File(outputPath);
                 File main = new File(mainPath);

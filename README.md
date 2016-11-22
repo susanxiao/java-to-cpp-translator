@@ -1,35 +1,88 @@
 #5Tran
 ----------
 
-- Support unit testing (sbt test-only)
+- Supports unit testing (sbt test-only)
+
     - AstTraversalTest 0-17
     - CppTest 0-17
     - HeaderAstTest 0-17
     - HeaderTest 0-17
 
-- Support printing the output.h, output.cpp, and main.cpp files individualy
+- Supports printing the output.h, output.cpp, and main.cpp files individually
+
+    For a single input
+    (with sbt)
     - run-main edu.nyu.oop.PrintHeaderFile [number]
     - run-main edu.nyu.oop.PrintCppFile [number]
     - run-main edu.nyu.oop.PrintMainFile [number]
 
-- Support printing the output.h, output.cpp, and main.cpp together (Implementation)
+    (with make)
+    - make header start=[number] end=[number]
+    - make cpp start=[number] end=[number]
+    - make main start=[number] end=[number]
+
+    For a range
+    (with sbt)
+    - run-main edu.nyu.oop.PrintHeaderFile [start] [end]
+    - run-main edu.nyu.oop.PrintCppFile [start] [end]
+    - run-main edu.nyu.oop.PrintMainFile [start] [end]
+
+    (with make)
+    - make header start=[start] end=[end]
+    - make cpp start=[start] end=[end]
+    - make main start=[start] end=[end]
+
+    For all inputs
+    (with sbt)
+    - run-main edu.nyu.oop.PrintHeaderFile
+    - run-main edu.nyu.oop.PrintCppFile
+    - run-main edu.nyu.oop.PrintMainFile
+
+    (with  make)
+    - make header
+    - make cpp
+    - make main
+
+- Supports printing the output.h, output.cpp, and main.cpp together (Full Translation)
+
+    (with sbt)
     - run-main edu.nyu.oop.ImplementationUtil [number]
+    - run-main edu.nyu.oop.ImplementationUtil [start] [end]
+    - run-main edu.nyu.oop.ImplementationUtil
 
-- Support inputs
-    - Phase 1 0-20
-    - Phase 2 0-20
-    - Phase 3 0-20
-    - Phase 4 0-15 and 17
-    - Phase 5 0-15 and 17
+    (with make)
+    - make translate start=[number] end=[number]
+    - make translate start=[start] end=[end]
+    - make translate
 
-- Support testing inputs
-    - run ImplementationUtil over the entire range of inputs. This gets the updated .h .cpp files.
+- Supports Comparison of Java and C++ outputs
+
+    With Makefile
+    (to just compare)
+    - make compare start=[number] end=[number]
+    - make compare start=[start] end=[end]
+    - make compare
+
+    (to translate and compare)
+    - make 5tran start=[number] end=[number]
+    - make 5tran start=[start] end=[end]
+    - make 5tran
+
+    Without Makefile
+    - run full translation over the entire range of inputs. This gets the updated .h .cpp files.
     - bash bashScript.sh; (from shell)
         - compiles all the C++ generated code
         - Redirects outputs to files   
     - run-main edu.nyu.oop.StdOutputChecking (from SBT)
         - outputs result of the translation on the inputs
-        
+
+- Supports inputs
+
+    - Phase 1 0-20
+    - Phase 2 0-20
+    - Phase 3 0-20
+    - Phase 4 0-15 and 17
+    - Phase 5 0-15 and 17  
         
 Translator
 ----------
