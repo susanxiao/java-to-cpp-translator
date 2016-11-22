@@ -11,29 +11,28 @@ public class StdOutputChecking {
     public static void main(String[] args) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i <= 20; i++) {
-            String path1 = String.format("./testOutputs/translationOutputs/test%03d/std_output.txt", i);
-            String path2 = String.format("./src/test/java/inputs/test%03d/std_output_input.txt", i);
+            String cppOutput = String.format("./testOutputs/translationOutputs/test%03d/output/cpp_output.txt", i);
+            String javaOutput = String.format("./testOutputs/translationOutputs/test%03d/output/java_output.txt", i);
             String inputName = String.format("test%03d", i);
-            File file1 = new File(path1);
-            File file2 = new File(path2);
-            FileInputStream fin_std_out = null;
-            FileInputStream fin_std_out_input = null;
+            File cppFile = new File(cppOutput);
+            File javaFile = new File(javaOutput);
             try {
-                fin_std_out = new FileInputStream(file1);
-                fin_std_out_input = new FileInputStream(file2);
-                BufferedReader myInput1 = new BufferedReader(new InputStreamReader(fin_std_out));
-                BufferedReader myInput2 = new BufferedReader(new InputStreamReader(fin_std_out_input));
-                StringBuilder std_output = new StringBuilder();
-                StringBuilder std_output_input = new StringBuilder();
-                String thisLine;
-                String thisLine2;
-                while ((thisLine = myInput1.readLine()) != null) {
-                    std_output.append(thisLine);
+                BufferedReader cppInput = new BufferedReader(new FileReader(cppFile));
+                BufferedReader javaInput = new BufferedReader(new FileReader(javaFile));
+                StringBuilder cpp = new StringBuilder();
+                StringBuilder java = new StringBuilder();
+                String inputLine;
+                while ((inputLine = cppInput.readLine()) != null) {
+                    cpp.append(inputLine);
                 }
-                while ((thisLine2 = myInput2.readLine()) != null) {
-                    std_output_input.append(thisLine2);
+
+                while ((inputLine = javaInput.readLine()) != null) {
+                    java.append(inputLine);
                 }
-                String equal = std_output.toString().equals(std_output_input.toString()) ? "Passes" : "Fails";
+                cppInput.close();
+                javaInput.close();
+
+                String equal;
                 switch (i) {
                     case 9:
                         equal = "Location? (Passes)(needs to be checked manually)";
@@ -53,6 +52,9 @@ public class StdOutputChecking {
                     case 17:
                         equal = "Location? (Passes)(needs to be checked manually)";
                         break;
+                    default:
+                        equal = cpp.toString().equals(java.toString()) ? "Passes" : "Fails";
+                        break;
                 }
                 if (i > 17) {
                     equal = "Fails (Need to check the results manually)";
@@ -67,6 +69,7 @@ public class StdOutputChecking {
             File main = new File(path_output);
             FileWriter printMain = new FileWriter(main);
             printMain.write(s.toString());
+            out.println(s.toString());
             printMain.flush();
             printMain.close();
             out.println("Printed " + main.getPath());
