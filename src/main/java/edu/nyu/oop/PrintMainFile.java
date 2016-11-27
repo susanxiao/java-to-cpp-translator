@@ -176,34 +176,38 @@ public class PrintMainFile extends Visitor {
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
                 if (n.getNode(0).getNode(0).getNode(0).getString(0).equals("cout")) {
                     expressionStatement += n.getNode(0).getNode(0).getNode(0).getString(0) + " << ";
-                    String primaryIdentifer = n.getNode(0).getNode(0).getNode(0).getString(0);
+                    String primaryId = null;
                     Node arguments = n.getNode(0).getNode(3);
                     for (Object o : arguments) {
                         if (o instanceof Node) {
                             Node currentNode = (Node) o;
                             if (currentNode.getName().equals("CallExpression")) {
-                                String primaryId = currentNode.getNode(0).getString(0);
-                                if (summaryTraversal.classes.containsKey(primaryId)) {
-                                    expressionStatement += "__" + primaryId + "::";
-                                    for (int i = 1; i < currentNode.size(); i++) {
-                                        Object o1 = currentNode.get(i);
-                                        if (o1 instanceof String)
-                                            expressionStatement += (String) o1;
-                                        else if (o1 instanceof Node) {
-                                            Node callChild = (Node) o1;
-                                            expressionStatement += "(";
-                                            if (callChild.getName().equals("Arguments")) {
-                                                for (int j = 0; j < callChild.size(); j++) {
-                                                    if (!summaryTraversal.classes.containsKey(callChild.getString(j))) {
-                                                        expressionStatement += callChild.getString(j);
-                                                        if (j < callChild.size() - 1)
-                                                            expressionStatement += ", ";
+                                if (currentNode.getNode(0).getName().equals("PrimaryIdentifier")) {
+                                    primaryId = currentNode.getNode(0).getString(0);
+                                    if (summaryTraversal.classes.containsKey(primaryId)) {
+                                        expressionStatement += "__" + primaryId + "::";
+                                        for (int i = 1; i < currentNode.size(); i++) {
+                                            Object o1 = currentNode.get(i);
+                                            if (o1 instanceof String)
+                                                expressionStatement += (String) o1;
+                                            else if (o1 instanceof Node) {
+                                                Node callChild = (Node) o1;
+                                                expressionStatement += "(";
+                                                if (callChild.getName().equals("Arguments")) {
+                                                    for (int j = 0; j < callChild.size(); j++) {
+                                                        if (!summaryTraversal.classes.containsKey(callChild.getString(j))) {
+                                                            expressionStatement += callChild.getString(j);
+                                                            if (j < callChild.size() - 1)
+                                                                expressionStatement += ", ";
+                                                        }
                                                     }
                                                 }
+                                                expressionStatement += ")";
                                             }
-                                            expressionStatement += ")";
                                         }
                                     }
+                                    else
+                                        expressionStatement += primaryId;
                                 } else if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
@@ -243,7 +247,7 @@ public class PrintMainFile extends Visitor {
                                             method = "method" + method.substring(0, 1).toUpperCase() + method.substring(1);
                                     }
                                 }
-                                if (!summaryTraversal.classes.containsKey(primaryId)) {
+                                if (primaryId != null && !summaryTraversal.classes.containsKey(primaryId)) {
                                     expressionStatement += "->__vptr->" + method + "(";
                                     Node args = currentNode.getNode(3);
                                     int argSize = args.size();

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 
 import xtc.tree.Visitor;
@@ -129,12 +130,25 @@ public class PrintHeaderFile extends Visitor {
             classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
-            StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name + "(" + summary.currentClass.name);
+            StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name);
+            if (!currentMethod.isStatic) {
+                method.append("(" + summary.currentClass.name);
 
-            for (ParameterImplementation currentParameter : currentMethod.parameters) {
-                method.append(", " + currentParameter.type);
+                for (ParameterImplementation currentParameter : currentMethod.parameters) {
+                    method.append(", " + currentParameter.type);
+                }
+                method.append(");\n");
             }
-            method.append(");\n");
+            else {
+                method.append("(");
+                for (int i = 0; i < currentMethod.parameters.size(); i++) {
+                    ParameterImplementation currentParameter = currentMethod.parameters.get(i);
+                    method.append(currentParameter.type);
+                    if (i < currentMethod.parameters.size() - 1)
+                        method.append(", ");
+                }
+                method.append(");\n");
+            }
 
             summary.addLine(method.toString());
         }
@@ -479,7 +493,7 @@ public class PrintHeaderFile extends Visitor {
         //      running all files will place it in testOutputs/translationOutputs
 
         int start = 0;
-        int end = 0;
+        int end = 20;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);

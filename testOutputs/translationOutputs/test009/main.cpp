@@ -16,7 +16,7 @@ int main(void)
 
 	A a = new __A();
 
-	cout << a->self->__vptr->toString(a) << endl;
+	cout << a->self << endl;
 
 	return 0;
 }

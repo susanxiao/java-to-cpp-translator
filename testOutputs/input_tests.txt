@@ -16,6 +16,6 @@ TEST014-> NullPointerException
 TEST015-> Location (needs to be checked manually)
 TEST016-> ClassCastException
 TEST017-> Location (needs to be checked manually)
-TEST018-> Fails
-TEST019-> Fails
-TEST020-> Fails
+TEST018-> Passes
+TEST019-> Passes
+TEST020-> Passes
