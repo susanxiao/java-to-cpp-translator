@@ -73,9 +73,9 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n) {
-        System.out.println(n.getString(3));
+        //System.out.println(n.getString(3));
         if(n.getString(3).equals("methodMain")){
-            mainImplementation.append("int main(void)\n{\n\n");
+            mainImplementation.append("int main (int argc, char ** args) \n{\n\n");
         }
         // block node is always last child of main method node
         int blockIndex = n.size() - 1;
@@ -87,8 +87,8 @@ public class PrintMainFile extends Visitor {
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
                     visitExpressionStatement(currentNode);
-                } else if (currentNode.getName().equals("Block")) {
-                    visitNestedBlock(currentNode);
+                } else if (currentNode.getName().equals("ForStatement")) {
+                    visitForStatement(currentNode);
                 }
             }
         }
@@ -326,6 +326,13 @@ public class PrintMainFile extends Visitor {
                                         expressionStatement += "->" + dataString + "->data";
                                     }
                                 }
+                            } else if (currentNode.getName().equals("SubscriptExpression")) {
+                                //expressionStatement += "reached here : subscript expression";
+                                GNode primaryIdentifier0 = (GNode) currentNode.get(0);
+                                GNode primaryIdentifier1 = (GNode) currentNode.get(1);
+                                expressionStatement += primaryIdentifier0.get(0).toString() + "[";
+                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";
+
                             }
                         }
                     }
@@ -357,6 +364,7 @@ public class PrintMainFile extends Visitor {
                     expressionStatement += "(";
                     Node argumentsNode = callExpressionNode.getNode(3);
                     expressionStatement += argumentsNode.getString(0) + ", ";
+
                     if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
                         Node newClassExpressionNode = argumentsNode.getNode(1);
                         String newClassIdentifier = "new ";
@@ -415,6 +423,59 @@ public class PrintMainFile extends Visitor {
         }
         mainImplementation.append(expressionStatement + "\n\n");
     }
+
+    public void visitForStatement(GNode n){
+        String forStatement = "\t//for statement\n\tfor";
+        for(Object o : n){
+            if (o instanceof Node) {
+                GNode currentNode = (GNode) o;
+                if (currentNode.getName().equals("BasicForControl")) {
+                    forStatement += "(";
+                    GNode basicForControlNode = (GNode) o;
+                    for(Object b : basicForControlNode){
+                        if (b instanceof Node) {
+                            GNode b_Node = (GNode) b;
+                            if (b_Node.getName().equals("Type")) {
+                                GNode primitiveType = (GNode) b_Node.get(0);
+                                forStatement += primitiveType.get(0).toString() + " "; //int
+                            }
+                            else if (b_Node.getName().equals("Declarators")) {
+                                GNode declaratorNode = (GNode) b_Node.get(0);
+                                forStatement += declaratorNode.get(0).toString() + "="; //i =
+                                GNode IntegerLiteralNode = (GNode) declaratorNode.get(2);
+                                forStatement += IntegerLiteralNode.get(0).toString() + "; "; //0;
+                            }
+                            else if (b_Node.getName().equals("RelationalExpression")) {
+                                GNode primaryIdentifierNode = (GNode) b_Node.get(0);
+                                forStatement += primaryIdentifierNode.get(0).toString(); //i
+                                forStatement += b_Node.get(1).toString();//<
+                                GNode SelectionExpressNode = (GNode) b_Node.get(2);
+                                GNode PrimaryId_inSelectionExNode = (GNode) SelectionExpressNode.get(0);
+                                forStatement += PrimaryId_inSelectionExNode.get(0).toString() + "."; // as.
+                                forStatement += SelectionExpressNode.get(1).toString() + " ; ";
+                            }
+                            else if (b_Node.getName().equals("ExpressionList")) {
+                                GNode postfixExpressionNode = (GNode) b_Node.get(0);
+                                GNode primaryID_inPostfixExpression = (GNode) postfixExpressionNode.get(0);
+                                forStatement += primaryID_inPostfixExpression.get(0).toString();
+                                forStatement += postfixExpressionNode.get(1).toString();
+
+                            }
+
+                        }
+                    }
+                    forStatement += ")";
+                    mainImplementation.append(forStatement + "\n\n");
+                }
+                else if (currentNode.getName().equals("Block")) {
+                    visitNestedBlock(currentNode);
+                }
+            }
+        }
+
+        //mainImplementation.append(forStatement + "\n\n");
+    }
+
 
     // visitMethod
 
@@ -530,6 +591,10 @@ public class PrintMainFile extends Visitor {
                 // get the summary traversal (class implementations)
                 AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
                 AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+
+                //before mutation - origianl AST
+                System.out.println("before mutation - origianl AST");
+                ImplementationUtil.prettyPrintAst(node);
 
                 // get the mutated tree
                 AstMutator visitor1 = new AstMutator(ImplementationUtil.newRuntime());
