@@ -258,7 +258,8 @@ public class PrintCppFile extends Visitor {
                                 if (dec.variableName.equals(blockPrimaryIdentifier))
                                     gateParent = false;
                             }
-                            String statement = gateParent ? "parent." + blockPrimaryIdentifier + "->data" : blockPrimaryIdentifier + "->data";
+                            String statement = gateParent ? "parent." + blockPrimaryIdentifier : blockPrimaryIdentifier;
+                            //String statement = gateParent ? "parent." + blockPrimaryIdentifier + "->data" : blockPrimaryIdentifier + "->data";
 
                             line.append(statement);
                             for (int i = 1; i < arguments.size(); i++) {
@@ -296,6 +297,16 @@ public class PrintCppFile extends Visitor {
 
         StringBuilder methodSignature = new StringBuilder();
 
+        boolean isStatic = false;
+        Node modifiers = n.getNode(0);
+        for (Object o : modifiers) {
+            if (o instanceof Node) {
+                Node modifier = (Node) o;
+                if (modifier.getString(0).equals("static"))
+                    isStatic = true;
+            }
+        }
+
         Node methodType = n.getNode(2);
         String returnType = (methodType.getName().equals("VoidType") ? "void" : methodType.getNode(0).getString(0));
         if (returnType.equals("int"))
@@ -315,10 +326,15 @@ public class PrintCppFile extends Visitor {
                     Node paramType = formalParameter.getNode(1);
                     String className = paramType.getNode(0).getString(0);
                     String paramName = formalParameter.getString(3);
+                    if (isStatic) {
+                        if (!paramName.equals("__this"))
+                            methodSignature.append(className + " " + paramName);
+                    }
+                    else
+                        methodSignature.append(className + " " + paramName);
 
-                    if (i > 0)
+                    if (i < formalParameters.size() - 1)
                         methodSignature.append(", ");
-                    methodSignature.append(className + " " + paramName);
                 }
             }
         }
@@ -363,7 +379,6 @@ public class PrintCppFile extends Visitor {
                     if (primaryIdentifier.equals("cout")) {
                         StringBuilder line = new StringBuilder("cout << ");
                         Node arguments = expressionStatementChild.getNode(3);
-                        String param = arguments.getNode(0).getNode(0).getString(0);
                         if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
                             Node argumentsPrimaryIdentifier = arguments.getNode(0);
                             line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");
@@ -374,9 +389,8 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
-                            String classCastException = summary.checkClassCast(param, summary.currentClass.name,
-                                    summary.classLocation, line.toString());
-                            summary.addLine(line.toString() + ";\n");
+                            //String classCastException = summary.checkClassCast(param, summary.currentClass.name,
+                                    //summary.classLocation, line.toString());
                         } else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
                             Node selectionExpression = arguments.getNode(0);
                             Node argumentsPrimaryIdentifier = selectionExpression.getNode(0);
@@ -385,13 +399,13 @@ public class PrintCppFile extends Visitor {
                                 String field = selectionExpression.getString(i);
                                 line.append("->" + field);
                             }
-                            line.append("->data");
+                            //line.append("->data");
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
-                            String lineExceptions = "";
+                            /*String lineExceptions = "";
                             lineExceptions += line;
-                            summary.addLine(lineExceptions.toString() + ";\n");
+                            summary.addLine(lineExceptions.toString() + ";\n");*/
 
                         } else if (arguments.getNode(0).getName().equals("CallExpression")) {
                             Node callExpression = arguments.getNode(0);
@@ -415,13 +429,13 @@ public class PrintCppFile extends Visitor {
                                     }
                                 }
                             }
-                            line.append("->data");
+                            //line.append("->data");
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
 
 
-                            String nullException = cppFileSummary.checkNull(param, summary.currentClass.name,
+                            /*String nullException = cppFileSummary.checkNull(param, summary.currentClass.name,
                                     methodName, summary.classLocation, line.toString());
                             String classException = summary.checkClassCast(param, summary.currentClass.name,
                                     summary.classLocation, line.toString());
@@ -435,7 +449,10 @@ public class PrintCppFile extends Visitor {
                             tryCatchComplete += summary.catchClassCast(param, summary.currentClass.name,
                                     summary.classLocation);
                             summary.addLine(tryCatchComplete + "\n");
+                            */
                         }
+
+                        summary.addLine(line.toString() + ";\n");
                     }
                 }
             } else if (currentNode.getName().equals("ReturnStatement")) {
@@ -459,6 +476,9 @@ public class PrintCppFile extends Visitor {
             } else if (currentNode.getName().equals("StringLiteral")) {
                 String value = currentNode.getString(0);
                 summary.addLine("return new __String(" + value + ");\n");
+            } else if (currentNode.getName().equals("IntegerLiteral")) {
+                String value = currentNode.getString(0);
+                summary.addLine("return "+value+";\n");
             } else if (currentNode.getName().equals("CallExpression")) {
                 String primaryIdentifier = currentNode.getNode(0).getString(0);
                 boolean parentGate = true; //if true, we need to call parent Object to get its field
@@ -577,6 +597,7 @@ public class PrintCppFile extends Visitor {
             code.append(line);
         }
 
+        /*
         public static String tryStart() {
             StringBuilder s = new StringBuilder();
             s.append("\n\t\t\ttry {");
@@ -630,6 +651,7 @@ public class PrintCppFile extends Visitor {
             s.append("\n\t\t\t}\n");
             return s.toString();
         }
+        */
     }
 
     public cppFileSummary getSummary(GNode n) {

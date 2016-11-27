@@ -20,9 +20,9 @@ int main(void)
 
 	A a2 = (A) b;
 
-	cout << a1->__vptr->toString(a1)->data << endl;
+	cout << a1->__vptr->toString(a1) << endl;
 
-	cout << a2->__vptr->toString(a2)->data << endl;
+	cout << a2->__vptr->toString(a2) << endl;
 
 	return 0;
 }

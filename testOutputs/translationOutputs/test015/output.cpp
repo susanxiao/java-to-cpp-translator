@@ -6,32 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test015 {
 		void __A::methodPrintOther(A __this, A other) {
-			
-			try {
-				std::stringstream ss;
-				ss << other;
-				std::string tmp = ss.str();
-				int count = 0;
-				for(int i = 0; i < tmp.length(); i++){
-					if(tmp[i] != '0'){ count += 1; }
-				}
-				if(count == 2 || count == 1){ throw java::lang::NullPointerException(); }
-				Class k = other->__vptr->getClass(other);
-				std::string paramClass = k->__vptr->getName(k)->data;
-				Class thisK = __this->__vptr->getClass(__this);
-				std::string thisClass = thisK->__vptr->getName(thisK)->data;
-				//if(paramClass != thisClass){ throw java::lang::ClassCastException();}
-				cout << other->__vptr->toString(other)->data << endl;
-			}
-			catch(const NullPointerException &ex){
-				cout << "java.lang.NullPointerException" << endl;
-				cout << "	at inputs.test015.A.methodPrintOther" << endl;
-			}
-			catch(const ClassCastException &ex){
-				cout << "java.lang.ClassCastException" << endl;
-				cout << "	at inputs.test015.A" << endl;
-			}
-
+			cout << other->__vptr->toString(other) << endl;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};
@@ -45,32 +20,7 @@ namespace inputs {
 		__A_VT __A::__vtable;
 
 		void __B::methodPrintOther(B __this, A other) {
-			
-			try {
-				std::stringstream ss;
-				ss << other;
-				std::string tmp = ss.str();
-				int count = 0;
-				for(int i = 0; i < tmp.length(); i++){
-					if(tmp[i] != '0'){ count += 1; }
-				}
-				if(count == 2 || count == 1){ throw java::lang::NullPointerException(); }
-				Class k = other->__vptr->getClass(other);
-				std::string paramClass = k->__vptr->getName(k)->data;
-				Class thisK = __this->__vptr->getClass(__this);
-				std::string thisClass = thisK->__vptr->getName(thisK)->data;
-				//if(paramClass != thisClass){ throw java::lang::ClassCastException();}
-				cout << other->__vptr->toString(other)->data << endl;
-			}
-			catch(const NullPointerException &ex){
-				cout << "java.lang.NullPointerException" << endl;
-				cout << "	at inputs.test015.B.methodPrintOther" << endl;
-			}
-			catch(const ClassCastException &ex){
-				cout << "java.lang.ClassCastException" << endl;
-				cout << "	at inputs.test015.B" << endl;
-			}
-
+			cout << other->__vptr->toString(other) << endl;
 		};
 
 		String __B::toString(B __this) {

@@ -1,4 +1,117 @@
-Object(
+Header(
+  A(
+    HeaderDeclaration(
+      "A",
+      "inputs_test020_",
+      DataLayout(
+        FieldDeclaration(
+          Modifiers(),
+          "__A_VT*",
+          "__vptr",
+          Declarators()
+        ),
+        FieldDeclaration(
+          Modifiers(
+            "static"
+          ),
+          "__A_VT",
+          "__vtable",
+          Declarators()
+        ),
+        DataLayoutMethodDeclaration(
+          Modifiers(
+            "static"
+          ),
+          Modifiers(),
+          "int",
+          "methodX",
+          "A",
+          Parameters()
+        ),
+        DataLayoutMethodDeclaration(
+          Modifiers(
+            "static"
+          ),
+          "int32_t",
+          "hashCode",
+          "Object",
+          Parameters(
+            "__Object"
+          )
+        ),
+        DataLayoutMethodDeclaration(
+          Modifiers(
+            "static"
+          ),
+          "Class",
+          "getClass",
+          "Object",
+          Parameters(
+            "__Object"
+          )
+        ),
+        DataLayoutMethodDeclaration(
+          Modifiers(
+            "static"
+          ),
+          "bool",
+          "equals",
+          "Object",
+          Parameters(
+            "Object"
+          )
+        ),
+        DataLayoutMethodDeclaration(
+          Modifiers(
+            "static"
+          ),
+          "Class",
+          "__class",
+          "Object",
+          Parameters()
+        ),
+        VTable(
+          VTableMethodDeclaration(
+            Modifiers(),
+            "Class",
+            "__isa",
+            "Object",
+            Parameters()
+          ),
+          VTableMethodDeclaration(
+            Modifiers(),
+            "int",
+            "methodX",
+            "A",
+            Parameters()
+          ),
+          VTableMethodDeclaration(
+            Modifiers(),
+            "int32_t",
+            "hashCode",
+            "Object",
+            Parameters()
+          ),
+          VTableMethodDeclaration(
+            Modifiers(),
+            "Class",
+            "getClass",
+            "Object",
+            Parameters()
+          ),
+          VTableMethodDeclaration(
+            Modifiers(),
+            "bool",
+            "equals",
+            "Object",
+            Parameters(
+              "__Object"
+            )
+          )
+        )
+      )
+    )
+  ),
   Test020(
     HeaderDeclaration(
       "Test020",
@@ -19,19 +132,15 @@ Object(
           Declarators()
         ),
         DataLayoutMethodDeclaration(
-          Modifiers(),
-          "int",
-          "x",
-          "Test020",
-          Parameters()
-        ),
-        DataLayoutMethodDeclaration(
+          Modifiers(
+            "static"
+          ),
           Modifiers(),
           "void",
-          "main",
+          "methodMain",
           "Test020",
           Parameters(
-            "String[ args"
+            "String["
           )
         ),
         DataLayoutMethodDeclaration(
@@ -64,7 +173,6 @@ Object(
           "equals",
           "Object",
           Parameters(
-            "Object",
             "Object"
           )
         ),
@@ -87,18 +195,11 @@ Object(
           ),
           VTableMethodDeclaration(
             Modifiers(),
-            "int",
-            "x",
-            "Test020",
-            Parameters()
-          ),
-          VTableMethodDeclaration(
-            Modifiers(),
             "void",
-            "main",
+            "methodMain",
             "Test020",
             Parameters(
-              String[ args
+              "String["
             )
           ),
           VTableMethodDeclaration(
@@ -106,18 +207,14 @@ Object(
             "int32_t",
             "hashCode",
             "Object",
-            Parameters(
-              "__Object"
-            )
+            Parameters()
           ),
           VTableMethodDeclaration(
             Modifiers(),
             "Class",
             "getClass",
             "Object",
-            Parameters(
-              "__Object"
-            )
+            Parameters()
           ),
           VTableMethodDeclaration(
             Modifiers(),
@@ -125,7 +222,6 @@ Object(
             "equals",
             "Object",
             Parameters(
-              "__Object",
               "__Object"
             )
           )

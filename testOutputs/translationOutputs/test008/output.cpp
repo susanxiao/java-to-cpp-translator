@@ -7,7 +7,7 @@ namespace inputs {
 	namespace test008 {
 		__A::__A() : __vptr(&__vtable) {
 			a = new __String("A");
-			cout << a->data << endl;
+			cout << a << endl;
 		};
 
 		Class __A::__class() {
@@ -21,7 +21,7 @@ namespace inputs {
 		__B::__B() : __vptr(&__vtable) {
 			b = new __String("B");
 			parent.a = new __String("B");
-			cout << parent.a->data << endl;
+			cout << parent.a << endl;
 		};
 
 		Class __B::__class() {

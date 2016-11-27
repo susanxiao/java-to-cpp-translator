@@ -35,30 +35,24 @@ public class StdOutputChecking {
                 String equal;
                 switch (i) {
                     case 9:
-                        equal = "Location? (Passes)(needs to be checked manually)";
-                        break;
                     case 13:
-                        equal = "Location? (Passes)(needs to be checked manually)";
+                    case 15:
+                    case 17:
+                        equal = "Location (needs to be checked manually)";
                         break;
                     case 14:
-                        equal = "NullPointerException? (Passes)(returns the location of NullPointerException)(needs to be checked manually)";
-                        break;
-                    case 15:
-                        equal = "Location? (Passes)(needs to be checked manually)";
+                        equal = "NullPointerException";
                         break;
                     case 16:
-                        equal = "ClassCastException? (Fails)(returns the location of ClassCastException)(needs to be checked manually)";
-                        break;
-                    case 17:
-                        equal = "Location? (Passes)(needs to be checked manually)";
+                        equal = "ClassCastException";
                         break;
                     default:
                         equal = cpp.toString().equals(java.toString()) ? "Passes" : "Fails";
                         break;
-                }
+                }/*
                 if (i > 17) {
                     equal = "Fails (Need to check the results manually)";
-                }
+                }*/
                 s.append(inputName.toUpperCase() + "-> " + equal + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -69,7 +63,6 @@ public class StdOutputChecking {
             File main = new File(path_output);
             FileWriter printMain = new FileWriter(main);
             printMain.write(s.toString());
-            out.println(s.toString());
             printMain.flush();
             printMain.close();
             out.println("Printed " + main.getPath());
