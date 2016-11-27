@@ -15,7 +15,7 @@ int main(void)
 {
 
 	A a = new __A(5);
-	cout << a->__vptr->methodSelf(a)->__vptr->methodToString(a->__vptr->self(a))->data << endl;
+	cout << a->__vptr->methodSelf(a)->__vptr->toString(a->__vptr->methodSelf(a))->data << endl;
 
 	return 0;
 }

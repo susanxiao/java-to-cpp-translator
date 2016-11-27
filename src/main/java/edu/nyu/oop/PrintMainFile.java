@@ -73,6 +73,10 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n) {
+        System.out.println(n.getString(3));
+        if(n.getString(3).equals("methodMain")){
+            mainImplementation.append("int main(void)\n{\n\n");
+        }
         // block node is always last child of main method node
         int blockIndex = n.size() - 1;
         GNode block = (GNode) n.getNode(blockIndex);
@@ -167,6 +171,7 @@ public class PrintMainFile extends Visitor {
                 }
             }
         }
+        //fieldDeclaration += "end field dec";
         mainImplementation.append(fieldDeclaration + "\n");
     }
 
@@ -492,7 +497,6 @@ public class PrintMainFile extends Visitor {
 
         s1.append(";\n\n");
 
-
         //  visit the main method
         for (Object o : n) {
             Node currentClass = (Node) o;
@@ -507,8 +511,6 @@ public class PrintMainFile extends Visitor {
         s1.append(mainImplementation);
 
         s1.append("\n\n//------------------\n\n");
-
-        //out.println(s1.toString());
 
         summary.filePrinted = s1.toString();
 
