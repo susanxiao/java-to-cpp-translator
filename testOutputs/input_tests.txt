@@ -7,15 +7,15 @@ TEST005-> Passes
 TEST006-> Passes
 TEST007-> Passes
 TEST008-> Passes
-TEST009-> Location? (Passes)(needs to be checked manually)
-TEST010-> Fails
+TEST009-> Location (needs to be checked manually)
+TEST010-> Passes
 TEST011-> Passes
-TEST012-> Fails
-TEST013-> Location? (Passes)(needs to be checked manually)
-TEST014-> NullPointerException? (Passes)(returns the location of NullPointerException)(needs to be checked manually)
-TEST015-> Location? (Passes)(needs to be checked manually)
-TEST016-> ClassCastException? (Fails)(returns the location of ClassCastException)(needs to be checked manually)
-TEST017-> Location? (Passes)(needs to be checked manually)
-TEST018-> Fails (Need to check the results manually)
-TEST019-> Fails (Need to check the results manually)
-TEST020-> Fails (Need to check the results manually)
+TEST012-> Passes
+TEST013-> Location (needs to be checked manually)
+TEST014-> NullPointerException
+TEST015-> Location (needs to be checked manually)
+TEST016-> ClassCastException
+TEST017-> Location (needs to be checked manually)
+TEST018-> Fails
+TEST019-> Fails
+TEST020-> Fails

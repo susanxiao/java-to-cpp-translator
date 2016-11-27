@@ -11,10 +11,12 @@ using namespace java::lang;
 using namespace std;
 using namespace inputs::test018;
 
+
+	int x;
+
 int main(void)
 {
 
-	int x;
 
 	{
 		int x;

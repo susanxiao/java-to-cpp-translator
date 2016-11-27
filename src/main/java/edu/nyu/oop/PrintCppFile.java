@@ -297,6 +297,16 @@ public class PrintCppFile extends Visitor {
 
         StringBuilder methodSignature = new StringBuilder();
 
+        boolean isStatic = false;
+        Node modifiers = n.getNode(0);
+        for (Object o : modifiers) {
+            if (o instanceof Node) {
+                Node modifier = (Node) o;
+                if (modifier.getString(0).equals("static"))
+                    isStatic = true;
+            }
+        }
+
         Node methodType = n.getNode(2);
         String returnType = (methodType.getName().equals("VoidType") ? "void" : methodType.getNode(0).getString(0));
         if (returnType.equals("int"))
@@ -316,10 +326,15 @@ public class PrintCppFile extends Visitor {
                     Node paramType = formalParameter.getNode(1);
                     String className = paramType.getNode(0).getString(0);
                     String paramName = formalParameter.getString(3);
+                    if (isStatic) {
+                        if (!paramName.equals("__this"))
+                            methodSignature.append(className + " " + paramName);
+                    }
+                    else
+                        methodSignature.append(className + " " + paramName);
 
-                    if (i > 0)
+                    if (i < formalParameters.size() - 1)
                         methodSignature.append(", ");
-                    methodSignature.append(className + " " + paramName);
                 }
             }
         }
@@ -461,6 +476,9 @@ public class PrintCppFile extends Visitor {
             } else if (currentNode.getName().equals("StringLiteral")) {
                 String value = currentNode.getString(0);
                 summary.addLine("return new __String(" + value + ");\n");
+            } else if (currentNode.getName().equals("IntegerLiteral")) {
+                String value = currentNode.getString(0);
+                summary.addLine("return "+value+";\n");
             } else if (currentNode.getName().equals("CallExpression")) {
                 String primaryIdentifier = currentNode.getNode(0).getString(0);
                 boolean parentGate = true; //if true, we need to call parent Object to get its field

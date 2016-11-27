@@ -160,6 +160,16 @@ public class AstTraversal extends Visitor {
         MethodImplementation m = new MethodImplementation(name);
         summary.addMethod(m);
 
+        /** Static **/
+        Node modifiers = n.getNode(0);
+        for (Object o : modifiers) {
+            if (o instanceof Node) {
+                Node modifier = (Node) o;
+                if (modifier.getString(0).equals("static"))
+                    m.isStatic = true;
+            }
+        }
+
         /** Return Type **/
         if (type.getName().equals("Type")) {
             Node qualifiedIdentifier = type.getNode(0);

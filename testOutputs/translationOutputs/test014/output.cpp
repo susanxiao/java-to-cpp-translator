@@ -6,6 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test014 {
 		void __A::methodPrintOther(A __this, A other) {
+			cout << other->__vptr->toString(other) << endl;
 		};
 
 		__A::__A() : __vptr(&__vtable) {};

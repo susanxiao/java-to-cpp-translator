@@ -8,12 +8,14 @@ import java.util.ArrayList;
 
 public class MethodImplementation {
     //TODO: modifiers
+    boolean isStatic;
     String name;
     String returnType;
     ArrayList<ParameterImplementation> parameters;
     ArrayList<MethodStatement> implementation;
 
     public MethodImplementation(String name) {
+        isStatic = false;
         String methodName = name;
         switch(methodName){
             case "toString":

@@ -76,6 +76,12 @@ public class PrintMainFile extends Visitor {
         // block node is always last child of main method node
         int blockIndex = n.size() - 1;
         GNode block = (GNode) n.getNode(blockIndex);
+        String methodName = n.getString(3);
+        System.out.println(methodName);
+
+        if (methodName.equals("methodMain"))
+            mainImplementation.append("int main(void)\n{\n\n");
+
         for (Object o : block) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -87,6 +93,11 @@ public class PrintMainFile extends Visitor {
                     visitNestedBlock(currentNode);
                 }
             }
+        }
+        if (methodName.equals("methodMain")) {
+            // append the return statement
+            mainImplementation.append("\treturn 0;\n");
+            mainImplementation.append("}");
         }
     }
 
@@ -171,7 +182,29 @@ public class PrintMainFile extends Visitor {
                         if (o instanceof Node) {
                             Node currentNode = (Node) o;
                             if (currentNode.getName().equals("CallExpression")) {
-                                if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
+                                String primaryId = currentNode.getNode(0).getString(0);
+                                if (summaryTraversal.classes.containsKey(primaryId)) {
+                                    expressionStatement += "__" + primaryId + "::";
+                                    for (int i = 1; i < currentNode.size(); i++) {
+                                        Object o1 = currentNode.get(i);
+                                        if (o1 instanceof String)
+                                            expressionStatement += (String) o1;
+                                        else if (o1 instanceof Node) {
+                                            Node callChild = (Node) o1;
+                                            expressionStatement += "(";
+                                            if (callChild.getName().equals("Arguments")) {
+                                                for (int j = 0; j < callChild.size(); j++) {
+                                                    if (!summaryTraversal.classes.containsKey(callChild.getString(j))) {
+                                                        expressionStatement += callChild.getString(j);
+                                                        if (j < callChild.size() - 1)
+                                                            expressionStatement += ", ";
+                                                    }
+                                                }
+                                            }
+                                            expressionStatement += ")";
+                                        }
+                                    }
+                                } else if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
@@ -210,66 +243,68 @@ public class PrintMainFile extends Visitor {
                                             method = "method" + method.substring(0, 1).toUpperCase() + method.substring(1);
                                     }
                                 }
-                                expressionStatement += "->__vptr->" + method + "(";
-                                Node args = currentNode.getNode(3);
-                                int argSize = args.size();
-                                if (args.size() > 0) {
-                                    for (Object o1 : args) {
-                                        argSize--;
-                                        if (currentNode.getNode(0).getName().equals("PrimaryIdentifier")) {
-                                            if (argSize > 0) {
-                                                expressionStatement += o1.toString() + ",";
-                                            } else {
+                                if (!summaryTraversal.classes.containsKey(primaryId)) {
+                                    expressionStatement += "->__vptr->" + method + "(";
+                                    Node args = currentNode.getNode(3);
+                                    int argSize = args.size();
+                                    if (args.size() > 0) {
+                                        for (Object o1 : args) {
+                                            argSize--;
+                                            if (currentNode.getNode(0).getName().equals("PrimaryIdentifier")) {
+                                                if (argSize > 0) {
+                                                    expressionStatement += o1.toString() + ",";
+                                                } else {
+                                                    expressionStatement += o1.toString();
+                                                }
+                                            } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
+                                                Node callExpression = currentNode.getNode(0);
+                                                String primaryIdentifier = callExpression.getNode(0).getString(0);
+
+                                                expressionStatement += primaryIdentifier + "->__vptr";
+                                                for (int i = 1; i < callExpression.size(); i++) {
+                                                    Object o2 = callExpression.get(i);
+                                                    if (o2 instanceof String) {
+                                                        String methodNameCallExpression = (String) o2;
+                                                        if (!(methodNameCallExpression.startsWith("method"))) {
+                                                            switch (methodNameCallExpression) {
+                                                                case "toString":
+                                                                    break;
+                                                                case "hashCode":
+                                                                    break;
+                                                                case "equals":
+                                                                    break;
+                                                                case "getClass":
+                                                                    break;
+                                                                default:
+                                                                    methodNameCallExpression = "method" + methodNameCallExpression.substring(0, 1).toUpperCase()
+                                                                            + methodNameCallExpression.substring(1);
+                                                            }
+                                                        }
+
+                                                        expressionStatement += "->" + methodNameCallExpression;
+                                                    } else if (o2 instanceof Node) {
+                                                        Node arguments1 = (Node) o2;
+                                                        expressionStatement += "(";
+                                                        for (int j = 0; j < arguments1.size(); j++) {
+                                                            if (j > 0)
+                                                                expressionStatement += ", ";
+                                                            expressionStatement += arguments1.getString(j);
+                                                        }
+                                                        expressionStatement += ")";
+                                                    }
+                                                }
+                                            } else if (o1 instanceof String) {
                                                 expressionStatement += o1.toString();
                                             }
-                                        } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
-                                            Node callExpression = currentNode.getNode(0);
-                                            String primaryIdentifier = callExpression.getNode(0).getString(0);
-
-                                            expressionStatement += primaryIdentifier + "->__vptr";
-                                            for (int i = 1; i < callExpression.size(); i++) {
-                                                Object o2 = callExpression.get(i);
-                                                if (o2 instanceof String) {
-                                                    String methodNameCallExpression = (String) o2;
-                                                    if (!(methodNameCallExpression.startsWith("method"))) {
-                                                        switch (methodNameCallExpression) {
-                                                            case "toString":
-                                                                break;
-                                                            case "hashCode":
-                                                                break;
-                                                            case "equals":
-                                                                break;
-                                                            case "getClass":
-                                                                break;
-                                                            default:
-                                                                methodNameCallExpression = "method" + methodNameCallExpression.substring(0, 1).toUpperCase()
-                                                                        + methodNameCallExpression.substring(1);
-                                                        }
-                                                    }
-
-                                                    expressionStatement += "->" + methodNameCallExpression;
-                                                } else if (o2 instanceof Node) {
-                                                    Node arguments1 = (Node) o2;
-                                                    expressionStatement += "(";
-                                                    for (int j = 0; j < arguments1.size(); j++) {
-                                                        if (j > 0)
-                                                            expressionStatement += ", ";
-                                                        expressionStatement += arguments1.getString(j);
-                                                    }
-                                                    expressionStatement += ")";
-                                                }
-                                            }
-                                        } else if (o1 instanceof String) {
-                                            expressionStatement += o1.toString();
                                         }
                                     }
+                                    expressionStatement += ")";
+                                    /*if (method.equals("toString")) {
+                                        expressionStatement += "->data";
+                                    } else if (primaryIdentifer.equals("cout")) {
+                                        expressionStatement += "->data";
+                                    }*/
                                 }
-                                expressionStatement += ")";
-                                /*if (method.equals("toString")) {
-                                    expressionStatement += "->data";
-                                } else if (primaryIdentifer.equals("cout")) {
-                                    expressionStatement += "->data";
-                                }*/
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
@@ -452,7 +487,7 @@ public class PrintMainFile extends Visitor {
         }
 
         s1.append(";\n\n");
-        s1.append("int main(void)\n{\n\n");
+
 
         //  visit the main method
         for (Object o : n) {
@@ -466,11 +501,6 @@ public class PrintMainFile extends Visitor {
         }
 
         s1.append(mainImplementation);
-
-
-        // append the return statement
-        s1.append("\treturn 0;\n");
-        s1.append("}");
 
         s1.append("\n\n//------------------\n\n");
 
@@ -522,7 +552,7 @@ public class PrintMainFile extends Visitor {
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                ImplementationUtil.prettyPrintAst(node);
+                //ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;

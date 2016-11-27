@@ -189,28 +189,30 @@ public class PrintHeaderFile extends Visitor {
         for (int i = summary.currentClass.methods.size() - 1; i >= 0; i--) {
             MethodImplementation currentMethod = summary.currentClass.methods.get(i);
             String currentMethodName = currentMethod.name;
-            if (!(currentMethodName.startsWith("method"))) {
-                switch (currentMethodName) {
-                    case "toString":
-                        break;
-                    case "hashCode":
-                        break;
-                    case "equals":
-                        break;
-                    case "getClass":
-                        break;
-                    default:
-                        currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
+            if (!currentMethod.isStatic) {
+                if (!(currentMethodName.startsWith("method"))) {
+                    switch (currentMethodName) {
+                        case "toString":
+                            break;
+                        case "hashCode":
+                            break;
+                        case "equals":
+                            break;
+                        case "getClass":
+                            break;
+                        default:
+                            currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
 
+                    }
                 }
-            }
-            vConstructor.put(currentMethodName, currentMethodName + "(&__" + summary.currentClass.name + "::" + currentMethodName + ")");
+                vConstructor.put(currentMethodName, currentMethodName + "(&__" + summary.currentClass.name + "::" + currentMethodName + ")");
 
-            StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
-            for (ParameterImplementation p : currentMethod.parameters)
-                method.append(", " + p.type);
-            method.append(");\n");
-            vMethods.put(currentMethodName, method.toString());
+                StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
+                for (ParameterImplementation p : currentMethod.parameters)
+                    method.append(", " + p.type);
+                method.append(");\n");
+                vMethods.put(currentMethodName, method.toString());
+            }
         }
 
         //superclass methods

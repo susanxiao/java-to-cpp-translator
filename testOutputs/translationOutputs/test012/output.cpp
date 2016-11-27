@@ -10,6 +10,7 @@ namespace inputs {
 		};
 
 		void __A::methodPrintOther(A __this, A other) {
+			cout << other->__vptr->methodMyToString(other) << endl;
 		};
 
 		String __A::methodMyToString(A __this) {
