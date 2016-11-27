@@ -180,13 +180,9 @@ public class PrintMainFile extends Visitor {
                                     if (!methodNameCall.startsWith("method")) {
                                         switch (methodNameCall) {
                                             case "toString":
-                                                break;
                                             case "hashCode":
-                                                break;
                                             case "equals":
-                                                break;
-                                            case "getClass":
-                                                break;
+                                            case "getClass": break;
                                             default:
                                                 methodNameCall = "method" + methodNameCall.substring(0, 1).toUpperCase() + methodNameCall.substring(1);
                                         }
@@ -207,13 +203,9 @@ public class PrintMainFile extends Visitor {
                                 if (!(method.startsWith("method"))) {
                                     switch (method) {
                                         case "toString":
-                                            break;
                                         case "hashCode":
-                                            break;
                                         case "equals":
-                                            break;
-                                        case "getClass":
-                                            break;
+                                        case "getClass": break;
                                         default:
                                             method = "method" + method.substring(0, 1).toUpperCase() + method.substring(1);
                                     }
@@ -273,11 +265,11 @@ public class PrintMainFile extends Visitor {
                                     }
                                 }
                                 expressionStatement += ")";
-                                if (method.equals("toString")) {
+                                /*if (method.equals("toString")) {
                                     expressionStatement += "->data";
                                 } else if (primaryIdentifer.equals("cout")) {
                                     expressionStatement += "->data";
-                                }
+                                }*/
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
@@ -293,7 +285,8 @@ public class PrintMainFile extends Visitor {
                                         if (dec.variableName.equals(field) || field.equals("data"))
                                             gateParent = false;
                                     }
-                                    expressionStatement += gateParent ? "->parent." + field + "->data" : "->" + field + "->data";
+                                    expressionStatement += gateParent ? "->parent." + field : "->" + field;
+                                    //expressionStatement += gateParent ? "->parent." + field + "->data" : "->" + field + "->data";
 
                                 }
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {
@@ -315,10 +308,10 @@ public class PrintMainFile extends Visitor {
                                     }
                                     if (gateParent) {
                                         expressionStatement += variable;
-                                        expressionStatement += "->parent." + dataString + "->data";
+                                        expressionStatement += "->parent." + dataString ; //+ "->data";
                                     } else {
                                         expressionStatement += variable;
-                                        expressionStatement += "->" + dataString + "->data";
+                                        expressionStatement += "->" + dataString; // + "->data";
                                     }
                                 }
                             }
@@ -332,13 +325,9 @@ public class PrintMainFile extends Visitor {
                 if (!(methodName.startsWith("method"))) {
                     switch (methodName) {
                         case "toString":
-                            break;
                         case "hashCode":
-                            break;
                         case "equals":
-                            break;
-                        case "getClass":
-                            break;
+                        case "getClass": break;
                         default:
                             methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
 

@@ -69,7 +69,6 @@ public class StdOutputChecking {
             File main = new File(path_output);
             FileWriter printMain = new FileWriter(main);
             printMain.write(s.toString());
-            out.println(s.toString());
             printMain.flush();
             printMain.close();
             out.println("Printed " + main.getPath());
