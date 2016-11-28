@@ -89,7 +89,7 @@ compare :
 		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
 		sudo javac -d $$cppOutputPath/bin $$javaInputPath/Test$$formatNum.java ; \
-		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum > $$cppOutputPath/output/java_output.txt ; \
+		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum >> $$cppOutputPath/output/java_output.txt 2>&1; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Java code outputted to java_output.txt" ;
