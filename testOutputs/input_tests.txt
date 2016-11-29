@@ -8,9 +8,9 @@ TEST006-> Passes
 TEST007-> Passes
 TEST008-> Passes
 TEST009-> Location (needs to be checked manually)
-TEST010-> Passes
-TEST011-> Passes
-TEST012-> Passes
+TEST010-> Fails
+TEST011-> Fails
+TEST012-> Fails
 TEST013-> Location (needs to be checked manually)
 TEST014-> NullPointerException
 TEST015-> Location (needs to be checked manually)

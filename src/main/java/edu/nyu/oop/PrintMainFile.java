@@ -83,8 +83,8 @@ public class PrintMainFile extends Visitor {
         String methodName = n.getString(3);
         System.out.println(methodName);
 
-        if (methodName.equals("methodMain"))
-            mainImplementation.append("int main(void)\n{\n\n");
+        //if (methodName.equals("methodMain"))
+            //mainImplementation.append("int main(void)\n{\n\n");
 
         for (Object o : block) {
             if (o instanceof Node) {

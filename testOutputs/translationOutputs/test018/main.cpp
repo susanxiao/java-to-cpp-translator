@@ -16,9 +16,6 @@ using namespace inputs::test018;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	cout << x << endl;
 
 	return 0;

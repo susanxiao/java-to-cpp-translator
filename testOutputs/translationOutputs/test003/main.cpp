@@ -14,9 +14,6 @@ using namespace inputs::test003;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	A a = new __A(new __String("A"));
 	cout << a->__vptr->methodGetFld(a) << endl;
 

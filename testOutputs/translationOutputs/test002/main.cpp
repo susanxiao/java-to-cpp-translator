@@ -14,9 +14,6 @@ using namespace inputs::test002;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	A a = new __A();
 
 	Object o = (Object) a;

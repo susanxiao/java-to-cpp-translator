@@ -14,9 +14,6 @@ using namespace inputs::test007;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	B b = new __B();
 
 	cout << b->parent.a << endl;

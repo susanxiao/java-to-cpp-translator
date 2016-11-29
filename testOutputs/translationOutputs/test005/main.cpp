@@ -14,9 +14,6 @@ using namespace inputs::test005;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	B b = new __B();
 
 	A a1 = new __A();

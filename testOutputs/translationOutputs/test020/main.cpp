@@ -14,9 +14,6 @@ using namespace inputs::test020;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	int x;
 
 	x = 3;

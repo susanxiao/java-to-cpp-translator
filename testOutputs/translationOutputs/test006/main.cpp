@@ -14,9 +14,6 @@ using namespace inputs::test006;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	A a = new __A();
 
 	a->__vptr->methodAlmostSetFld(a, new __String("B"));

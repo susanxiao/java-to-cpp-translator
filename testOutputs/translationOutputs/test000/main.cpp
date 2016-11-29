@@ -14,9 +14,6 @@ using namespace inputs::test000;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	cout << "Hello."  << endl;
 
 	return 0;

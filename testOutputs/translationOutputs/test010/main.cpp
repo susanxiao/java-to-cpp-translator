@@ -14,9 +14,6 @@ using namespace inputs::test010;
 int main (int argc, char ** args) 
 {
 
-int main(void)
-{
-
 	A a = new __A();
 
 	a->__vptr->methodSetA(a, new __String("A"));
