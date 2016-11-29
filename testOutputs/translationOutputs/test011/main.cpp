@@ -11,6 +11,9 @@ using namespace java::lang;
 using namespace std;
 using namespace inputs::test011;
 
+int main (int argc, char ** args) 
+{
+
 int main(void)
 {
 

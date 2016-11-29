@@ -13,15 +13,11 @@ using namespace inputs::test018;
 
 	int x;
 
-int main(void)
+int main (int argc, char ** args) 
 {
 
-	{
-		int x;
-
-		x = 3;
-
-	}
+int main(void)
+{
 
 	cout << x << endl;
 

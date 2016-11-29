@@ -13,6 +13,9 @@ using namespace inputs::test019;
 
 	int x;
 
+int main (int argc, char ** args) 
+{
+
 int main(void)
 {
 
