@@ -21,7 +21,6 @@ int main (int argc, char ** argv)
 		args.__data[a-1] = argument;
 	}
 
-	//for statement
 	for(int32_t i=0; i<args.length ; i++)
 
 	{

@@ -74,17 +74,26 @@ public class PrintMainFile extends Visitor {
 
     public void visitMethodDeclaration(GNode n) {
         //System.out.println(n.getString(3));
-        if(n.getString(3).equals("methodMain")){
+        /*if(n.getString(3).equals("methodMain")){
             mainImplementation.append("int main (int argc, char ** args) \n{\n\n");
-        }
+        }*/
         // block node is always last child of main method node
         int blockIndex = n.size() - 1;
         GNode block = (GNode) n.getNode(blockIndex);
         String methodName = n.getString(3);
-        System.out.println(methodName);
+        //System.out.println(methodName);
 
-        //if (methodName.equals("methodMain"))
+        if (methodName.equals("methodMain")) {
             //mainImplementation.append("int main(void)\n{\n\n");
+            mainImplementation.append("int main (int argc, char ** argv) \n{\n\n");
+            mainImplementation.append("\t//get command line arguments. convert between args(java) and argv(c++). for test22, 23...\n");
+            mainImplementation.append("\t__rt::Array<java::lang::String> args(argc-1);\n");
+            mainImplementation.append("\tfor(int a=1; a<argc;a++){\n");//starts with a=1(not a=0) because the first argument in cpp is the command
+            mainImplementation.append("\t\tjava::lang::String argument = new __String(argv[a]);\n");
+            //mainImplementation.append("\t//cout << \"add arg: \"<< argument->data << endl;");
+            mainImplementation.append("\t\targs.__data[a-1] = argument;\n");
+            mainImplementation.append("\t}\n\n");
+        }
 
         for (Object o : block) {
             if (o instanceof Node) {
@@ -109,6 +118,12 @@ public class PrintMainFile extends Visitor {
         String fieldDeclaration = "\t";
 
         String type = n.getNode(1).getNode(0).getString(0);
+        boolean isTypeArray;
+        if(n.getNode(1).getNode(1)!=null){ // the type is an array
+            if(n.getNode(1).getNode(1).getString(0).equals("[")) {
+                type = "__rt::Array<java::lang::" + n.getNode(1).getNode(0).getString(0) + ">";
+            }
+        }
         fieldDeclaration += type + " ";
 
         if (n.getNode(2).getName().equals("Declarators")) {
@@ -148,7 +163,14 @@ public class PrintMainFile extends Visitor {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
                             fieldDeclaration += " = (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
-                        } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
+                        } else if (currentDeclarator.getNode(2).getName().equals("ArrayCastExpression")) {
+                            fieldDeclaration += "("+ currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0)+");";
+                            mainImplementation.append(fieldDeclaration+"\n");//append here, Orelse the order are incorrect becasue the visit statments directly appends to mainImplementation string
+                            fieldDeclaration="";
+                            visitForStatement((GNode) currentDeclarator.getNode(2).getNode(1).getNode(0));
+
+
+                        }else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
                             String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
                             fieldDeclaration += " = " + primaryIdentifier + ";\n";
                         } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
@@ -362,8 +384,8 @@ public class PrintMainFile extends Visitor {
                                 //expressionStatement += "reached here : subscript expression";
                                 GNode primaryIdentifier0 = (GNode) currentNode.get(0);
                                 GNode primaryIdentifier1 = (GNode) currentNode.get(1);
-                                expressionStatement += primaryIdentifier0.get(0).toString() + "[";
-                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";
+                                expressionStatement += primaryIdentifier0.get(0).toString() + ".__data[";
+                                expressionStatement += primaryIdentifier1.get(0).toString() + "]->data";
 
                             }
                         }
@@ -453,7 +475,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitForStatement(GNode n){
-        String forStatement = "\t//for statement\n\tfor";
+        String forStatement = "\tfor";
         for(Object o : n){
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -465,7 +487,12 @@ public class PrintMainFile extends Visitor {
                             GNode b_Node = (GNode) b;
                             if (b_Node.getName().equals("Type")) {
                                 GNode primitiveType = (GNode) b_Node.get(0);
-                                forStatement += primitiveType.get(0).toString() + " "; //int
+                                if(primitiveType.get(0).toString()=="int"){
+                                    forStatement += "int32_t "; //int
+                                }
+                                else {
+                                    forStatement += primitiveType.get(0).toString() + " ";
+                                }
                             }
                             else if (b_Node.getName().equals("Declarators")) {
                                 GNode declaratorNode = (GNode) b_Node.get(0);
@@ -478,6 +505,7 @@ public class PrintMainFile extends Visitor {
                                 forStatement += primaryIdentifierNode.get(0).toString(); //i
                                 forStatement += b_Node.get(1).toString();//<
                                 GNode SelectionExpressNode = (GNode) b_Node.get(2);
+                                //System.out.println("test Sel Node: "+SelectionExpressNode.toString());
                                 GNode PrimaryId_inSelectionExNode = (GNode) SelectionExpressNode.get(0);
                                 forStatement += PrimaryId_inSelectionExNode.get(0).toString() + "."; // as.
                                 forStatement += SelectionExpressNode.get(1).toString() + " ; ";
@@ -504,8 +532,8 @@ public class PrintMainFile extends Visitor {
         //mainImplementation.append(forStatement + "\n\n");
     }
 
-
     // visitMethod
+
 
 
     public PrintMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
@@ -613,17 +641,19 @@ public class PrintMainFile extends Visitor {
                 AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
 
                 //before mutation - origianl AST
-                System.out.println("before mutation - origianl AST");
-                ImplementationUtil.prettyPrintAst(node);
+                //System.out.println("before mutation - origianl AST");
+                //ImplementationUtil.prettyPrintAst(node);
 
                 // get the mutated tree
                 AstMutator visitor1 = new AstMutator(ImplementationUtil.newRuntime());
                 visitor1.mutate(node);
+                //System.out.println("after mutation ");
+                //ImplementationUtil.prettyPrintAst(node);
 
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                //ImplementationUtil.prettyPrintAst(node);
+                ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;

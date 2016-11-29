@@ -9,7 +9,7 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test007;
+using namespace inputs::test022;
 
 int main (int argc, char ** argv) 
 {
@@ -21,14 +21,16 @@ int main (int argc, char ** argv)
 		args.__data[a-1] = argument;
 	}
 
-	B b = new __B();
+	for(int32_t i=0; i<args.length ; i++)
 
-	cout << b->parent.a << endl;
+	{
+		cout << args.__data[i]->data << endl;
 
-	cout << b->b << endl;
+	}
 
 	return 0;
 }
 
 //------------------
+
 
