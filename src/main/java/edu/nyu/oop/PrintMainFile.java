@@ -244,7 +244,8 @@ public class PrintMainFile extends Visitor {
                                     expressionStatement += primaryId;
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
-                                    expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
+                                    primaryId = currentNode.getNode(0).getNode(0).getString(0);
+                                    expressionStatement += primaryId;
                                     String methodNameCall = currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2);
                                     if (!methodNameCall.startsWith("method")) {
                                         switch (methodNameCall) {

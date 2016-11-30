@@ -39,13 +39,9 @@ public class AstMutator extends Visitor {
         if (!(methodNameString.startsWith("method"))) {
             switch (methodNameString) {
                 case "toString":
-                    break;
                 case "hashCode":
-                    break;
                 case "equals":
-                    break;
-                case "getClass":
-                    break;
+                case "getClass": break;
                 default:
                     methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
 
@@ -526,13 +522,9 @@ public class AstMutator extends Visitor {
                     if (!(methodNameString.startsWith("method"))) {
                         switch (methodNameString) {
                             case "toString":
-                                break;
                             case "hashCode":
-                                break;
                             case "equals":
-                                break;
-                            case "getClass":
-                                break;
+                            case "getClass": break;
                             default:
                                 methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
 
