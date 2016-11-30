@@ -517,8 +517,10 @@ public class AstMutator extends Visitor {
 
         // had some problems here will fix at a later date.
         if (n.getNode(0).getName().equals("CallExpression")) {
-            if (n.getNode(0).getNode(3).getName().equals("Arguments")) {
-                if (n.getNode(0).getNode(3).getNode(0).getName().equals("CallExpression")) {
+            Node callExp = n.getNode(0);
+            if (callExp.getNode(3).getName().equals("Arguments")) {
+                Node args = callExp.getNode(3);
+                if (args.size() > 0 && args.getNode(0).getName().equals("CallExpression")) {
 
                     String methodNameString = n.getNode(0).getNode(3).getNode(0).getString(2);
                     if (!(methodNameString.startsWith("method"))) {
