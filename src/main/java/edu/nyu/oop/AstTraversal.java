@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.NodeUtil;
 import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -8,6 +9,7 @@ import xtc.util.Runtime;
 
 import static java.lang.System.out;
 
+import java.io.File;
 import java.lang.*;
 
 
@@ -587,6 +589,27 @@ public class AstTraversal extends Visitor {
         }
     }
 
+    public static void main(String[] args) {
+        int start = 0;
+        int end = 20;
+
+        if (args.length > 1) {
+            start = ImplementationUtil.getInteger(args[0]);
+            end = ImplementationUtil.getInteger(args[1]);
+        }
+        else if (args.length > 0) {
+            int value = ImplementationUtil.getInteger(args[0]);
+            if (value >= 0) {
+                start = value;
+                end = value;
+            }
+        }
+
+        for (int i = start; i <= end; i++) {
+            GNode node = (GNode) NodeUtil.parseJavaFile(new File(String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i)));
+            ImplementationUtil.prettyPrintToFile(new File(String.format("./testOutputs/astOutputs/Test%03d.txt", i)), node);
+        }
+    }
 
     public AstTraversal(Runtime runtime) {
         this.runtime = runtime;

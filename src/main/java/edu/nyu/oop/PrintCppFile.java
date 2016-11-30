@@ -62,7 +62,7 @@ public class PrintCppFile extends Visitor {
         summary.addLine("static Class k =\n");
         summary.addLine("new __Class(__rt::literal(\"" + summary.currentClassLocation + "\"), (Class) __rt::null());\n");
         summary.addLine("return k;\n");
-        summary.decScope();
+        summary.decMethodScope();
         summary.code.append("\n");
 
         //vtable
@@ -275,7 +275,7 @@ public class PrintCppFile extends Visitor {
                 }
             }
         }
-        summary.decScope();
+        summary.decMethodScope();
 
         Set<Map.Entry<String, String>> initializerSet = summary.initializerList.entrySet();
         StringBuilder initializers = new StringBuilder("__vptr(&__vtable)");
@@ -389,8 +389,6 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
-                            String classCastException = summary.checkClassCast(param, summary.currentClass.name,
-                                    summary.classLocation, line.toString());
                         } else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
                             Node selectionExpression = arguments.getNode(0);
                             Node argumentsPrimaryIdentifier = selectionExpression.getNode(0);
@@ -434,31 +432,27 @@ public class PrintCppFile extends Visitor {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
 
-                            String nullException = cppFileSummary.checkNull(param, summary.currentClass.name,
-                                    methodName, summary.classLocation, line.toString());
-                            String classException = summary.checkClassCast(param, summary.currentClass.name,
-                                    summary.classLocation, line.toString());
-                            String tryCatchComplete = "";
-                            tryCatchComplete += summary.tryStart();
-                            tryCatchComplete += nullException;
-                            tryCatchComplete += classException;
-                            tryCatchComplete += summary.tryEnd(line.toString());
-                            tryCatchComplete += summary.catchNullPointer(param, summary.currentClass.name,
-                                    summary.classLocation, methodName);
-                            tryCatchComplete += summary.catchClassCast(param, summary.currentClass.name,
-                                    summary.classLocation);
-                            summary.addLine(tryCatchComplete + "\n");
+                            summary.addLine("try");
+                            summary.incScope();
+
+                            summary.checkNull(param);
+                            summary.checkClassCast(param);
+
+                            summary.addLine(line.toString()+";\n");
+                            summary.decScope();
+                            summary.catchNullPointer(summary.currentClass.name, summary.classLocation, methodName);
+                            summary.catchClassCast(summary.currentClass.name, summary.classLocation);
 
                         }
 
-                        summary.addLine(line.toString() + ";\n");
+                        //summary.addLine(line.toString() + ";\n");
                     }
                 }
             } else if (currentNode.getName().equals("ReturnStatement")) {
                 visitReturnStatement(currentNode);
             }
         }
-        summary.decScope();
+        summary.decMethodScope();
     }
 
     public void visitReturnStatement(GNode n) {
@@ -568,7 +562,7 @@ public class PrintCppFile extends Visitor {
             incScope();
         }
 
-        public void closeNamespace() {
+        public void decScope() {
             scope--;
 
             for (int i = 0; i < scope; i++)
@@ -581,7 +575,7 @@ public class PrintCppFile extends Visitor {
             scope++;
         }
 
-        public void decScope() {
+        public void decMethodScope() {
             scope--;
 
             for (int i = 0; i < scope; i++)
@@ -596,59 +590,40 @@ public class PrintCppFile extends Visitor {
             code.append(line);
         }
 
-
-        public static String tryStart() {
-            StringBuilder s = new StringBuilder();
-            s.append("\n\t\t\ttry {");
-            return s.toString();
+        public void checkNull(String param) {
+            addLine("std::stringstream ss;\n");
+            addLine("ss << " + param + ";\n");
+            addLine("std::string tmp = ss.str();\n");
+            addLine("int count = 0;\n");
+            addLine("for(int i = 0; i < tmp.length(); i++)");
+            incScope();
+            addLine("if(tmp[i] != '0'){ count += 1; }\n");
+            decScope();
+            addLine("if(count == 2 || count == 1){ throw java::lang::NullPointerException(); }\n");
         }
 
-        public static String tryEnd(String line) {
-            StringBuilder s = new StringBuilder();
-            s.append("\t\t\t\t" + line + ";\n");
-            s.append("\t\t\t}\n");
-            return s.toString();
+        public void checkClassCast(String param) {
+            addLine("Class k = " + param + "->__vptr->getClass(" + param + ");\n");
+            addLine("std::string paramClass = k->__vptr->getName(k)->data;\n");
+            addLine("Class thisK = __this->__vptr->getClass(__this);\n");
+            addLine("std::string thisClass = thisK->__vptr->getName(thisK)->data;\n");
+            addLine("//if(paramClass != thisClass){ throw java::lang::ClassCastException();}\n");
         }
 
-        public static String checkNull(String param, String className, String methodName, String classLocation, String line) {
-            StringBuilder s = new StringBuilder();
-            s.append("\n\t\t\t\tstd::stringstream ss;\n");
-            s.append("\t\t\t\tss << " + param + ";\n");
-            s.append("\t\t\t\tstd::string tmp = ss.str();\n");
-            s.append("\t\t\t\tint count = 0;\n");
-            s.append("\t\t\t\tfor(int i = 0; i < tmp.length(); i++){\n");
-            s.append("\t\t\t\t\tif(tmp[i] != '0'){ count += 1; }\n");
-            s.append("\t\t\t\t}\n");
-            s.append("\t\t\t\tif(count == 2 || count == 1){ throw java::lang::NullPointerException(); }\n");
-            return s.toString();
+        public void catchNullPointer(String className, String classLocation, String methodName) {
+            addLine("catch(const NullPointerException &ex)");
+            incScope();
+            addLine("cout << \"java.lang.NullPointerException\" << endl;\n");
+            addLine("cout << \"\tat " + classLocation + "" + className + "." + methodName + "\" << endl;\n");
+            decScope();
         }
 
-        public static String checkClassCast(String param, String className, String classLocation, String line) {
-            StringBuilder s = new StringBuilder();
-            s.append("\t\t\t\tClass k = " + param + "->__vptr->getClass(" + param + ");\n");
-            s.append("\t\t\t\tstd::string paramClass = k->__vptr->getName(k)->data;\n");
-            s.append("\t\t\t\tClass thisK = __this->__vptr->getClass(__this);\n");
-            s.append("\t\t\t\tstd::string thisClass = thisK->__vptr->getName(thisK)->data;\n");
-            s.append("\t\t\t\t//if(paramClass != thisClass){ throw java::lang::ClassCastException();}\n");
-            return s.toString();
-        }
-
-        public static String catchNullPointer(String param, String className, String classLocation, String methodName) {
-            StringBuilder s = new StringBuilder();
-            s.append("\t\t\tcatch(const NullPointerException &ex){");
-            s.append("\n\t\t\t\tcout << \"java.lang.NullPointerException\" << endl;");
-            s.append("\n\t\t\t\tcout << \"\tat " + classLocation + "" + className + "." + methodName + "\" << endl;");
-            s.append("\n\t\t\t}\n");
-            return s.toString();
-        }
-
-        public static String catchClassCast(String param, String className, String classLocation) {
-            StringBuilder s = new StringBuilder();
-            s.append("\t\t\tcatch(const ClassCastException &ex){");
-            s.append("\n\t\t\t\tcout << \"java.lang.ClassCastException\" << endl;");
-            s.append("\n\t\t\t\tcout << \"\tat " + classLocation + "" + className + "\" << endl;");
-            s.append("\n\t\t\t}\n");
-            return s.toString();
+        public void catchClassCast(String className, String classLocation) {
+            addLine("catch(const ClassCastException &ex)");
+            incScope();
+            addLine("cout << \"java.lang.ClassCastException\" << endl;\n");
+            addLine("cout << \"\tat " + classLocation + "" + className + "\" << endl;\n");
+            decScope();
         }
 
     }
@@ -657,7 +632,7 @@ public class PrintCppFile extends Visitor {
         visit(n);
 
         while (summary.scope > 0) {
-            summary.closeNamespace();
+            summary.decScope();
         }
 
         return summary;

@@ -38,27 +38,27 @@ help :
 	@echo "     doAll ------- To fully translate and compare outputs"
 ast astCreate :
 	@echo "Creating AST for $(start) to $(end)" ;
-	#TODO: construct java AST main method so we can circumvent calling test-only ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).AstTraversal $(start) $(end)" ;
 	@echo "Java AST outputs are in testOutputs/astOutputs"
 mutate astMutate :
 	@echo "Mutating AST for $(start) to $(end)" ;
-	#TODO: also construct this main method ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).AstMutator $(start) $(end)" ;
 	@echo "Mutated ASTs are in testOutputs/mutatedAstOutputs"
 header printHeader :
 	@echo "Printing output.h file for $(start) to $(end)" ;
-	@sbt "run-main $(packages).PrintHeaderFile $(start) $(end)" ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).PrintHeaderFile $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/printHeaderOutputs"
 cpp printCpp :
 	@echo "Printing output.cpp file for $(start) to $(end)" ;
-	@sbt "run-main $(packages).PrintCppFile $(start) $(end)" ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).PrintCppFile $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/printCppOutputs"
 main printMain :
 	@echo "Printing main.cpp file for $(start) to $(end)" ;
-	@sbt "run-main $(packages).PrintMainFile $(start) $(end)" ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).PrintMainFile $(start) $(end)" ;
 	@echo "main.cpp outputs are in testOutputs/mainFileOutputs"
 translate printAll:
 	@echo "Translating inputs $(start) to $(end)" ;
-	@sbt "run-main $(packages).ImplementationUtil $(start) $(end)" ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).ImplementationUtil $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/translationOutputs"
 copy javalang :
 	@echo "Copying java_lang.cpp and java_lang.h" ;
@@ -89,11 +89,11 @@ compare :
 		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
 		sudo javac -d $$cppOutputPath/bin $$javaInputPath/Test$$formatNum.java ; \
-		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum >> $$cppOutputPath/output/java_output.txt 2>&1; \
+		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum > $$cppOutputPath/output/java_output.txt 2>&1; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Java code outputted to java_output.txt" ;
 	@echo "Checking outputs" ;
-	@sbt "run-main $(packages).StdOutputChecking" ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"
 5tran doAll : translate copy compare
