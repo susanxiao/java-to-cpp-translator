@@ -239,7 +239,6 @@ public class PrintMainFile extends Visitor {
                                     else
                                         expressionStatement += primaryId;
                                 } else if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
-                                    System.out.println(currentNode.getNode(0));
                                     primaryId = currentNode.getNode(0).getNode(0).getString(0);
                                     expressionStatement += primaryId;
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
@@ -341,20 +340,37 @@ public class PrintMainFile extends Visitor {
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
                             } else if (currentNode.getName().equals("SelectionExpression")) {
+                                boolean isClass = false;
                                 String key = currentNode.getNode(0).getString(0); //primary identifier
-                                expressionStatement += key;
-
+                                if (summaryTraversal.classes.containsKey(key)) { //primary identifier is class, not var
+                                    expressionStatement += "__"+key;
+                                    isClass = true;
+                                }
+                                else
+                                    expressionStatement += key;
                                 for (int i = 1; i < currentNode.size(); i++) {
-                                    boolean gateParent = true;
                                     String field = currentNode.getString(i);
-                                    // check if parent should be used
-                                    String className = summary.classVariables.get(key); //class of primary identifier
-                                    for (FieldDeclaration dec : summaryTraversal.findClass(className).declarations) {
-                                        if (dec.variableName.equals(field) || field.equals("data"))
-                                            gateParent = false;
+                                    if (isClass) { //primary identifier is class, not var
+                                        isClass = summaryTraversal.classes.containsKey(field);
+                                        if (isClass) //if field is also class
+                                            expressionStatement += "::__" + field;
+                                        else
+                                            expressionStatement += "::" + field;
                                     }
-                                    expressionStatement += gateParent ? "->parent." + field : "->" + field;
-                                    //expressionStatement += gateParent ? "->parent." + field + "->data" : "->" + field + "->data";
+                                    else {
+                                        boolean gateParent = true;
+
+                                        // check if parent should be used
+                                        String className = summary.classVariables.get(key); //class of primary identifier
+
+                                        for (FieldDeclaration dec : summaryTraversal.findClass(className).declarations) {
+                                            if (dec.variableName.equals(field) || field.equals("data"))
+                                                gateParent = false;
+                                        }
+
+                                        expressionStatement += gateParent ? "->parent." + field : "->" + field;
+                                        //expressionStatement += gateParent ? "->parent." + field + "->data" : "->" + field + "->data";
+                                    }
 
                                 }
                             } else if (currentNode.getName().equals("PrimaryIdentifier")) {

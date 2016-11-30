@@ -7,8 +7,6 @@ import xtc.tree.Node;
 import xtc.tree.Visitor;
 import xtc.util.Runtime;
 
-import static java.lang.System.out;
-
 import java.io.File;
 import java.lang.*;
 
@@ -112,6 +110,8 @@ public class AstTraversal extends Visitor {
                                 String modifierString = modifiersNode.getString(0);
                                 if (modifierString != null) {
                                     currentStatement.modifiers = modifierString;
+                                    if (modifierString.equals("static"))
+                                        currentStatement.isStatic = true;
                                 }
                             }
                         }
@@ -120,7 +120,7 @@ public class AstTraversal extends Visitor {
                     for (Object o1 : currentNode) {
                         if (o1 instanceof Node) {
                             Node typeNode = (Node) o1;
-                            if (typeNode.getName().equals("QualifiedIdentifier")) {
+                            if (typeNode.getName().equals("QualifiedIdentifier") || typeNode.getName().equals("PrimitiveType")) {
                                 String typeString = typeNode.getString(0);
                                 if (typeString != null) {
                                     currentStatement.staticType = typeString;
@@ -136,8 +136,8 @@ public class AstTraversal extends Visitor {
                                 for (Object o2 : declaratorsNode) {
                                     if (o2 instanceof Node) {
                                         Node declaratorNode = (Node) o2;
-                                        if (declaratorNode.getName().equals("StringLiteral")) {
-                                            currentStatement.stringLiteral = declaratorNode.getString(0);
+                                        if (declaratorNode.getName().equals("StringLiteral") || declaratorNode.getName().equals("IntegerLiteral")) {
+                                            currentStatement.literalValue = declaratorNode.getString(0);
                                         }
                                     } else {
                                         if (o2 != null) {

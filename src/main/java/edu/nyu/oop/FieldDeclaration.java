@@ -2,8 +2,6 @@ package edu.nyu.oop;
 
 import java.util.ArrayList;
 
-import static java.lang.System.out;
-
 /**
  * Created by susan on 10/19/16.
  */
@@ -13,7 +11,7 @@ public class FieldDeclaration extends MethodStatement {
     String modifiers;
     String staticType;
     String variableName;
-    String stringLiteral;
+    String literalValue;
 
     /**
      * For primitive types, below is null
@@ -31,6 +29,8 @@ public class FieldDeclaration extends MethodStatement {
      * Other declarations
      */
     ExpressionStatement assignment;
+
+    boolean isStatic = false;
 
     @Override
     public String toString() {
@@ -61,8 +61,8 @@ public class FieldDeclaration extends MethodStatement {
             s.append(")");
         } else if (primaryIdentifier != null) {
             s.append(" = " + primaryIdentifier);
-        } else if (stringLiteral != null) {
-            s.append(" = " + stringLiteral);
+        } else if (literalValue != null) {
+            s.append(" = " + literalValue);
         } else if (assignment != null) {
             s.append(" = "+assignment.toString());
         }
@@ -100,8 +100,8 @@ public class FieldDeclaration extends MethodStatement {
             s.append(")");
         } else if (primaryIdentifier != null) {
             s.append(" = " + primaryIdentifier);
-        } else if (stringLiteral != null) {
-            s.append(" = " + stringLiteral);
+        } else if (literalValue != null) {
+            s.append(" = " + literalValue);
         }
 
         return s.toString();

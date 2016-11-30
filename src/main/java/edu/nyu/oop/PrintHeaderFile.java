@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
 
-import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 
 import xtc.tree.Visitor;
@@ -78,7 +77,12 @@ public class PrintHeaderFile extends Visitor {
             for (FieldDeclaration currentDeclaration : currentClass.declarations) {
                 declarationsCounter += 1;
                 String type = (currentDeclaration.staticType.equals("int") ? "int32_t" : currentDeclaration.staticType);
-                declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
+                if (!currentDeclaration.isStatic)
+                    declarationsMap.put(currentDeclaration.variableName, type + " " + currentDeclaration.variableName);
+                else if (currentDeclaration.literalValue == null)
+                    declarationsMap.put(currentDeclaration.variableName, "static " + type + " " + currentDeclaration.variableName);
+                else
+                    declarationsMap.put(currentDeclaration.variableName, "static const " + type + " " + currentDeclaration.variableName + " = " + currentDeclaration.literalValue);
             }
             currentClass = currentClass.superClass;
             if(currentClass != null) {

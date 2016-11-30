@@ -91,7 +91,9 @@ public class StdOutputChecking {
                 s.append(inputName.toLowerCase() + " -> " + equal + "\n");
 
             } catch (IOException e) {
-                e.printStackTrace();
+                s.append(inputName.toLowerCase() + " -> Failed - Not Started\n");
+                fail.append(inputName.toLowerCase() + " -> Failed - Not Started\n");
+                //e.printStackTrace();
             }
         }
         s.append(fail);
