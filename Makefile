@@ -2,11 +2,13 @@
 start = 0
 end = 20
 packages=edu.nyu.oop
+testArgs = "1 2 3 4"
 
 # TARGETS
 help :
 	@echo "----5-Tran Java to C++ Translator----"
 	@echo "packages = $(packages)"
+	@echo "testArgs = $(testArgs)"
 	@echo "-------------------------------------"
 	@echo "To modify the input range, input"
 	@echo "     start=[startNumber] and/or"
@@ -77,7 +79,7 @@ compare :
 		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
 		sudo g++ $$cppOutputPath/*.cpp -o $$cppOutputPath/bin/a.out ; \
-		sudo $$cppOutputPath/bin/a.out > $$cppOutputPath/output/cpp_output.txt ; \
+		sudo $$cppOutputPath/bin/a.out $(testArgs) > $$cppOutputPath/output/cpp_output.txt ; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "C++ code outputted to cpp_output.txt" ;
@@ -89,7 +91,7 @@ compare :
 		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
 		sudo javac -d $$cppOutputPath/bin $$javaInputPath/Test$$formatNum.java ; \
-		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum > $$cppOutputPath/output/java_output.txt 2>&1; \
+		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum $(testArgs)> $$cppOutputPath/output/java_output.txt 2>&1; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Java code outputted to java_output.txt" ;
