@@ -94,6 +94,6 @@ compare :
 	done ;
 	@echo "Java code outputted to java_output.txt" ;
 	@echo "Checking outputs" ;
-	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking" ;
+	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking $(start) $(end)" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"
 5tran doAll : translate copy compare

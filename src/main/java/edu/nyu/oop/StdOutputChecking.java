@@ -26,6 +26,7 @@ public class StdOutputChecking {
         }
 
         StringBuilder s = new StringBuilder();
+        StringBuilder fail = new StringBuilder("\nFailed:\n");
         for (int i = start; i <= end; i++) {
             String cppOutput = String.format("./testOutputs/translationOutputs/test%03d/output/cpp_output.txt", i);
             String javaOutput = String.format("./testOutputs/translationOutputs/test%03d/output/java_output.txt", i);
@@ -44,19 +45,11 @@ public class StdOutputChecking {
                     if (!cppInputLine.equals(javaInputLine)) {
                         if (javaInputLine.startsWith("inputs.test")) {
 
-                            String[] cpp = cppInputLine.split("\\.|@");
-                            String[] java = javaInputLine.split("\\.|@");
+                            String[] cpp = cppInputLine.split("@");
+                            String[] java = javaInputLine.split("@");
 
-                            if (cpp.length != java.length)
+                            if (!cpp[0].equals(java[0]))
                                 isEqual = false;
-                            else {
-                                for (int j = 0; j < java.length - 1; j++) { //last one is hex
-                                    if (!cpp[j].equals(java[j])) {
-                                        isEqual = false;
-                                        break;
-                                    }
-                                }
-                            }
 
                             message = " - Location";
                         }
@@ -91,7 +84,9 @@ public class StdOutputChecking {
                 cppInput.close();
                 javaInput.close();
 
-                String equal = (isEqual ? "      " : "Failed") + message; //this way Failed ones stand out
+                String equal = (isEqual ? "Passed" : "Failed") + message;
+                if (!isEqual)
+                    fail.append(inputName.toLowerCase() + " -> " + equal + "\n");
 
                 s.append(inputName.toLowerCase() + " -> " + equal + "\n");
 
@@ -99,6 +94,7 @@ public class StdOutputChecking {
                 e.printStackTrace();
             }
         }
+        s.append(fail);
         try {
             String path_output = "./testOutputs/input_tests.txt";
             File main = new File(path_output);
