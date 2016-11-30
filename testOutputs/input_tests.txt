@@ -1,21 +1,21 @@
-TEST000-> Passes
-TEST001-> Passes
-TEST002-> Passes
-TEST003-> Passes
-TEST004-> Passes
-TEST005-> Passes
-TEST006-> Passes
-TEST007-> Passes
-TEST008-> Passes
-TEST009-> Location (needs to be checked manually)
-TEST010-> Fails
-TEST011-> Fails
-TEST012-> Fails
-TEST013-> Location (needs to be checked manually)
-TEST014-> NullPointerException
-TEST015-> Location (needs to be checked manually)
-TEST016-> ClassCastException
-TEST017-> Location (needs to be checked manually)
-TEST018-> Passes
-TEST019-> Passes
-TEST020-> Passes
+TEST000->       
+TEST001->       
+TEST002->       
+TEST003->       
+TEST004->       
+TEST005->       
+TEST006->       
+TEST007->       
+TEST008->       
+TEST009->        - Location
+TEST010->       
+TEST011->       
+TEST012->       
+TEST013->        - Location
+TEST014-> Failed - Exception
+TEST015->        - Location
+TEST016-> Failed - Exception
+TEST017-> Failed - Location
+TEST018->       
+TEST019->       
+TEST020->       

@@ -1,6 +1,7 @@
 package edu.nyu.oop;
 
 import java.io.*;
+import java.util.Scanner;
 
 import static java.lang.System.out;
 
@@ -9,51 +10,91 @@ import static java.lang.System.out;
  */
 public class StdOutputChecking {
     public static void main(String[] args) {
+        int start = 0;
+        int end = 20;
+
+        if (args.length > 1) {
+            start = ImplementationUtil.getInteger(args[0]);
+            end = ImplementationUtil.getInteger(args[1]);
+        }
+        else if (args.length > 0) {
+            int value = ImplementationUtil.getInteger(args[0]);
+            if (value >= 0) {
+                start = value;
+                end = value;
+            }
+        }
+
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i <= 20; i++) {
+        for (int i = start; i <= end; i++) {
             String cppOutput = String.format("./testOutputs/translationOutputs/test%03d/output/cpp_output.txt", i);
             String javaOutput = String.format("./testOutputs/translationOutputs/test%03d/output/java_output.txt", i);
             String inputName = String.format("test%03d", i);
             File cppFile = new File(cppOutput);
             File javaFile = new File(javaOutput);
             try {
-                BufferedReader cppInput = new BufferedReader(new FileReader(cppFile));
-                BufferedReader javaInput = new BufferedReader(new FileReader(javaFile));
-                StringBuilder cpp = new StringBuilder();
-                StringBuilder java = new StringBuilder();
-                String inputLine;
-                while ((inputLine = cppInput.readLine()) != null) {
-                    cpp.append(inputLine);
+                Scanner cppInput = new Scanner(cppFile);
+                Scanner javaInput = new Scanner(javaFile);
+                boolean isEqual = true;
+                String message = "";
+                while (cppInput.hasNext() && javaInput.hasNext()) {
+                    String cppInputLine = cppInput.nextLine();
+                    String javaInputLine = javaInput.nextLine();
+
+                    if (!cppInputLine.equals(javaInputLine)) {
+                        if (javaInputLine.startsWith("inputs.test")) {
+
+                            String[] cpp = cppInputLine.split("\\.|@");
+                            String[] java = javaInputLine.split("\\.|@");
+
+                            if (cpp.length != java.length)
+                                isEqual = false;
+                            else {
+                                for (int j = 0; j < java.length - 1; j++) { //last one is hex
+                                    if (!cpp[j].equals(java[j])) {
+                                        isEqual = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            message = " - Location";
+                        }
+                        else if (javaInputLine.startsWith("Exception")) {
+                            if (!javaInputLine.contains(cppInputLine))
+                                isEqual = false;
+                            else {
+                                while (javaInputLine.startsWith("\tat") && javaInput.hasNext())
+                                    javaInputLine = javaInput.nextLine();
+                            }
+
+                            message = " - Exception";
+                        }
+                        else
+                            isEqual = false;
+                    }
+                    if (!isEqual) break;
                 }
 
-                while ((inputLine = javaInput.readLine()) != null) {
-                    java.append(inputLine);
+                if (cppInput.hasNext()) //not both null
+                    isEqual = false;
+
+                if (javaInput.hasNext()) {
+                    isEqual = false;
+                    String javaInputLine = javaInput.nextLine();
+                    if(javaInputLine.startsWith("Exception"))
+                        message = " - Exception";
+                    else if (javaInputLine.startsWith("inputs.test"))
+                        message = " - Location";
                 }
+
                 cppInput.close();
                 javaInput.close();
 
-                String equal;
-                switch (i) {
-                    case 9:
-                    case 13:
-                    case 15:
-                    case 17:
-                        equal = "Location (needs to be checked manually)";
-                        break;
-                    case 14:
-                        equal = "NullPointerException";
-                        break;
-                    case 16:
-                        equal = "ClassCastException";
-                        break;
-                    default:
-                        equal = cpp.toString().equals(java.toString()) ? "Passes" : "Fails";
-                        break;
-                }/*
-                if (i > 17) {
-                    equal = "Fails (Need to check the results manually)";
-                }*/
-                s.append(inputName.toUpperCase() + "-> " + equal + "\n");
+                String equal = (isEqual ? "      " : "Failed") + message; //this way Failed ones stand out
+
+                s.append(inputName.toLowerCase() + " -> " + equal + "\n");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
