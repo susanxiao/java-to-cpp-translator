@@ -247,6 +247,8 @@ public class AstTraversal extends Visitor {
                                     String argumentType = arguments.getNode(i).getName().toString();
                                     if (argumentType.toString().equals("PrimaryIdentifier")) {
                                         String argumentsPrimaryIdentifier = argumentsCallExpression.getNode(0).getString(0);
+                                        if (summary.currentMethod.name.equals("main") && argumentsPrimaryIdentifier.equals("args"))
+                                            summary.usesArgs = true;
                                         currentArgument.primaryIdentifier = argumentsPrimaryIdentifier;
 
                                         //TODO: handle fields of primary identifier within arguments
@@ -267,12 +269,16 @@ public class AstTraversal extends Visitor {
                         } else if (declaratorNodeName.equals("PrimaryIdentifier")) {
                             Node primaryIdentifier = declarator.getNode(2);
                             String primaryIdentifierLiteral = primaryIdentifier.getString(0);
+                            if (summary.currentMethod.name.equals("main") && primaryIdentifierLiteral.equals("args"))
+                                summary.usesArgs = true;
                             currentStatement.primaryIdentifier = primaryIdentifierLiteral;
                         } else if (declaratorNodeName.equals("SelectionExpression")) {
                             ExpressionStatement assignment = new ExpressionStatement();
                             for (Object o1 : declarator.getNode(2)) {
                                 if (o1 instanceof Node) {
                                     String primaryIdentifier = ((Node) o1).getString(0);
+                                    if (summary.currentMethod.name.equals("main") && primaryIdentifier.equals("args"))
+                                        summary.usesArgs = true;
                                     assignment.primaryIdentifier = primaryIdentifier;
                                 } else if (o1 instanceof String) {
                                     if (assignment.fields == null)
@@ -297,6 +303,8 @@ public class AstTraversal extends Visitor {
                                         Node expressionNode = (Node) o2;
                                         if (expressionNode.getName().equals("PrimaryIdentifier")) {
                                             String primaryIdentifierString = expressionNode.getString(0);
+                                            if (summary.currentMethod.name.equals("main") && primaryIdentifierString.equals("args"))
+                                                summary.usesArgs = true;
                                             currentStatement.primaryIdentifier = primaryIdentifierString;
                                         }
                                     } else if (summary.operators.contains(o2.toString())) {
@@ -311,6 +319,8 @@ public class AstTraversal extends Visitor {
                                                 Node currentExpressionNode = (Node) o4;
                                                 if (currentExpressionNode.getName().equals("PrimaryIdentifier")) {
                                                     String primaryIdentifierString = currentExpressionNode.getString(0);
+                                                    if (summary.currentMethod.name.equals("main") && primaryIdentifierString.equals("args"))
+                                                        summary.usesArgs = true;
                                                     assignmentString += primaryIdentifierString;
                                                     currentStatement.literalAssignment = assignmentString;
                                                     summary.currentMethod.addMethodStatement(currentStatement);
@@ -326,6 +336,8 @@ public class AstTraversal extends Visitor {
                                         Node callExpressionNode = (Node) o2;
                                         if (callExpressionNode.getName().equals("PrimaryIdentifier")) {
                                             String primaryIdentifierString = callExpressionNode.getString(0);
+                                            if (summary.currentMethod.name.equals("main") && primaryIdentifierString.equals("args"))
+                                                summary.usesArgs = true;
                                             currentStatement.primaryIdentifier = primaryIdentifierString;
                                         } else if (callExpressionNode.getName().equals("Arguments")) {
                                             currentStatement.arguments = new ArrayList<>();
@@ -342,6 +354,8 @@ public class AstTraversal extends Visitor {
                                                                 Node callExpressionNodeArgs = (Node) o4;
                                                                 if (callExpressionNodeArgs.getName().equals("PrimaryIdentifier")) {
                                                                     String argPrimaryIdentifier = callExpressionNodeArgs.getString(0);
+                                                                    if (summary.currentMethod.name.equals("main") && argPrimaryIdentifier.equals("args"))
+                                                                        summary.usesArgs = true;
                                                                     currentArgument.primaryIdentifier = argPrimaryIdentifier;
                                                                 } else if (callExpressionNodeArgs.getName().equals("SelectionExpression")) {
                                                                     for (Object o5 : callExpressionNodeArgs) {
@@ -349,6 +363,8 @@ public class AstTraversal extends Visitor {
                                                                             Node selectionExpressionArgs = (Node) o5;
                                                                             if (selectionExpressionArgs.getName().equals("PrimaryIdentifier")) {
                                                                                 String argPrimaryIdentifier = selectionExpressionArgs.getString(0);
+                                                                                if (summary.currentMethod.name.equals("main") && argPrimaryIdentifier.equals("args"))
+                                                                                    summary.usesArgs = true;
                                                                                 currentArgument.primaryIdentifier = argPrimaryIdentifier;
                                                                             }
                                                                         } else if (o5 instanceof String) {
@@ -366,6 +382,8 @@ public class AstTraversal extends Visitor {
                                                         }
                                                     } else if (argumentsNode.getName().equals("PrimaryIdentifier")) {
                                                         String primaryIdentifier = argumentsNode.getString(0);
+                                                        if (summary.currentMethod.name.equals("main") && primaryIdentifier.equals("args"))
+                                                            summary.usesArgs = true;
                                                         currentArgument.primaryIdentifier = primaryIdentifier;
                                                     } else if (argumentsNode.getName().equals("SelectionExpression")) {
                                                         for (Object o4 : argumentsNode) {
@@ -373,6 +391,8 @@ public class AstTraversal extends Visitor {
                                                                 Node selectionExpressionArgs = (Node) o4;
                                                                 if (selectionExpressionArgs.getName().equals("PrimaryIdentifier")) {
                                                                     String argPrimaryIdentifier = selectionExpressionArgs.getString(0);
+                                                                    if (summary.currentMethod.name.equals("main") && argPrimaryIdentifier.equals("args"))
+                                                                        summary.usesArgs = true;
                                                                     currentArgument.primaryIdentifier = argPrimaryIdentifier;
                                                                 }
                                                             } else if (o4 instanceof String) {
@@ -391,7 +411,10 @@ public class AstTraversal extends Visitor {
                                                 if (o3 instanceof Node) {
                                                     Node selectionExpressionNode = (Node) o3;
                                                     if (selectionExpressionNode.getName().equals("PrimaryIdentifier")) {
-                                                        currentStatement.primaryIdentifier = selectionExpressionNode.getString(0);
+                                                        String primaryIdentifier = selectionExpressionNode.getString(0);
+                                                        if (summary.currentMethod.name.equals("main") && primaryIdentifier.equals("args"))
+                                                            summary.usesArgs = true;
+                                                        currentStatement.primaryIdentifier = primaryIdentifier;
                                                     }
                                                 } else {
                                                     if (o3 != null) {
@@ -426,7 +449,7 @@ public class AstTraversal extends Visitor {
 
                     summary.currentMethod.addMethodStatement(currentStatement);
                 } else {
-
+                    dispatch(current);
                 }
             }
         }
@@ -576,6 +599,11 @@ public class AstTraversal extends Visitor {
         }
     }
 
+    public void visitPrimaryIdentifier(GNode n) {
+        if (n.getString(0).equals("args"))
+            summary.usesArgs = true;
+    }
+
 
     /**
      * visit method
@@ -650,6 +678,8 @@ public class AstTraversal extends Visitor {
         ClassImplementation currentClass;
         MethodImplementation currentMethod;
         ConstructorImplementation currentConstructor;
+
+        boolean usesArgs = false;
 
         // operators ?
         String operators = "=+-*/";

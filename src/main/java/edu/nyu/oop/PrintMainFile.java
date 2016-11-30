@@ -84,15 +84,18 @@ public class PrintMainFile extends Visitor {
         //System.out.println(methodName);
 
         if (methodName.equals("methodMain")) {
-            //mainImplementation.append("int main(void)\n{\n\n");
-            mainImplementation.append("int main (int argc, char ** argv) \n{\n\n");
-            mainImplementation.append("\t//get command line arguments. convert between args(java) and argv(c++). for test22, 23...\n");
-            mainImplementation.append("\t__rt::Array<java::lang::String> args(argc-1);\n");
-            mainImplementation.append("\tfor(int a=1; a<argc;a++){\n");//starts with a=1(not a=0) because the first argument in cpp is the command
-            mainImplementation.append("\t\tjava::lang::String argument = new __String(argv[a]);\n");
-            //mainImplementation.append("\t//cout << \"add arg: \"<< argument->data << endl;");
-            mainImplementation.append("\t\targs.__data[a-1] = argument;\n");
-            mainImplementation.append("\t}\n\n");
+            if (summaryTraversal.usesArgs) {
+                mainImplementation.append("int main (int argc, char ** argv) \n{\n\n");
+                mainImplementation.append("\t//get command line arguments. convert between args(java) and argv(c++). for test22, 23...\n");
+                mainImplementation.append("\t__rt::Array<java::lang::String> args(argc-1);\n");
+                mainImplementation.append("\tfor(int a=1; a<argc;a++){\n");//starts with a=1(not a=0) because the first argument in cpp is the command
+                mainImplementation.append("\t\tjava::lang::String argument = new __String(argv[a]);\n");
+                //mainImplementation.append("\t//cout << \"add arg: \"<< argument->data << endl;");
+                mainImplementation.append("\t\targs.__data[a-1] = argument;\n");
+                mainImplementation.append("\t}\n\n");
+            }
+            else
+                mainImplementation.append("int main(void)\n{\n\n");
         }
 
         for (Object o : block) {
@@ -236,7 +239,9 @@ public class PrintMainFile extends Visitor {
                                     else
                                         expressionStatement += primaryId;
                                 } else if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
-                                    expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
+                                    System.out.println(currentNode.getNode(0));
+                                    primaryId = currentNode.getNode(0).getNode(0).getString(0);
+                                    expressionStatement += primaryId;
                                     expressionStatement += "->" + currentNode.getNode(0).getString(1);
                                 } else if (currentNode.getNode(0).getName().equals("CallExpression")) {
                                     expressionStatement += currentNode.getNode(0).getNode(0).getString(0);
@@ -299,13 +304,9 @@ public class PrintMainFile extends Visitor {
                                                         if (!(methodNameCallExpression.startsWith("method"))) {
                                                             switch (methodNameCallExpression) {
                                                                 case "toString":
-                                                                    break;
                                                                 case "hashCode":
-                                                                    break;
                                                                 case "equals":
-                                                                    break;
-                                                                case "getClass":
-                                                                    break;
+                                                                case "getClass": break;
                                                                 default:
                                                                     methodNameCallExpression = "method" + methodNameCallExpression.substring(0, 1).toUpperCase()
                                                                             + methodNameCallExpression.substring(1);
@@ -653,7 +654,7 @@ public class PrintMainFile extends Visitor {
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                ImplementationUtil.prettyPrintAst(node);
+                //ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;

@@ -19,6 +19,10 @@ public class MethodImplementation {
         String methodName = name;
         switch(methodName){
             case "toString":
+            case "hashCode":
+            case "equals":
+            case "getClass":
+            case "main":
                 break;
             default:
                 methodName = "method" + name.substring(0,1).toUpperCase() + name.substring(1);
