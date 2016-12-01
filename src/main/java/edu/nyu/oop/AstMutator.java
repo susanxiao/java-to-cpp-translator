@@ -112,20 +112,39 @@ public class AstMutator extends Visitor {
                                     //Cast Array
                                     //System.out.println("test-cast array");
                                     GNode ArrayCastExpression = GNode.create("ArrayCastExpression");
+
+                                    /* This can be consolidated to
+                                        __rt::Array<Object>* as = (__rt::Array<Object>*) args;
+                                     */
+
+                                    GNode CastArrayConstructorExpression = GNode.create("CastArrayConstructorExpression");
+                                        GNode typeNode = GNode.create("Type");
+                                        typeNode.add(staticType);
+                                    CastArrayConstructorExpression.add(typeNode);
+                                        GNode primaryId = GNode.create("PrimaryIdentifier");
+                                        primaryId.add(primaryIdentifierString);
+                                    CastArrayConstructorExpression.add(primaryId);
+
+                                        /*GNode ArrayConstructorArguments = GNode.create("ArrayConstructorArguments");
+                                            ArrayConstructorArguments.add(primaryIdentifierString+"->length");
+                                        CastArrayConstructorExpression.add(ArrayConstructorArguments);
+                                        */
+                                    ArrayCastExpression.add(CastArrayConstructorExpression);
+
                                         /*1. print:
                                         __rt::Array<java::lang::Object> as(args.length); //example from test22
-                                        */
+                                        /
                                         GNode CastArrayConstructorExpression = GNode.create("CastArrayConstructorExpression");
-                                            GNode ArrayConstructorArugments = GNode.create("ArrayConstructorArugments");
-                                                ArrayConstructorArugments.add(primaryIdentifierString+".length");
-                                            CastArrayConstructorExpression.add(ArrayConstructorArugments);
+                                            GNode ArrayConstructorArguments = GNode.create("ArrayConstructorArguments");
+                                                ArrayConstructorArguments.add(primaryIdentifierString+"->length");
+                                            CastArrayConstructorExpression.add(ArrayConstructorArguments);
                                         ArrayCastExpression.add(CastArrayConstructorExpression);
 
                                         /*2. print:
                                         for(int i=0;i<as.length;i++){
                                             as.__data[i] = (Object) args.__data[i];
                                         }
-                                        */
+                                        /
                                         GNode CastArrayContentsExpression = GNode.create("CastArrayContentsExpression");
                                             GNode ForStatement = GNode.create("ForStatement");
                                                 GNode BasicForControl = GNode.create("BasicForControl");
@@ -168,7 +187,7 @@ public class AstMutator extends Visitor {
                                                 ForStatement.add(BasicForControl);
 
                                                 GNode Block = GNode.create("Block");
-                                                    //print: as.__data[i] = (Object) args.__data[i];
+                                                    //print: as->__data[i] = (Object) args->__data[i];
                                                     GNode FieldDeclaration = GNode.create("FieldDeclaration");
                                                         Modifiers = GNode.create("Modifiers");//Modifiers node already exists
                                                         FieldDeclaration.add(Modifiers);
@@ -180,7 +199,7 @@ public class AstMutator extends Visitor {
                                                         FieldDeclaration.add(Type);
                                                         Declarators = GNode.create("Declarators");
                                                             Declarator = GNode.create("Declarator");
-                                                                Declarator.add(declarator.getString(0)+".__data[i]");
+                                                                Declarator.add(declarator.getString(0)+"->__data[i]");
                                                                 Declarator.add(null);
                                                                 GNode CastExpression = GNode.create("CastExpression");
                                                                     Type= GNode.create("Type");
@@ -191,7 +210,7 @@ public class AstMutator extends Visitor {
                                                                     CastExpression.add(Type);
                                                                     PrimaryIdentifier= GNode.create("PrimaryIdentifier");
                                                                         //PrimaryIdentifier.add(primaryIdentifierString);
-                                                                        PrimaryIdentifier.add(primaryIdentifierString +".__data[i]");
+                                                                        PrimaryIdentifier.add(primaryIdentifierString +"->__data[i]");
                                                                     CastExpression.add(PrimaryIdentifier);
                                                                 Declarator.add(CastExpression);
                                                             Declarators.add(Declarator);
@@ -204,7 +223,7 @@ public class AstMutator extends Visitor {
                                         ArrayCastExpression.add(CastArrayContentsExpression);
 
 
-
+                                    */
                                     declarator.set(2, ArrayCastExpression);
 
                                 }

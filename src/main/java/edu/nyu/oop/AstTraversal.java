@@ -600,7 +600,7 @@ public class AstTraversal extends Visitor {
     }
 
     public void visitPrimaryIdentifier(GNode n) {
-        if (n.getString(0).equals("args"))
+        if (summary.currentMethod.name.equals("main") && n.getString(0).equals("args"))
             summary.usesArgs = true;
     }
 
