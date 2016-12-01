@@ -35,6 +35,7 @@ help :
 	@echo "     printAll ---- To print the full translation"
 	@echo "make copy --------"
 	@echo "     javalang ---- To copy java_lang.cpp and java_lang.h into translationOutputs"
+	@echo "make clean ------- To remove past outputs from translationOutputs"
 	@echo "make compare ----- To compare already translated outputs"
 	@echo "make 5tran -------"
 	@echo "     doAll ------- To fully translate and compare outputs"
@@ -62,6 +63,15 @@ translate printAll:
 	@echo "Translating inputs $(start) to $(end)" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).ImplementationUtil $(start) $(end)" ;
 	@echo "Translated outputs are in testOutputs/translationOutputs"
+clean:
+	@echo "Removing past outputs for $(start) to $(end)" ;
+	@num=$(start) ; while [ $$num -le $(end) ] ; do \
+		formatNum=`printf "%03d" $$num` ; \
+		cppOutputPath=`expr ./testOutputs/translationOutputs/test$$formatNum` ; \
+		rm $$cppOutputPath/output/*  ; \
+		num=`expr $$num + 1` ; \
+	done ;
+	@echo "Removed past outputs from testOutputs/translationOutputs" ;
 copy javalang :
 	@echo "Copying java_lang.cpp and java_lang.h" ;
 	@num=$(start) ; while [ $$num -le $(end) ] ; do \
@@ -98,4 +108,4 @@ compare :
 	@echo "Checking outputs" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking $(start) $(end)" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"
-5tran doAll : translate copy compare
+5tran doAll : translate copy clean compare
