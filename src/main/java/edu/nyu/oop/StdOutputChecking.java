@@ -27,6 +27,8 @@ public class StdOutputChecking {
 
         StringBuilder s = new StringBuilder();
         StringBuilder fail = new StringBuilder("\nFailed:\n");
+
+        int numFail = 0;
         for (int i = start; i <= end; i++) {
             String cppOutput = String.format("./testOutputs/translationOutputs/test%03d/output/cpp_output.txt", i);
             String javaOutput = String.format("./testOutputs/translationOutputs/test%03d/output/java_output.txt", i);
@@ -85,18 +87,24 @@ public class StdOutputChecking {
                 javaInput.close();
 
                 String equal = (isEqual ? "Passed" : "Failed") + message;
-                if (!isEqual)
+                if (!isEqual) {
                     fail.append(inputName.toLowerCase() + " -> " + equal + "\n");
+                    numFail++;
+                }
 
                 s.append(inputName.toLowerCase() + " -> " + equal + "\n");
 
             } catch (IOException e) {
                 s.append(inputName.toLowerCase() + " -> Failed - Not Started\n");
                 fail.append(inputName.toLowerCase() + " -> Failed - Not Started\n");
+                numFail++;
                 //e.printStackTrace();
             }
         }
-        s.append(fail);
+
+        if (numFail > 0)
+            s.append(fail);
+
         try {
             String path_output = "./testOutputs/input_tests.txt";
             File main = new File(path_output);
