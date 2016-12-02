@@ -13,7 +13,6 @@ namespace inputs {
 		void __A::methodPrintOther(A __this, A other) {
 			__rt::checkNotNull(other);
 			cout << other->a << endl;
-			cout << other->a << endl;
 		};
 
 		String __A::toString(A __this) {

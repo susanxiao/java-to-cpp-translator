@@ -436,9 +436,6 @@ public class PrintCppFile extends Visitor {
                             if (expressionStatementChild.getString(2) != null) {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
-                            String lineExceptions = "";
-                            lineExceptions += line;
-                            summary.addLine(lineExceptions.toString() + ";\n");
 
                         } else if (arguments.getNode(0).getName().equals("CallExpression")) {
                             Node callExpression = arguments.getNode(0);

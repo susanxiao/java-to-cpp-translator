@@ -54,6 +54,7 @@ public class StdOutputChecking {
 
                             message = " - Location";
                         } else if (javaInputLine.startsWith("Exception")) {
+
                             if (!javaInputLine.contains(cppInputLine))
                                 isEqual = false;
                             else {
