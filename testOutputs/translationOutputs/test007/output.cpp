@@ -25,7 +25,7 @@ b((String)__rt::null()) {
 
 		Class __B::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test007.B"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test007.B"),__A::__class());
 			return k;
 		};
 

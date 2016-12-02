@@ -49,7 +49,7 @@ namespace inputs {
 
 		struct __B {
 			__B_VT* __vptr;
-			__A* parent;
+			__A parent;
 			B some;
 
 			__B();

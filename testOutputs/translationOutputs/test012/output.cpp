@@ -37,7 +37,7 @@ namespace inputs {
 
 		Class __B1::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test012.B1"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test012.B1"),__A::__class());
 			return k;
 		};
 
@@ -49,7 +49,7 @@ namespace inputs {
 
 		Class __B2::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test012.B2"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test012.B2"),__A::__class());
 			return k;
 		};
 
@@ -65,7 +65,7 @@ namespace inputs {
 
 		Class __C::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test012.C"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test012.C"),__B1::__class(),__A::__class());
 			return k;
 		};
 

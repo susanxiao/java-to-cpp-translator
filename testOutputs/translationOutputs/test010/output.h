@@ -63,7 +63,7 @@ namespace inputs {
 		struct __B1 {
 			__B1_VT* __vptr;
 			String b;
-			__A* parent;
+			__A parent;
 
 			__B1();
 
@@ -97,7 +97,7 @@ namespace inputs {
 		struct __B2 {
 			__B2_VT* __vptr;
 			String b;
-			__A* parent;
+			__A parent;
 
 			__B2();
 
@@ -131,7 +131,7 @@ namespace inputs {
 		struct __C {
 			__C_VT* __vptr;
 			String c;
-			__B1* parent;
+			__B1 parent;
 
 			__C();
 

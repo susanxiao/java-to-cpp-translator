@@ -21,7 +21,7 @@ int main(void)
 	other->parent.some = a;
 
 	Class k0 = a->__vptr->getClass(a);
-	checkClass(k0,other);
+	checkClass(k0, other);
 
 	a->__vptr->methodPrintOther(a, (A) other);
 

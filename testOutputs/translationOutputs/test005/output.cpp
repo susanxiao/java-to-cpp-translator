@@ -29,7 +29,7 @@ namespace inputs {
 
 		Class __B::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test005.B"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test005.B"),__A::__class());
 			return k;
 		};
 

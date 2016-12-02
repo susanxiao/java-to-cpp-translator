@@ -33,17 +33,17 @@ int main(void)
 	a->__vptr->methodPrintOther(a, a);
 
 	Class k0 = a->__vptr->getClass(a);
-	checkClass(k0,b1);
+	checkClass(k0, b1);
 
 	a->__vptr->methodPrintOther(a, (A) b1);
 
 	Class k1 = a->__vptr->getClass(a);
-	checkClass(k1,b2);
+	checkClass(k1, b2);
 
 	a->__vptr->methodPrintOther(a, (A) b2);
 
 	Class k2 = a->__vptr->getClass(a);
-	checkClass(k2,c);
+	checkClass(k2, c);
 
 	a->__vptr->methodPrintOther(a, (A) c);
 
