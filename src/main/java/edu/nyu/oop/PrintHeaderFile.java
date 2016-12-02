@@ -495,8 +495,8 @@ public class PrintHeaderFile extends Visitor {
         //NOTE: running a specific file will place it in the output folder.
         //      running all files will place it in testOutputs/translationOutputs
 
-        int start = 14;
-        int end = 14;
+        int start = 0;
+        int end = 20;
 
 
         if (args.length > 1) {

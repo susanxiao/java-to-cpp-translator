@@ -674,8 +674,8 @@ public class PrintMainFile extends Visitor {
     public static void main(String[] args) {
         //TO RUN: run-main edu.nyu.oop.PrintMainFile ***
         // *** a number 0-20, or nothing to run all test cases
-        int start = 16;
-        int end = 16;
+        int start = 0;
+        int end = 20;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
