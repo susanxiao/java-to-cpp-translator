@@ -88,7 +88,15 @@ public class PrintCppFile extends Visitor {
             }
         }
         if (!constructorCreated) {
-            summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable) {};\n\n");
+            summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable)");
+            for (FieldDeclaration var : summaryTraversal.classes.get(summary.currentClass.name).declarations) {
+                if (summaryTraversal.classes.containsKey(var.staticType)) {
+                    summary.addLine("\n," + var.variableName + "((" + summary.currentClass.name + ")__rt::null())");
+                } else {
+                    summary.addLine("\n," + var.variableName + "((" + var.staticType + ")__rt::null())");
+                }
+            }
+            summary.addLine("\n{};\n\n");
         }
     }
 
@@ -279,6 +287,7 @@ public class PrintCppFile extends Visitor {
 
         Set<Map.Entry<String, String>> initializerSet = summary.initializerList.entrySet();
         StringBuilder initializers = new StringBuilder("__vptr(&__vtable)");
+        Set<String> variables = new TreeSet<>();
 
         for (Map.Entry<String, String> entry : initializerSet) {
             if (entry.getValue() != null) {
@@ -286,6 +295,23 @@ public class PrintCppFile extends Visitor {
                 for (int i = 0; i < summary.scope + 2; i++)
                     initializers.append("\t");
                 initializers.append(entry.getKey() + "(" + entry.getValue() + ")");
+                variables.add(entry.getKey());
+            }
+        }
+
+        StringBuilder setNull;
+        String className = summary.currentClass.name;
+        for (FieldDeclaration declaration : summaryTraversal.classes.get(summary.currentClass.name).declarations) {
+            if (!variables.contains(declaration.variableName)) {
+                if (summaryTraversal.classes.containsKey(declaration.staticType)) {
+                    setNull = new StringBuilder(",\n");
+                    setNull.append(declaration.variableName + "((" + className + ")__rt::null())");
+                    initializers.append(setNull);
+                } else {
+                    setNull = new StringBuilder(",\n");
+                    setNull.append(declaration.variableName + "((" + declaration.staticType + ")__rt::null())");
+                    initializers.append(setNull);
+                }
             }
         }
         summary.code = new StringBuilder(String.format(summary.code.toString(), initializers.toString()));
@@ -317,6 +343,8 @@ public class PrintCppFile extends Visitor {
 
         methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
 
+        Set<String> paramNames = new TreeSet<>();
+
         Node formalParameters = n.getNode(4);
         for (int i = 0; i < formalParameters.size(); i++) {
             Object o = formalParameters.get(i);
@@ -329,9 +357,11 @@ public class PrintCppFile extends Visitor {
                     if (isStatic) {
                         if (!paramName.equals("__this"))
                             methodSignature.append(className + " " + paramName);
-                    } else
+                        paramNames.add(paramName);
+                    } else {
                         methodSignature.append(className + " " + paramName);
-
+                        paramNames.add(paramName);
+                    }
                     if (i < formalParameters.size() - 1)
                         methodSignature.append(", ");
                 }
@@ -342,6 +372,11 @@ public class PrintCppFile extends Visitor {
 
         summary.incScope();
         Node methodBlock = n.getNode(7);
+
+        for (String name : paramNames) {
+            if (!name.equals("__this"))
+                summary.addLine("__rt::checkNotNull(" + name + ");\n");
+        }
 
         HashSet<String> localVariables = new HashSet<>();
         for (Object o : methodBlock) {
@@ -432,20 +467,8 @@ public class PrintCppFile extends Visitor {
                                 line.append(" << " + expressionStatementChild.getString(2));
                             }
 
-                            summary.addLine("try");
-                            summary.incScope();
-
-                            summary.checkNull(param);
-                            summary.checkClassCast(param);
-
-                            summary.addLine(line.toString()+";\n");
-                            summary.decScope();
-                            summary.catchNullPointer(summary.currentClass.name, summary.classLocation, methodName);
-                            summary.catchClassCast(summary.currentClass.name, summary.classLocation);
-
                         }
-
-                        //summary.addLine(line.toString() + ";\n");
+                        summary.addLine(line.toString() + ";\n");
                     }
                 }
             } else if (currentNode.getName().equals("ReturnStatement")) {
@@ -590,42 +613,6 @@ public class PrintCppFile extends Visitor {
             code.append(line);
         }
 
-        public void checkNull(String param) {
-            addLine("std::stringstream ss;\n");
-            addLine("ss << " + param + ";\n");
-            addLine("std::string tmp = ss.str();\n");
-            addLine("int count = 0;\n");
-            addLine("for(int i = 0; i < tmp.length(); i++)");
-            incScope();
-            addLine("if(tmp[i] != '0'){ count += 1; }\n");
-            decScope();
-            addLine("if(count == 2 || count == 1){ throw java::lang::NullPointerException(); }\n");
-        }
-
-        public void checkClassCast(String param) {
-            addLine("Class k = " + param + "->__vptr->getClass(" + param + ");\n");
-            addLine("std::string paramClass = k->__vptr->getName(k)->data;\n");
-            addLine("Class thisK = __this->__vptr->getClass(__this);\n");
-            addLine("std::string thisClass = thisK->__vptr->getName(thisK)->data;\n");
-            addLine("//if(paramClass != thisClass){ throw java::lang::ClassCastException();}\n");
-        }
-
-        public void catchNullPointer(String className, String classLocation, String methodName) {
-            addLine("catch(const NullPointerException &ex)");
-            incScope();
-            addLine("cout << \"java.lang.NullPointerException\" << endl;\n");
-            addLine("cout << \"\tat " + classLocation + "" + className + "." + methodName + "\" << endl;\n");
-            decScope();
-        }
-
-        public void catchClassCast(String className, String classLocation) {
-            addLine("catch(const ClassCastException &ex)");
-            incScope();
-            addLine("cout << \"java.lang.ClassCastException\" << endl;\n");
-            addLine("cout << \"\tat " + classLocation + "" + className + "\" << endl;\n");
-            decScope();
-        }
-
     }
 
     public cppFileSummary getSummary(GNode n) {
@@ -645,7 +632,7 @@ public class PrintCppFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
-        start = end = 16;
+        start = end = 11;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);

@@ -5,7 +5,7 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test012 {
+	namespace test011 {
 		struct __A;
 		struct __A_VT;
 
@@ -36,7 +36,7 @@ namespace inputs {
 
 			static void methodSetA(A, String);
 			static void methodPrintOther(A, A);
-			static String methodMyToString(A);
+			static String toString(A);
 		};
 
 		struct __A_VT {
@@ -48,17 +48,15 @@ namespace inputs {
 			String (*toString)(A);
 			void (*methodSetA)(A, String);
 			void (*methodPrintOther)(A, A);
-			String (*methodMyToString)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
 			hashCode((int32_t(*)(A))&__Object::hashCode),
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
-			toString((String(*)(A))&__Object::toString),
+			toString(&__A::toString),
 			methodSetA(&__A::methodSetA),
-			methodPrintOther(&__A::methodPrintOther),
-			methodMyToString(&__A::methodMyToString)
+			methodPrintOther(&__A::methodPrintOther)
 			{}
 		};
 
@@ -84,17 +82,15 @@ namespace inputs {
 			String (*toString)(B1);
 			void (*methodSetA)(B1, String);
 			void (*methodPrintOther)(B1, A);
-			String (*methodMyToString)(B1);
 
 			__B1_VT()
 			: __isa(__B1::__class()),
 			hashCode((int32_t(*)(B1))&__Object::hashCode),
 			equals((bool(*)(B1, Object))&__Object::equals),
 			getClass((Class(*)(B1))&__Object::getClass),
-			toString((String(*)(B1))&__Object::toString),
+			toString((String(*)(B1))&__A::toString),
 			methodSetA((void(*)(B1, String))&__A::methodSetA),
-			methodPrintOther((void(*)(B1, A))&__A::methodPrintOther),
-			methodMyToString((String(*)(B1))&__A::methodMyToString)
+			methodPrintOther((void(*)(B1, A))&__A::methodPrintOther)
 			{}
 		};
 
@@ -120,17 +116,15 @@ namespace inputs {
 			String (*toString)(B2);
 			void (*methodSetA)(B2, String);
 			void (*methodPrintOther)(B2, A);
-			String (*methodMyToString)(B2);
 
 			__B2_VT()
 			: __isa(__B2::__class()),
 			hashCode((int32_t(*)(B2))&__Object::hashCode),
 			equals((bool(*)(B2, Object))&__Object::equals),
 			getClass((Class(*)(B2))&__Object::getClass),
-			toString((String(*)(B2))&__Object::toString),
+			toString((String(*)(B2))&__A::toString),
 			methodSetA((void(*)(B2, String))&__A::methodSetA),
-			methodPrintOther((void(*)(B2, A))&__A::methodPrintOther),
-			methodMyToString((String(*)(B2))&__A::methodMyToString)
+			methodPrintOther((void(*)(B2, A))&__A::methodPrintOther)
 			{}
 		};
 
@@ -145,7 +139,6 @@ namespace inputs {
 
 			static __C_VT __vtable;
 
-			static String methodMyToString(C);
 		};
 
 		struct __C_VT {
@@ -157,20 +150,17 @@ namespace inputs {
 			String (*toString)(C);
 			void (*methodSetA)(C, String);
 			void (*methodPrintOther)(C, A);
-			String (*methodMyToString)(C);
 
 			__C_VT()
 			: __isa(__C::__class()),
 			hashCode((int32_t(*)(C))&__Object::hashCode),
 			equals((bool(*)(C, Object))&__Object::equals),
 			getClass((Class(*)(C))&__Object::getClass),
-			toString((String(*)(C))&__Object::toString),
+			toString((String(*)(C))&__A::toString),
 			methodSetA((void(*)(C, String))&__A::methodSetA),
-			methodPrintOther((void(*)(C, A))&__A::methodPrintOther),
-			methodMyToString(&__C::methodMyToString)
+			methodPrintOther((void(*)(C, A))&__A::methodPrintOther)
 			{}
 		};
 
 	}
 }
-

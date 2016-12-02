@@ -245,7 +245,7 @@ public class HeaderTest {
         assert (summary.classCount == 2);
         assert (summary.classMethodCounts.get("A") == 2);
         assert (summary.classDeclarationCounts.get("A") == 1);
-      }
+    }
 
     @Test
     public void test014() {

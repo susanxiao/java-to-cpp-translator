@@ -166,7 +166,8 @@ public class AstTraversalTest {
         assert (summary.classMethodCounts.get("B1").equals(0));
         assert (summary.classMethodCounts.get("B2").equals(0));
         assert (summary.classMethodCounts.get("C").equals(0));
-        assert (summary.classMethodCounts.get("Test011").equals(1));    }
+        assert (summary.classMethodCounts.get("Test011").equals(1));
+    }
 
     @Test
     public void test012() {

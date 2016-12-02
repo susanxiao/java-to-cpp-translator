@@ -14,7 +14,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String _fld;
+			String fld;
 
 			__A(String fld);
 
@@ -22,7 +22,7 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static String getFld(A);
+			static String methodGetFld(A);
 		};
 
 		struct __A_VT {
@@ -32,7 +32,7 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			String (*getFld)(A);
+			String (*methodGetFld)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -40,7 +40,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			getFld(&__A::getFld)
+			methodGetFld(&__A::methodGetFld)
 			{}
 		};
 

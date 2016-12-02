@@ -6,41 +6,22 @@ using namespace std;
 namespace inputs {
 	namespace test010 {
 		void __A::methodSetA(A __this, String x) {
+			__rt::checkNotNull(x);
 			__this->a = x;
 		};
 
 		void __A::methodPrintOther(A __this, A other) {
-			try {
-				std::stringstream ss;
-				ss << other;
-				std::string tmp = ss.str();
-				int count = 0;
-				for(int i = 0; i < tmp.length(); i++) {
-					if(tmp[i] != '0'){ count += 1; }
-				}
-				if(count == 2 || count == 1){ throw java::lang::NullPointerException(); }
-				Class k = other->__vptr->getClass(other);
-				std::string paramClass = k->__vptr->getName(k)->data;
-				Class thisK = __this->__vptr->getClass(__this);
-				std::string thisClass = thisK->__vptr->getName(thisK)->data;
-				//if(paramClass != thisClass){ throw java::lang::ClassCastException();}
-				cout << other->__vptr->toString(other) << endl;
-			}
-			catch(const NullPointerException &ex) {
-				cout << "java.lang.NullPointerException" << endl;
-				cout << "	at inputs.test010.A.methodPrintOther" << endl;
-			}
-			catch(const ClassCastException &ex) {
-				cout << "java.lang.ClassCastException" << endl;
-				cout << "	at inputs.test010.A" << endl;
-			}
+			__rt::checkNotNull(other);
+			cout << other->__vptr->toString(other) << endl;
 		};
 
 		String __A::toString(A __this) {
 			return __this->a;
 		};
 
-		__A::__A() : __vptr(&__vtable) {};
+		__A::__A() : __vptr(&__vtable)		
+,a((String)__rt::null())		
+{};
 
 		Class __A::__class() {
 			static Class k =
@@ -50,7 +31,9 @@ namespace inputs {
 
 		__A_VT __A::__vtable;
 
-		__B1::__B1() : __vptr(&__vtable) {};
+		__B1::__B1() : __vptr(&__vtable)		
+,b((String)__rt::null())		
+{};
 
 		Class __B1::__class() {
 			static Class k =
@@ -60,7 +43,9 @@ namespace inputs {
 
 		__B1_VT __B1::__vtable;
 
-		__B2::__B2() : __vptr(&__vtable) {};
+		__B2::__B2() : __vptr(&__vtable)		
+,b((String)__rt::null())		
+{};
 
 		Class __B2::__class() {
 			static Class k =
@@ -70,7 +55,9 @@ namespace inputs {
 
 		__B2_VT __B2::__vtable;
 
-		__C::__C() : __vptr(&__vtable) {};
+		__C::__C() : __vptr(&__vtable)		
+,c((String)__rt::null())		
+{};
 
 		Class __C::__class() {
 			static Class k =

@@ -16,8 +16,7 @@ public class StdOutputChecking {
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
             end = ImplementationUtil.getInteger(args[1]);
-        }
-        else if (args.length > 0) {
+        } else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;
@@ -54,8 +53,7 @@ public class StdOutputChecking {
                                 isEqual = false;
 
                             message = " - Location";
-                        }
-                        else if (javaInputLine.startsWith("Exception")) {
+                        } else if (javaInputLine.startsWith("Exception")) {
                             if (!javaInputLine.contains(cppInputLine))
                                 isEqual = false;
                             else {
@@ -64,8 +62,7 @@ public class StdOutputChecking {
                             }
 
                             message = " - Exception";
-                        }
-                        else
+                        } else
                             isEqual = false;
                     }
                     if (!isEqual) break;

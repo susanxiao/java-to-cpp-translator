@@ -14,7 +14,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			A _some;
+			A some;
 
 			__A();
 
@@ -22,7 +22,7 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static void printOther(A, A);
+			static void methodPrintOther(A, A);
 		};
 
 		struct __A_VT {
@@ -32,7 +32,7 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			void (*printOther)(A, A);
+			void (*methodPrintOther)(A, A);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -40,7 +40,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			printOther(&__A::printOther)
+			methodPrintOther(&__A::methodPrintOther)
 			{}
 		};
 

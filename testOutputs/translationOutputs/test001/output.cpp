@@ -9,7 +9,8 @@ namespace inputs {
 			return new __String("A");
 		};
 
-		__A::__A() : __vptr(&__vtable) {};
+		__A::__A() : __vptr(&__vtable)		
+{};
 
 		Class __A::__class() {
 			static Class k =

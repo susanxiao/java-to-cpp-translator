@@ -38,12 +38,13 @@ public class AstMutator extends Visitor {
         String methodNameString = n.getString(3);
         if (!(methodNameString.startsWith("method"))) {
             switch (methodNameString) {
-                case "toString":
-                case "hashCode":
-                case "equals":
-                case "getClass": break;
-                default:
-                    methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
+            case "toString":
+            case "hashCode":
+            case "equals":
+            case "getClass":
+                break;
+            default:
+                methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
 
             }
             GNode methodName = GNode.create(methodNameString);
@@ -108,7 +109,7 @@ public class AstMutator extends Visitor {
                             if (!staticType.equals(dynamicType)) {
                                 GNode type1 = GNode.create("Type");
                                 Node castArray = type.getNode(1);
-                                if(castArray!=null && castArray.getName().toString().equals("Dimensions") && castArray.getString(0).equals("[")){
+                                if(castArray!=null && castArray.getName().toString().equals("Dimensions") && castArray.getString(0).equals("[")) {
                                     //Cast Array
                                     //System.out.println("test-cast array");
                                     GNode ArrayCastExpression = GNode.create("ArrayCastExpression");
@@ -118,116 +119,115 @@ public class AstMutator extends Visitor {
                                      */
 
                                     GNode CastArrayConstructorExpression = GNode.create("CastArrayConstructorExpression");
-                                        GNode typeNode = GNode.create("Type");
-                                        typeNode.add(staticType);
+                                    GNode typeNode = GNode.create("Type");
+                                    typeNode.add(staticType);
                                     CastArrayConstructorExpression.add(typeNode);
-                                        GNode primaryId = GNode.create("PrimaryIdentifier");
-                                        primaryId.add(primaryIdentifierString);
+                                    GNode primaryId = GNode.create("PrimaryIdentifier");
+                                    primaryId.add(primaryIdentifierString);
                                     CastArrayConstructorExpression.add(primaryId);
 
-                                        /*GNode ArrayConstructorArguments = GNode.create("ArrayConstructorArguments");
-                                            ArrayConstructorArguments.add(primaryIdentifierString+"->length");
-                                        CastArrayConstructorExpression.add(ArrayConstructorArguments);
-                                        */
+                                    /*GNode ArrayConstructorArguments = GNode.create("ArrayConstructorArguments");
+                                        ArrayConstructorArguments.add(primaryIdentifierString+"->length");
+                                    CastArrayConstructorExpression.add(ArrayConstructorArguments);
+                                    */
                                     ArrayCastExpression.add(CastArrayConstructorExpression);
 
-                                        /*1. print:
-                                        __rt::Array<java::lang::Object> as(args.length); //example from test22
-                                        /
-                                        GNode CastArrayConstructorExpression = GNode.create("CastArrayConstructorExpression");
-                                            GNode ArrayConstructorArguments = GNode.create("ArrayConstructorArguments");
-                                                ArrayConstructorArguments.add(primaryIdentifierString+"->length");
-                                            CastArrayConstructorExpression.add(ArrayConstructorArguments);
-                                        ArrayCastExpression.add(CastArrayConstructorExpression);
+                                    /*1. print:
+                                    __rt::Array<java::lang::Object> as(args.length); //example from test22
+                                    /
+                                    GNode CastArrayConstructorExpression = GNode.create("CastArrayConstructorExpression");
+                                        GNode ArrayConstructorArguments = GNode.create("ArrayConstructorArguments");
+                                            ArrayConstructorArguments.add(primaryIdentifierString+"->length");
+                                        CastArrayConstructorExpression.add(ArrayConstructorArguments);
+                                    ArrayCastExpression.add(CastArrayConstructorExpression);
 
-                                        /*2. print:
-                                        for(int i=0;i<as.length;i++){
-                                            as.__data[i] = (Object) args.__data[i];
-                                        }
-                                        /
-                                        GNode CastArrayContentsExpression = GNode.create("CastArrayContentsExpression");
-                                            GNode ForStatement = GNode.create("ForStatement");
-                                                GNode BasicForControl = GNode.create("BasicForControl");
-                                                    GNode Modifiers = GNode.create("Modifiers");
-                                                    BasicForControl.add(Modifiers);
-                                                    GNode Type = GNode.create("Type");
-                                                        GNode PrimitiveType = GNode.create("PrimitiveType");
-                                                        PrimitiveType.add("int");
-                                                        Type.add(PrimitiveType);
-                                                        Type.add(null);
-                                                    BasicForControl.add(Type);
-                                                    GNode Declarators = GNode.create("Declarators");
-                                                        GNode Declarator = GNode.create("Declarator");
-                                                            Declarator.add("i");
-                                                            Declarator.add(null);
-                                                            GNode IntegerLiteral = GNode.create("IntegerLiteral");
-                                                            IntegerLiteral.add("0");
-                                                            Declarator.add(IntegerLiteral);
-                                                        Declarators.add(Declarator);
-                                                    BasicForControl.add(Declarators);
-                                                    GNode RelationalExpression = GNode.create("RelationalExpression");
-                                                        GNode PrimaryIdentifier = GNode.create("PrimaryIdentifier");
+                                    /*2. print:
+                                    for(int i=0;i<as.length;i++){
+                                        as.__data[i] = (Object) args.__data[i];
+                                    }
+                                    /
+                                    GNode CastArrayContentsExpression = GNode.create("CastArrayContentsExpression");
+                                        GNode ForStatement = GNode.create("ForStatement");
+                                            GNode BasicForControl = GNode.create("BasicForControl");
+                                                GNode Modifiers = GNode.create("Modifiers");
+                                                BasicForControl.add(Modifiers);
+                                                GNode Type = GNode.create("Type");
+                                                    GNode PrimitiveType = GNode.create("PrimitiveType");
+                                                    PrimitiveType.add("int");
+                                                    Type.add(PrimitiveType);
+                                                    Type.add(null);
+                                                BasicForControl.add(Type);
+                                                GNode Declarators = GNode.create("Declarators");
+                                                    GNode Declarator = GNode.create("Declarator");
+                                                        Declarator.add("i");
+                                                        Declarator.add(null);
+                                                        GNode IntegerLiteral = GNode.create("IntegerLiteral");
+                                                        IntegerLiteral.add("0");
+                                                        Declarator.add(IntegerLiteral);
+                                                    Declarators.add(Declarator);
+                                                BasicForControl.add(Declarators);
+                                                GNode RelationalExpression = GNode.create("RelationalExpression");
+                                                    GNode PrimaryIdentifier = GNode.create("PrimaryIdentifier");
+                                                    PrimaryIdentifier.add("i");
+                                                    RelationalExpression.add(PrimaryIdentifier);
+                                                    RelationalExpression.add("<");
+                                                    GNode SelectionExpression = GNode.create("SelectionExpression");
+                                                        PrimaryIdentifier = GNode.create("PrimaryIdentifier");//PrimaryIdentifier is already defined in the scope
+                                                        SelectionExpression.add(primaryIdentifier);
+                                                        SelectionExpression.add("length");
+                                                    RelationalExpression.add(SelectionExpression);
+                                                BasicForControl.add(RelationalExpression);
+                                                GNode ExpressionList = GNode.create("ExpressionList");
+                                                    GNode PostfixExpression = GNode.create("PostfixExpression");
+                                                        PrimaryIdentifier = GNode.create("PrimaryIdentifier");
                                                         PrimaryIdentifier.add("i");
-                                                        RelationalExpression.add(PrimaryIdentifier);
-                                                        RelationalExpression.add("<");
-                                                        GNode SelectionExpression = GNode.create("SelectionExpression");
-                                                            PrimaryIdentifier = GNode.create("PrimaryIdentifier");//PrimaryIdentifier is already defined in the scope
-                                                            SelectionExpression.add(primaryIdentifier);
-                                                            SelectionExpression.add("length");
-                                                        RelationalExpression.add(SelectionExpression);
-                                                    BasicForControl.add(RelationalExpression);
-                                                    GNode ExpressionList = GNode.create("ExpressionList");
-                                                        GNode PostfixExpression = GNode.create("PostfixExpression");
-                                                            PrimaryIdentifier = GNode.create("PrimaryIdentifier");
-                                                            PrimaryIdentifier.add("i");
-                                                            PostfixExpression.add(PrimaryIdentifier);
-                                                        PostfixExpression.add("++");
-                                                        ExpressionList.add(PostfixExpression);
-                                                    BasicForControl.add(ExpressionList);
-                                                ForStatement.add(BasicForControl);
+                                                        PostfixExpression.add(PrimaryIdentifier);
+                                                    PostfixExpression.add("++");
+                                                    ExpressionList.add(PostfixExpression);
+                                                BasicForControl.add(ExpressionList);
+                                            ForStatement.add(BasicForControl);
 
-                                                GNode Block = GNode.create("Block");
-                                                    //print: as->__data[i] = (Object) args->__data[i];
-                                                    GNode FieldDeclaration = GNode.create("FieldDeclaration");
-                                                        Modifiers = GNode.create("Modifiers");//Modifiers node already exists
-                                                        FieldDeclaration.add(Modifiers);
-                                                        Type = GNode.create("Type"); //Type already exists
-                                                        GNode QualifiedIdentifier = GNode.create("QualifiedIdentifier");
-                                                            QualifiedIdentifier.add("");
-                                                        Type.add(QualifiedIdentifier);
-                                                        Type.add(null);
-                                                        FieldDeclaration.add(Type);
-                                                        Declarators = GNode.create("Declarators");
-                                                            Declarator = GNode.create("Declarator");
-                                                                Declarator.add(declarator.getString(0)+"->__data[i]");
-                                                                Declarator.add(null);
-                                                                GNode CastExpression = GNode.create("CastExpression");
-                                                                    Type= GNode.create("Type");
-                                                                        QualifiedIdentifier = GNode.create("QualifiedIdentifier");
-                                                                            QualifiedIdentifier.add(n.getNode(1).getNode(0).getString(0));
-                                                                        Type.add(QualifiedIdentifier);
-                                                                        Type.add(null);
-                                                                    CastExpression.add(Type);
-                                                                    PrimaryIdentifier= GNode.create("PrimaryIdentifier");
-                                                                        //PrimaryIdentifier.add(primaryIdentifierString);
-                                                                        PrimaryIdentifier.add(primaryIdentifierString +"->__data[i]");
-                                                                    CastExpression.add(PrimaryIdentifier);
-                                                                Declarator.add(CastExpression);
-                                                            Declarators.add(Declarator);
-                                                        FieldDeclaration.add(Declarators);
-                                                    Block.add(FieldDeclaration);
+                                            GNode Block = GNode.create("Block");
+                                                //print: as->__data[i] = (Object) args->__data[i];
+                                                GNode FieldDeclaration = GNode.create("FieldDeclaration");
+                                                    Modifiers = GNode.create("Modifiers");//Modifiers node already exists
+                                                    FieldDeclaration.add(Modifiers);
+                                                    Type = GNode.create("Type"); //Type already exists
+                                                    GNode QualifiedIdentifier = GNode.create("QualifiedIdentifier");
+                                                        QualifiedIdentifier.add("");
+                                                    Type.add(QualifiedIdentifier);
+                                                    Type.add(null);
+                                                    FieldDeclaration.add(Type);
+                                                    Declarators = GNode.create("Declarators");
+                                                        Declarator = GNode.create("Declarator");
+                                                            Declarator.add(declarator.getString(0)+"->__data[i]");
+                                                            Declarator.add(null);
+                                                            GNode CastExpression = GNode.create("CastExpression");
+                                                                Type= GNode.create("Type");
+                                                                    QualifiedIdentifier = GNode.create("QualifiedIdentifier");
+                                                                        QualifiedIdentifier.add(n.getNode(1).getNode(0).getString(0));
+                                                                    Type.add(QualifiedIdentifier);
+                                                                    Type.add(null);
+                                                                CastExpression.add(Type);
+                                                                PrimaryIdentifier= GNode.create("PrimaryIdentifier");
+                                                                    //PrimaryIdentifier.add(primaryIdentifierString);
+                                                                    PrimaryIdentifier.add(primaryIdentifierString +"->__data[i]");
+                                                                CastExpression.add(PrimaryIdentifier);
+                                                            Declarator.add(CastExpression);
+                                                        Declarators.add(Declarator);
+                                                    FieldDeclaration.add(Declarators);
+                                                Block.add(FieldDeclaration);
 
 
-                                                ForStatement.add(Block);
-                                            CastArrayContentsExpression.add(ForStatement);
-                                        ArrayCastExpression.add(CastArrayContentsExpression);
+                                            ForStatement.add(Block);
+                                        CastArrayContentsExpression.add(ForStatement);
+                                    ArrayCastExpression.add(CastArrayContentsExpression);
 
 
                                     */
                                     declarator.set(2, ArrayCastExpression);
 
-                                }
-                                else if(castArray==null){//regular cast
+                                } else if(castArray==null) { //regular cast
                                     GNode castExpression = GNode.create("CastExpression");
                                     //System.out.println("regular cast");
                                     GNode qualifiedIdentifier1 = GNode.create("QualifiedIdentifier");
@@ -540,12 +540,13 @@ public class AstMutator extends Visitor {
                     String methodNameString = n.getNode(0).getNode(3).getNode(0).getString(2);
                     if (!(methodNameString.startsWith("method"))) {
                         switch (methodNameString) {
-                            case "toString":
-                            case "hashCode":
-                            case "equals":
-                            case "getClass": break;
-                            default:
-                                methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
+                        case "toString":
+                        case "hashCode":
+                        case "equals":
+                        case "getClass":
+                            break;
+                        default:
+                            methodNameString = "method" + methodNameString.substring(0, 1).toUpperCase() + methodNameString.substring(1);
 
                         }
                         GNode nPrime = (GNode) n.getNode(0).getNode(3).getNode(0);
@@ -669,8 +670,7 @@ public class AstMutator extends Visitor {
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
             end = ImplementationUtil.getInteger(args[1]);
-        }
-        else if (args.length > 0) {
+        } else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;

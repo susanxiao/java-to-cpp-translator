@@ -14,7 +14,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String _a;
+			String a;
 
 			__A();
 
@@ -22,8 +22,8 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static void setA(A, String);
-			static void printOther(A, A);
+			static void methodSetA(A, String);
+			static void methodPrintOther(A, A);
 		};
 
 		struct __A_VT {
@@ -33,8 +33,8 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			void (*setA)(A, String);
-			void (*printOther)(A, A);
+			void (*methodSetA)(A, String);
+			void (*methodPrintOther)(A, A);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -42,8 +42,8 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			setA(&__A::setA),
-			printOther(&__A::printOther)
+			methodSetA(&__A::methodSetA),
+			methodPrintOther(&__A::methodPrintOther)
 			{}
 		};
 

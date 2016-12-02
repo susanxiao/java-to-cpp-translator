@@ -5,7 +5,8 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test007 {
-		__A::__A() : __vptr(&__vtable) {
+		__A::__A() : __vptr(&__vtable),
+a((String)__rt::null()) {
 			a = new __String("A");
 		};
 
@@ -17,7 +18,8 @@ namespace inputs {
 
 		__A_VT __A::__vtable;
 
-		__B::__B() : __vptr(&__vtable) {
+		__B::__B() : __vptr(&__vtable),
+b((String)__rt::null()) {
 			b = new __String("B");
 		};
 

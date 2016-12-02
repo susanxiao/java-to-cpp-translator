@@ -17,15 +17,15 @@ public class MethodImplementation {
     public MethodImplementation(String name) {
         isStatic = false;
         String methodName = name;
-        switch(methodName){
-            case "toString":
-            case "hashCode":
-            case "equals":
-            case "getClass":
-            case "main":
-                break;
-            default:
-                methodName = "method" + name.substring(0,1).toUpperCase() + name.substring(1);
+        switch(methodName) {
+        case "toString":
+        case "hashCode":
+        case "equals":
+        case "getClass":
+        case "main":
+            break;
+        default:
+            methodName = "method" + name.substring(0,1).toUpperCase() + name.substring(1);
         }
         this.name = methodName;
         parameters = new ArrayList<>();
