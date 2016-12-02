@@ -388,14 +388,10 @@ template <typename T, typename U>
 void checkClass(T __this, U object)
 {
     java::lang::Class k = object->__vptr->getClass(object);
-
     do
     {
-        if (__this == k) return;
-        k = k->__vptr->getSuperclass(k);
-    }
-    while (!(k == (java::lang::Class)__rt::null()));
-
+        if (k == __this){ return; }
+        k = k->parent;
+    }while (!(k == (java::lang::Class)__rt::null()));
     throw java::lang::ClassCastException();
-
 }
