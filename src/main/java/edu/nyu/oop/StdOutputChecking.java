@@ -10,8 +10,8 @@ import static java.lang.System.out;
  */
 public class StdOutputChecking {
     public static void main(String[] args) {
-        int start = 14;
-        int end = 14;
+        int start = 0;
+        int end = 20;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);

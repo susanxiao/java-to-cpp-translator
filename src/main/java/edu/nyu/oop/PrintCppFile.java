@@ -648,7 +648,6 @@ public class PrintCppFile extends Visitor {
         // *** a number 0-20, or nothing to run all test cases
         int start = 0;
         int end = 20;
-        start = end = 11;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
