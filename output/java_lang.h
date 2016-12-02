@@ -387,21 +387,22 @@ void checkStore(Array<T>* array, U object)
 template <typename T, typename U>
 void checkClass(T __this, U object)
 {
-    std::string paramClassCalling = __this->__vptr->getName(__this)->data;
-
     java::lang::Class k = object->__vptr->getClass(object);
-    std::string paramClassChecking = k->__vptr->getName(k)->data;
+    std::string checkClass = k->__vptr->getName(k)->data;
+
+    std::string callingClass = __this->__vptr->getName(__this)->data;
 
 
     do
     {
-        if (paramClassCalling == paramClassChecking) return;
-        k = k->parent->__class();
-        paramClassChecking = k->__vptr->getName(k)->data;
-    }
-    while (!("java.lang.Class" == paramClassChecking));
-
+        checkClass = k->__vptr->getName(k)->data;
+        if (callingClass == checkClass){
+             return;
+        }
+        k = k->parent;
+    }while (!(k == (java::lang::Class)__rt::null()));
 
     throw java::lang::ClassCastException();
+
 
 }

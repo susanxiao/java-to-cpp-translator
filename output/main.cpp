@@ -9,69 +9,24 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test010;
+using namespace inputs::test016;
 
 int main(void)
 {
 
 	A a = new __A();
 
-	a->__vptr->methodSetA(a, new __String("A"));
+	B other = new __B();
 
-	B1 b1 = new __B1();
+	Class k0 = other->__vptr->getClass(other);
+	checkClass(k0, a);
 
-	b1->__vptr->methodSetA(b1, new __String("B1"));
-
-	B2 b2 = new __B2();
-
-	b2->__vptr->methodSetA(b2, new __String("B2"));
-
-	C c = new __C();
-
-	c->__vptr->methodSetA(c, new __String("C"));
-
-	a->__vptr->methodPrintOther(a, a);
-
-	Class k0 = a->__vptr->getClass(a);
-	std::string paramClassCalling = k0->__vptr->getName(k0)->data;
-
-	Class k = b1->__vptr->getClass(b1);
-	std::string paramClassChecking = k->__vptr->getName(k)->data;
-	cout << paramClassCalling + " -- " + paramClassChecking << endl;
-
-	Class k1 = k->__vptr->getSuperclass(k);
-	//cout << b1->parent->__class()->__vptr->getName(b1->parent->__class())->data << endl;
-    paramClassChecking = k1->__vptr->getName(k1)->data;
-	cout << paramClassCalling + " -- " + paramClassChecking << endl;
-
-	k1 = k1->parent;
-    if(k1 == (Class)__rt::null()){
-        cout << "Hello" << endl;
-    }
-
-
-
-
-
-
-
-
-	/**
-
-	a->__vptr->methodPrintOther(a, (A) b1);
+	other->some = (B) a;
 
 	Class k1 = a->__vptr->getClass(a);
-	checkClass(k1,b2);
+	checkClass(k1, other);
 
-	a->__vptr->methodPrintOther(a, (A) b2);
-
-	Class k2 = a->__vptr->getClass(a);
-	checkClass(k2,c);
-
-	a->__vptr->methodPrintOther(a, (A) c);
-	**/
-
-	cout << "End of file" << endl;
+	a->__vptr->methodPrintOther(a, (A) other);
 
 	return 0;
 }

@@ -182,6 +182,7 @@ public class PrintMainFile extends Visitor {
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
+
                             fieldDeclaration += " = (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
                         } else if (currentDeclarator.getNode(2).getName().equals("ArrayCastExpression")) {
                             Node typeNode = currentDeclarator.getNode(2).getNode(0).getNode(0);
@@ -478,7 +479,7 @@ public class PrintMainFile extends Visitor {
                         } else {
                             expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
                             expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + variableCalling + "->__vptr->getClass(" + variableCalling + ");\n";
-                            expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + "," + primaryIdentifier1 + ");\n\n";
+                            expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
                             summary.checkClassCounter++;
                         }
                     } else {
@@ -494,11 +495,13 @@ public class PrintMainFile extends Visitor {
 
         } else if (n.getNode(0).getName().equals("Expression")) {
             Node expressionNode = n.getNode(0);
+            String primaryIdentifierExpression = "";
             for (Object o : expressionNode) {
                 if (o instanceof Node) {
                     Node currNode = (Node) o;
                     if (currNode.getName().equals("SelectionExpression")) {
                         String varName = currNode.getNode(0).getString(0);
+                        primaryIdentifierExpression = varName;
                         expressionStatement += varName;
 
                         for (int i = 1; i < currNode.size(); i++) {
@@ -518,6 +521,14 @@ public class PrintMainFile extends Visitor {
                         String castType = currNode.getNode(0).getNode(0).getString(0);
                         String varName = currNode.getNode(1).getString(0);
                         expressionStatement += "(" + castType + ") " + varName;
+                        String expressionStatement1 = "";
+                        expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + primaryIdentifierExpression
+                                + "->__vptr->getClass(" + primaryIdentifierExpression + ");\n";
+                        expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + varName + ");\n\n";
+                        summary.checkClassCounter++;
+                        String temp = expressionStatement;
+                        expressionStatement = "";
+                        expressionStatement += expressionStatement1 + temp;
                     } else if (currNode.getName().equals("IntegerLiteral")) {
                         expressionStatement += currNode.getString(0);
                     }
@@ -663,8 +674,8 @@ public class PrintMainFile extends Visitor {
     public static void main(String[] args) {
         //TO RUN: run-main edu.nyu.oop.PrintMainFile ***
         // *** a number 0-20, or nothing to run all test cases
-        int start = 10;
-        int end = 10;
+        int start = 16;
+        int end = 16;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);

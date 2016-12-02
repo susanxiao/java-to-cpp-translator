@@ -385,10 +385,17 @@ void checkStore(Array<T>* array, U object)
 
 // ========================================================================
 template <typename T, typename U>
-void checkClass(T classCall, U object)
+void checkClass(T __this, U object)
 {
-    if (!classCall->__vptr->isInstance(classCall, (java::lang::Object)object))
+    java::lang::Class k = object->__vptr->getClass(object);
+
+    do
     {
-        throw java::lang::ClassCastException();
+        if (__this == k) return;
+        k = k->__vptr->getSuperclass(k);
     }
+    while (!(k == (java::lang::Class)__rt::null()));
+
+    throw java::lang::ClassCastException();
+
 }
