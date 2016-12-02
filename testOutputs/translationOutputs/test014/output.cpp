@@ -10,7 +10,7 @@ namespace inputs {
 			cout << other->__vptr->toString(other) << endl;
 		};
 
-		__A::__A() : __vptr(&__vtable)				
+		__A::__A() : __vptr(&__vtable)		
 ,some((A)__rt::null())		
 {};
 

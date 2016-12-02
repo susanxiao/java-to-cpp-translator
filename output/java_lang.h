@@ -382,3 +382,26 @@ void checkStore(Array<T>* array, U object)
 }
 
 }
+
+// ========================================================================
+template <typename T, typename U>
+void checkClass(T __this, U object)
+{
+    std::string paramClassCalling = __this->__vptr->getName(__this)->data;
+
+    java::lang::Class k = object->__vptr->getClass(object);
+    std::string paramClassChecking = k->__vptr->getName(k)->data;
+
+
+    do
+    {
+        if (paramClassCalling == paramClassChecking) return;
+        k = k->parent->__class();
+        paramClassChecking = k->__vptr->getName(k)->data;
+    }
+    while (!("java.lang.Class" == paramClassChecking));
+
+
+    throw java::lang::ClassCastException();
+
+}

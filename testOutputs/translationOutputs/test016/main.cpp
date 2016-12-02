@@ -20,6 +20,9 @@ int main(void)
 
 	other->some = (B) a;
 
+	Class k0 = a->__vptr->getClass(a);
+	checkClass(k0,other);
+
 	a->__vptr->methodPrintOther(a, (A) other);
 
 	return 0;

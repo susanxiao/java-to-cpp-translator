@@ -60,7 +60,20 @@ public class PrintCppFile extends Visitor {
         summary.addLine("Class __" + summary.currentClass.name + "::__class()");
         summary.incScope();
         summary.addLine("static Class k =\n");
-        summary.addLine("new __Class(__rt::literal(\"" + summary.currentClassLocation + "\"), (Class) __rt::null());\n");
+        String superClasses = "";
+        ClassImplementation superClass = summary.currentClass.superClass;
+        while (superClass != null) {
+            superClasses += ",";
+            superClasses += "__" + superClass.name + "::__class()";
+
+            superClass = superClass.superClass;
+        }
+        if (superClasses != "") {
+            superClasses += ");\n";
+            summary.addLine("new __Class(__rt::literal(\"" + summary.currentClassLocation + "\")" + superClasses);
+        } else {
+            summary.addLine("new __Class(__rt::literal(\"" + summary.currentClassLocation + "\"), (Class) __rt::null());\n");
+        }
         summary.addLine("return k;\n");
         summary.decMethodScope();
         summary.code.append("\n");
