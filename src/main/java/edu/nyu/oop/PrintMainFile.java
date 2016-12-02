@@ -29,6 +29,7 @@ public class PrintMainFile extends Visitor {
 
     StringBuilder mainImplementation = new StringBuilder();
 
+
     // visitXXX methods
     public void visitClassDeclaration(GNode n) {
         for (Object o : n) {
@@ -98,8 +99,7 @@ public class PrintMainFile extends Visitor {
                 mainImplementation.append("\t}\n\n");
 
                 summary.localVariables.put("args", "String[");
-            }
-            else
+            } else
                 mainImplementation.append("int main(void)\n{\n\n");
         }
 
@@ -128,8 +128,8 @@ public class PrintMainFile extends Visitor {
 
         String type = n.getNode(1).getNode(0).getString(0);
         boolean isTypeArray = false;
-        if(n.getNode(1).getNode(1)!=null){ // the type is an array
-            if(n.getNode(1).getNode(1).getString(0).equals("[")) {
+        if (n.getNode(1).getNode(1) != null) { // the type is an array
+            if (n.getNode(1).getNode(1).getString(0).equals("[")) {
                 type = "__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">*";
                 isTypeArray = true;
             }
@@ -150,7 +150,7 @@ public class PrintMainFile extends Visitor {
                             if (isTypeArray) {
                                 fieldDeclaration += "__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">";
 
-                                String typeString = n.getNode(1).getNode(0).getString(0)+"[";
+                                String typeString = n.getNode(1).getNode(0).getString(0) + "[";
                                 summary.localVariables.put(variable, typeString);
 
                             } else {
@@ -182,6 +182,7 @@ public class PrintMainFile extends Visitor {
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
+
                             fieldDeclaration += " = (" + typeDeclarator + ") " + primaryIdentifier + ";\n";
                         } else if (currentDeclarator.getNode(2).getName().equals("ArrayCastExpression")) {
                             Node typeNode = currentDeclarator.getNode(2).getNode(0).getNode(0);
@@ -189,9 +190,9 @@ public class PrintMainFile extends Visitor {
                             Node primaryIdNode = currentDeclarator.getNode(2).getNode(0).getNode(1);
                             String primaryId = primaryIdNode.getString(0);
 
-                            fieldDeclaration += " = (__rt::Array<"+typeString+">*) "+primaryId+";\n";
+                            fieldDeclaration += " = (__rt::Array<" + typeString + ">*) " + primaryId + ";\n";
 
-                            summary.localVariables.put(variable, typeString+"[");
+                            summary.localVariables.put(variable, typeString + "[");
 
                             /*fieldDeclaration += "("+ currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0)+");";
                             mainImplementation.append(fieldDeclaration+"\n");//append here, Orelse the order are incorrect becasue the visit statments directly appends to mainImplementation string
@@ -199,7 +200,7 @@ public class PrintMainFile extends Visitor {
                             visitForStatement((GNode) currentDeclarator.getNode(2).getNode(1).getNode(0)); */
 
 
-                        }else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
+                        } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
                             String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
                             fieldDeclaration += " = " + primaryIdentifier + ";\n";
                         } else if (currentDeclarator.getNode(2).getName().equals("SelectionExpression")) {
@@ -261,8 +262,7 @@ public class PrintMainFile extends Visitor {
                                                 expressionStatement += ")";
                                             }
                                         }
-                                    }
-                                    else
+                                    } else
                                         expressionStatement += primaryId;
                                 } else if (currentNode.getNode(0).getName().equals("SelectionExpression")) {
                                     primaryId = currentNode.getNode(0).getNode(0).getString(0);
@@ -274,12 +274,13 @@ public class PrintMainFile extends Visitor {
                                     String methodNameCall = currentNode.getNode(0).getString(currentNode.getNode(0).size() - 2);
                                     if (!methodNameCall.startsWith("method")) {
                                         switch (methodNameCall) {
-                                            case "toString":
-                                            case "hashCode":
-                                            case "equals":
-                                            case "getClass": break;
-                                            default:
-                                                methodNameCall = "method" + methodNameCall.substring(0, 1).toUpperCase() + methodNameCall.substring(1);
+                                        case "toString":
+                                        case "hashCode":
+                                        case "equals":
+                                        case "getClass":
+                                            break;
+                                        default:
+                                            methodNameCall = "method" + methodNameCall.substring(0, 1).toUpperCase() + methodNameCall.substring(1);
                                         }
                                     }
                                     expressionStatement += "->__vptr->" + methodNameCall + "(";
@@ -297,12 +298,13 @@ public class PrintMainFile extends Visitor {
                                 String method = currentNode.getString(2);
                                 if (!(method.startsWith("method"))) {
                                     switch (method) {
-                                        case "toString":
-                                        case "hashCode":
-                                        case "equals":
-                                        case "getClass": break;
-                                        default:
-                                            method = "method" + method.substring(0, 1).toUpperCase() + method.substring(1);
+                                    case "toString":
+                                    case "hashCode":
+                                    case "equals":
+                                    case "getClass":
+                                        break;
+                                    default:
+                                        method = "method" + method.substring(0, 1).toUpperCase() + method.substring(1);
                                     }
                                 }
                                 if (primaryId != null && !summaryTraversal.classes.containsKey(primaryId)) {
@@ -329,13 +331,14 @@ public class PrintMainFile extends Visitor {
                                                         String methodNameCallExpression = (String) o2;
                                                         if (!(methodNameCallExpression.startsWith("method"))) {
                                                             switch (methodNameCallExpression) {
-                                                                case "toString":
-                                                                case "hashCode":
-                                                                case "equals":
-                                                                case "getClass": break;
-                                                                default:
-                                                                    methodNameCallExpression = "method" + methodNameCallExpression.substring(0, 1).toUpperCase()
-                                                                            + methodNameCallExpression.substring(1);
+                                                            case "toString":
+                                                            case "hashCode":
+                                                            case "equals":
+                                                            case "getClass":
+                                                                break;
+                                                            default:
+                                                                methodNameCallExpression = "method" + methodNameCallExpression.substring(0, 1).toUpperCase()
+                                                                                           + methodNameCallExpression.substring(1);
                                                             }
                                                         }
 
@@ -369,10 +372,9 @@ public class PrintMainFile extends Visitor {
                                 boolean isClass = false;
                                 String key = currentNode.getNode(0).getString(0); //primary identifier
                                 if (summaryTraversal.classes.containsKey(key)) { //primary identifier is class, not var
-                                    expressionStatement += "__"+key;
+                                    expressionStatement += "__" + key;
                                     isClass = true;
-                                }
-                                else
+                                } else
                                     expressionStatement += key;
                                 for (int i = 1; i < currentNode.size(); i++) {
                                     String field = currentNode.getString(i);
@@ -382,8 +384,7 @@ public class PrintMainFile extends Visitor {
                                             expressionStatement += "::__" + field;
                                         else
                                             expressionStatement += "::" + field;
-                                    }
-                                    else {
+                                    } else {
                                         boolean gateParent = true;
 
                                         // check if parent should be used
@@ -418,7 +419,7 @@ public class PrintMainFile extends Visitor {
                                     }
                                     if (gateParent) {
                                         expressionStatement += variable;
-                                        expressionStatement += "->parent." + dataString ; //+ "->data";
+                                        expressionStatement += "->parent." + dataString; //+ "->data";
                                     } else {
                                         expressionStatement += variable;
                                         expressionStatement += "->" + dataString; // + "->data";
@@ -443,15 +444,18 @@ public class PrintMainFile extends Visitor {
                 String methodName = callExpressionNode.getString(2);
                 if (!(methodName.startsWith("method"))) {
                     switch (methodName) {
-                        case "toString":
-                        case "hashCode":
-                        case "equals":
-                        case "getClass": break;
-                        default:
-                            methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
+                    case "toString":
+                    case "hashCode":
+                    case "equals":
+                    case "getClass":
+                        break;
+                    default:
+                        methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
 
                     }
                 }
+                String expressionStatement1 = "";
+                String variableCalling = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
                 String primaryIdentifer = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
@@ -474,21 +478,30 @@ public class PrintMainFile extends Visitor {
                             expressionStatement += argumentsNode.getNode(1).getString(0);
                         } else {
                             expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
+                            expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + variableCalling + "->__vptr->getClass(" + variableCalling + ");\n";
+                            expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
+                            summary.checkClassCounter++;
                         }
                     } else {
                         expressionStatement += argumentsNode.getString(0);
                     }
                     expressionStatement += ");";
+                    String temp = expressionStatement;
+                    expressionStatement = "";
+                    expressionStatement += expressionStatement1;
+                    expressionStatement += temp;
                 }
             }
 
         } else if (n.getNode(0).getName().equals("Expression")) {
             Node expressionNode = n.getNode(0);
+            String primaryIdentifierExpression = "";
             for (Object o : expressionNode) {
                 if (o instanceof Node) {
                     Node currNode = (Node) o;
                     if (currNode.getName().equals("SelectionExpression")) {
                         String varName = currNode.getNode(0).getString(0);
+                        primaryIdentifierExpression = varName;
                         expressionStatement += varName;
 
                         for (int i = 1; i < currNode.size(); i++) {
@@ -508,6 +521,14 @@ public class PrintMainFile extends Visitor {
                         String castType = currNode.getNode(0).getNode(0).getString(0);
                         String varName = currNode.getNode(1).getString(0);
                         expressionStatement += "(" + castType + ") " + varName;
+                        String expressionStatement1 = "";
+                        expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + primaryIdentifierExpression
+                                + "->__vptr->getClass(" + primaryIdentifierExpression + ");\n";
+                        expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + varName + ");\n\n";
+                        summary.checkClassCounter++;
+                        String temp = expressionStatement;
+                        expressionStatement = "";
+                        expressionStatement += expressionStatement1 + temp;
                     } else if (currNode.getName().equals("IntegerLiteral")) {
                         expressionStatement += currNode.getString(0);
                     }
@@ -520,43 +541,39 @@ public class PrintMainFile extends Visitor {
         mainImplementation.append(expressionStatement + "\n\n");
     }
 
-    public void visitForStatement(GNode n){
+    public void visitForStatement(GNode n) {
         String forStatement = "\tfor ";
-        for(Object o : n){
+        for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("BasicForControl")) {
                     forStatement += "(";
                     GNode basicForControlNode = (GNode) o;
-                    for(Object b : basicForControlNode){
+                    for (Object b : basicForControlNode) {
                         if (b instanceof Node) {
                             GNode b_Node = (GNode) b;
                             if (b_Node.getName().equals("Type")) {
                                 GNode primitiveType = (GNode) b_Node.get(0);
-                                if(primitiveType.get(0).toString().equals("int")){
+                                if (primitiveType.get(0).toString().equals("int")) {
                                     forStatement += "int32_t "; //int
-                                }
-                                else {
+                                } else {
                                     forStatement += primitiveType.get(0).toString() + " ";
                                 }
-                            }
-                            else if (b_Node.getName().equals("Declarators")) {
+                            } else if (b_Node.getName().equals("Declarators")) {
                                 GNode declaratorNode = (GNode) b_Node.get(0);
                                 forStatement += declaratorNode.get(0).toString() + " = "; //i =
                                 GNode IntegerLiteralNode = (GNode) declaratorNode.get(2);
                                 forStatement += IntegerLiteralNode.get(0).toString() + "; "; //0;
-                            }
-                            else if (b_Node.getName().equals("RelationalExpression")) {
+                            } else if (b_Node.getName().equals("RelationalExpression")) {
                                 GNode primaryIdentifierNode = (GNode) b_Node.get(0);
                                 forStatement += primaryIdentifierNode.get(0).toString(); //i
-                                forStatement += " "+b_Node.get(1).toString()+" ";//<
+                                forStatement += " " + b_Node.get(1).toString() + " ";//<
                                 GNode SelectionExpressNode = (GNode) b_Node.get(2);
                                 //System.out.println("test Sel Node: "+SelectionExpressNode.toString());
                                 GNode PrimaryId_inSelectionExNode = (GNode) SelectionExpressNode.get(0);
                                 forStatement += PrimaryId_inSelectionExNode.get(0).toString() + "->"; // as->
                                 forStatement += SelectionExpressNode.get(1).toString() + "; ";
-                            }
-                            else if (b_Node.getName().equals("ExpressionList")) {
+                            } else if (b_Node.getName().equals("ExpressionList")) {
                                 GNode postfixExpressionNode = (GNode) b_Node.get(0);
                                 GNode primaryID_inPostfixExpression = (GNode) postfixExpressionNode.get(0);
                                 forStatement += primaryID_inPostfixExpression.get(0).toString();
@@ -568,8 +585,7 @@ public class PrintMainFile extends Visitor {
                     }
                     forStatement += ")";
                     mainImplementation.append(forStatement);
-                }
-                else if (currentNode.getName().equals("Block")) {
+                } else if (currentNode.getName().equals("Block")) {
                     visitNestedBlock(currentNode);
                 }
             }
@@ -581,7 +597,6 @@ public class PrintMainFile extends Visitor {
     // visitMethod
 
 
-
     public PrintMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
         this.runtime = runtime;
         this.summaryTraversal = summaryTraversal;
@@ -590,6 +605,7 @@ public class PrintMainFile extends Visitor {
     static class printMainFileSummary {
         String currentClassName;
         String filePrinted;
+        int checkClassCounter;
         ArrayList<String> classNames = new ArrayList<String>();
         ArrayList<String> variables = new ArrayList<String>();
         TreeMap<String, String> classVariables = new TreeMap<>();
@@ -613,8 +629,8 @@ public class PrintMainFile extends Visitor {
         s1.append("#include \"java_lang.h\"\n\n");
         s1.append("#include \"output.h\"\n");
         s1.append("\n" +
-                "using namespace java::lang;\n" +
-                "using namespace std;\n");
+                  "using namespace java::lang;\n" +
+                  "using namespace std;\n");
         s1.append("using namespace ");
 
         for (Object o : n) {
@@ -658,14 +674,13 @@ public class PrintMainFile extends Visitor {
     public static void main(String[] args) {
         //TO RUN: run-main edu.nyu.oop.PrintMainFile ***
         // *** a number 0-20, or nothing to run all test cases
-        int start = 0;
-        int end = 20;
+        int start = 16;
+        int end = 16;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
             end = ImplementationUtil.getInteger(args[1]);
-        }
-        else if (args.length > 0) {
+        } else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;
@@ -701,10 +716,11 @@ public class PrintMainFile extends Visitor {
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                //ImplementationUtil.prettyPrintAst(node);
+                ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;
+                out.println(mainFile);
 
                 main = new File("testOutputs/mainFileOutputs", String.format("Test%03d", i));
                 main.createNewFile();

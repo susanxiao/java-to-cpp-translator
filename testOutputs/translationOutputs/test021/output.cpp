@@ -5,7 +5,8 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test021 {
-		__A::__A() : __vptr(&__vtable) {};
+		__A::__A() : __vptr(&__vtable)		
+{};
 
 		Class __A::__class() {
 			static Class k =

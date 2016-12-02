@@ -9,21 +9,16 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test015;
+using namespace inputs::test014;
 
 int main(void)
 {
 
 	A a = new __A();
 
-	B other = new __B();
+	A other = a->some;
 
-	other->parent.some = a;
-
-	Class k0 = a->__vptr->getClass(a);
-	checkClass(k0, other);
-
-	a->__vptr->methodPrintOther(a, (A) other);
+	a->__vptr->methodPrintOther(a, other);
 
 	return 0;
 }

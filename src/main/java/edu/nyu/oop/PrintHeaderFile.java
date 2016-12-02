@@ -142,8 +142,7 @@ public class PrintHeaderFile extends Visitor {
                     method.append(", " + currentParameter.type);
                 }
                 method.append(");\n");
-            }
-            else {
+            } else {
                 method.append("(");
                 for (int i = 0; i < currentMethod.parameters.size(); i++) {
                     ParameterImplementation currentParameter = currentMethod.parameters.get(i);
@@ -210,16 +209,16 @@ public class PrintHeaderFile extends Visitor {
             if (!currentMethod.isStatic) {
                 if (!(currentMethodName.startsWith("method"))) {
                     switch (currentMethodName) {
-                        case "toString":
-                            break;
-                        case "hashCode":
-                            break;
-                        case "equals":
-                            break;
-                        case "getClass":
-                            break;
-                        default:
-                            currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
+                    case "toString":
+                        break;
+                    case "hashCode":
+                        break;
+                    case "equals":
+                        break;
+                    case "getClass":
+                        break;
+                    default:
+                        currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
 
                     }
                 }
@@ -241,16 +240,16 @@ public class PrintHeaderFile extends Visitor {
                 String currentMethodName = currentMethod.name;
                 if (!(currentMethodName.startsWith("method"))) {
                     switch (currentMethodName) {
-                        case "toString":
-                            break;
-                        case "hashCode":
-                            break;
-                        case "equals":
-                            break;
-                        case "getClass":
-                            break;
-                        default:
-                            currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
+                    case "toString":
+                        break;
+                    case "hashCode":
+                        break;
+                    case "equals":
+                        break;
+                    case "getClass":
+                        break;
+                    default:
+                        currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
                     }
                 }
                 if (!vConstructor.containsKey(currentMethodName)) { //if it already exists, it is the overwriting method
@@ -266,7 +265,7 @@ public class PrintHeaderFile extends Visitor {
 
                     String paramString = String.format(parameters.toString(), summary.currentClass.name);
                     vConstructor.put(currentMethodName,
-                            currentMethodName + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethodName + ")");
+                                     currentMethodName + "((" + (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + "(*)" + paramString + ")&__" + superClass.name + "::" + currentMethodName + ")");
 
                 } else { //if it already exists, we need to move its location to where the superclass holds it
                     String key = currentMethod.name;
@@ -496,14 +495,14 @@ public class PrintHeaderFile extends Visitor {
         //NOTE: running a specific file will place it in the output folder.
         //      running all files will place it in testOutputs/translationOutputs
 
-        int start = 0;
-        int end = 20;
+        int start = 14;
+        int end = 14;
+
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
             end = ImplementationUtil.getInteger(args[1]);
-        }
-        else if (args.length > 0) {
+        } else if (args.length > 0) {
             int value = ImplementationUtil.getInteger(args[0]);
             if (value >= 0) {
                 start = value;

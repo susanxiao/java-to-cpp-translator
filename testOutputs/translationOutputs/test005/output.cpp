@@ -9,7 +9,8 @@ namespace inputs {
 			return new __String("A");
 		};
 
-		__A::__A() : __vptr(&__vtable) {};
+		__A::__A() : __vptr(&__vtable)		
+{};
 
 		Class __A::__class() {
 			static Class k =
@@ -23,11 +24,12 @@ namespace inputs {
 			return new __String("B");
 		};
 
-		__B::__B() : __vptr(&__vtable) {};
+		__B::__B() : __vptr(&__vtable)		
+{};
 
 		Class __B::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test005.B"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test005.B"),__A::__class());
 			return k;
 		};
 

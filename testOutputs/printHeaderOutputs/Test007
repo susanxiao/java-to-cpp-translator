@@ -18,7 +18,7 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			String _a;
+			String a;
 
 			__A();
 
@@ -47,7 +47,7 @@ namespace inputs {
 
 		struct __B {
 			__B_VT* __vptr;
-			String _b;
+			String b;
 			__A parent;
 
 			__B();

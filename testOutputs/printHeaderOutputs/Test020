@@ -21,7 +21,7 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static int32_t methodX(A);
+			static int32_t methodX();
 		};
 
 		struct __A_VT {

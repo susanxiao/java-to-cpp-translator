@@ -10,10 +10,12 @@ namespace inputs {
 		};
 
 		void __A::methodSetFld(A __this, String f) {
+			__rt::checkNotNull(f);
 			__this->fld = f;
 		};
 
 		void __A::methodAlmostSetFld(A __this, String f) {
+			__rt::checkNotNull(f);
 			String fld;
 			fld = f;
 		};

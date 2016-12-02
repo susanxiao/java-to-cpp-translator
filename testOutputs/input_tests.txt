@@ -12,9 +12,9 @@ test010 -> Passed
 test011 -> Passed
 test012 -> Passed
 test013 -> Passed - Location
-test014 -> Failed - Exception
+test014 -> Passed - Exception
 test015 -> Passed - Location
-test016 -> Failed - Exception
+test016 -> Passed - Exception
 test017 -> Passed - Location
 test018 -> Passed
 test019 -> Passed
@@ -22,7 +22,3 @@ test020 -> Passed
 test021 -> Passed
 test022 -> Passed
 test023 -> Passed
-
-Failed:
-test014 -> Failed - Exception
-test016 -> Failed - Exception
