@@ -10,8 +10,8 @@ import static java.lang.System.out;
  */
 public class StdOutputChecking {
     public static void main(String[] args) {
-        int start = 0;
-        int end = 20;
+        int start = 14;
+        int end = 14;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);
@@ -54,7 +54,6 @@ public class StdOutputChecking {
 
                             message = " - Location";
                         } else if (javaInputLine.startsWith("Exception")) {
-
                             if (!javaInputLine.contains(cppInputLine))
                                 isEqual = false;
                             else {
@@ -69,14 +68,19 @@ public class StdOutputChecking {
                     if (!isEqual) break;
                 }
 
-                if (cppInput.hasNext()) //not both null
+                if (cppInput.hasNext()) { //not both null
                     isEqual = false;
+                }
 
                 if (javaInput.hasNext()) {
                     isEqual = false;
                     String javaInputLine = javaInput.nextLine();
-                    if(javaInputLine.startsWith("Exception"))
+                    out.println(javaInputLine);
+                    if(javaInputLine.startsWith("Exception")) {
                         message = " - Exception";
+                        if(!cppInput.hasNext())
+                            isEqual = true;
+                    }
                     else if (javaInputLine.startsWith("inputs.test"))
                         message = " - Location";
                 }

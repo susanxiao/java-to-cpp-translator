@@ -5,19 +5,16 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test016 {
+	namespace test014 {
 		struct __A;
 		struct __A_VT;
 
-		struct __B;
-		struct __B_VT;
-
 
 		typedef __A* A;
-		typedef __B* B;
 
 		struct __A {
 			__A_VT* __vptr;
+			A some;
 
 			__A();
 
@@ -44,40 +41,6 @@ namespace inputs {
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
 			methodPrintOther(&__A::methodPrintOther)
-			{}
-		};
-
-		struct __B {
-			__B_VT* __vptr;
-			__A parent;
-			B some;
-
-			__B();
-
-			static Class __class();
-
-			static __B_VT __vtable;
-
-			static void methodPrintOther(B, A);
-			static String toString(B);
-		};
-
-		struct __B_VT {
-			Class __isa;
-
-			int32_t (*hashCode)(B);
-			bool (*equals)(B, Object);
-			Class (*getClass)(B);
-			String (*toString)(B);
-			void (*methodPrintOther)(B, A);
-
-			__B_VT()
-			: __isa(__B::__class()),
-			hashCode((int32_t(*)(B))&__Object::hashCode),
-			equals((bool(*)(B, Object))&__Object::equals),
-			getClass((Class(*)(B))&__Object::getClass),
-			toString(&__B::toString),
-			methodPrintOther(&__B::methodPrintOther)
 			{}
 		};
 
