@@ -22,3 +22,4 @@ test020 -> Passed
 test021 -> Passed
 test022 -> Passed
 test023 -> Passed
+test024 -> Passed

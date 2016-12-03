@@ -19,7 +19,6 @@ int main(void)
 	A other = a->some;
 
 	a->__vptr->methodPrintOther(a, other);
-
 	return 0;
 }
 

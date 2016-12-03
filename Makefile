@@ -82,17 +82,6 @@ copy javalang :
 	done ;
 	@echo "Copied java_lang files into translationOutputs directories"
 compare :
-	@echo "Compiling and outputting C++ code for $(start) to $(end)" ;
-	@num=$(start) ; while [ $$num -le $(end) ] ; do \
-		formatNum=`printf "%03d" $$num` ; \
-		cppOutputPath=`expr ./testOutputs/translationOutputs/test$$formatNum` ; \
-		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
-		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
-		sudo g++ $$cppOutputPath/*.cpp -o $$cppOutputPath/bin/a.out ; \
-		sudo $$cppOutputPath/bin/a.out $(testArgs) > $$cppOutputPath/output/cpp_output.txt ; \
-		num=`expr $$num + 1` ; \
-	done ;
-	@echo "C++ code outputted to cpp_output.txt" ;
 	@echo "Compiling and outputting Java code for $(start) to $(end)" ;
 	@num=$(start) ; while [ $$num -le $(end) ] ; do \
 		formatNum=`printf "%03d" $$num` ; \
@@ -101,10 +90,21 @@ compare :
 		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
 		sudo javac -d $$cppOutputPath/bin $$javaInputPath/Test$$formatNum.java ; \
-		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum $(testArgs)> $$cppOutputPath/output/java_output.txt 2>&1; \
+		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum $(testArgs)> $$cppOutputPath/output/java_output.txt 2>&1 ; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Java code outputted to java_output.txt" ;
+	@echo "Compiling and outputting C++ code for $(start) to $(end)" ;
+	@num=$(start) ; while [ $$num -le $(end) ] ; do \
+		formatNum=`printf "%03d" $$num` ; \
+		cppOutputPath=`expr ./testOutputs/translationOutputs/test$$formatNum` ; \
+		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
+		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
+		sudo g++ $$cppOutputPath/*.cpp -o $$cppOutputPath/bin/a.out ; \
+		sudo $$cppOutputPath/bin/a.out $(testArgs) > $$cppOutputPath/output/cpp_output.txt 2>&1 ; \
+		num=`expr $$num + 1` ; \
+	done ;
+	@echo "C++ code outputted to cpp_output.txt" ;
 	@echo "Checking outputs" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking $(start) $(end)" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"

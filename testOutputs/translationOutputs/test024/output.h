@@ -5,7 +5,7 @@
 using namespace java::lang;
 
 namespace inputs {
-	namespace test014 {
+	namespace test024 {
 		struct __A;
 		struct __A_VT;
 
@@ -14,15 +14,15 @@ namespace inputs {
 
 		struct __A {
 			__A_VT* __vptr;
-			A some;
+			int32_t i;
 
-			__A();
+			__A(int32_t i);
 
 			static Class __class();
 
 			static __A_VT __vtable;
 
-			static void methodPrintOther(A, A);
+			static int32_t methodGet(A);
 		};
 
 		struct __A_VT {
@@ -32,7 +32,7 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			void (*methodPrintOther)(A, A);
+			int32_t (*methodGet)(A);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -40,7 +40,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodPrintOther(&__A::methodPrintOther)
+			methodGet(&__A::methodGet)
 			{}
 		};
 

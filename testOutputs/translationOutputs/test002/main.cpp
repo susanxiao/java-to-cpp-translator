@@ -19,7 +19,6 @@ int main(void)
 	Object o = (Object) a;
 
 	cout << o->__vptr->toString(o) << endl;
-
 	return 0;
 }
 

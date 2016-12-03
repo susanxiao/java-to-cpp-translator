@@ -16,7 +16,6 @@ int main(void)
 
 	A a = new __A(new __String("A"));
 	cout << a->__vptr->methodGetFld(a) << endl;
-
 	return 0;
 }
 

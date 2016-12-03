@@ -19,9 +19,9 @@ namespace inputs {
 			return __this->a;
 		};
 
-		__A::__A() : __vptr(&__vtable)		
-,a((String)__rt::null())		
-{};
+		__A::__A() : __vptr(&__vtable),
+			a((String)__rt::null())
+		{};
 
 		Class __A::__class() {
 			static Class k =
@@ -31,9 +31,9 @@ namespace inputs {
 
 		__A_VT __A::__vtable;
 
-		__B1::__B1() : __vptr(&__vtable)		
-,b((String)__rt::null())		
-{};
+		__B1::__B1() : __vptr(&__vtable),
+			b((String)__rt::null())
+		{};
 
 		Class __B1::__class() {
 			static Class k =
@@ -43,9 +43,9 @@ namespace inputs {
 
 		__B1_VT __B1::__vtable;
 
-		__B2::__B2() : __vptr(&__vtable)		
-,b((String)__rt::null())		
-{};
+		__B2::__B2() : __vptr(&__vtable),
+			b((String)__rt::null())
+		{};
 
 		Class __B2::__class() {
 			static Class k =
@@ -59,9 +59,9 @@ namespace inputs {
 			return new __String("still C");
 		};
 
-		__C::__C() : __vptr(&__vtable)		
-,c((String)__rt::null())		
-{};
+		__C::__C() : __vptr(&__vtable),
+			c((String)__rt::null())
+		{};
 
 		Class __C::__class() {
 			static Class k =
@@ -73,3 +73,4 @@ namespace inputs {
 
 	}
 }
+

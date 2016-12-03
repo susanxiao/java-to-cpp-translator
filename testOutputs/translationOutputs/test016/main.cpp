@@ -22,12 +22,10 @@ int main(void)
 	checkClass(k0, a);
 
 	other->some = (B) a;
-
 	Class k1 = a->__vptr->getClass(a);
 	checkClass(k1, other);
 
 	a->__vptr->methodPrintOther(a, (A) other);
-
 	return 0;
 }
 
