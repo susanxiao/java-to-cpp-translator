@@ -112,6 +112,8 @@ public class PrintMainFile extends Visitor {
                     visitExpressionStatement(currentNode);
                 } else if (currentNode.getName().equals("ForStatement")) {
                     visitForStatement(currentNode);
+                } else if (currentNode.getName().equals("WhileStatement")) {
+                    visitWhileStatement(currentNode);
                 }
             }
         }
@@ -130,11 +132,13 @@ public class PrintMainFile extends Visitor {
         boolean isTypeArray = false;
         if (n.getNode(1).getNode(1) != null) { // the type is an array
             if (n.getNode(1).getNode(1).getString(0).equals("[")) {
-                type = "__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">*";
+                fieldDeclaration += "__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">* ";
                 isTypeArray = true;
             }
         }
-        fieldDeclaration += type + " ";
+        else {
+            fieldDeclaration += n.getNode(1).getNode(0).getString(0)+" ";
+        }
 
         if (n.getNode(2).getName().equals("Declarators")) {
             Node declaratorsNode = n.getNode(2);
@@ -179,6 +183,19 @@ public class PrintMainFile extends Visitor {
                                 fieldDeclaration += "();\n";
                             }
 
+                        } else if (currentDeclarator.getNode(2).getName().equals("NewArrayExpression")) {
+                            fieldDeclaration += " = ";
+
+                            Node newArray = currentDeclarator.getNode(2);
+                            String qualifiedIdentifier = newArray.getNode(0).getString(0);
+                            String size = newArray.getNode(1).getNode(0).getString(0);
+
+                            if (!type.equals(qualifiedIdentifier))
+                                fieldDeclaration += "(__rt::Array<"+type+">*) ";
+
+                            fieldDeclaration += "new __rt::Array<"+qualifiedIdentifier+">("+size+");\n";
+
+                            summary.localVariables.put(variable, type+"[");
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
@@ -213,6 +230,8 @@ public class PrintMainFile extends Visitor {
                             }
                             fieldDeclaration += ";\n";
 
+                        } else if (currentDeclarator.getNode(2).getName().equals("IntegerLiteral")) {
+                            fieldDeclaration += " = "+currentDeclarator.getNode(2).getString(0)+";\n";
                         } else {
                             fieldDeclaration += ";\n";
                         }
@@ -291,6 +310,27 @@ public class PrintMainFile extends Visitor {
                                         expressionStatement += arguments1.getString(i);
                                     }
                                     expressionStatement += ")";
+                                } else if (currentNode.getNode(0).getName().equals("CastExpression")) {
+                                    expressionStatement += "(";
+                                    for (Object o1 : currentNode.getNode(0)) {
+                                        if (o1 instanceof Node) {
+                                            Node currentChild = (Node) o1;
+                                            if (currentChild.getName().equals("Type")) {
+                                                primaryId = (primaryId == null ? "" : primaryId) + "("+currentChild.getNode(0).getString(0)+") ";
+                                                expressionStatement += primaryId;
+                                            }
+                                            else if (currentChild.getName().equals("SubscriptExpression")) {
+                                                GNode primaryIdentifier0 = (GNode) currentChild.get(0);
+                                                GNode primaryIdentifier1 = (GNode) currentChild.get(1);
+                                                primaryId = (primaryId == null ? "" : primaryId) + primaryIdentifier0.get(0).toString() + "->__data[";
+                                                primaryId += primaryIdentifier1.get(0).toString() + "]";
+
+                                                expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
+                                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";;
+                                            }
+                                        }
+                                    }
+                                    expressionStatement += ")";
                                 } else {
                                     expressionStatement += currentNode.getNode(0).getString(0);
                                 }
@@ -358,6 +398,9 @@ public class PrintMainFile extends Visitor {
                                                 expressionStatement += o1.toString();
                                             }
                                         }
+                                    }
+                                    else {
+                                        expressionStatement += primaryId;
                                     }
                                     expressionStatement += ")";
                                     /*if (method.equals("toString")) {
@@ -496,6 +539,7 @@ public class PrintMainFile extends Visitor {
         } else if (n.getNode(0).getName().equals("Expression")) {
             Node expressionNode = n.getNode(0);
             String primaryIdentifierExpression = "";
+            boolean isArray = false;
             for (Object o : expressionNode) {
                 if (o instanceof Node) {
                     Node currNode = (Node) o;
@@ -515,8 +559,62 @@ public class PrintMainFile extends Visitor {
                             }
                             expressionStatement += gateParent ? "->parent." + field : "->" + field;
                         }
+                    } else if (currNode.getName().equals("SubscriptExpression")) {
+                        //expressionStatement += "reached here : subscript expression";
+                        GNode primaryIdentifier0 = (GNode) currNode.get(0);
+                        GNode primaryIdentifier1 = (GNode) currNode.get(1);
+
+                        primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
+
+                        expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
+                        expressionStatement += primaryIdentifier1.get(0).toString() + "]";
+                        isArray = true;
+
+                    } else if (currNode.getName().equals("NewClassExpression")) {
+                        String qualifiedIdentifier = currNode.getNode(2).getString(0);
+
+                        if (isArray && !summary.localVariables.get(primaryIdentifierExpression).equals(qualifiedIdentifier+"["))
+                            expressionStatement += "("+summary.localVariables.get(primaryIdentifierExpression).replace("[", "")+") ";
+
+                        expressionStatement += "new __"+qualifiedIdentifier;
+
+                        for (int i = 3; i < currNode.size(); i++) {
+                            Object o1 = currNode.get(i);
+                            if (o1 instanceof Node) {
+                                Node currentChild = (Node) o1;
+                                if (currentChild.getName().equals("Arguments")) {
+                                    expressionStatement+="(";
+                                    for (int j = 0; j < currentChild.size(); j++) {
+                                        if (j > 0)
+                                            expressionStatement += ", ";
+                                        Object o3 = currentChild.get(j);
+                                        if (o3 instanceof Node) {
+                                            if (((Node) o3).getName().equals("PrimaryIdentifier")) {
+                                                expressionStatement += ((Node) o3).getString(0);
+                                            }
+                                        }
+                                    }
+                                    expressionStatement += ")";
+                                }
+                            }
+                        }
+
                     } else if (currNode.getName().equals("PrimaryIdentifier")) {
                         expressionStatement += currNode.getString(0);
+                    } else if (currNode.getName().equals("AdditiveExpression")) {
+                        for (Object o1 : currNode) {
+                            if (o1 instanceof Node) {
+                                if (((Node) o1).getName().equals("PrimaryIdentifier")) {
+                                    expressionStatement += ((Node) o1).getString(0);
+                                }
+                                else if (((Node) o1).getName().equals("IntegerLiteral")) {
+                                    expressionStatement += ((Node) o1).getString(0);
+                                }
+                            }
+                            else if (o1 instanceof String) { //the operator
+                                expressionStatement += " "+o1+" ";
+                            }
+                        }
                     } else if (currNode.getName().equals("CastExpression")) {
                         String castType = currNode.getNode(0).getNode(0).getString(0);
                         String varName = currNode.getNode(1).getString(0);
@@ -538,7 +636,35 @@ public class PrintMainFile extends Visitor {
             }
             expressionStatement += ";";
         }
-        mainImplementation.append(expressionStatement + "\n\n");
+        mainImplementation.append(expressionStatement + "\n");
+    }
+
+    public void visitWhileStatement(GNode n) {
+        String whileStatement = "\twhile ";
+
+        for (Object o : n) {
+            if (o instanceof Node) {
+                GNode currentNode = (GNode) o;
+                if (currentNode.getName().equals("RelationalExpression")) {
+                    GNode primaryIdentifierNode = (GNode) currentNode.get(0);
+                    whileStatement += "("+primaryIdentifierNode.get(0).toString() +  " " + currentNode.get(1).toString() + " ";//<
+                    for (int i = 2; i < currentNode.size(); i++) {
+                        Object o1 = currentNode.get(i);
+                        if (o1 instanceof Node) {
+                            if (((Node) o1).getName().equals("IntegerLiteral")) {
+                                whileStatement += ((Node) o1).getString(0);
+                            }
+                        }
+                    }
+                    whileStatement += ")";
+                    mainImplementation.append(whileStatement);
+                }
+                else if (currentNode.getName().equals("Block")) {
+                    visitNestedBlock(currentNode);
+                }
+            }
+        }
+
     }
 
     public void visitForStatement(GNode n) {

@@ -19,9 +19,7 @@ int main(void)
 	A other = a;
 
 	other->__vptr->methodSetA(other, new __String("A"));
-
 	a->__vptr->methodPrintOther(a, other);
-
 	return 0;
 }
 

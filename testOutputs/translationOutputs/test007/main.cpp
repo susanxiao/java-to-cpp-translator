@@ -17,9 +17,7 @@ int main(void)
 	B b = new __B();
 
 	cout << b->parent.a << endl;
-
 	cout << b->b << endl;
-
 	return 0;
 }
 

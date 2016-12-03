@@ -10,8 +10,8 @@ namespace inputs {
 			cout << other->__vptr->toString(other) << endl;
 		};
 
-		__A::__A() : __vptr(&__vtable)		
-{};
+		__A::__A() : __vptr(&__vtable)
+		{};
 
 		Class __A::__class() {
 			static Class k =
@@ -31,8 +31,8 @@ namespace inputs {
 		};
 
 		__B::__B() : __vptr(&__vtable),
-			some((B)__rt::null())		
-{};
+			some((B)__rt::null())
+		{};
 
 		Class __B::__class() {
 			static Class k =
@@ -44,3 +44,4 @@ namespace inputs {
 
 	}
 }
+

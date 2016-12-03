@@ -16,8 +16,8 @@ namespace inputs {
 		};
 
 		__A::__A() : __vptr(&__vtable),
-			a((String)__rt::null())		
-{};
+			a((String)__rt::null())
+		{};
 
 		Class __A::__class() {
 			static Class k =
@@ -29,3 +29,4 @@ namespace inputs {
 
 	}
 }
+

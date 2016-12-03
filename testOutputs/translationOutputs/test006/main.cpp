@@ -17,13 +17,9 @@ int main(void)
 	A a = new __A();
 
 	a->__vptr->methodAlmostSetFld(a, new __String("B"));
-
 	cout << a->__vptr->methodGetFld(a) << endl;
-
 	a->__vptr->methodSetFld(a, new __String("B"));
-
 	cout << a->__vptr->methodGetFld(a) << endl;
-
 	return 0;
 }
 

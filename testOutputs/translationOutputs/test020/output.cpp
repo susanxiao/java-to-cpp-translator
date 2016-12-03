@@ -9,8 +9,8 @@ namespace inputs {
 			return 4;
 		};
 
-		__A::__A() : __vptr(&__vtable)		
-{};
+		__A::__A() : __vptr(&__vtable)
+		{};
 
 		Class __A::__class() {
 			static Class k =
@@ -22,3 +22,4 @@ namespace inputs {
 
 	}
 }
+

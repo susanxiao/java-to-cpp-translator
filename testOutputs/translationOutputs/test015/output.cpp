@@ -11,8 +11,8 @@ namespace inputs {
 		};
 
 		__A::__A() : __vptr(&__vtable),
-			some((A)__rt::null())		
-{};
+			some((A)__rt::null())
+		{};
 
 		Class __A::__class() {
 			static Class k =
@@ -31,8 +31,8 @@ namespace inputs {
 			return __this->parent.some->__vptr->toString(__this->parent.some);
 		};
 
-		__B::__B() : __vptr(&__vtable)		
-{};
+		__B::__B() : __vptr(&__vtable)
+		{};
 
 		Class __B::__class() {
 			static Class k =
@@ -44,3 +44,4 @@ namespace inputs {
 
 	}
 }
+
