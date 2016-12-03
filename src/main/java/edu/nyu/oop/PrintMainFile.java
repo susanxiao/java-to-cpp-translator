@@ -576,7 +576,7 @@ public class PrintMainFile extends Visitor {
                                 Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
                                 Node qualifiedIdentifierInFieldDec  = NodeUtil.dfs(declaratorNodeInFieldDec,"QualifiedIdentifier");
                                  theLeftSideArrayType = qualifiedIdentifierInFieldDec.getString(0);
-                                System.out.println("theLeftSideArrayType: " + theLeftSideArrayType);
+                                //System.out.println("theLeftSideArrayType: " + theLeftSideArrayType);
                             }else{
                                 //System.out.println("not found");
                             }
@@ -586,13 +586,25 @@ public class PrintMainFile extends Visitor {
                         Node rightSideArrayType = expressionNode.getNode(2);
                         Node qualifiedIdentifier_arrayType = NodeUtil.dfs(rightSideArrayType, "QualifiedIdentifier");
                         String theRightSideArrayType  =   qualifiedIdentifier_arrayType.getString(0);
-                        System.out.println("theRightSideArrayType: " + theRightSideArrayType);
+                        //System.out.println("theRightSideArrayType: " + theRightSideArrayType);
 
                         if(!theLeftSideArrayType.equals(theRightSideArrayType) )  {
-                            System.out.println("throw java.lan.ArrayStoreException" );
+                            //System.out.println("check summary traversal");
+                            //System.out.println(summaryTraversal.classes.toString());
+                            //System.out.println(summaryTraversal.classes.containsKey(theRightSideArrayType));
+                            ClassImplementation classOf_theRightSideArryaType = summaryTraversal.classes.get(theRightSideArrayType);
+                            //System.out.println(classOf_theRightSideArryaType.superClassName);
+                            if(classOf_theRightSideArryaType.superClassName !=null){
+                                if(classOf_theRightSideArryaType.superClassName.equals(theLeftSideArrayType)){//rightSideArrayType is a subclass of LeftClassArryType
+                                    //System.out.println("(checking for ArrayStoreException)rightSideArrayType is a subclass of LeftClassArryType - so its okay");
+                                }
+                            }
+                            else{//doesn't have a superClass - rightSideArrayType is NOT a subclass of LeftClassArryType
+                                System.out.println("throw java.lan.ArrayStoreException" );
+                            }
 
                         }else{
-                             System.out.println("Same type");
+                             //System.out.println("(checking for ArrayStoreException) Same type");
                         }
 
 
