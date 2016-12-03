@@ -557,18 +557,21 @@ public class AstTraversal extends Visitor {
                                     }
                                 }
                             } else if (expressionStatementNode.getName().equals("CallExpression")) {
-                                Node selectionExpression = expressionStatementNode.getNode(0);
-                                for (Object o2 : selectionExpression) {
-                                    if (o2 instanceof Node) {
-                                        String primaryIdentifier = ((Node) o2).getString(0);
-                                        currentStatement.primaryIdentifier = primaryIdentifier;
-                                    } else if (o2 instanceof String) {
-                                        if (currentStatement.fields == null)
-                                            currentStatement.fields = new ArrayList<>();
-                                        String field = (String) o2;
-                                        currentStatement.fields.add(field);
+                                if(expressionStatementNode.getNode(0)!=null){
+                                    Node selectionExpression = expressionStatementNode.getNode(0);
+                                    for (Object o2 : selectionExpression) {
+                                        if (o2 instanceof Node) {
+                                            String primaryIdentifier = ((Node) o2).getString(0);
+                                            currentStatement.primaryIdentifier = primaryIdentifier;
+                                        } else if (o2 instanceof String) {
+                                            if (currentStatement.fields == null)
+                                                currentStatement.fields = new ArrayList<>();
+                                            String field = (String) o2;
+                                            currentStatement.fields.add(field);
+                                        }
                                     }
                                 }
+
 
                                 String method = expressionStatementNode.getString(2);
                                 currentStatement.method = method;

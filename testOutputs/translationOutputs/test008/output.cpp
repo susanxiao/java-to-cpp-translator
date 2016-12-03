@@ -5,7 +5,7 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test008 {
-		__A::__A() : __vptr(&__vtable),
+		__A::__A() : __vptr(&__vtable) ,
 			a((String)__rt::null()) {
 			a = new __String("A");
 			cout << a << endl;
@@ -19,7 +19,7 @@ namespace inputs {
 
 		__A_VT __A::__vtable;
 
-		__B::__B() : __vptr(&__vtable),
+		__B::__B() : __vptr(&__vtable) ,
 			b((String)__rt::null()) {
 			b = new __String("B");
 			parent.a = new __String("B");

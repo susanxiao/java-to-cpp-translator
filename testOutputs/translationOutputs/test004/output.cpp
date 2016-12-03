@@ -5,7 +5,7 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test004 {
-		__A::__A(String fld) : __vptr(&__vtable),
+		__A::__A(String fld) : __vptr(&__vtable) ,
 				fld(fld) {
 		};
 

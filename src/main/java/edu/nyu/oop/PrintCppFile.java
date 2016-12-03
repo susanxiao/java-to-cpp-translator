@@ -104,7 +104,7 @@ public class PrintCppFile extends Visitor {
                     constructorCreated = true;
                     summary.code.append("\n");
                 } else if (currentMethod.getName().equals("MethodDeclaration")) {
-                    visitMethodDeclaration(currentMethod);
+                    visitMethodDeclaration(currentMethod, n);
                     summary.code.append("\n");
                 }
             }
@@ -129,7 +129,7 @@ public class PrintCppFile extends Visitor {
         else {
             for (Object o : n) {
                 if (o instanceof Node && ((Node) o).getName().equals("MethodDeclaration"))
-                    visitMethodDeclaration(GNode.cast(o));
+                    visitMethodDeclaration(GNode.cast(o), n);
             }
         }
     }
@@ -222,6 +222,44 @@ public class PrintCppFile extends Visitor {
         }
         constructor.append(") : %s"); //this is the placeholder for the initializer list
 
+        //test025: class B is a subclass and directly calls super()
+        //Need to initialize parent before Block
+        //When you create a object in c++, by default it runs the default constructor on all of it's objects
+        //explicitly initialize the member 'parent' which does not have a default constructor
+        if(constructorBlock.size()>0) {
+            if (constructorBlock.getNode(0) != null) { // ExpressionStatementNode
+                //System.out.print("Almost there1");
+                if (constructorBlock.getNode(0).getName().equals("ExpressionStatement") && constructorBlock.getNode(0).getNode(0) != null) {
+                    //System.out.print("Almost there2");
+                    if (constructorBlock.getNode(0).getNode(0).getName().equals("CallExpression")) {
+                        //System.out.print("Almost there3");
+                        if (constructorBlock.getNode(0).getNode(0).getNode(0) == null) {
+                            //System.out.print("Almost there4");
+                            if (constructorBlock.getNode(0).getNode(0).getNode(1) == null) {
+                                //System.out.print("Almost there5");
+                                if (constructorBlock.getNode(0).getNode(0).getString(2).equals("super")) {
+                                    //System.out.print("Almost there6");
+                                    if (constructorBlock.getNode(0).getNode(0).getNode(3).getName().equals("Arguments")) {
+                                        //System.out.print("Almost there!");
+                                        //there may be more than one argument
+                                        String constructorArguments = "";
+                                        int num_constructorArguments = constructorBlock.getNode(0).getNode(0).getNode(3).getNode(0).size();
+                                        for (int i = 0; i < num_constructorArguments; i++) {
+                                            String arg = constructorBlock.getNode(0).getNode(0).getNode(3).getNode(0).getString(i);
+                                            constructorArguments += arg;
+                                            if (i + 1 < num_constructorArguments) {
+                                                constructorArguments += ", ";
+                                            }
+                                        }
+                                        constructor.append(", parent(" + constructorArguments + ")");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         summary.addLine(constructor.toString());
 
         summary.incScope();
@@ -251,6 +289,7 @@ public class PrintCppFile extends Visitor {
                             Node primarySibling = expressionStatementChild.getNode(2);
                             if (primarySibling.getName().equals("PrimaryIdentifier")) {
                                 String variableValue = primarySibling.getString(0);
+                                
                                 if (summary.initializerList.containsKey(variableName) && summary.initializerList.get(variableName) == null)
                                     summary.initializerList.put(variableName, variableValue);
                                 else
@@ -306,31 +345,35 @@ public class PrintCppFile extends Visitor {
                             }
                         }
                     } else if (expressionStatementChild.getName().equals("CallExpression")) {
-                        String primaryIdentifier = expressionStatementChild.getNode(0).getNode(0).getString(0);
-                        if (primaryIdentifier.equals("cout")) {
-                            StringBuilder line = new StringBuilder("cout << ");
-                            Node arguments = expressionStatementChild.getNode(3);
-                            Node argumentsPrimaryIdentifier = arguments.getNode(0);
-                            boolean gateParent = true;
-                            String className = summary.currentClass.name;
-                            String blockPrimaryIdentifier = argumentsPrimaryIdentifier.getString(0);
-                            for (FieldDeclaration dec : summaryTraversal.classes.get(className).declarations) {
-                                if (dec.variableName.equals(blockPrimaryIdentifier))
-                                    gateParent = false;
-                            }
-                            String statement = gateParent ? "parent." + blockPrimaryIdentifier : blockPrimaryIdentifier;
-                            //String statement = gateParent ? "parent." + blockPrimaryIdentifier + "->data" : blockPrimaryIdentifier + "->data";
+                        if(expressionStatementChild.getNode(0)!=null){
+                            String primaryIdentifier = expressionStatementChild.getNode(0).getNode(0).getString(0);
+                            if (primaryIdentifier.equals("cout")) {
+                                StringBuilder line = new StringBuilder("cout << ");
+                                Node arguments = expressionStatementChild.getNode(3);
+                                Node argumentsPrimaryIdentifier = arguments.getNode(0);
+                                boolean gateParent = true;
+                                String className = summary.currentClass.name;
+                                String blockPrimaryIdentifier = argumentsPrimaryIdentifier.getString(0);
+                                for (FieldDeclaration dec : summaryTraversal.classes.get(className).declarations) {
+                                    if (dec.variableName.equals(blockPrimaryIdentifier))
+                                        gateParent = false;
+                                }
+                                String statement = gateParent ? "parent." + blockPrimaryIdentifier : blockPrimaryIdentifier;
+                                //String statement = gateParent ? "parent." + blockPrimaryIdentifier + "->data" : blockPrimaryIdentifier + "->data";
 
-                            line.append(statement);
-                            for (int i = 1; i < arguments.size(); i++) {
-                                String field = arguments.getString(i);
-                                line.append("->" + field);
+                                line.append(statement);
+                                for (int i = 1; i < arguments.size(); i++) {
+                                    String field = arguments.getString(i);
+                                    line.append("->" + field);
+                                }
+                                if (expressionStatementChild.getString(2) != null) {
+                                    line.append(" << " + expressionStatementChild.getString(2));
+                                }
+                                summary.addLine(line.toString() + ";\n");
                             }
-                            if (expressionStatementChild.getString(2) != null) {
-                                line.append(" << " + expressionStatementChild.getString(2));
-                            }
-                            summary.addLine(line.toString() + ";\n");
                         }
+
+
                     }
                 }
             }
@@ -338,7 +381,7 @@ public class PrintCppFile extends Visitor {
         summary.decMethodScope();
 
         Set<Map.Entry<String, String>> initializerSet = summary.initializerList.entrySet();
-        StringBuilder initializers = new StringBuilder("__vptr(&__vtable)");
+        StringBuilder initializers = new StringBuilder("__vptr(&__vtable) ");
         Set<String> variables = new TreeSet<>();
 
         for (Map.Entry<String, String> entry : initializerSet) {
@@ -350,6 +393,10 @@ public class PrintCppFile extends Visitor {
                 variables.add(entry.getKey());
             }
         }
+
+
+
+
 
         String className = summary.currentClass.name;
         for (FieldDeclaration declaration : summaryTraversal.classes.get(summary.currentClass.name).declarations) {
@@ -373,7 +420,7 @@ public class PrintCppFile extends Visitor {
         summary.code = new StringBuilder(String.format(summary.code.toString(), initializers.toString()));
     }
 
-    public void visitMethodDeclaration(GNode n) {
+    public void visitMethodDeclaration(GNode n, GNode classBodyNode) {
 
         if (!summary.isMainClass) {
             summary.currentClassMethodCount++;
@@ -526,7 +573,7 @@ public class PrintCppFile extends Visitor {
                         }
                     }
                 } else if (currentNode.getName().equals("ReturnStatement")) {
-                    visitReturnStatement(currentNode);
+                    visitReturnStatement(currentNode, classBodyNode);
                 }
             }
             summary.decMethodScope();
@@ -538,7 +585,7 @@ public class PrintCppFile extends Visitor {
         }
     }
 
-    public void visitReturnStatement(GNode n) {
+    public void visitReturnStatement(GNode n,GNode classBodyNode) {
         if (!summary.isMainClass) {
             for (Object o : n) {
                 Node currentNode = (Node) o;
@@ -596,7 +643,54 @@ public class PrintCppFile extends Visitor {
                         }
                     }
                     summary.addLine(line + ";\n");
+                } else if (currentNode.getName().equals("AdditiveExpression")) { //test025
+                    String additiveExpression = "";
+                    for (int i = 0; i < currentNode.size(); i++) {
+                        Object o1 = currentNode.get(i);
+                        if (o1 instanceof Node) {
+                            Node currentChild = (Node) o1;
+                            //System.out.println("print names: " + currentChild.getName());
+                            if (currentChild.getName().equals("IntegerLiteral")) {
+                                additiveExpression += currentChild.getString(0);
+                            } else if (currentChild.getName().equals("PrimaryIdentifier")) {
+                                String primaryID_str = currentChild.getString(0);
+                                boolean thisVariableIsDeclaredInCurrentClass=false;
+
+                                //The following lines may have bugs(wasn't able to test them in test 25)
+                                for (int classBody_child_index = 0; classBody_child_index < classBodyNode.size(); classBody_child_index++) {
+                                    Object classBody_child = classBodyNode.get(classBody_child_index);
+                                    if(classBody_child instanceof Node){
+                                        Node classBody_child_NODE = (Node) classBody_child;
+                                        if(classBody_child_NODE.getName().equals("FieldDeclaration")){
+                                            if(classBody_child_NODE.getNode(2).getNode(0).getName().equals("Declarator")){
+                                                Node declaratorNode = (Node) classBody_child_NODE.getNode(2).getNode(0);
+                                                for (int decNode_index = 0; decNode_index < declaratorNode.size(); decNode_index++) {
+                                                    Object declaredVariables = currentNode.get(decNode_index);
+                                                    if(declaredVariables instanceof String ){
+                                                        if(declaredVariables.equals(primaryID_str)){
+                                                            thisVariableIsDeclaredInCurrentClass=true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if(thisVariableIsDeclaredInCurrentClass){//If the variable is declared in the struct, just use it
+                                    additiveExpression += "__this->"+primaryID_str;
+                                }else{//Otherwise, the variable should be from a parent class
+                                    additiveExpression += "__this->parent."+primaryID_str;
+                                }
+
+                            }
+                        } else if (o1 instanceof String) {
+                            additiveExpression += o1;
+                        }
+                    }
+                    summary.addLine("return " + additiveExpression + ";\n");
+
                 }
+
             }
         }
     }
