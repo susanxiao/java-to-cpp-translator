@@ -26,33 +26,33 @@ echo "Compiled 0->20";
 
 echo "";
 echo "Directing output to output/cpp_output.txt";
-sudo testOutputs/translationOutputs/test000/bin/a.out > testOutputs/translationOutputs/test000/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test001/bin/a.out > testOutputs/translationOutputs/test001/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test002/bin/a.out > testOutputs/translationOutputs/test002/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test003/bin/a.out > testOutputs/translationOutputs/test003/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test004/bin/a.out > testOutputs/translationOutputs/test004/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test005/bin/a.out > testOutputs/translationOutputs/test005/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test006/bin/a.out > testOutputs/translationOutputs/test006/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test007/bin/a.out > testOutputs/translationOutputs/test007/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test008/bin/a.out > testOutputs/translationOutputs/test008/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test009/bin/a.out > testOutputs/translationOutputs/test009/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test010/bin/a.out > testOutputs/translationOutputs/test010/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test011/bin/a.out > testOutputs/translationOutputs/test011/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test012/bin/a.out > testOutputs/translationOutputs/test012/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test013/bin/a.out > testOutputs/translationOutputs/test013/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test014/bin/a.out > testOutputs/translationOutputs/test014/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test015/bin/a.out > testOutputs/translationOutputs/test015/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test016/bin/a.out > testOutputs/translationOutputs/test016/output/cpp_output.txt;
-sudo testOutputs/translationOutputs/test017/bin/a.out > testOutputs/translationOutputs/test017/output/cpp_output.txt;
-# sudo testOutputs/translationOutputs/test018/bin/a.out > testOutputs/translationOutputs/test018/output/cpp_output.txt;
-# sudo testOutputs/translationOutputs/test019/bin/a.out > testOutputs/translationOutputs/test019/output/cpp_output.txt;
-# sudo testOutputs/translationOutputs/test020/bin/a.out > testOutputs/translationOutputs/test020/output/cpp_output.txt;
+sudo testOutputs/translationOutputs/test000/bin/a.out > testOutputs/translationOutputs/test000/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test001/bin/a.out > testOutputs/translationOutputs/test001/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test002/bin/a.out > testOutputs/translationOutputs/test002/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test003/bin/a.out > testOutputs/translationOutputs/test003/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test004/bin/a.out > testOutputs/translationOutputs/test004/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test005/bin/a.out > testOutputs/translationOutputs/test005/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test006/bin/a.out > testOutputs/translationOutputs/test006/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test007/bin/a.out > testOutputs/translationOutputs/test007/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test008/bin/a.out > testOutputs/translationOutputs/test008/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test009/bin/a.out > testOutputs/translationOutputs/test009/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test010/bin/a.out > testOutputs/translationOutputs/test010/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test011/bin/a.out > testOutputs/translationOutputs/test011/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test012/bin/a.out > testOutputs/translationOutputs/test012/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test013/bin/a.out > testOutputs/translationOutputs/test013/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test014/bin/a.out > testOutputs/translationOutputs/test014/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test015/bin/a.out > testOutputs/translationOutputs/test015/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test016/bin/a.out > testOutputs/translationOutputs/test016/output/cpp_output.txt 2>&1;
+sudo testOutputs/translationOutputs/test017/bin/a.out > testOutputs/translationOutputs/test017/output/cpp_output.txt 2>&1;
+# sudo testOutputs/translationOutputs/test018/bin/a.out > testOutputs/translationOutputs/test018/output/cpp_output.txt 2>&1;
+# sudo testOutputs/translationOutputs/test019/bin/a.out > testOutputs/translationOutputs/test019/output/cpp_output.txt 2>&1;
+# sudo testOutputs/translationOutputs/test020/bin/a.out > testOutputs/translationOutputs/test020/output/cpp_output.txt 2>&1;
 
 echo "Directed output to output/cpp_output.txt";
 
 echo "";
 (
-echo "Directing outputs of inputs to output/java_output.txt 2>&1"
+echo "Directing outputs of inputs to output/java_output.txt"
 sudo javac -d ./testOutputs/translationOutputs/test000/bin ./src/test/java/inputs/test000/Test000.java;
 java -classpath ./testOutputs/translationOutputs/test000/bin inputs/test000/Test000 > ./testOutputs/translationOutputs/test000/output/java_output.txt 2>&1;
 sudo javac -d ./testOutputs/translationOutputs/test001/bin ./src/test/java/inputs/test001/Test001.java;
