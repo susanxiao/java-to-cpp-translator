@@ -30,8 +30,8 @@ namespace inputs {
 			return __this->some->__vptr->toString(__this->some);
 		};
 
-		__B::__B() : __vptr(&__vtable)		
-,some((B)__rt::null())		
+		__B::__B() : __vptr(&__vtable),
+			some((B)__rt::null())		
 {};
 
 		Class __B::__class() {

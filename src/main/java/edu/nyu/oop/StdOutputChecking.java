@@ -54,11 +54,23 @@ public class StdOutputChecking {
 
                             message = " - Location";
                         } else if (javaInputLine.startsWith("Exception")) {
-                            if (!javaInputLine.contains(cppInputLine))
-                                isEqual = false;
-                            else {
-                                while (javaInputLine.startsWith("\tat") && javaInput.hasNext())
+                            String[] javaSplit = javaInputLine.split(" ");
+                            String[] cppSplit = cppInputLine.split(" ");
+
+                            String[] javaException = javaSplit[4].replace(":", "").split("\\.");
+                            String[] cppException = cppSplit[cppSplit.length - 1].replace("\'", "").split("::");
+
+                            for (int j = 0; j < javaException.length; j++) {
+                                if (!javaException[j].equals(cppException[j])) {
+                                    isEqual = false;
+                                    break;
+                                }
+                            }
+
+                            if (javaInput.hasNext()) {
+                                do {
                                     javaInputLine = javaInput.nextLine();
+                                } while (javaInput.hasNext() && javaInputLine.startsWith("\tat"));
                             }
 
                             message = " - Exception";
@@ -75,7 +87,6 @@ public class StdOutputChecking {
                 if (javaInput.hasNext()) {
                     isEqual = false;
                     String javaInputLine = javaInput.nextLine();
-                    out.println(javaInputLine);
                     if(javaInputLine.startsWith("Exception")) {
                         message = " - Exception";
                         if(!cppInput.hasNext())

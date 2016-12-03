@@ -106,13 +106,16 @@ public class PrintCppFile extends Visitor {
                 if (!(var.assignment != null || var.literalValue != null
                         || var.dynamicType != null || var.primaryIdentifier != null)) {
                     if (summaryTraversal.classes.containsKey(var.staticType)) {
-                        summary.addLine("\n," + var.variableName + "((" + summary.currentClass.name + ")__rt::null())");
+                        summary.code.append(",\n");
+                        summary.addLine("\t" + var.variableName + "((" + summary.currentClass.name + ")__rt::null())");
                     } else {
-                        summary.addLine("\n," + var.variableName + "((" + var.staticType + ")__rt::null())");
+                        summary.code.append(",\n");
+                        summary.addLine("\t" + var.variableName + "((" + var.staticType + ")__rt::null())");
                     }
                 }
             }
-            summary.addLine("\n{};\n\n");
+            summary.code.append("\n");
+            summary.addLine("{};\n\n");
         }
     }
 
@@ -315,20 +318,21 @@ public class PrintCppFile extends Visitor {
             }
         }
 
-        StringBuilder setNull;
         String className = summary.currentClass.name;
         for (FieldDeclaration declaration : summaryTraversal.classes.get(summary.currentClass.name).declarations) {
             if (!variables.contains(declaration.variableName)) {
                 if (!(declaration.assignment != null || declaration.literalValue != null
                         || declaration.dynamicType != null || declaration.primaryIdentifier != null)) {
                     if (summaryTraversal.classes.containsKey(declaration.staticType)) {
-                        setNull = new StringBuilder(",\n");
-                        setNull.append(declaration.variableName + "((" + className + ")__rt::null())");
-                        initializers.append(setNull);
+                        initializers.append(",\n");
+                        for (int i = 0; i < summary.scope + 1; i++)
+                            initializers.append("\t");
+                        initializers.append(declaration.variableName + "((" + className + ")__rt::null())");
                     } else {
-                        setNull = new StringBuilder(",\n");
-                        setNull.append(declaration.variableName + "((" + declaration.staticType + ")__rt::null())");
-                        initializers.append(setNull);
+                        initializers.append(",\n");
+                        for (int i = 0; i < summary.scope + 1; i++)
+                            initializers.append("\t");
+                        initializers.append(declaration.variableName + "((" + declaration.staticType + ")__rt::null())");
                     }
                 }
             }

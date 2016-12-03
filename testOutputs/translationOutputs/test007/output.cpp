@@ -6,7 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test007 {
 		__A::__A() : __vptr(&__vtable),
-a((String)__rt::null()) {
+			a((String)__rt::null()) {
 			a = new __String("A");
 		};
 
@@ -19,7 +19,7 @@ a((String)__rt::null()) {
 		__A_VT __A::__vtable;
 
 		__B::__B() : __vptr(&__vtable),
-b((String)__rt::null()) {
+			b((String)__rt::null()) {
 			b = new __String("B");
 		};
 
