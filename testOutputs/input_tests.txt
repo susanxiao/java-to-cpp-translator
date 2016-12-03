@@ -24,3 +24,7 @@ test022 -> Passed
 test023 -> Passed
 test024 -> Passed
 test025 -> Passed
+test026 -> Failed - Exception
+
+Failed:
+test026 -> Failed - Exception

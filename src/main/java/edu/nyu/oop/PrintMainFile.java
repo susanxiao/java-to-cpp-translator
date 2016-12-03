@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import edu.nyu.oop.util.*;
+
 import static java.lang.System.out;
 
 /**
@@ -57,7 +59,7 @@ public class PrintMainFile extends Visitor {
         //visitMethodDeclaration(methodMain);
     }
 
-    public void visitNestedBlock(GNode n) {
+    public void visitNestedBlock(GNode n, GNode methodDecNode) {
         mainImplementation.append(" {\n");
         for (Object o : n) {
             if (o instanceof Node) {
@@ -67,7 +69,7 @@ public class PrintMainFile extends Visitor {
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
                     mainImplementation.append("\t");
-                    visitExpressionStatement(currentNode);
+                    visitExpressionStatement(currentNode, methodDecNode);
                 }
             }
         }
@@ -109,11 +111,11 @@ public class PrintMainFile extends Visitor {
                 if (currentNode.getName().equals("FieldDeclaration")) {
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
-                    visitExpressionStatement(currentNode);
+                    visitExpressionStatement(currentNode, n );
                 } else if (currentNode.getName().equals("ForStatement")) {
-                    visitForStatement(currentNode);
+                    visitForStatement(currentNode, n);
                 } else if (currentNode.getName().equals("WhileStatement")) {
-                    visitWhileStatement(currentNode);
+                    visitWhileStatement(currentNode, n);
                 }
             }
         }
@@ -246,7 +248,7 @@ public class PrintMainFile extends Visitor {
         mainImplementation.append(fieldDeclaration + "\n");
     }
 
-    public void visitExpressionStatement(GNode n) {
+    public void visitExpressionStatement(GNode n, GNode methodDecNode) {
         String expressionStatement = "\t";
         if (n.getNode(0).getName().equals("CallExpression")) {
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
@@ -560,9 +562,39 @@ public class PrintMainFile extends Visitor {
                             expressionStatement += gateParent ? "->parent." + field : "->" + field;
                         }
                     } else if (currNode.getName().equals("SubscriptExpression")) {
-                        //expressionStatement += "reached here : subscript expression";
-                        GNode primaryIdentifier0 = (GNode) currNode.get(0);
-                        GNode primaryIdentifier1 = (GNode) currNode.get(1);
+                        //expressionStatement += "reached here : subscript expression. ";
+                        expressionStatement += "//check array Types\n\t\t";
+                        GNode primaryIdentifier0 = (GNode) currNode.get(0);//test26: as
+                        GNode primaryIdentifier1 = (GNode) currNode.get(1);//test26: i
+
+                        //check type of primaryIdentifier0(variable as in test26)
+                        java.util.List<Node> fieldDecNodes = NodeUtil.dfsAll(methodDecNode, "FieldDeclaration");
+                        String theLeftSideArrayType="";
+                        for (Node f : fieldDecNodes ) {
+                            //System.out.print(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
+                            if(f.getNode(2).getNode(0).getString(0).equals(primaryIdentifier0.getString(0))){
+                                Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
+                                Node qualifiedIdentifierInFieldDec  = NodeUtil.dfs(declaratorNodeInFieldDec,"QualifiedIdentifier");
+                                 theLeftSideArrayType = qualifiedIdentifierInFieldDec.getString(0);
+                                System.out.println("theLeftSideArrayType: " + theLeftSideArrayType);
+                            }else{
+                                //System.out.println("not found");
+                            }
+                        }
+
+                        //Check if the right side type matches
+                        Node rightSideArrayType = expressionNode.getNode(2);
+                        Node qualifiedIdentifier_arrayType = NodeUtil.dfs(rightSideArrayType, "QualifiedIdentifier");
+                        String theRightSideArrayType  =   qualifiedIdentifier_arrayType.getString(0);
+                        System.out.println("theRightSideArrayType: " + theRightSideArrayType);
+
+                        if(!theLeftSideArrayType.equals(theRightSideArrayType) )  {
+                            System.out.println("throw java.lan.ArrayStoreException" );
+
+                        }else{
+                             System.out.println("Same type");
+                        }
+
 
                         primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
 
@@ -639,7 +671,7 @@ public class PrintMainFile extends Visitor {
         mainImplementation.append(expressionStatement + "\n");
     }
 
-    public void visitWhileStatement(GNode n) {
+    public void visitWhileStatement(GNode n, GNode methodDecNode) {
         String whileStatement = "\twhile ";
 
         for (Object o : n) {
@@ -660,14 +692,14 @@ public class PrintMainFile extends Visitor {
                     mainImplementation.append(whileStatement);
                 }
                 else if (currentNode.getName().equals("Block")) {
-                    visitNestedBlock(currentNode);
+                    visitNestedBlock(currentNode, methodDecNode);
                 }
             }
         }
 
     }
 
-    public void visitForStatement(GNode n) {
+    public void visitForStatement(GNode n, GNode methodDecNode) {
         String forStatement = "\tfor ";
         for (Object o : n) {
             if (o instanceof Node) {
@@ -712,7 +744,7 @@ public class PrintMainFile extends Visitor {
                     forStatement += ")";
                     mainImplementation.append(forStatement);
                 } else if (currentNode.getName().equals("Block")) {
-                    visitNestedBlock(currentNode);
+                    visitNestedBlock(currentNode, methodDecNode);
                 }
             }
         }

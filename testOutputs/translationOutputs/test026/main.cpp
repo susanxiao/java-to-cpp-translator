@@ -9,16 +9,16 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test025;
+using namespace inputs::test026;
 
 int main(void)
 {
 
-	__rt::Array<Object>* as = (__rt::Array<Object>*) new __rt::Array<A>(10);
+	__rt::Array<A>* as = (__rt::Array<A>*) new __rt::Array<B>(10);
 
 	for (int32_t i = 0; i < as->length; i++) {
 		//check array Types
-		as->__data[i] = (Object) new __B(i);
+		as->__data[i] = new __A(i);
 	}
 	int k = 0;
 
@@ -30,5 +30,4 @@ int main(void)
 }
 
 //------------------
-
 
