@@ -174,9 +174,11 @@ public class PrintCppFile extends Visitor {
                                 summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier+">::__class()");
                                 summary.incRunTimeScope();
                                 summary.addRunTimeLine("static java::lang::Class k =\n");
+
                                 /*orginal*/
                                 //summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[java.lang.*EDITHERE*"+qualifiedIdentifier+";\"),\n");
-                                /*edited*/
+
+                                /*edit*/
                                 //System.out.println("get packageName");
                                 String packageName="";//ex)inputs.test028
                                 ArrayList<String> currentPackages = summaryTraversal.currentPackages;
@@ -190,8 +192,22 @@ public class PrintCppFile extends Visitor {
                                         packageName+=".";
                                     }
                                 }
+
+                                //Find out Dimension of Array
+                                //System.out.println("Find out Dimension of Array");
+                                int arrayDimension=0;
+                                //System.out.println(n.getNode(1).getNode(1).getName());
+                                //System.out.println(n.getNode(1).getNode(1).size());
+                                if(n.getNode(1).getNode(1).getName().equals("Dimensions")){
+                                    arrayDimension=n.getNode(1).getNode(1).size();
+                                }
+                                String addDimensions="";
+                                for(int i=0; i<arrayDimension;i++){
+                                    addDimensions+="[";
+                                }
+                                summary.addRunTimeLine("\tnew java::lang::__Class(literal(\""+addDimensions+"L"+packageName+"."+qualifiedIdentifier+";\"),\n");
                                 /*End editing*/
-                                summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[L"+packageName+"."+qualifiedIdentifier+";\"),\n");
+
                                 summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
                                 summary.addRunTimeLine("\t\t\t"+summary.classLocation.replace(".", "::") +"__"+qualifiedIdentifier+"::__class());\n");
                                 summary.addRunTimeLine("return k;\n");
