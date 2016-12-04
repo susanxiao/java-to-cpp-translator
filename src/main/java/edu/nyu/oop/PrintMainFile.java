@@ -571,7 +571,8 @@ public class PrintMainFile extends Visitor {
                         java.util.List<Node> fieldDecNodes = NodeUtil.dfsAll(methodDecNode, "FieldDeclaration");
                         String theLeftSideArrayType="";
                         for (Node f : fieldDecNodes ) {
-                            //System.out.print(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
+                            //ToDo see if I can use summaryTraversal instead to passing additional arguments to visit methods
+                            //System.out.println(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
                             if(f.getNode(2).getNode(0).getString(0).equals(primaryIdentifier0.getString(0))){
                                 Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
                                 Node qualifiedIdentifierInFieldDec  = NodeUtil.dfs(declaratorNodeInFieldDec,"QualifiedIdentifier");
@@ -601,6 +602,7 @@ public class PrintMainFile extends Visitor {
                             }
                             else{//doesn't have a superClass - rightSideArrayType is NOT a subclass of LeftClassArryType
                                 System.out.println("throw java.lan.ArrayStoreException" );
+                                expressionStatement += "throw java::lang::ArrayStoreException();\n";
                             }
 
                         }else{

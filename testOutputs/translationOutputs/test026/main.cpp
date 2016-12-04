@@ -18,7 +18,8 @@ int main(void)
 
 	for (int32_t i = 0; i < as->length; i++) {
 		//check array Types
-		as->__data[i] = new __A(i);
+		throw java::lang::ArrayStoreException();
+as->__data[i] = new __A(i);
 	}
 	int k = 0;
 
