@@ -4,7 +4,7 @@
 using namespace java::lang;
 using namespace std;
 namespace inputs {
-	namespace test024 {
+	namespace test030 {
 		__A::__A(int32_t i) : __vptr(&__vtable) ,
 				i(i) {
 		};
@@ -15,7 +15,7 @@ namespace inputs {
 
 		Class __A::__class() {
 			static Class k =
-			new __Class(__rt::literal("inputs.test024.A"), (Class) __rt::null());
+			new __Class(__rt::literal("inputs.test030.A"), (Class) __rt::null());
 			return k;
 		};
 
@@ -26,11 +26,11 @@ namespace inputs {
 
 namespace __rt {
 	template<>
-	java::lang::Class Array<inputs::test024::A>::__class() {
+	java::lang::Class Array<inputs::test030::A>::__class() {
 		static java::lang::Class k =
-			new java::lang::__Class(literal("[Linputs.test024.A;"),
+			new java::lang::__Class(literal("[java.lang.A;"),
 					java::lang::__Object::__class(),
-					inputs::test024::__A::__class());
+					inputs::test030::__A::__class());
 		return k;
 	}
 }

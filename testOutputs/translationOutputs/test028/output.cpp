@@ -28,7 +28,7 @@ namespace __rt {
 	template<>
 	java::lang::Class Array<inputs::test028::A>::__class() {
 		static java::lang::Class k =
-			new java::lang::__Class(literal("[java.lang.A;"),
+			new java::lang::__Class(literal("[Linputs.test028.A;"),
 					java::lang::__Object::__class(),
 					inputs::test028::__A::__class());
 		return k;
