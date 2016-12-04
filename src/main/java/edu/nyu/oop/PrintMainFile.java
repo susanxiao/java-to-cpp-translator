@@ -59,7 +59,7 @@ public class PrintMainFile extends Visitor {
         //visitMethodDeclaration(methodMain);
     }
 
-    public void visitNestedBlock(GNode n, GNode methodDecNode) {
+    public void visitNestedBlock(GNode n) {
         mainImplementation.append(" {\n");
         for (Object o : n) {
             if (o instanceof Node) {
@@ -69,7 +69,7 @@ public class PrintMainFile extends Visitor {
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
                     mainImplementation.append("\t");
-                    visitExpressionStatement(currentNode, methodDecNode);
+                    visitExpressionStatement(currentNode);
                 }
             }
         }
@@ -111,11 +111,11 @@ public class PrintMainFile extends Visitor {
                 if (currentNode.getName().equals("FieldDeclaration")) {
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
-                    visitExpressionStatement(currentNode, n );
+                    visitExpressionStatement(currentNode );
                 } else if (currentNode.getName().equals("ForStatement")) {
-                    visitForStatement(currentNode, n);
+                    visitForStatement(currentNode);
                 } else if (currentNode.getName().equals("WhileStatement")) {
-                    visitWhileStatement(currentNode, n);
+                    visitWhileStatement(currentNode);
                 }
             }
         }
@@ -248,7 +248,7 @@ public class PrintMainFile extends Visitor {
         mainImplementation.append(fieldDeclaration + "\n");
     }
 
-    public void visitExpressionStatement(GNode n, GNode methodDecNode) {
+    public void visitExpressionStatement(GNode n) {
         String expressionStatement = "\t";
         if (n.getNode(0).getName().equals("CallExpression")) {
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
@@ -542,9 +542,11 @@ public class PrintMainFile extends Visitor {
             Node expressionNode = n.getNode(0);
             String primaryIdentifierExpression = "";
             boolean isArray = false;
-            for (Object o : expressionNode) {
+            for (int nodeIndex=0; nodeIndex< expressionNode.size(); nodeIndex++) {
+                Object o = expressionNode.get(nodeIndex);
                 if (o instanceof Node) {
                     Node currNode = (Node) o;
+                    boolean needToGetSecondArgumentForCheckStoreFunction= false;
                     if (currNode.getName().equals("SelectionExpression")) {
                         String varName = currNode.getNode(0).getString(0);
                         primaryIdentifierExpression = varName;
@@ -562,16 +564,47 @@ public class PrintMainFile extends Visitor {
                             expressionStatement += gateParent ? "->parent." + field : "->" + field;
                         }
                     } else if (currNode.getName().equals("SubscriptExpression")) {
-                        //expressionStatement += "reached here : subscript expression. ";
-                        expressionStatement += "//check array Types\n\t\t";
+                        //expressionStatement += "//check array Types: use the checkStore() function in java_lang.h\n\t\t";
                         GNode primaryIdentifier0 = (GNode) currNode.get(0);//test26: as
                         GNode primaryIdentifier1 = (GNode) currNode.get(1);//test26: i
 
+                        expressionStatement += "checkStore(" + primaryIdentifier0.getString(0) + ", ";
+                        needToGetSecondArgumentForCheckStoreFunction = true;
+                        //Get RightHandSide type (should be the next next node. the next node should be "=")
+                        Node rightSideOfExpression = expressionNode.getNode(nodeIndex+2);
+                        if(rightSideOfExpression.getName().equals("NewClassExpression")){
+                            String qualifiedIdentifier = rightSideOfExpression.getNode(2).getString(0);
+                            expressionStatement += "new __" + qualifiedIdentifier;
+
+                            for (int i = 3; i < rightSideOfExpression.size(); i++) { // write "(i)"
+                                Object o1 = rightSideOfExpression.get(i);
+                                if (o1 instanceof Node) {
+                                    Node currentChild = (Node) o1;
+                                    if (currentChild.getName().equals("Arguments")) {
+                                        expressionStatement+="(";
+                                        for (int j = 0; j < currentChild.size(); j++) {
+                                            if (j > 0)
+                                                expressionStatement += ", ";
+                                            Object o3 = currentChild.get(j);
+                                            if (o3 instanceof Node) {
+                                                if (((Node) o3).getName().equals("PrimaryIdentifier")) {
+                                                    expressionStatement += ((Node) o3).getString(0);
+                                                }
+                                            }
+                                        }
+                                        expressionStatement += ")";
+                                    }
+                                }
+                            }
+                            expressionStatement += ");\n";
+                        }
+
+
+                        /*
                         //check type of primaryIdentifier0(variable as in test26)
                         java.util.List<Node> fieldDecNodes = NodeUtil.dfsAll(methodDecNode, "FieldDeclaration");
                         String theLeftSideArrayType="";
                         for (Node f : fieldDecNodes ) {
-                            //ToDo see if I can use summaryTraversal instead to passing additional arguments to visit methods
                             //System.out.println(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
                             if(f.getNode(2).getNode(0).getString(0).equals(primaryIdentifier0.getString(0))){
                                 Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
@@ -607,7 +640,8 @@ public class PrintMainFile extends Visitor {
 
                         }else{
                              //System.out.println("(checking for ArrayStoreException) Same type");
-                        }
+                        }*/
+
 
 
                         primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
@@ -685,7 +719,7 @@ public class PrintMainFile extends Visitor {
         mainImplementation.append(expressionStatement + "\n");
     }
 
-    public void visitWhileStatement(GNode n, GNode methodDecNode) {
+    public void visitWhileStatement(GNode n) {
         String whileStatement = "\twhile ";
 
         for (Object o : n) {
@@ -706,14 +740,14 @@ public class PrintMainFile extends Visitor {
                     mainImplementation.append(whileStatement);
                 }
                 else if (currentNode.getName().equals("Block")) {
-                    visitNestedBlock(currentNode, methodDecNode);
+                    visitNestedBlock(currentNode);
                 }
             }
         }
 
     }
 
-    public void visitForStatement(GNode n, GNode methodDecNode) {
+    public void visitForStatement(GNode n) {
         String forStatement = "\tfor ";
         for (Object o : n) {
             if (o instanceof Node) {
@@ -758,7 +792,7 @@ public class PrintMainFile extends Visitor {
                     forStatement += ")";
                     mainImplementation.append(forStatement);
                 } else if (currentNode.getName().equals("Block")) {
-                    visitNestedBlock(currentNode, methodDecNode);
+                    visitNestedBlock(currentNode);
                 }
             }
         }

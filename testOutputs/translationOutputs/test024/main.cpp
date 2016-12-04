@@ -17,8 +17,8 @@ int main(void)
 	__rt::Array<Object>* as = (__rt::Array<Object>*) new __rt::Array<A>(10);
 
 	for (int32_t i = 0; i < as->length; i++) {
-		//check array Types
-		as->__data[i] = (Object) new __A(i);
+		checkStore(as, new __A(i));
+as->__data[i] = (Object) new __A(i);
 	}
 	int k = 0;
 

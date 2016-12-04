@@ -17,8 +17,7 @@ int main(void)
 	__rt::Array<A>* as = (__rt::Array<A>*) new __rt::Array<B>(10);
 
 	for (int32_t i = 0; i < as->length; i++) {
-		//check array Types
-		throw java::lang::ArrayStoreException();
+		checkStore(as, new __A(i));
 as->__data[i] = new __A(i);
 	}
 	int k = 0;
