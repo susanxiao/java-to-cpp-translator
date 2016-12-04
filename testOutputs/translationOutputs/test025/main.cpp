@@ -17,15 +17,13 @@ int main(void)
 	__rt::Array<Object>* as = (__rt::Array<Object>*) new __rt::Array<A>(10);
 
 	for (int32_t i = 0; i < as->length; i++) {
-		checkIndex(as, i);
-		checkStore(as, new __B(i));
+			checkStore(as, new __B(i));
 		as->__data[i] = (Object) new __B(i);
 	}
 	int k = 0;
 
 	while (k < 10) {
-		checkIndex(as, k);
-		cout << ((A) as->__data[k])->__vptr->methodGet((A) as->__data[k]) << endl;
+			cout << ((A) as->__data[k])->__vptr->methodGet((A) as->__data[k]) << endl;
 			k = k + 1;
 	}
 	return 0;

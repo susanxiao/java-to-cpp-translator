@@ -16,15 +16,7 @@ using namespace inputs::test018;
 int main(void)
 {
 
-	{
-		int x;
-
-		x = 3;
-
-	}
-
-	cout << x << endl;
-
+		cout << x << endl;
 	return 0;
 }
 

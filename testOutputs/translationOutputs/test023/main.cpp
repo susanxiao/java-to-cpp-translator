@@ -24,8 +24,7 @@ int main (int argc, char ** argv)
 	__rt::Array<Object>* as = (__rt::Array<Object>*) args;
 
 	for (int32_t i = 0; i < as->length; i++) {
-		checkIndex(as, i);
-		cout << (String) as->__data[i] << endl;
+			cout << (String) as->__data[i] << endl;
 	}
 	return 0;
 }
