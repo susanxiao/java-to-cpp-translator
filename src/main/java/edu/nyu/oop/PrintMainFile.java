@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 
 import edu.nyu.oop.util.*;
@@ -249,7 +250,22 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitExpressionStatement(GNode n) {
-        String expressionStatement = "\t";
+        String expressionStatement = "\t\t";
+        //See if there is an array in the expression Statement
+        //If there is an array, make sure we do not get an ArrayIndexOutOfBoundsException
+        //boolean thereIsAnArray=false;
+        Node checkIfThereIsAnArray = NodeUtil.dfs(n,"SubscriptExpression");
+        if(checkIfThereIsAnArray!=null){
+            System.out.println("there is an array in the expression");
+            System.out.println(checkIfThereIsAnArray.getName());
+            String arrayVariableName = checkIfThereIsAnArray.getNode(0).getString(0);
+            String arrayIndex = checkIfThereIsAnArray.getNode(1).getString(0);
+            expressionStatement = "\tcheckIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n\t\t";
+        }
+        else{
+            System.out.println("No array in the expression");
+        }
+
         if (n.getNode(0).getName().equals("CallExpression")) {
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
                 if (n.getNode(0).getNode(0).getNode(0).getString(0).equals("cout")) {
@@ -596,7 +612,7 @@ public class PrintMainFile extends Visitor {
                                     }
                                 }
                             }
-                            expressionStatement += ");\n";
+                            expressionStatement += ");\n\t\t";
                         }
 
 

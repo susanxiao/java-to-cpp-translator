@@ -16,8 +16,8 @@ int main(void)
 
 	int x;
 
-	x = 3;
-	cout << __A::x << endl;
+		x = 3;
+		cout << __A::x << endl;
 	return 0;
 }
 

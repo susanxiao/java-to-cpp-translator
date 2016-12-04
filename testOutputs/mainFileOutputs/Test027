@@ -9,12 +9,12 @@
 
 using namespace java::lang;
 using namespace std;
-using namespace inputs::test026;
+using namespace inputs::test027;
 
 int main(void)
 {
 
-	__rt::Array<A>* as = (__rt::Array<A>*) new __rt::Array<B>(10);
+	__rt::Array<A>* as = new __rt::Array<A>(10);
 
 	for (int32_t i = 0; i < as->length; i++) {
 		checkIndex(as, i);
@@ -23,7 +23,7 @@ int main(void)
 	}
 	int k = 0;
 
-	while (k < 10) {
+	while (k < 11) {
 		checkIndex(as, k);
 		cout << ((A) as->__data[k])->__vptr->methodGet((A) as->__data[k]) << endl;
 			k = k + 1;
@@ -32,4 +32,5 @@ int main(void)
 }
 
 //------------------
+
 
