@@ -395,3 +395,12 @@ void checkClass(T __this, U object)
     }while (!(k == (java::lang::Class)__rt::null()));
     throw java::lang::ClassCastException();
 }
+
+/* Check in PrintMainFile.java directly to see if array size is negative
+void checkNegativeArraySize(int32_t arraySize)
+{
+    if(arraySize<0){
+        throw java::lang::NegativeArraySizeException();
+    }
+}*/
+

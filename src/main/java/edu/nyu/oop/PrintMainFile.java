@@ -191,13 +191,47 @@ public class PrintMainFile extends Visitor {
 
                             Node newArray = currentDeclarator.getNode(2);
                             String qualifiedIdentifier = newArray.getNode(0).getString(0);
-                            String size = newArray.getNode(1).getNode(0).getString(0);
+                            //check if size is negative or positive
+                            boolean sizeIsNegative = false;
+                            String negSize="";
+                            Node sizeMightBeNegative = NodeUtil.dfs(newArray,"UnaryExpression");
+                            if(sizeMightBeNegative!=null){
+                                if(sizeMightBeNegative.getString(0).equals("-")){
+                                    sizeIsNegative = true;
+                                    negSize = "-"+sizeMightBeNegative.getNode(1).getString(0);
+                                }
+                            }
+
+                            String size = newArray.getNode(1).getNode(0).getString(0);//size is positive
+                            if(sizeIsNegative){//size is negative
+                                size = negSize;
+                            }
+
 
                             if (!type.equals(qualifiedIdentifier))
                                 fieldDeclaration += "(__rt::Array<"+type+">*) ";
 
                             fieldDeclaration += "new __rt::Array<"+qualifiedIdentifier+">("+size+");\n";
 
+                            //check NegativeArraySizeException()
+                            //fieldDeclaration += "checkNegativeArraySize(" + size + ");";
+                            if(Integer.parseInt(size) < 0){
+                                //System.out.println("its a negative size");
+                                //need to throw NegativeArraySizeException() BEFORE assigning the array
+                                String fieldDeclaration_deepCopy = "";
+                                for(int i=0; i<fieldDeclaration.length(); i++){
+                                    char c = fieldDeclaration.charAt(i);
+                                    //System.out.println("c" + c);
+                                    fieldDeclaration_deepCopy += c;
+                                }
+                                //System.out.println("fieldDeclaration_deepCopy" + fieldDeclaration_deepCopy);
+                                fieldDeclaration ="";
+                                fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
+                                fieldDeclaration += fieldDeclaration_deepCopy;
+                            }
+                            //else{
+                                //System.out.println("its a positive size");
+                            //}
                             summary.localVariables.put(variable, type+"[");
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
@@ -256,14 +290,14 @@ public class PrintMainFile extends Visitor {
         //boolean thereIsAnArray=false;
         Node checkIfThereIsAnArray = NodeUtil.dfs(n,"SubscriptExpression");
         if(checkIfThereIsAnArray!=null){
-            System.out.println("there is an array in the expression");
-            System.out.println(checkIfThereIsAnArray.getName());
+            //System.out.println("there is an array in the expression");
+            //System.out.println(checkIfThereIsAnArray.getName());
             String arrayVariableName = checkIfThereIsAnArray.getNode(0).getString(0);
             String arrayIndex = checkIfThereIsAnArray.getNode(1).getString(0);
             expressionStatement = "\tcheckIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n\t\t";
         }
         else{
-            System.out.println("No array in the expression");
+            //System.out.println("No array in the expression");
         }
 
         if (n.getNode(0).getName().equals("CallExpression")) {
