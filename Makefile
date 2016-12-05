@@ -50,15 +50,15 @@ mutate astMutate :
 header printHeader :
 	@echo "Printing output.h file for $(start) to $(end)" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).PrintHeaderFile $(start) $(end)" ;
-	@echo "Translated outputs are in testOutputs/printHeaderOutputs"
+	@echo "Translated outputs are in testOutputs/translationOutputs"
 cpp printCpp :
 	@echo "Printing output.cpp file for $(start) to $(end)" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).PrintCppFile $(start) $(end)" ;
-	@echo "Translated outputs are in testOutputs/printCppOutputs"
+	@echo "Translated outputs are in testOutputs/translationOutputs"
 main printMain :
 	@echo "Printing main.cpp file for $(start) to $(end)" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).PrintMainFile $(start) $(end)" ;
-	@echo "main.cpp outputs are in testOutputs/mainFileOutputs"
+	@echo "main.cpp outputs are in testOutputs/translationOutputs"
 translate printAll:
 	@echo "Translating inputs $(start) to $(end)" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).ImplementationUtil $(start) $(end)" ;

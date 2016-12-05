@@ -908,7 +908,8 @@ public class PrintCppFile extends Visitor {
                 PrintCppFile visitor = new PrintCppFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 cppFileSummary summaryCpp = visitor.getSummary(node);
 
-                output = new File("testOutputs/printCppOutputs", String.format("Test%03d", i));
+                String outputPath = String.format("./testOutputs/translationOutputs/test%03d/output.cpp", i);
+                output = new File(outputPath);
                 output.getParentFile().mkdirs();
                 output.createNewFile();
 

@@ -1041,8 +1041,8 @@ public class PrintMainFile extends Visitor {
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;
                 out.println(mainFile);
-
-                main = new File("testOutputs/mainFileOutputs", String.format("Test%03d", i));
+                String mainPath = String.format("./testOutputs/translationOutputs//test%03d/main.cpp", i);
+                main = new File(mainPath);
                 main.createNewFile();
 
                 printerMain = new PrintWriter(main);
