@@ -1,6 +1,6 @@
 # VARIABLES
 start = 0
-end = 20
+end = 50
 packages=edu.nyu.oop
 testArgs = "1 2 3 4"
 
@@ -90,6 +90,7 @@ compare :
 		test -d $$cppOutputPath/bin || mkdir $$cppOutputPath/bin ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
 		sudo javac -d $$cppOutputPath/bin $$javaInputPath/Test$$formatNum.java ; \
+		sudo chown -R $$USER: $$cppOutputPath/bin/inputs ; \
 		java -classpath $$cppOutputPath/bin inputs/test$$formatNum/Test$$formatNum $(testArgs)> $$cppOutputPath/output/java_output.txt 2>&1 ; \
 		num=`expr $$num + 1` ; \
 	done ;
