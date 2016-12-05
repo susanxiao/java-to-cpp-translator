@@ -299,13 +299,10 @@ public class PrintMainFile extends Visitor {
         rather than having a visitSubscriptExpression() and directing adding to main Implementation
         because subscript expressions are normally in the middle of an expression
         */
-        String subscriptExpression_str="";
-
         GNode primaryIdentifier0 = (GNode) n.get(0);
         GNode primaryIdentifier1 = (GNode) n.get(1);
 
-
-        subscriptExpression_str += primaryIdentifier0.get(0).toString() + "->__data[";
+        String subscriptExpression_str = primaryIdentifier0.get(0).toString() + "->__data[";
         subscriptExpression_str += primaryIdentifier1.get(0).toString() + "]";
 
         return subscriptExpression_str;
@@ -787,7 +784,7 @@ public class PrintMainFile extends Visitor {
 
                     } else if (currNode.getName().equals("PrimaryIdentifier")) {
                         expressionStatement += currNode.getString(0);
-                    } else if (currNode.getName().equals("AdditiveExpression")) {
+                    } else if (currNode.getName().equals("AdditiveExpression") || currNode.getName().equals("MultiplicativeExpression")) {
                         for (Object o1 : currNode) {
                             if (o1 instanceof Node) {
                                 if (((Node) o1).getName().equals("PrimaryIdentifier")) {
@@ -887,8 +884,8 @@ public class PrintMainFile extends Visitor {
                                     //Select expression in 2D array
                                     Node twoDimension_SubscriptExpression = SelectionExpressNode.getNode(0);
                                     String subscriptExpression = returnSubscriptExpression((GNode) twoDimension_SubscriptExpression);
-                                    System.out.print("2nd for loop: "+subscriptExpression+"\n");
-                                    forStatement+=subscriptExpression;
+                                    //System.out.print("2nd for loop: "+subscriptExpression+"\n");
+                                    forStatement += subscriptExpression;
 
                                 }else {
                                     //Select expression in 1D array
