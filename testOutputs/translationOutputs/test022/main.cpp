@@ -22,7 +22,7 @@ int main (int argc, char ** argv)
 	}
 
 	for (int32_t i = 0; i < args->length; i++) {
-		cout << args->__data[i] << endl;
+			cout << args->__data[i] << endl;
 	}
 	return 0;
 }

@@ -174,7 +174,40 @@ public class PrintCppFile extends Visitor {
                                 summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier+">::__class()");
                                 summary.incRunTimeScope();
                                 summary.addRunTimeLine("static java::lang::Class k =\n");
-                                summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[java.lang."+qualifiedIdentifier+";\"),\n");
+
+                                /*orginal*/
+                                //summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[java.lang.*EDITHERE*"+qualifiedIdentifier+";\"),\n");
+
+                                /*edit*/
+                                //System.out.println("get packageName");
+                                String packageName="";//ex)inputs.test028
+                                ArrayList<String> currentPackages = summaryTraversal.currentPackages;
+                                int currentPackages_size = currentPackages.size();
+                                for(int i=0; i<currentPackages_size ; i++){
+                                //for(String p: currentPackages){
+                                    String p = currentPackages.get(i);
+                                    //System.out.println(p);
+                                    packageName+=p;
+                                    if(i+1<currentPackages_size ){
+                                        packageName+=".";
+                                    }
+                                }
+
+                                //Find out Dimension of Array
+                                //System.out.println("Find out Dimension of Array");
+                                int arrayDimension=0;
+                                //System.out.println(n.getNode(1).getNode(1).getName());
+                                //System.out.println(n.getNode(1).getNode(1).size());
+                                if(n.getNode(1).getNode(1).getName().equals("Dimensions")){
+                                    arrayDimension=n.getNode(1).getNode(1).size();
+                                }
+                                String addDimensions="";
+                                for(int i=0; i<arrayDimension;i++){
+                                    addDimensions+="[";
+                                }
+                                summary.addRunTimeLine("\tnew java::lang::__Class(literal(\""+addDimensions+"L"+packageName+"."+qualifiedIdentifier+";\"),\n");
+                                /*End editing*/
+
                                 summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
                                 summary.addRunTimeLine("\t\t\t"+summary.classLocation.replace(".", "::") +"__"+qualifiedIdentifier+"::__class());\n");
                                 summary.addRunTimeLine("return k;\n");

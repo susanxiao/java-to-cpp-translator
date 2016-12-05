@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 
 import edu.nyu.oop.util.*;
@@ -70,6 +71,9 @@ public class PrintMainFile extends Visitor {
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
                     mainImplementation.append("\t");
                     visitExpressionStatement(currentNode);
+                } else if (currentNode.getName().equals("ForStatement")) {
+                    mainImplementation.append("\t");
+                    visitForStatement(currentNode);
                 }
             }
         }
@@ -190,13 +194,47 @@ public class PrintMainFile extends Visitor {
 
                             Node newArray = currentDeclarator.getNode(2);
                             String qualifiedIdentifier = newArray.getNode(0).getString(0);
-                            String size = newArray.getNode(1).getNode(0).getString(0);
+                            //check if size is negative or positive
+                            boolean sizeIsNegative = false;
+                            String negSize="";
+                            Node sizeMightBeNegative = NodeUtil.dfs(newArray,"UnaryExpression");
+                            if(sizeMightBeNegative!=null){
+                                if(sizeMightBeNegative.getString(0).equals("-")){
+                                    sizeIsNegative = true;
+                                    negSize = "-"+sizeMightBeNegative.getNode(1).getString(0);
+                                }
+                            }
+
+                            String size = newArray.getNode(1).getNode(0).getString(0);//size is positive
+                            if(sizeIsNegative){//size is negative
+                                size = negSize;
+                            }
+
 
                             if (!type.equals(qualifiedIdentifier))
                                 fieldDeclaration += "(__rt::Array<"+type+">*) ";
 
                             fieldDeclaration += "new __rt::Array<"+qualifiedIdentifier+">("+size+");\n";
 
+                            //check NegativeArraySizeException()
+                            //fieldDeclaration += "checkNegativeArraySize(" + size + ");";
+                            if(Integer.parseInt(size) < 0){
+                                //System.out.println("its a negative size");
+                                //need to throw NegativeArraySizeException() BEFORE assigning the array
+                                String fieldDeclaration_deepCopy = "";
+                                for(int i=0; i<fieldDeclaration.length(); i++){
+                                    char c = fieldDeclaration.charAt(i);
+                                    //System.out.println("c" + c);
+                                    fieldDeclaration_deepCopy += c;
+                                }
+                                //System.out.println("fieldDeclaration_deepCopy" + fieldDeclaration_deepCopy);
+                                fieldDeclaration ="";
+                                fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
+                                fieldDeclaration += fieldDeclaration_deepCopy;
+                            }
+                            //else{
+                                //System.out.println("its a positive size");
+                            //}
                             summary.localVariables.put(variable, type+"[");
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
@@ -248,8 +286,63 @@ public class PrintMainFile extends Visitor {
         mainImplementation.append(fieldDeclaration + "\n");
     }
 
+    public String checkIndexBoundsForSubscriptExpression(GNode n){
+        String arrayVariableName = n.getNode(0).getString(0);
+        String arrayIndex = n.getNode(1).getString(0);
+
+        return "\tcheckIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n\t\t";
+    }
+
+    public String returnSubscriptExpression(GNode n){
+        /*
+        return a string subscriptExpression string
+        rather than having a visitSubscriptExpression() and directing adding to main Implementation
+        because subscript expressions are normally in the middle of an expression
+        */
+        String subscriptExpression_str="";
+
+        GNode primaryIdentifier0 = (GNode) n.get(0);
+        GNode primaryIdentifier1 = (GNode) n.get(1);
+
+
+        subscriptExpression_str += primaryIdentifier0.get(0).toString() + "->__data[";
+        subscriptExpression_str += primaryIdentifier1.get(0).toString() + "]";
+
+        return subscriptExpression_str;
+    }
+
     public void visitExpressionStatement(GNode n) {
-        String expressionStatement = "\t";
+        String expressionStatement = "\t\t";
+        //See if there is an array in the expression Statement
+        //If there is an array, make sure we do not get an ArrayIndexOutOfBoundsException
+        Node checkIfThereIsAnArray = NodeUtil.dfs(n,"SubscriptExpression");
+        if(checkIfThereIsAnArray!=null){
+            Node checkIfItsA2DArray = NodeUtil.dfs(checkIfThereIsAnArray,"SubscriptExpression");
+            if(checkIfItsA2DArray!=null){//2D array
+                //Todo Do I Also need to checkIndexboudns error for 2d Arrays?
+                //Node secondDimension = checkIfItsA2DArray;
+                //String  checkIndexBoundError =checkIndexBoundsForSubscriptExpression((GNode) checkIfItsA2DArray );
+                //expressionStatement+=checkIndexBoundError;
+
+            }else{//1D array
+                String  checkIndexBoundError =checkIndexBoundsForSubscriptExpression((GNode) checkIfThereIsAnArray);
+
+                //System.out.println("there is an array in the expression");
+                //System.out.println(checkIfThereIsAnArray.getName());
+
+                /*
+                String arrayVariableName = checkIfThereIsAnArray.getNode(0).getString(0);
+                String arrayIndex = checkIfThereIsAnArray.getNode(1).getString(0);
+                expressionStatement += "\tcheckIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n\t\t";
+                */
+                expressionStatement+=checkIndexBoundError;
+            }
+
+        }
+        else{
+            //System.out.println("No array in the expression");
+        }
+
         if (n.getNode(0).getName().equals("CallExpression")) {
             if (n.getNode(0).getNode(0).getName().equals("SelectionExpression")) {
                 if (n.getNode(0).getNode(0).getNode(0).getString(0).equals("cout")) {
@@ -322,6 +415,7 @@ public class PrintMainFile extends Visitor {
                                                 expressionStatement += primaryId;
                                             }
                                             else if (currentChild.getName().equals("SubscriptExpression")) {
+                                                //String subscriptExpressionSTR= returnSubscriptExpression((GNode) currentChild);
                                                 GNode primaryIdentifier0 = (GNode) currentChild.get(0);
                                                 GNode primaryIdentifier1 = (GNode) currentChild.get(1);
                                                 primaryId = (primaryId == null ? "" : primaryId) + primaryIdentifier0.get(0).toString() + "->__data[";
@@ -471,13 +565,23 @@ public class PrintMainFile extends Visitor {
                                     }
                                 }
                             } else if (currentNode.getName().equals("SubscriptExpression")) {
-                                //expressionStatement += "reached here : subscript expression";
-                                GNode primaryIdentifier0 = (GNode) currentNode.get(0);
-                                GNode primaryIdentifier1 = (GNode) currentNode.get(1);
-                                if (!summary.localVariables.get(primaryIdentifier0.get(0).toString()).equals("String["))
-                                    expressionStatement += "(String) ";
-                                expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
-                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";
+                                boolean itsA1DArray = currentNode.getNode(0).getName().equals("PrimaryIdentifier");
+                                if(itsA1DArray) {
+                                    //expressionStatement += "reached here : subscript expression";
+                                    GNode primaryIdentifier0 = (GNode) currentNode.get(0);
+                                    GNode primaryIdentifier1 = (GNode) currentNode.get(1);
+                                    if (!summary.localVariables.get(primaryIdentifier0.get(0).toString()).equals("String["))
+                                        expressionStatement += "(String) ";
+
+                                    expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
+                                    expressionStatement += primaryIdentifier1.get(0).toString() + "]";
+                                }
+                                else{ //2D array. assume we don't have 3D,4D,5D...
+                                    Node secondDimension = currentNode.getNode(0);//currentNode.getNode(0).getName() should be "SubscriptExpression"
+                                    String subscriptExpressionSTR= returnSubscriptExpression((GNode) secondDimension);
+                                    expressionStatement +=subscriptExpressionSTR;
+
+                                }
 
                             }
                         }
@@ -564,91 +668,93 @@ public class PrintMainFile extends Visitor {
                             expressionStatement += gateParent ? "->parent." + field : "->" + field;
                         }
                     } else if (currNode.getName().equals("SubscriptExpression")) {
-                        //expressionStatement += "//check array Types: use the checkStore() function in java_lang.h\n\t\t";
-                        GNode primaryIdentifier0 = (GNode) currNode.get(0);//test26: as
-                        GNode primaryIdentifier1 = (GNode) currNode.get(1);//test26: i
+                        boolean itsA2DArray = currNode.getNode(0).getName().equals("SubscriptExpression");
+                        if(!itsA2DArray) { //1D Array
+                            //expressionStatement += "//check array Types: use the checkStore() function in java_lang.h\n\t\t";
+                            GNode primaryIdentifier0 = (GNode) currNode.get(0);//test26: as
+                            GNode primaryIdentifier1 = (GNode) currNode.get(1);//test26: i
 
-                        expressionStatement += "checkStore(" + primaryIdentifier0.getString(0) + ", ";
-                        needToGetSecondArgumentForCheckStoreFunction = true;
-                        //Get RightHandSide type (should be the next next node. the next node should be "=")
-                        Node rightSideOfExpression = expressionNode.getNode(nodeIndex+2);
-                        if(rightSideOfExpression.getName().equals("NewClassExpression")){
-                            String qualifiedIdentifier = rightSideOfExpression.getNode(2).getString(0);
-                            expressionStatement += "new __" + qualifiedIdentifier;
+                            expressionStatement += "checkStore(" + primaryIdentifier0.getString(0) + ", ";
+                            needToGetSecondArgumentForCheckStoreFunction = true;
+                            //Get RightHandSide type (should be the next next node. the next node should be "=")
+                            Node rightSideOfExpression = expressionNode.getNode(nodeIndex + 2);
+                            if (rightSideOfExpression.getName().equals("NewClassExpression")) {
+                                String qualifiedIdentifier = rightSideOfExpression.getNode(2).getString(0);
+                                expressionStatement += "new __" + qualifiedIdentifier;
 
-                            for (int i = 3; i < rightSideOfExpression.size(); i++) { // write "(i)"
-                                Object o1 = rightSideOfExpression.get(i);
-                                if (o1 instanceof Node) {
-                                    Node currentChild = (Node) o1;
-                                    if (currentChild.getName().equals("Arguments")) {
-                                        expressionStatement+="(";
-                                        for (int j = 0; j < currentChild.size(); j++) {
-                                            if (j > 0)
-                                                expressionStatement += ", ";
-                                            Object o3 = currentChild.get(j);
-                                            if (o3 instanceof Node) {
-                                                if (((Node) o3).getName().equals("PrimaryIdentifier")) {
-                                                    expressionStatement += ((Node) o3).getString(0);
+                                for (int i = 3; i < rightSideOfExpression.size(); i++) { // write "(i)"
+                                    Object o1 = rightSideOfExpression.get(i);
+                                    if (o1 instanceof Node) {
+                                        Node currentChild = (Node) o1;
+                                        if (currentChild.getName().equals("Arguments")) {
+                                            expressionStatement += "(";
+                                            for (int j = 0; j < currentChild.size(); j++) {
+                                                if (j > 0)
+                                                    expressionStatement += ", ";
+                                                Object o3 = currentChild.get(j);
+                                                if (o3 instanceof Node) {
+                                                    if (((Node) o3).getName().equals("PrimaryIdentifier")) {
+                                                        expressionStatement += ((Node) o3).getString(0);
+                                                    }
                                                 }
                                             }
+                                            expressionStatement += ")";
                                         }
-                                        expressionStatement += ")";
                                     }
                                 }
+                                expressionStatement += ");\n\t\t";
                             }
-                            expressionStatement += ");\n";
-                        }
 
 
-                        /*
-                        //check type of primaryIdentifier0(variable as in test26)
-                        java.util.List<Node> fieldDecNodes = NodeUtil.dfsAll(methodDecNode, "FieldDeclaration");
-                        String theLeftSideArrayType="";
-                        for (Node f : fieldDecNodes ) {
-                            //System.out.println(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
-                            if(f.getNode(2).getNode(0).getString(0).equals(primaryIdentifier0.getString(0))){
-                                Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
-                                Node qualifiedIdentifierInFieldDec  = NodeUtil.dfs(declaratorNodeInFieldDec,"QualifiedIdentifier");
-                                 theLeftSideArrayType = qualifiedIdentifierInFieldDec.getString(0);
-                                //System.out.println("theLeftSideArrayType: " + theLeftSideArrayType);
-                            }else{
-                                //System.out.println("not found");
-                            }
-                        }
-
-                        //Check if the right side type matches
-                        Node rightSideArrayType = expressionNode.getNode(2);
-                        Node qualifiedIdentifier_arrayType = NodeUtil.dfs(rightSideArrayType, "QualifiedIdentifier");
-                        String theRightSideArrayType  =   qualifiedIdentifier_arrayType.getString(0);
-                        //System.out.println("theRightSideArrayType: " + theRightSideArrayType);
-
-                        if(!theLeftSideArrayType.equals(theRightSideArrayType) )  {
-                            //System.out.println("check summary traversal");
-                            //System.out.println(summaryTraversal.classes.toString());
-                            //System.out.println(summaryTraversal.classes.containsKey(theRightSideArrayType));
-                            ClassImplementation classOf_theRightSideArryaType = summaryTraversal.classes.get(theRightSideArrayType);
-                            //System.out.println(classOf_theRightSideArryaType.superClassName);
-                            if(classOf_theRightSideArryaType.superClassName !=null){
-                                if(classOf_theRightSideArryaType.superClassName.equals(theLeftSideArrayType)){//rightSideArrayType is a subclass of LeftClassArryType
-                                    //System.out.println("(checking for ArrayStoreException)rightSideArrayType is a subclass of LeftClassArryType - so its okay");
+                            /*
+                            //check type of primaryIdentifier0(variable as in test26)
+                            java.util.List<Node> fieldDecNodes = NodeUtil.dfsAll(methodDecNode, "FieldDeclaration");
+                            String theLeftSideArrayType="";
+                            for (Node f : fieldDecNodes ) {
+                                //System.out.println(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
+                                if(f.getNode(2).getNode(0).getString(0).equals(primaryIdentifier0.getString(0))){
+                                    Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
+                                    Node qualifiedIdentifierInFieldDec  = NodeUtil.dfs(declaratorNodeInFieldDec,"QualifiedIdentifier");
+                                     theLeftSideArrayType = qualifiedIdentifierInFieldDec.getString(0);
+                                    //System.out.println("theLeftSideArrayType: " + theLeftSideArrayType);
+                                }else{
+                                    //System.out.println("not found");
                                 }
                             }
-                            else{//doesn't have a superClass - rightSideArrayType is NOT a subclass of LeftClassArryType
-                                System.out.println("throw java.lan.ArrayStoreException" );
-                                expressionStatement += "throw java::lang::ArrayStoreException();\n";
-                            }
 
-                        }else{
-                             //System.out.println("(checking for ArrayStoreException) Same type");
-                        }*/
+                            //Check if the right side type matches
+                            Node rightSideArrayType = expressionNode.getNode(2);
+                            Node qualifiedIdentifier_arrayType = NodeUtil.dfs(rightSideArrayType, "QualifiedIdentifier");
+                            String theRightSideArrayType  =   qualifiedIdentifier_arrayType.getString(0);
+                            //System.out.println("theRightSideArrayType: " + theRightSideArrayType);
+
+                            if(!theLeftSideArrayType.equals(theRightSideArrayType) )  {
+                                //System.out.println("check summary traversal");
+                                //System.out.println(summaryTraversal.classes.toString());
+                                //System.out.println(summaryTraversal.classes.containsKey(theRightSideArrayType));
+                                ClassImplementation classOf_theRightSideArryaType = summaryTraversal.classes.get(theRightSideArrayType);
+                                //System.out.println(classOf_theRightSideArryaType.superClassName);
+                                if(classOf_theRightSideArryaType.superClassName !=null){
+                                    if(classOf_theRightSideArryaType.superClassName.equals(theLeftSideArrayType)){//rightSideArrayType is a subclass of LeftClassArryType
+                                        //System.out.println("(checking for ArrayStoreException)rightSideArrayType is a subclass of LeftClassArryType - so its okay");
+                                    }
+                                }
+                                else{//doesn't have a superClass - rightSideArrayType is NOT a subclass of LeftClassArryType
+                                    System.out.println("throw java.lan.ArrayStoreException" );
+                                    expressionStatement += "throw java::lang::ArrayStoreException();\n";
+                                }
+
+                            }else{
+                                 //System.out.println("(checking for ArrayStoreException) Same type");
+                            }*/
 
 
+                            primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
 
-                        primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
-
-                        expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
-                        expressionStatement += primaryIdentifier1.get(0).toString() + "]";
-                        isArray = true;
+                            expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
+                            expressionStatement += primaryIdentifier1.get(0).toString() + "]";
+                            isArray = true;
+                        }
 
                     } else if (currNode.getName().equals("NewClassExpression")) {
                         String qualifiedIdentifier = currNode.getNode(2).getString(0);
@@ -771,14 +877,25 @@ public class PrintMainFile extends Visitor {
                                 GNode IntegerLiteralNode = (GNode) declaratorNode.get(2);
                                 forStatement += IntegerLiteralNode.get(0).toString() + "; "; //0;
                             } else if (b_Node.getName().equals("RelationalExpression")) {
+
                                 GNode primaryIdentifierNode = (GNode) b_Node.get(0);
                                 forStatement += primaryIdentifierNode.get(0).toString(); //i
                                 forStatement += " " + b_Node.get(1).toString() + " ";//<
                                 GNode SelectionExpressNode = (GNode) b_Node.get(2);
                                 //System.out.println("test Sel Node: "+SelectionExpressNode.toString());
-                                GNode PrimaryId_inSelectionExNode = (GNode) SelectionExpressNode.get(0);
-                                forStatement += PrimaryId_inSelectionExNode.get(0).toString() + "->"; // as->
-                                forStatement += SelectionExpressNode.get(1).toString() + "; ";
+                                if(SelectionExpressNode.getNode(0).getName().equals("SubscriptExpression")){
+                                    //Select expression in 2D array
+                                    Node twoDimension_SubscriptExpression = SelectionExpressNode.getNode(0);
+                                    String subscriptExpression = returnSubscriptExpression((GNode) twoDimension_SubscriptExpression);
+                                    System.out.print("2nd for loop: "+subscriptExpression+"\n");
+                                    forStatement+=subscriptExpression;
+
+                                }else {
+                                    //Select expression in 1D array
+                                    GNode PrimaryId_inSelectionExNode = (GNode) SelectionExpressNode.get(0);
+                                    forStatement += PrimaryId_inSelectionExNode.get(0).toString(); // as
+                                }
+                                forStatement +=  "->" + SelectionExpressNode.get(1).toString() + "; ";
                             } else if (b_Node.getName().equals("ExpressionList")) {
                                 GNode postfixExpressionNode = (GNode) b_Node.get(0);
                                 GNode primaryID_inPostfixExpression = (GNode) postfixExpressionNode.get(0);

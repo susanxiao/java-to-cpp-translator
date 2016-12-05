@@ -18,11 +18,11 @@ int main(void)
 
 	B other = new __B();
 
-	other->parent.some = a;
+		other->parent.some = a;
 	Class k0 = a->__vptr->getClass(a);
 	checkClass(k0, other);
 
-	a->__vptr->methodPrintOther(a, (A) other);
+		a->__vptr->methodPrintOther(a, (A) other);
 	return 0;
 }
 
