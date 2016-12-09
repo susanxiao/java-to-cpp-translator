@@ -81,7 +81,7 @@ copy javalang :
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Copied java_lang files into translationOutputs directories"
-compare :
+compile :
 	@echo "Compiling and outputting Java code for $(start) to $(end)" ;
 	@num=$(start) ; while [ $$num -le $(end) ] ; do \
 		formatNum=`printf "%03d" $$num` ; \
@@ -106,7 +106,8 @@ compare :
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "C++ code outputted to cpp_output.txt" ;
+compare :
 	@echo "Checking outputs" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking $(start) $(end)" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"
-5tran doAll : translate copy clean compare
+5tran doAll : translate copy compile clean compare
