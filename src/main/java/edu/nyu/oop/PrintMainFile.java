@@ -616,7 +616,13 @@ public class PrintMainFile extends Visitor {
                         String newClassIdentifier = "new ";
                         newClassIdentifier += newClassExpressionNode.getNode(2).getString(0) + "(";
                         expressionStatement += newClassIdentifier;
-                        expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                        try{
+                            //Handles no argument case. - Ex Test032
+                            expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                        }
+                        catch(IndexOutOfBoundsException e){
+
+                        }
                         expressionStatement += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);

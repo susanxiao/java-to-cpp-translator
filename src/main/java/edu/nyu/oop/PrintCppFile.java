@@ -550,7 +550,8 @@ public class PrintCppFile extends Visitor {
                         if (primaryIdentifier.equals("cout")) {
                             StringBuilder line = new StringBuilder("cout << ");
                             Node arguments = expressionStatementChild.getNode(3);
-                            String param = arguments.getNode(0).getNode(0).getString(0);
+                            //IntelliJ tells me param is never used so I commented it as it was causing cast problems.
+                            //String param = arguments.getNode(0).getNode(0).getString(0);
                             if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
                                 Node argumentsPrimaryIdentifier = arguments.getNode(0);
                                 line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");

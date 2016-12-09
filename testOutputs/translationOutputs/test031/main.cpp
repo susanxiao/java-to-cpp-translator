@@ -18,7 +18,7 @@ int main(void)
 
 	for (int32_t i = 0; i < as->length; i++) {
 		for (int32_t j = 0; j < as->__data[i]->length; j++) {
-			 = ;
+			 = i * j;
 	}
 	}
 	for (int32_t i = 0; i < as->length; i++) {
@@ -30,4 +30,5 @@ int main(void)
 }
 
 //------------------
+
 
