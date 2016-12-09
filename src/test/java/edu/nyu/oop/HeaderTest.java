@@ -6,6 +6,7 @@ import org.junit.Test;
 import xtc.tree.GNode;
 
 import static java.lang.System.out;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Garrett on 10/24/16.
@@ -23,12 +24,14 @@ public class HeaderTest {
         out.println("*********************** Test 000 ***********************");
         String path = "./src/test/java/inputs/test000/Test000.java";
         GNode node = (GNode) XtcTestUtils.loadTestFile(path);
-        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
-        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
-        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        AstTraversal visitor1 = new AstTraversal(XtcTestUtils.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitor1.getTraversal(node);
+        HeaderAst.HeaderAstSummary n = HeaderAst.getHeaderAst(summaryTraversal);
+        GNode parentNode = n.parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 0);
+
+        assertEquals(summary.classCount, 0);
     }
 
     @Test
@@ -41,8 +44,10 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 1);
-        assert (summary.classMethodCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
     }
 
 
@@ -56,8 +61,10 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 1);
-        assert (summary.classMethodCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
     }
 
     @Test
@@ -70,9 +77,12 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 1);
-        assert (summary.classMethodCounts.get("A") == 1);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
     }
 
     @Test
@@ -85,9 +95,13 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 1);
-        assert (summary.classMethodCounts.get("A") == 1);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
     }
 
     @Test
@@ -100,11 +114,16 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 2);
-        assert (summary.classMethodCounts.get("A") == 1);
-        assert (summary.classDeclarationCounts.get("A") == 0);
-        assert (summary.classMethodCounts.get("B") == 1);
-        assert (summary.classDeclarationCounts.get("B") == 0);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 0);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 1);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 0);
     }
 
     @Test
@@ -117,9 +136,12 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 1);
-        assert (summary.classMethodCounts.get("A") == 3);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 3);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
 
     }
 
@@ -133,11 +155,17 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 2);
-        assert (summary.classMethodCounts.get("A") == 0);
-        assert (summary.classDeclarationCounts.get("A") == 1);
-        assert (summary.classMethodCounts.get("B") == 0);
-        assert (summary.classDeclarationCounts.get("B") == 1);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 0);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 0);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 1);
+
     }
 
     @Test
@@ -150,11 +178,16 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 2);
-        assert (summary.classMethodCounts.get("A") == 0);
-        assert (summary.classDeclarationCounts.get("A") == 1);
-        assert (summary.classMethodCounts.get("B") == 0);
-        assert (summary.classDeclarationCounts.get("B") == 1);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 0);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 0);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 1);
     }
 
     @Test
@@ -167,9 +200,13 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 1);
-        assert (summary.classMethodCounts.get("A") == 0);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 0);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+
     }
 
     @Test
@@ -182,15 +219,25 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 4);
-        assert (summary.classMethodCounts.get("A") == 3);
-        assert (summary.classDeclarationCounts.get("A") == 1);
-        assert (summary.classMethodCounts.get("B1") == 0);
-        assert (summary.classDeclarationCounts.get("B1") == 1);
-        assert (summary.classMethodCounts.get("B2") == 0);
-        assert (summary.classDeclarationCounts.get("B2") == 1);
-        assert (summary.classMethodCounts.get("C") == 0);
-        assert (summary.classDeclarationCounts.get("C") == 1);
+
+        assertEquals(summary.classCount, 4);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 3);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB1 = summary.classMethodCounts.get("B1");
+        assertEquals(countB1, 0);
+        countB1 = summary.classDeclarationCounts.get("B1");
+        assertEquals(countB1, 1);
+        int countB2 = summary.classMethodCounts.get("B2");
+        assertEquals(countB2, 0);
+        countB2 = summary.classDeclarationCounts.get("B2");
+        assertEquals(countB2, 1);
+        int countC = summary.classMethodCounts.get("C");
+        assertEquals(countC, 0);
+        countC = summary.classDeclarationCounts.get("C");
+        assertEquals(countC, 1);
+
     }
 
     @Test
@@ -202,15 +249,24 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 5);
-        assert (summary.classMethodCounts.get("A") == 3);
-        assert (summary.classDeclarationCounts.get("A") == 1);
-        assert (summary.classMethodCounts.get("B1") == 0);
-        assert (summary.classDeclarationCounts.get("B1") == 1);
-        assert (summary.classMethodCounts.get("B2") == 0);
-        assert (summary.classDeclarationCounts.get("B2") == 1);
-        assert (summary.classMethodCounts.get("C") == 0);
-        assert (summary.classDeclarationCounts.get("C") == 1);
+
+        assertEquals(summary.classCount, 4);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 3);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB1 = summary.classMethodCounts.get("B1");
+        assertEquals(countB1, 0);
+        countB1 = summary.classDeclarationCounts.get("B1");
+        assertEquals(countB1, 1);
+        int countB2 = summary.classMethodCounts.get("B2");
+        assertEquals(countB2, 0);
+        countB2 = summary.classDeclarationCounts.get("B2");
+        assertEquals(countB2, 1);
+        int countC = summary.classMethodCounts.get("C");
+        assertEquals(countC, 0);
+        countC = summary.classDeclarationCounts.get("C");
+        assertEquals(countC, 1);
     }
 
     @Test
@@ -222,15 +278,24 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 5);
-        assert (summary.classMethodCounts.get("A") == 3);
-        assert (summary.classDeclarationCounts.get("A") == 1);
-        assert (summary.classMethodCounts.get("B1") == 0);
-        assert (summary.classDeclarationCounts.get("B1") == 1);
-        assert (summary.classMethodCounts.get("B2") == 0);
-        assert (summary.classDeclarationCounts.get("B2") == 1);
-        assert (summary.classMethodCounts.get("C") == 1);
-        assert (summary.classDeclarationCounts.get("C") == 1);
+
+        assertEquals(summary.classCount, 4);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 3);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB1 = summary.classMethodCounts.get("B1");
+        assertEquals(countB1, 0);
+        countB1 = summary.classDeclarationCounts.get("B1");
+        assertEquals(countB1, 1);
+        int countB2 = summary.classMethodCounts.get("B2");
+        assertEquals(countB2, 0);
+        countB2 = summary.classDeclarationCounts.get("B2");
+        assertEquals(countB2, 1);
+        int countC = summary.classMethodCounts.get("C");
+        assertEquals(countC, 1);
+        countC = summary.classDeclarationCounts.get("C");
+        assertEquals(countC, 1);
     }
 
     @Test
@@ -242,9 +307,13 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 2);
-        assert (summary.classMethodCounts.get("A") == 2);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 2);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+
     }
 
     @Test
@@ -256,9 +325,12 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 2);
-        assert (summary.classMethodCounts.get("A") == 1);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
     }
 
     @Test
@@ -270,11 +342,17 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 3);
-        assert (summary.classMethodCounts.get("A") == 1);
-        assert (summary.classDeclarationCounts.get("A") == 1);
-        assert (summary.classMethodCounts.get("B") == 2);
-        assert (summary.classDeclarationCounts.get("B") == 0);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 2);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 0);
+
     }
 
     @Test
@@ -286,11 +364,16 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 3);
-        assert (summary.classMethodCounts.get("A") == 1);
-        assert (summary.classDeclarationCounts.get("A") == 0);
-        assert (summary.classMethodCounts.get("B") == 2);
-        assert (summary.classDeclarationCounts.get("B") == 1);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 0);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 2);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 1);
     }
 
     @Test
@@ -302,12 +385,15 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
-        assert (summary.classCount == 2);
-        assert (summary.classMethodCounts.get("A") == 2);
-        assert (summary.classDeclarationCounts.get("A") == 1);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+
     }
 
-    @Ignore
     @Test
     public void test018() {
         System.out.println("*********************** Test 018 ***********************");
@@ -317,9 +403,11 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 0);
+
     }
 
-    @Ignore
     @Test
     public void test019() {
         System.out.println("*********************** Test 019 ***********************");
@@ -329,9 +417,11 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 0);
+
     }
 
-    @Ignore
     @Test
     public void test020() {
         System.out.println("*********************** Test 020 ***********************");
@@ -341,5 +431,186 @@ public class HeaderTest {
         GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
         PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
         PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 0);
+    }
+
+    @Test
+    public void test021() {
+        System.out.println("*********************** Test 021 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test021/Test021.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 0);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+    }
+
+    @Test
+    public void test022() {
+        System.out.println("*********************** Test 022 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test022/Test022.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 0);
+
+    }
+
+    @Test
+    public void test023() {
+        System.out.println("*********************** Test 023 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test023/Test023.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 0);
+
+    }
+
+    @Test
+    public void test024() {
+        System.out.println("*********************** Test 024 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test024/Test024.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+    }
+
+    @Test
+    public void test025() {
+        System.out.println("*********************** Test 025 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test025/Test025.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 1);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 0);
+    }
+
+    @Test
+    public void test026() {
+        System.out.println("*********************** Test 026 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test026/Test026.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 2);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+        int countB = summary.classMethodCounts.get("B");
+        assertEquals(countB, 1);
+        countB = summary.classDeclarationCounts.get("B");
+        assertEquals(countB, 0);
+    }
+
+    @Test
+    public void test027() {
+        System.out.println("*********************** Test 027 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test027/Test027.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+
+    }
+
+    @Test
+    public void test028() {
+        System.out.println("*********************** Test 028 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test028/Test028.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+
+    }
+
+    @Test
+    public void test029() {
+        System.out.println("*********************** Test 029 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test029/Test029.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
+
+    }
+
+    @Test
+    public void test030() {
+        System.out.println("*********************** Test 030 ***********************");
+        GNode node = (GNode) XtcTestUtils.loadTestFile("./src/test/java/inputs/test030/Test030.java");
+        AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
+        AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+        GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
+        PrintHeaderFile visitor = new PrintHeaderFile(ImplementationUtil.newRuntime(), summaryTraversal);
+        PrintHeaderFile.headerFileSummary summary = visitor.getSummary(parentNode);
+
+        assertEquals(summary.classCount, 1);
+        int countA = summary.classMethodCounts.get("A");
+        assertEquals(countA, 1);
+        countA = summary.classDeclarationCounts.get("A");
+        assertEquals(countA, 1);
     }
 }

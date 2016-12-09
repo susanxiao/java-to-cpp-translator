@@ -137,7 +137,7 @@ Header(
           ),
           Modifiers(),
           "void",
-          "methodMain",
+          "main",
           "Test020",
           Parameters(
             "String["
@@ -196,7 +196,7 @@ Header(
           VTableMethodDeclaration(
             Modifiers(),
             "void",
-            "methodMain",
+            "main",
             "Test020",
             Parameters(
               "String["

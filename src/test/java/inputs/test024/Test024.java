@@ -21,7 +21,7 @@ public class Test024 {
 
         int k = 0;
         while(k < 10) {
-            System.out.println(((A) as[k]).get());
+            System.out.println( ((A) as[k]).get());
             k = k + 1;
         }
     }

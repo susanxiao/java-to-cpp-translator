@@ -41,6 +41,7 @@ public class AstTraversal extends Visitor {
         String name = n.getString(1);
         String superClassName = null;
         String modifier = "";
+        summary.constructorCount = 0;
 
         for (Object o : n) {
             if (o instanceof Node) {
@@ -87,6 +88,7 @@ public class AstTraversal extends Visitor {
                 if (currentNode.getName().equals("MethodDeclaration"))
                     visitMethodDeclaration((GNode) o);
                 else if (currentNode.getName().equals("ConstructorDeclaration")) {
+                    summary.constructorCount += 1;
                     visitConstructorDeclaration((GNode) o);
                 } else if (currentNode.getName().equals("FieldDeclaration")) {
                     visitFieldDeclaration((GNode) o);
@@ -669,6 +671,7 @@ public class AstTraversal extends Visitor {
 
         // summary testing information so that we can perform unit testing
         int classCount;
+        int constructorCount;
         TreeMap<String, Integer> classMethodCounts = new TreeMap<>();
 
 
