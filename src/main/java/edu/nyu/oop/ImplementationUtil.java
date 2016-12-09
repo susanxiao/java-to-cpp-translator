@@ -41,61 +41,10 @@ public class ImplementationUtil {
 
         for (int i = start; i <= end; i++) {
             String filePath = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
-            GNode root = (GNode) loadTestFile(filePath);
-            AstTraversal visitor1 = new AstTraversal(newRuntime());
-
-            // PHASE 1: obtain the traversal summary
-            AstTraversal.AstTraversalSummary summaryTraversal = visitor1.getTraversal(root);
-
-            // PHASE 2: construct the c++ header Ast
-            GNode headerNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
-            //prettyPrintAst(headerNode);
-
-            // PHASE 3: create the header code
-            PrintHeaderFile.headerFileSummary headerFileSummary = new PrintHeaderFile(newRuntime(), summaryTraversal).getSummary(headerNode);
-
-            // PHASE 4: mutate the traversed tree
-            new AstMutator(newRuntime()).mutate(root);
-
-            // PHASE 5: create the cpp code
-            PrintCppFile.cppFileSummary cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(root);
-
-            // PHASE 5: create the main code
-            PrintMainFile.printMainFileSummary mainSummary = new PrintMainFile(newRuntime(), summaryTraversal).getSummary(root);
-
-            try {
-                String headerPath = String.format("./testOutputs/translationOutputs/test%03d/output.h", i);
-                String outputPath = String.format("./testOutputs/translationOutputs/test%03d/output.cpp", i);
-                String mainPath = String.format("./testOutputs/translationOutputs//test%03d/main.cpp", i);
-
-                File header = new File(headerPath);
-                File output = new File(outputPath);
-                File main = new File(mainPath);
-
-                main.getParentFile().mkdirs();
-
-                FileWriter printHeader = new FileWriter(header);
-                printHeader.write(headerFileSummary.code.toString());
-                printHeader.flush();
-                printHeader.close();
-                out.println("Printed "+header.getPath());
-
-                FileWriter printOutput = new FileWriter(output);
-                printOutput.write(cppSummary.code.toString());
-                printOutput.flush();
-                printOutput.close();
-                out.println("Printed "+output.getPath());
-
-                FileWriter printMain = new FileWriter(main);
-                printMain.write(mainSummary.filePrinted);
-                printMain.flush();
-                printMain.close();
-                out.println("Printed "+main.getPath());
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String path = String.format("./testOutputs/translationOutputs/test%03d/", i);
+            new TranslationFacade(filePath, path).translate();
         }
+
     }
 
     public static Runtime newRuntime() {
