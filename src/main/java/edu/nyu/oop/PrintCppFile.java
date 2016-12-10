@@ -483,6 +483,7 @@ public class PrintCppFile extends Visitor {
             Set<String> paramNames = new TreeSet<>();
 
             Node formalParameters = n.getNode(4);
+            String[] paramTypesCorrespondingToParamNames = new String[formalParameters.size()];
             for (int i = 0; i < formalParameters.size(); i++) {
                 Object o = formalParameters.get(i);
                 if (o instanceof Node) {
@@ -491,13 +492,18 @@ public class PrintCppFile extends Visitor {
                         Node paramType = formalParameter.getNode(1);
                         String className = paramType.getNode(0).getString(0);
                         String paramName = formalParameter.getString(3);
+                        String paramTypeForParamName = formalParameter.getNode(1).getNode(0).getString(0);
                         if (isStatic) {
                             if (!paramName.equals("__this"))
                                 methodSignature.append(className + " " + paramName);
                             paramNames.add(paramName);
+                            paramTypesCorrespondingToParamNames[i] = paramTypeForParamName;
+                            //System.out.println(paramTypeForParamName + " added");
                         } else {
                             methodSignature.append(className + " " + paramName);
                             paramNames.add(paramName);
+                            paramTypesCorrespondingToParamNames[i] = paramTypeForParamName;
+                            //System.out.println(paramTypeForParamName + " added");
                         }
                         if (i < formalParameters.size() - 1)
                             methodSignature.append(", ");
@@ -510,9 +516,26 @@ public class PrintCppFile extends Visitor {
             summary.incScope();
             Node methodBlock = n.getNode(7);
 
-            for (String name : paramNames) {
-                if (!name.equals("__this"))
+            //for (String name : paramNames) {
+            //System.out.println("--sizes--");
+            //System.out.println(paramNames.size());
+            //System.out.println(paramTypesCorrespondingToParamNames.length);
+            for(int i = 0; i<paramNames.size(); i++){
+                String name = paramNames.toArray()[i].toString();
+                System.out.println("print param names");
+                System.out.println(name);
+                //don't need to check null for primitive types
+                String paramTypesForParam = paramTypesCorrespondingToParamNames[i];
+                /*System.out.println(paramTypesForParam);
+                if(paramTypesForParam.equals("int")){
+                    System.out.println("its a int type!");
+                }
+                else{
+                    System.out.println("not a int type!");
+                }*/
+                if (!name.equals("__this") && !paramTypesForParam.equals("int") && !paramTypesForParam.equals("double") )
                     summary.addLine("__rt::checkNotNull(" + name + ");\n");
+
             }
 
             HashSet<String> localVariables = new HashSet<>();
@@ -550,7 +573,8 @@ public class PrintCppFile extends Visitor {
                         if (primaryIdentifier.equals("cout")) {
                             StringBuilder line = new StringBuilder("cout << ");
                             Node arguments = expressionStatementChild.getNode(3);
-                            String param = arguments.getNode(0).getNode(0).getString(0);
+                            //IntelliJ tells me param is never used so I commented it as it was causing cast problems.
+                            //String param = arguments.getNode(0).getNode(0).getString(0);
                             if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
                                 Node argumentsPrimaryIdentifier = arguments.getNode(0);
                                 line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");
@@ -600,6 +624,11 @@ public class PrintCppFile extends Visitor {
                                 if (expressionStatementChild.getString(2) != null) {
                                     line.append(" << " + expressionStatementChild.getString(2));
                                 }
+
+                            } else if (arguments.getNode(0).getName().equals("StringLiteral")) {
+                                System.out.println("add cout string literal");
+                                String printThisString = arguments.getNode(0).getString(0);
+                                System.out.println(printThisString);
 
                             }
                             summary.addLine(line.toString() + ";\n");
