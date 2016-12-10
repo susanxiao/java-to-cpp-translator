@@ -17,23 +17,22 @@ import static java.lang.System.out;
  */
 class HeaderComponent {
 
-    private PrintHeaderFile.headerFileSummary headerFileSummary = null;
-    private AstTraversal.AstTraversalSummary summaryTraversal = null;
-    private String filePath = null;
     private String printPath = null;
     private GNode root = null;
+    private PrintHeaderFile.headerFileSummary headerFileSummary = null;
+    private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
-    public HeaderComponent(String filePath, String printPath, GNode root) {
-        this.filePath = filePath;
+
+    HeaderComponent(String printPath, GNode root) {
         this.printPath = printPath;
         this.root = root;
     }
 
-    public AstTraversal.AstTraversalSummary getSummaryTraversal() {
+    AstTraversal.AstTraversalSummary getSummaryTraversal() {
         return this.summaryTraversal;
     }
 
-    public void updateHeader() {
+    private void updateHeader() {
         AstTraversal visitor1 = new AstTraversal(newRuntime());
         // PHASE 1: obtain the traversal summary
         this.summaryTraversal = visitor1.getTraversal(root);
@@ -43,7 +42,7 @@ class HeaderComponent {
         this.headerFileSummary = new PrintHeaderFile(newRuntime(), summaryTraversal).getSummary(headerNode);
     }
 
-    public void printHeader() {
+    private void printHeader() {
         File header = new File(printPath + "output.h");
         header.getParentFile().mkdirs();
 
@@ -59,7 +58,7 @@ class HeaderComponent {
         out.println("Printed " + header.getPath());
     }
 
-    public void execute() {
+    void execute() {
         this.updateHeader();
         this.printHeader();
     }
@@ -71,36 +70,36 @@ class CppComponent {
     private PrintCppFile.cppFileSummary cppSummary = null;
     private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
-    public CppComponent(String printPath, GNode root) {
+    CppComponent(String printPath, GNode root) {
         this.printPath = printPath;
         this.root = root;
     }
 
-    public GNode getRoot() {
+    GNode getRoot() {
         return this.root;
     }
 
-    public void setTraversal(AstTraversal.AstTraversalSummary summaryTraversal) {
+    void setTraversal(AstTraversal.AstTraversalSummary summaryTraversal) {
         this.summaryTraversal = summaryTraversal;
     }
 
-    public AstTraversal.AstTraversalSummary getSummaryTraversal() {
+    AstTraversal.AstTraversalSummary getSummaryTraversal() {
         return this.summaryTraversal;
     }
 
-    public PrintCppFile.cppFileSummary getCppSummary() {
+    PrintCppFile.cppFileSummary getCppSummary() {
         return this.cppSummary;
     }
 
 
-    public void updateCpp() {
+    private void updateCpp() {
         // PHASE 4: mutate the traversed tree
         new AstMutator(newRuntime()).mutate(root);
         // PHASE 5: create the cpp code
         this.cppSummary = new PrintCppFile(newRuntime(), summaryTraversal).getSummary(root);
     }
 
-    public void printCpp() {
+    private void printCpp() {
         File output = new File(printPath + "output.cpp");
         try {
             FileWriter printOutput = new FileWriter(output);
@@ -113,7 +112,7 @@ class CppComponent {
         out.println("Printed " + output.getPath());
     }
 
-    public void execute() {
+    void execute() {
         this.updateCpp();
         this.printCpp();
     }
@@ -128,24 +127,24 @@ class MainComponent {
     private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
 
-    public MainComponent(String printPath, GNode root) {
+    MainComponent(String printPath, GNode root) {
         this.printPath = printPath;
         this.root = root;
     }
 
-    public void setTraversal(AstTraversal.AstTraversalSummary summaryTraversal) {
+    void setTraversal(AstTraversal.AstTraversalSummary summaryTraversal) {
         this.summaryTraversal = summaryTraversal;
     }
 
-    public void setRoot(GNode root) {
+    void setRoot(GNode root) {
         this.root = root;
     }
 
-    public void updateMain() {
+    private void updateMain() {
         this.mainSummary = new PrintMainFile(newRuntime(), summaryTraversal).getSummary(root);
     }
 
-    public void printMain() {
+    private void printMain() {
         File main = new File(printPath + "main.cpp");
         try {
             FileWriter printMain = new FileWriter(main);
@@ -158,7 +157,7 @@ class MainComponent {
         }
     }
 
-    public void execute() {
+    void execute() {
         this.updateMain();
         this.printMain();
     }
@@ -171,8 +170,18 @@ public class TranslationFacade {
     private CppComponent cppController;
     private MainComponent mainController;
 
+    public TranslationFacade() {
+
+    }
+
     public TranslationFacade(String filePath, String path) {
-        this.headerController = new HeaderComponent(filePath, path, (GNode) loadTestFile(filePath));
+        this.headerController = new HeaderComponent(path, (GNode) loadTestFile(filePath));
+        this.cppController = new CppComponent(path, (GNode) loadTestFile(filePath));
+        this.mainController = new MainComponent(path, (GNode) loadTestFile(filePath));
+    }
+
+    public void setControllers(String filePath, String path) {
+        this.headerController = new HeaderComponent(path, (GNode) loadTestFile(filePath));
         this.cppController = new CppComponent(path, (GNode) loadTestFile(filePath));
         this.mainController = new MainComponent(path, (GNode) loadTestFile(filePath));
     }
