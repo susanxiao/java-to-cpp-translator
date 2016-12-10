@@ -6,7 +6,6 @@ using namespace std;
 namespace inputs {
 	namespace test032 {
 		int32_t __A::methodM(A __this, int i) {
-			__rt::checkNotNull(i);
 			cout << ;
 			return i;
 		};
@@ -17,7 +16,6 @@ namespace inputs {
 		};
 
 		void __A::methodM(A __this, double d) {
-			__rt::checkNotNull(d);
 			cout << ;
 		};
 
