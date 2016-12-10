@@ -110,6 +110,7 @@ public class PrintMainFile extends Visitor {
                 mainImplementation.append("int main(void)\n{\n\n");
         }
 
+
         for (Object o : block) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -158,6 +159,10 @@ public class PrintMainFile extends Visitor {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
                     String variable = currentDeclarator.getString(0);
+                    if(type.equals("byte")){
+                        //System.out.println("need to change byte");
+                        type = "unsigned char";
+                    }
                     summary.classVariables.put(variable, type);
                     fieldDeclaration += variable;
                     if (currentDeclarator.getNode(2) != null) {
@@ -660,6 +665,36 @@ public class PrintMainFile extends Visitor {
                                 System.out.println("temp: " + tempNewMethodName);
                             }
                             //if tempNewMethod is not in the list of methods, change(downcast/upcast)
+                            int theIndexofParamToChange = addParamsToMethodName.size()-1;
+                            boolean methodDoesNotExist = true;
+                            while(methodDoesNotExist) {
+                                for (int i = 0; i < summaryTraversal.overloadedMethodNames.size(); i++) {
+                                    if (summaryTraversal.overloadedMethodNames.get(i).get(1).equals(tempNewMethodName)) {
+                                        methodDoesNotExist = false;
+                                        methodName = tempNewMethodName;
+                                        break;
+                                    }
+                                }
+
+                                if(methodDoesNotExist) {
+                                    //try editing tempNewMethodName
+                                    addParamsToMethodName.set(theIndexofParamToChange, "Object");
+                                    //Todo :fix Bug- works with test32, but not sure for future tests
+                                    theIndexofParamToChange--;
+                                    tempNewMethodName = methodName;
+                                    for (int i = 0; i < addParamsToMethodName.size(); i++) {
+                                        tempNewMethodName += addParamsToMethodName.get(i);
+                                    }
+
+                                    System.out.println("new temp name : " + tempNewMethodName);
+
+                                    /*if (!methodDoesNotExist) {
+                                        System.out.println("need to change name");
+                                    } else {
+                                        System.out.println("use this name");
+                                    }*/
+                                }
+                            }
                         }
 
                     }
@@ -691,6 +726,12 @@ public class PrintMainFile extends Visitor {
                         expressionStatement += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
+                        System.out.println("check primiary Identifies");
+                        //System.out.println(summary.classVariables.get(primaryIdentifer));
+                        System.out.println(primaryIdentifier1);
+                        System.out.println(primaryIdentifer);
+                        System.out.println(summary.classVariables.get(primaryIdentifier1));
+                        System.out.println(summary.classVariables.get(primaryIdentifer));
                         if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
                             expressionStatement += argumentsNode.getNode(1).getString(0);
                         } else {
@@ -1075,22 +1116,46 @@ public class PrintMainFile extends Visitor {
 
                 }
                 else{//it's not the main class
+
+
+
+
+
                     //check for method overloading
                     System.out.println("other class");
                     String className = currentClass.getString(1);
-                    System.out.println(className);
+                    //System.out.println(className);
                     ArrayList<String> a = new ArrayList<String>();
                     a.add(className);
 
+
+
                     Node ClassBody = currentClass.getNode(5);
                     for(Object obj: ClassBody){
+                        ArrayList<String> finalMethodNames = new ArrayList<String>();
+                        finalMethodNames.add(className);
                         Node currClass = (Node) obj;
                         if (currClass.getName().equals("MethodDeclaration")) {
                             String methodName = currClass.getString(3);
                             System.out.println(methodName);
                             a.add(methodName);
+
+                            Node formalParamSNode = currClass.getNode(4);
+                            if(formalParamSNode.size()>1){
+                                methodName += "_";
+                                for(int i=1; i<formalParamSNode.size();i++){
+                                    methodName += formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0);
+                                    System.out.println("new methodNAMe: " + methodName);
+                                    //System.out.println(formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0));
+
+                                }
+                            }
+                            finalMethodNames.add(methodName);
                         }
+                        //System.out.println("final names" + finalMethodNames);
+                        summaryTraversal.overloadedMethodNames.add(finalMethodNames);
                     }
+                    System.out.println("final names" + summaryTraversal.overloadedMethodNames.toString());
                     summaryTraversal.allMethods_checkMethodOverloading.add(a);
                     System.out.println( summaryTraversal.allMethods_checkMethodOverloading.toString() );
 
