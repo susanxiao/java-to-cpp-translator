@@ -110,4 +110,4 @@ compare :
 	@echo "Checking outputs" ;
 	@sbt --error 'set showSuccess := false' "run-main $(packages).StdOutputChecking $(start) $(end)" ;
 	@echo "Output comparisons are in testOutputs/input_tests.txt"
-5tran doAll : translate copy compile clean compare
+5tran doAll : translate copy clean compile compare
