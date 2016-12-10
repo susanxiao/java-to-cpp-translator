@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.NodeUtil;
 import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -94,7 +95,44 @@ public class PrintCppFile extends Visitor {
 
     public void visitClassBody(GNode n) {
         if (!summary.isMainClass) {
+            //check If methods are overloaded
+            System.out.println("check method overloading");
+            ArrayList<String> checkMethodOverloading = new ArrayList<String>();
+            for (Object methods : n) {
+                GNode currentMethod = (GNode) methods;
+                if (currentMethod.getName().equals("MethodDeclaration")) {
+                    String methodName = currentMethod.getString(3);
+                    checkMethodOverloading.add(methodName);
+                    //summaryTraversal.isTheMethodOverloaded.put(methodName, "");
+                }
+            }
+            int numOfMethods = checkMethodOverloading.size();
+            System.out.println(numOfMethods);
+            boolean[] isAOverloadedMethod = new boolean[numOfMethods];//default is false
+            if(numOfMethods>1){//method overloading possible
+                System.out.println("method overloading possible");
+                for(int s=0; s< numOfMethods; s++){
+                    String methodName= checkMethodOverloading.get(s);
+                    int numOfSameMethodNames=0;
+                    for(String findStringsWithSameName : checkMethodOverloading){
+                        if(methodName.equals(findStringsWithSameName)){
+                            numOfSameMethodNames++;
+                        }
+                    }
+                    if(numOfSameMethodNames>1){
+                        isAOverloadedMethod[s]=true;
+                        //summaryTraversal.isTheMethodOverloaded.
+                    }
+                }
+            }
+            for(boolean overload : isAOverloadedMethod) {
+                System.out.println(overload);
+            }
+            System.out.println("--end checking method overloading--");
+            //System.out.println(summaryTraversal.classNames);
+
             boolean constructorCreated = false;
+            int nthMethod=0;//use for checking overloading
             for (Object methods : n) {
                 GNode currentMethod = (GNode) methods;
                 if (currentMethod.getName().equals("FieldDeclaration")) {
@@ -104,10 +142,14 @@ public class PrintCppFile extends Visitor {
                     constructorCreated = true;
                     summary.code.append("\n");
                 } else if (currentMethod.getName().equals("MethodDeclaration")) {
-                    visitMethodDeclaration(currentMethod, n);
+                    boolean isThisMethodOverLoaded = isAOverloadedMethod[nthMethod];
+                    visitMethodDeclaration(currentMethod, n, isThisMethodOverLoaded);
+                    nthMethod++;
                     summary.code.append("\n");
+
                 }
             }
+
             if (!constructorCreated) {
                 summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable)");
                 for (FieldDeclaration var : summaryTraversal.classes.get(summary.currentClass.name).declarations) {
@@ -129,7 +171,7 @@ public class PrintCppFile extends Visitor {
         else {
             for (Object o : n) {
                 if (o instanceof Node && ((Node) o).getName().equals("MethodDeclaration"))
-                    visitMethodDeclaration(GNode.cast(o), n);
+                    visitMethodDeclaration(GNode.cast(o), n, false);
             }
         }
     }
@@ -453,7 +495,14 @@ public class PrintCppFile extends Visitor {
         summary.code = new StringBuilder(String.format(summary.code.toString(), initializers.toString()));
     }
 
-    public void visitMethodDeclaration(GNode n, GNode classBodyNode) {
+    public void visitMethodDeclaration(GNode n, GNode classBodyNode, boolean isThisMethodOverloaded) {
+        //isThis method a overloaded method?
+        if(isThisMethodOverloaded){
+            System.out.println("Overlaoded method");
+        }
+        else{
+            System.out.println("not a Overlaoded method");
+        }
 
         if (!summary.isMainClass) {
             summary.currentClassMethodCount++;
@@ -477,8 +526,20 @@ public class PrintCppFile extends Visitor {
 
             String methodName = n.getString(3);
 
+            if(isThisMethodOverloaded){
+                //getAllArguments
+                Node formalParamSNode = n.getNode(4);
+                if(formalParamSNode.size()>1){
+                    methodName += "_";
+                    for(int i=1; i<formalParamSNode.size();i++){
+                        methodName += formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0);
+                        System.out.println("new methodNAMe: " + methodName);
+                        //System.out.println(formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0));
 
-            methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
+                    }
+                }
+            }
+            methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(" );
 
             Set<String> paramNames = new TreeSet<>();
 
@@ -629,6 +690,9 @@ public class PrintCppFile extends Visitor {
                                 System.out.println("add cout string literal");
                                 String printThisString = arguments.getNode(0).getString(0);
                                 System.out.println(printThisString);
+                                line.append(printThisString);
+                                line.append(" <<endl");
+
 
                             }
                             summary.addLine(line.toString() + ";\n");
