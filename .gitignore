@@ -16,3 +16,4 @@ out
 atlassian-ide-plugin.xml
 *.log.gz
 .git
+testOutputs
