@@ -622,45 +622,45 @@ public class PrintMainFile extends Visitor {
                         }
                     }
 
-
-
-
                     System.out.println(index);
-                    if(summaryTraversal.isOverLoaded.get(theClassWithOverloading).get(index).equals("overloaded")){
-                        System.out.println("--fix overloading--");
-                        methodName += "_";
-                        //get type of parameters
-                        Node arguments = callExpressionNode.getNode(3);
-                        ArrayList<String> addParamsToMethodName = new ArrayList<String>();
-                        for(int i=1; i<arguments.size();i++) {
-                            Node currNode = arguments.getNode(i);
-                            if (currNode.getName().equals("PrimaryIdentifier")) {
-                                String varType = summaryTraversal.fieldsInMainInfo.get(currNode.getString(0));
-                                System.out.println(varType);
-                                if (summaryTraversal.fieldsInMainInfo.get(currNode.getString(0)).equals("unsigned char")) {
-                                    //methodName += "int";
-                                    addParamsToMethodName.add("int");
-                                } else {
-                                    //methodName += varType;
-                                    addParamsToMethodName.add(varType);
-                                }
-                            } else if (currNode.getName().equals("FloatingPointLiteral")) {
-                                //methodName += "double";
-                                addParamsToMethodName.add("double");
-                            } else if (currNode.getName().equals("CastExpression")) {
+                    if(index>-1){
+                        if(summaryTraversal.isOverLoaded.get(theClassWithOverloading).get(index).equals("overloaded")) {
+                            System.out.println("--fix overloading--");
+                            methodName += "_";
+                            //get type of parameters
+                            Node arguments = callExpressionNode.getNode(3);
+                            ArrayList<String> addParamsToMethodName = new ArrayList<String>();
+                            for (int i = 1; i < arguments.size(); i++) {
+                                Node currNode = arguments.getNode(i);
+                                if (currNode.getName().equals("PrimaryIdentifier")) {
+                                    String varType = summaryTraversal.fieldsInMainInfo.get(currNode.getString(0));
+                                    System.out.println(varType);
+                                    if (summaryTraversal.fieldsInMainInfo.get(currNode.getString(0)).equals("unsigned char")) {
+                                        //methodName += "int";
+                                        addParamsToMethodName.add("int");
+                                    } else {
+                                        //methodName += varType;
+                                        addParamsToMethodName.add(varType);
+                                    }
+                                } else if (currNode.getName().equals("FloatingPointLiteral")) {
+                                    //methodName += "double";
+                                    addParamsToMethodName.add("double");
+                                } else if (currNode.getName().equals("CastExpression")) {
 
-                                //methodName += currNode.getNode(0).getNode(0).getString(0);
-                                addParamsToMethodName.add(currNode.getNode(0).getNode(0).getString(0));
-                            } else if (currNode.getName().equals("NewClassExpression")) {
-                                //methodName += currNode.getNode(2).getString(0);
-                                addParamsToMethodName.add(currNode.getNode(2).getString(0));
+                                    //methodName += currNode.getNode(0).getNode(0).getString(0);
+                                    addParamsToMethodName.add(currNode.getNode(0).getNode(0).getString(0));
+                                } else if (currNode.getName().equals("NewClassExpression")) {
+                                    //methodName += currNode.getNode(2).getString(0);
+                                    addParamsToMethodName.add(currNode.getNode(2).getString(0));
+                                }
                             }
+                            String tempNewMethodName = methodName;
+                            for (int i = 0; i < addParamsToMethodName.size(); i++) {
+                                tempNewMethodName += addParamsToMethodName.get(i);
+                                System.out.println("temp: " + tempNewMethodName);
+                            }
+                            //if tempNewMethod is not in the list of methods, change(downcast/upcast)
                         }
-                        String tempNewMethodName = methodName;
-                        for(int i=0; i<addParamsToMethodName.size();i++){
-                            tempNewMethodName+= addParamsToMethodName.get(i);
-                        }
-                        //if tempNewMethod is not in the list of methods, change(downcast/upcast)
 
                     }
 
@@ -1048,8 +1048,10 @@ public class PrintMainFile extends Visitor {
                 if (currentClass.getString(1).contains("Test")) { //Main
                     //save information for fields in main(use for method overloading)
                     System.out.println("Testing");
+
                     //System.out.println(currentClass.getNode(5).getNode(0).getNode(7).getName());//Block
-                    GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
+                    //GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
+                    GNode block = (GNode) NodeUtil.dfs(currentClass,"Block");
                     for(Object obj : block) {
                         Node currClass = (Node) obj;
                         if (currClass.getName().equals("FieldDeclaration")) {
@@ -1066,6 +1068,7 @@ public class PrintMainFile extends Visitor {
                         }
                     }
                     System.out.println(summaryTraversal.fieldsInMainInfo.toString());
+                    //END: save information for fields in main(use for method overloading)
 
                     summary.currentClassName = currentClass.getString(1);
                     visitClassDeclaration((GNode) currentClass);
