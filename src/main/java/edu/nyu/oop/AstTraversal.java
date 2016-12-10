@@ -686,6 +686,12 @@ public class AstTraversal extends Visitor {
 
         boolean usesArgs = false;
 
+        ArrayList<ArrayList<String>> allMethods_checkMethodOverloading = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> isOverLoaded = new ArrayList<ArrayList<String>>();
+        //ArrayList<ArrayList<String>> fieldsInMainInfo = new ArrayList<ArrayList<String>>();
+        HashMap<String, String> fieldsInMainInfo =  new HashMap<>();
+
+
         // operators ?
         String operators = "=+-*/";
 
