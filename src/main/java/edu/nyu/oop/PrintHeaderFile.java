@@ -24,7 +24,6 @@ import java.io.IOException;
 
 
 public class PrintHeaderFile extends Visitor {
-
     private PrintHeaderFile.headerFileSummary summary = new headerFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
@@ -516,8 +515,11 @@ public class PrintHeaderFile extends Visitor {
             GNode node = (GNode) ImplementationUtil.loadTestFile(test);
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+            System.out.println("--------Before Mutation--------");
+            ImplementationUtil.prettyPrintAst(node);//Before mutated
             GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
-            ImplementationUtil.prettyPrintAst(parentNode);
+            System.out.println("--------After Mutation----------");
+            ImplementationUtil.prettyPrintAst(parentNode); //
 
             try {
                 PrintWriter printerHeader;
