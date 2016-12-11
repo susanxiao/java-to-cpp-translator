@@ -42,8 +42,8 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodSetA(&__A::methodSetA),
-			methodPrintOther(&__A::methodPrintOther)
+			methodSetA (&__A::methodSetA),
+			methodPrintOther (&__A::methodPrintOther)
 			{}
 		};
 

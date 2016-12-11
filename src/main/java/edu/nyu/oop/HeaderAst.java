@@ -169,6 +169,7 @@ public class HeaderAst {
                 int index = methodNames_checkOverloading.indexOf(m.name);
                 System.out.println("index: " + index);
                 String isOverloaded= methodIsOverloaded.get(index);
+
                 if(isOverloaded.equals("true")){
                     ArrayList<String> currentMethod1 = new ArrayList<>();
                     currentMethod1.add(m.returnType);
@@ -209,7 +210,7 @@ public class HeaderAst {
                     methods.put(overloadedName, currentMethod1);
 
                 }
-                else {
+                else {//No overloaded methods
 
                     ArrayList<String> currentMethod1 = new ArrayList<>();
                     currentMethod1.add(m.returnType);
@@ -222,7 +223,7 @@ public class HeaderAst {
                     methodNames.add(m.name);
                     methods.put(m.name, currentMethod1);
                 }
-            }
+            }//END: for(MethodImplementation m : currentClass.methods)
             System.out.println("methodCount: " + methodCount);
 
             System.out.println("methodNames.size()" + methodNames.size());

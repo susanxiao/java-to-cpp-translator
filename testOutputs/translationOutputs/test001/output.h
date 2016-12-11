@@ -37,7 +37,7 @@ namespace inputs {
 			hashCode((int32_t(*)(A))&__Object::hashCode),
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
-			toString(&__A::toString)
+			toString (&__A::toString)
 			{}
 		};
 
