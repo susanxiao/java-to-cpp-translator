@@ -21,12 +21,12 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static int32_t methodM(A, int);
-			static void methodM(A, A);
-			static void methodM(A, double);
-			static void methodM(A, Object);
-			static void methodM(A, Object, Object);
-			static void methodM(A, A, Object);
+			static int32_t methodM_int(A, int);
+			static void methodM_A(A, A);
+			static void methodM_double(A, double);
+			static void methodM_Object(A, Object);
+			static void methodM_ObjectObject(A, Object, Object);
+			static void methodM_AObject(A, A, Object);
 		};
 
 		struct __A_VT {
@@ -36,7 +36,12 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-			int32_t (*methodM)(A, int);
+			void (*methodM_AObject)(A, A,Object);
+			void (*methodM_ObjectObject)(A, Object,Object);
+			void (*methodM_Object)(A, Object);
+			void (*methodM_double)(A, double);
+			void (*methodM_A)(A, A);
+			int (*methodM_int)(A, int);
 
 			__A_VT()
 			: __isa(__A::__class()),
@@ -44,7 +49,12 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodM(&__A::methodM)
+			methodM_AObject (&__A::methodM_AObject),
+			methodM_ObjectObject (&__A::methodM_ObjectObject),
+			methodM_Object (&__A::methodM_Object),
+			methodM_double (&__A::methodM_double),
+			methodM_A (&__A::methodM_A),
+			methodM_int (&__A::methodM_int)
 			{}
 		};
 

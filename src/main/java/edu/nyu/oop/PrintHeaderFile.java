@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.NodeUtil;
 import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -31,8 +32,8 @@ public class PrintHeaderFile extends Visitor {
     private AstTraversal.AstTraversalSummary summaryTraversal;
 
     //check overloading
-    public ArrayList<ArrayList<String>> methodNames;
-    public ArrayList<ArrayList<String>> methodIsOverloaded;
+    //public ArrayList<ArrayList<String>> methodNames;
+    //public ArrayList<ArrayList<String>> methodIsOverloaded;
 
     // visitXXX methods
     public void visitHeaderDeclaration(GNode n) {
@@ -205,7 +206,7 @@ public class PrintHeaderFile extends Visitor {
                             break;
                         }
                     }
-                    method.append(paramType+"fix");
+                    method.append(paramType);
                     newNameForOverloaded+=paramType;
                     System.out.println("newNameForOverloaded" + newNameForOverloaded);
                     arr.add(newNameForOverloaded);
@@ -304,7 +305,6 @@ public class PrintHeaderFile extends Visitor {
 
                     }
                 }
-                //Todo: summary.currentClass.methods only stores ONE methodM (before overloaded methods names are chaneged)
                 //check overloaded
                 String methodIsOverloaded="don't know yet";
                 System.out.println("checek equals");
@@ -325,8 +325,9 @@ public class PrintHeaderFile extends Visitor {
 
                 System.out.println("methodIsOverloaded.equals:" + methodIsOverloaded);
                 //System.out.println("summaryTraversal.overloadedMethodNames." + summaryTraversal.overloadedMethodNames.toString());
+                String overLoadedName="";
                 if(methodIsOverloaded.equals("true")){
-                    String overLoadedName="";
+
                     //System.out.println(currentClass_methods.toString());
                     //System.out.println();
                     for(int j=0; j<summaryTraversal.overloadedMethodNames.size(); j++){//6
@@ -340,8 +341,56 @@ public class PrintHeaderFile extends Visitor {
                                 overLoadedName = summaryTraversal.overloadedMethodNames.get(j).get(lastIndex);
                                 //System.out.println("**overLoadedName)" + overLoadedName);
                                 //vConstructor.
+                                //currentMethodName = overLoadedName;
                                 vConstructor.put(overLoadedName, overLoadedName  + " (&__" + summary.currentClass.name + "::" + overLoadedName + ")");
                                 //System.out.println("vConstructor: " + vConstructor.toString());
+
+
+                                /*StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + overLoadedName + ")(%s");
+                                for (ParameterImplementation p : currentMethod.parameters)
+                                    method.append(", " + p.type);
+                                method.append(");\n");
+                                */
+                                String returnType="";
+                                String parameters=summary.currentClass.name+ ", ";
+                                System.out.println("find return type: " );
+                                for(Object o_vtableMethodDec: n ){
+                                    Node vTMethodDec = (Node) o_vtableMethodDec;
+                                    if(vTMethodDec.contains(overLoadedName)){
+                                        //System.out.println("can find reutrn type" );
+                                        returnType = vTMethodDec.getString(1);
+
+                                        Node paramNode = vTMethodDec.getNode(4);
+                                        for(int k=0; k<paramNode.size();k++){
+                                            String s=paramNode.getString(k);
+                                            parameters+=s;
+                                            if(k<paramNode.size()-1){
+                                                parameters+=",";
+                                            }
+
+                                        }
+
+                                    }else{
+                                        //System.out.println("did not find" );
+                                    }
+
+
+                                }
+
+                                String method=returnType;
+
+                                method += " (*";
+                                method += overLoadedName;
+                                method += ")";
+
+                                method += "(";
+                                method += parameters;
+                                method += ");\n";
+
+                                System.out.println("put overloaded name: " + overLoadedName);
+
+
+                                vMethods.put(overLoadedName, method.toString());
                             }
                         }
                         //System.out.println();
@@ -349,15 +398,23 @@ public class PrintHeaderFile extends Visitor {
                     //System.out.println();
 
                     }else {
+
                     //vConstructor.put(currentMethodName, currentMethodName + summary.currentClass.name + " (&__" + summary.currentClass.name + "::" + currentMethodName + ")");
                     vConstructor.put(currentMethodName, currentMethodName + " (&__" + summary.currentClass.name + "::" + currentMethodName + ")");
 
+                    /*todo the following part was originally after this else part*/
+                    StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
+                    for (ParameterImplementation p : currentMethod.parameters)
+                        method.append(", " + p.type);
+                    method.append(");\n");
+
+                    vMethods.put(currentMethodName, method.toString());
+
+                    System.out.println("print vMethods: " + vMethods.toString());
+
                 }
-                StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
-                for (ParameterImplementation p : currentMethod.parameters)
-                    method.append(", " + p.type);
-                method.append(");\n");
-                vMethods.put(currentMethodName, method.toString());
+
+
             }
         }
 
@@ -381,6 +438,7 @@ public class PrintHeaderFile extends Visitor {
                         currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
                     }
                 }
+
                 if (!vConstructor.containsKey(currentMethodName)) { //if it already exists, it is the overwriting method
                     StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")");
 
@@ -458,8 +516,10 @@ public class PrintHeaderFile extends Visitor {
         //vtable methods
         summary.addLine("Class __isa;\n\n");
         ArrayList<String> vMethodValues = new ArrayList<>(vMethods.values());
+        System.out.println("vMethods " + vMethods.toString());
         for (int i = vMethodValues.size() - 1; i >= 0; i--) {
             String s = vMethodValues.get(i);
+            System.out.println("s: " + s);
             summary.addLine(String.format(s, summary.currentClass.name));
         }
         summary.code.append("\n");
