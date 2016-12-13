@@ -27,7 +27,6 @@ namespace inputs {
 			static void methodMObject(A, Object);
 			static void methodMObjectObject(A, Object, Object);
 			static void methodMAObject(A, A, Object);
-
 		};
 
 		struct __A_VT {
@@ -37,14 +36,12 @@ namespace inputs {
 			bool (*equals)(A, Object);
 			Class (*getClass)(A);
 			String (*toString)(A);
-
 			int32_t (*methodMInt)(A, int32_t);
 			void (*methodMA)(A, A);
 			void (*methodMDouble)(A, double);
 			void (*methodMObject)(A, Object);
 			void (*methodMObjectObject)(A, Object, Object);
 			void (*methodMAObject)(A, A, Object);
-
 
 			__A_VT()
 			: __isa(__A::__class()),

@@ -1,8 +1,6 @@
 package edu.nyu.oop;
 
-import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
-import xtc.util.Runtime;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -122,7 +120,7 @@ class MainComponent {
 
     private String printPath = null;
     private GNode root = null;
-    private PrintMainFile.printMainFileSummary mainSummary = null;
+    private PrintMainFile.PrintMainFileSummary mainSummary = null;
     private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
 
