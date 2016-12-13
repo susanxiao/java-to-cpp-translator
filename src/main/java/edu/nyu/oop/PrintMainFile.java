@@ -31,6 +31,11 @@ public class PrintMainFile extends Visitor {
 
     StringBuilder mainImplementation = new StringBuilder();
 
+    //constructor
+    public PrintMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
+        this.runtime = runtime;
+        this.summaryTraversal = summaryTraversal;
+    }
 
     // visitXXX methods
     public void visitClassDeclaration(GNode n) {
@@ -151,9 +156,7 @@ public class PrintMainFile extends Visitor {
         boolean is2D = false;
         if (n.getNode(1).getNode(1) != null) { // the type is an array
             if (n.getNode(1).getNode(1).getString(0).equals("[")) {
-
                 isTypeArray = true;
-
                 if (n.getNode(1).getNode(1).size() > 1 && n.getNode(1).getNode(1).getString(1).equals("[")) {
                     //2d array
                     is2D = true;
@@ -332,12 +335,6 @@ public class PrintMainFile extends Visitor {
 
     // visitMethod
 
-
-    public PrintMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
-        this.runtime = runtime;
-        this.summaryTraversal = summaryTraversal;
-    }
-
     public PrintMainFileSummary getSummary(GNode n) {
         StringBuilder s1 = new StringBuilder();
 
@@ -400,7 +397,7 @@ public class PrintMainFile extends Visitor {
 
                     //check for method overloading
                     String className = currentClass.getString(1);
-                    ArrayList<String> a = new ArrayList<String>();
+                    ArrayList<String> a = new ArrayList<>();
                     a.add(className);
 
                     Node ClassBody = currentClass.getNode(5);
@@ -464,8 +461,8 @@ public class PrintMainFile extends Visitor {
     public static void main(String[] args) {
         //TO RUN: run-main edu.nyu.oop.PrintMainFile ***
         // *** a number 0-20, or nothing to run all test cases
-        int start = 32;
-        int end = 32;
+        int start = 0;
+        int end = 20;
 
         if (args.length > 1) {
             start = ImplementationUtil.getInteger(args[0]);

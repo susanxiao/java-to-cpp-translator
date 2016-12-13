@@ -8,6 +8,8 @@ import java.util.HashMap;
 /**
  * Created by willk on 12/13/16.
  */
+
+//This class handles some responsibility in visitFieldDeclaration in PrintMainFile.
 public class PrintMainFieldDeclarationUtil {
 
     public static String handleDeclarators(Node n, Node declaratorsNode, String type, boolean isTypeArray, boolean is2D, PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
@@ -104,7 +106,6 @@ public class PrintMainFieldDeclarationUtil {
     /*Handles NewArrayExpressions within Declarator nodes.
     All parameters are passed in through handleDeclarator(), with variables of the same name.
      */
-
     public static String handleNewArrayExpression(Node n, Node currentDeclarator, String type, String variable, boolean is2D, PrintMainFileSummary summary){
         String fieldDeclaration="";
         fieldDeclaration += " = ";
