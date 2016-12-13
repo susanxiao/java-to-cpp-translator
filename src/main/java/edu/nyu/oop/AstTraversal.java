@@ -162,7 +162,22 @@ public class AstTraversal extends Visitor {
         String name = n.getString(3);
         Node type = n.getNode(2);
         MethodImplementation m = new MethodImplementation(name);
-        summary.addMethod(m);
+
+        if (!(name.startsWith("method"))) {
+            switch (name) {
+                case "toString":
+                case "hashCode":
+                case "equals":
+                case "getClass":
+                    break;
+                default:
+                    name = "method" + name.substring(0, 1).toUpperCase() + name.substring(1);
+            }
+        }
+
+        summary.currentMethod = m;
+
+        m.className = summary.currentClass; //reflexivity for overloading
 
         /** Static **/
         Node modifiers = n.getNode(0);
@@ -185,7 +200,57 @@ public class AstTraversal extends Visitor {
 
         /** Parameters **/
         visitMethodFormalParameters(n.getGeneric(4));
+        String overLoadedName = name;
+        for (ParameterImplementation p : m.parameters) {
+            overLoadedName += p.type.substring(0, 1).toUpperCase() + p.type.substring(1);
+        }
 
+        m.overLoadedName = overLoadedName;
+
+        /** Check overloading **/
+
+        ArrayList<MethodImplementation> potentials = summary.currentClass.deepFindMethod(name);
+
+        if (!potentials.isEmpty()) {
+            if (potentials.size() == 1 && potentials.get(0).overLoadedName.equals(m.overLoadedName)) {
+                //THIS IS OVERRIDING!!!!
+            }
+            else {
+                for (MethodImplementation potential : potentials) {
+                    potential.isOverloaded = true;
+
+                    //if the overloadedMethods table does not contain the classes, put them in
+                    if (!summary.overLoadedMethods.containsKey(potential.className.name))
+                        summary.overLoadedMethods.put(potential.className.name, new HashMap<String, ArrayList<MethodImplementation>>());
+
+                    HashMap<String, ArrayList<MethodImplementation>> potentialOverLoadMap = summary.overLoadedMethods.get(potential.className.name);
+
+                    //if the class-specific overloadedMethods table does not contain the current method, put it in
+                    if (!potentialOverLoadMap.containsKey(name)) {
+                        //if potential's overLoadMap doesn't have the current method name, it does not have potential in there
+                        ArrayList<MethodImplementation> temp = new ArrayList<>();
+                        temp.add(potential);
+                        potentialOverLoadMap.put(name, temp);
+
+                        //if it does, we do not have to add potential again
+                    }
+                }
+
+                m.isOverloaded = true;
+
+                if (!summary.overLoadedMethods.containsKey(summary.currentClass.name))
+                    summary.overLoadedMethods.put(summary.currentClass.name, new HashMap<String, ArrayList<MethodImplementation>>());
+
+                HashMap<String, ArrayList<MethodImplementation>> mOverLoadMap = summary.overLoadedMethods.get(summary.currentClass.name);
+
+
+                if (!mOverLoadMap.containsKey(name))
+                    mOverLoadMap.put(name, new ArrayList<MethodImplementation>());
+                mOverLoadMap.get(name).add(m);
+            }
+        }
+
+        summary.addMethod(m);
         /** Implementation **/
         visitMethodBlock(n.getGeneric(7));
     }
@@ -683,6 +748,8 @@ public class AstTraversal extends Visitor {
         ClassImplementation currentClass;
         MethodImplementation currentMethod;
         ConstructorImplementation currentConstructor;
+
+        HashMap<String, HashMap<String, ArrayList<MethodImplementation>>> overLoadedMethods = new HashMap<>();
 
         boolean usesArgs = false;
 

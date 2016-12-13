@@ -477,10 +477,17 @@ public class PrintCppFile extends Visitor {
 
             String methodName = n.getString(3);
 
+            boolean isOverloaded = false;
+            HashMap<String, ArrayList<MethodImplementation>> map = summaryTraversal.overLoadedMethods.get(summary.currentClass.name);
+            if (map != null && map.containsKey(methodName)) {
+                isOverloaded = true;
+                methodSignature.append(returnType + " __" + summary.currentClass.name + "::%s("); //methodName goes here;
+            }
+            else {
+                methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
+            }
 
-            methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
-
-            Set<String> paramNames = new TreeSet<>();
+            HashMap<String, String> paramNames = new HashMap<>();
 
             Node formalParameters = n.getNode(4);
             for (int i = 0; i < formalParameters.size(); i++) {
@@ -493,25 +500,31 @@ public class PrintCppFile extends Visitor {
                         String paramName = formalParameter.getString(3);
                         if (isStatic) {
                             if (!paramName.equals("__this"))
-                                methodSignature.append(className + " " + paramName);
-                            paramNames.add(paramName);
+                                methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
+                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
                         } else {
-                            methodSignature.append(className + " " + paramName);
-                            paramNames.add(paramName);
+                            methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
+                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
                         }
                         if (i < formalParameters.size() - 1)
                             methodSignature.append(", ");
+
+                        if (isOverloaded && !paramName.equals("__this"))
+                            methodName += className.substring(0, 1).toUpperCase() + className.substring(1);
                     }
                 }
             }
             methodSignature.append(")");
-            summary.addLine(methodSignature.toString());
+            summary.addLine(isOverloaded ? String.format(methodSignature.toString(), methodName) : methodSignature.toString());
 
             summary.incScope();
             Node methodBlock = n.getNode(7);
 
-            for (String name : paramNames) {
-                if (!name.equals("__this"))
+            for (String name : paramNames.keySet()) {
+                String paramType = paramNames.get(name);
+                if (!name.equals("__this") &&
+                        !(paramType.equals("int32_t")
+                        || paramType.equals("double"))) //TODO: other primitives
                     summary.addLine("__rt::checkNotNull(" + name + ");\n");
             }
 
@@ -550,16 +563,14 @@ public class PrintCppFile extends Visitor {
                         if (primaryIdentifier.equals("cout")) {
                             StringBuilder line = new StringBuilder("cout << ");
                             Node arguments = expressionStatementChild.getNode(3);
-                            String param = arguments.getNode(0).getNode(0).getString(0);
-                            if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
+                            if (arguments.getNode(0).getName().equals("StringLiteral")) {
+                                line.append(arguments.getNode(0).getString(0));
+                            } else if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
                                 Node argumentsPrimaryIdentifier = arguments.getNode(0);
                                 line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");
                                 for (int i = 1; i < arguments.size(); i++) {
                                     String field = arguments.getString(i);
                                     line.append("->" + field);
-                                }
-                                if (expressionStatementChild.getString(2) != null) {
-                                    line.append(" << " + expressionStatementChild.getString(2));
                                 }
                             } else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
                                 Node selectionExpression = arguments.getNode(0);
@@ -570,10 +581,6 @@ public class PrintCppFile extends Visitor {
                                     line.append("->" + field);
                                 }
                                 //line.append("->data");
-                                if (expressionStatementChild.getString(2) != null) {
-                                    line.append(" << " + expressionStatementChild.getString(2));
-                                }
-
                             } else if (arguments.getNode(0).getName().equals("CallExpression")) {
                                 Node callExpression = arguments.getNode(0);
                                 Node argumentsPrimaryIdentifier = callExpression.getNode(0);
@@ -597,10 +604,9 @@ public class PrintCppFile extends Visitor {
                                     }
                                 }
                                 //line.append("->data");
-                                if (expressionStatementChild.getString(2) != null) {
-                                    line.append(" << " + expressionStatementChild.getString(2));
-                                }
-
+                            }
+                            if (expressionStatementChild.getString(2) != null) {
+                                line.append(" << " + expressionStatementChild.getString(2));
                             }
                             summary.addLine(line.toString() + ";\n");
                         }

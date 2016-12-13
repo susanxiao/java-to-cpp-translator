@@ -134,12 +134,12 @@ public class PrintHeaderFile extends Visitor {
             classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
-            StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name);
+            StringBuilder method = new StringBuilder("static " + type + " " + (currentMethod.isOverloaded ? currentMethod.overLoadedName : currentMethod.name));
             if (!currentMethod.isStatic) {
                 method.append("(" + summary.currentClass.name);
 
                 for (ParameterImplementation currentParameter : currentMethod.parameters) {
-                    method.append(", " + currentParameter.type);
+                    method.append(", " + (currentParameter.type.equals("int") ? "int32_t" : currentParameter.type));
                 }
                 method.append(");\n");
             } else {
@@ -194,9 +194,7 @@ public class PrintHeaderFile extends Visitor {
 
     public void visitVTable(GNode n) {
 
-        //NOTE: this does not handle overloading
         //ensure that the order is the same
-
         LinkedHashMap<String, String> vMethods = new LinkedHashMap<>();
         LinkedHashMap<String, String> vConstructor = new LinkedHashMap<>();
 
@@ -206,27 +204,30 @@ public class PrintHeaderFile extends Visitor {
         for (int i = summary.currentClass.methods.size() - 1; i >= 0; i--) {
             MethodImplementation currentMethod = summary.currentClass.methods.get(i);
             String currentMethodName = currentMethod.name;
+
+            //if the method is overloaded
+            if (currentMethod.isOverloaded)
+                //put in vTable with overLoaded name
+                currentMethodName = currentMethod.overLoadedName;
+
             if (!currentMethod.isStatic) {
                 if (!(currentMethodName.startsWith("method"))) {
                     switch (currentMethodName) {
-                    case "toString":
-                        break;
-                    case "hashCode":
-                        break;
-                    case "equals":
-                        break;
-                    case "getClass":
-                        break;
-                    default:
-                        currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
-
+                        case "toString":
+                        case "hashCode":
+                        case "equals":
+                        case "getClass":
+                            break;
+                        default:
+                            currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
                     }
                 }
+
                 vConstructor.put(currentMethodName, currentMethodName + "(&__" + summary.currentClass.name + "::" + currentMethodName + ")");
 
                 StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
                 for (ParameterImplementation p : currentMethod.parameters)
-                    method.append(", " + p.type);
+                    method.append(", " + (p.type.equals("int") ? "int32_t" : p.type));
                 method.append(");\n");
                 vMethods.put(currentMethodName, method.toString());
             }
@@ -238,14 +239,17 @@ public class PrintHeaderFile extends Visitor {
             for (int i = superClass.methods.size() - 1; i >= 0; i--) {
                 MethodImplementation currentMethod = superClass.methods.get(i);
                 String currentMethodName = currentMethod.name;
+
+                //if the method is overloaded
+                if (currentMethod.isOverloaded)
+                    //put in header with overLoaded name
+                    currentMethodName = currentMethod.overLoadedName;
+
                 if (!(currentMethodName.startsWith("method"))) {
                     switch (currentMethodName) {
                     case "toString":
-                        break;
                     case "hashCode":
-                        break;
                     case "equals":
-                        break;
                     case "getClass":
                         break;
                     default:
@@ -257,7 +261,7 @@ public class PrintHeaderFile extends Visitor {
 
                     StringBuilder parameters = new StringBuilder("(%s");
                     for (ParameterImplementation p : currentMethod.parameters)
-                        parameters.append(", " + p.type);
+                        parameters.append(", " + (p.type.equals("int") ? "int32_t" : p.type));
                     parameters.append(")");
 
                     method.append(parameters.toString() + ";\n");
@@ -406,6 +410,7 @@ public class PrintHeaderFile extends Visitor {
         TreeMap<String, Integer> classDeclarationCounts = new TreeMap<>();
 
 
+        HashMap<String, HashMap<String, ArrayList<MethodImplementation>>> overLoadedMethods = new HashMap<>();
         StringBuilder forwardDeclarations;
         StringBuilder typeDef;
         StringBuilder code;
@@ -517,7 +522,7 @@ public class PrintHeaderFile extends Visitor {
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
             GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
-            ImplementationUtil.prettyPrintAst(parentNode);
+            //ImplementationUtil.prettyPrintAst(parentNode);
 
             try {
                 PrintWriter printerHeader;

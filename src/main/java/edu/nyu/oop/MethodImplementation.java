@@ -14,22 +14,28 @@ public class MethodImplementation {
     ArrayList<ParameterImplementation> parameters;
     ArrayList<MethodStatement> implementation;
 
+    String overLoadedName;
+    boolean isOverloaded;
+
+    ClassImplementation className;
+
     public MethodImplementation(String name) {
         isStatic = false;
-        String methodName = name;
-        switch(methodName) {
+        switch(name) {
         case "toString":
         case "hashCode":
         case "equals":
         case "getClass":
         case "main":
+            this.name = name;
             break;
         default:
-            methodName = "method" + name.substring(0,1).toUpperCase() + name.substring(1);
+            this.name = "method" + name.substring(0,1).toUpperCase() + name.substring(1);
         }
-        this.name = methodName;
         parameters = new ArrayList<>();
         implementation = new ArrayList<>();
+
+        isOverloaded = false;
     }
 
     public void setReturnType(String returnType) {
@@ -42,36 +48,6 @@ public class MethodImplementation {
 
     public void addMethodStatement(MethodStatement m) {
         implementation.add(m);
-    }
-
-
-    /**
-     * StringBuilders
-     **/
-
-    public String typeNameToString() {
-        StringBuilder s = new StringBuilder();
-        s.append(returnType);
-        s.append(" " + name);
-        return s.toString();
-    }
-
-    public String parametersToString() {
-        StringBuilder s = new StringBuilder();
-        s.append("(");
-        for (int i = 0; i < parameters.size(); i++) {
-
-            s.append(parameters.get(i).toString());
-        }
-        s.append(")");
-        return s.toString();
-    }
-
-    public String pointerToString() {
-        StringBuilder s = new StringBuilder();
-        s.append(returnType);
-        s.append(" (*" + name + ")");
-        return s.toString();
     }
 
     @Override
@@ -93,16 +69,13 @@ public class MethodImplementation {
         }
         s.append(")\n");
 
-        /** Implementation **/
+        /*
+        /** Implementation **
         for (int i = 0; i < implementation.size(); i++) {
             s.append("\t\t" + implementation.get(i).toString() + "\n");
         }
+        */
 
-        return s.toString();
-    }
-
-    public String toCpp() {
-        StringBuilder s = new StringBuilder();
         return s.toString();
     }
 
