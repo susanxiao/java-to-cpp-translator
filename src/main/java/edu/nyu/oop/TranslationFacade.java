@@ -120,7 +120,7 @@ class MainComponent {
 
     private String printPath = null;
     private GNode root = null;
-    private PrintMainFile.PrintMainFileSummary mainSummary = null;
+    private PrintMainFileSummary mainSummary = null;
     private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
 
