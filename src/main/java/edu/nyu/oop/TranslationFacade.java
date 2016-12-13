@@ -184,12 +184,6 @@ public class TranslationFacade {
         this.mainController = new MainComponent(path, (GNode) loadTestFile(filePath));
     }
 
-    public void setControllers(String filePath, String path) {
-        this.headerController = new HeaderComponent(filePath, path, (GNode) loadTestFile(filePath));
-        this.cppController = new CppComponent(path, (GNode) loadTestFile(filePath));
-        this.mainController = new MainComponent(path, (GNode) loadTestFile(filePath));
-    }
-
     public void translate() {
         headerController.execute();
         cppController.setTraversal(headerController.getSummaryTraversal());

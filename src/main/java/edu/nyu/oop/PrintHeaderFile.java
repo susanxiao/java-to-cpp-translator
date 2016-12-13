@@ -383,10 +383,8 @@ public class PrintHeaderFile extends Visitor {
         //vtable methods
         summary.addLine("Class __isa;\n\n");
         ArrayList<String> vMethodValues = new ArrayList<>(vMethods.values());
-        System.out.println("vMethods " + vMethods.toString());
         for (int i = vMethodValues.size() - 1; i >= 0; i--) {
             String s = vMethodValues.get(i);
-            System.out.println("s: " + s);
             summary.addLine(String.format(s, summary.currentClass.name));
         }
         summary.code.append("\n");

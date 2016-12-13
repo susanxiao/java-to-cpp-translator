@@ -96,7 +96,7 @@ public class PrintCppFile extends Visitor {
     public void visitClassBody(GNode n) {
         if (!summary.isMainClass) {
             //check If methods are overloaded
-            System.out.println("check method overloading");
+           // System.out.println("check method overloading");
             ArrayList<String> checkMethodOverloading = new ArrayList<String>();
             for (Object methods : n) {
                 GNode currentMethod = (GNode) methods;
@@ -107,10 +107,10 @@ public class PrintCppFile extends Visitor {
                 }
             }
             int numOfMethods = checkMethodOverloading.size();
-            System.out.println(numOfMethods);
+            //System.out.println(numOfMethods);
             boolean[] isAOverloadedMethod = new boolean[numOfMethods];//default is false
             if(numOfMethods>1){//method overloading possible
-                System.out.println("method overloading possible");
+                //System.out.println("method overloading possible");
                 for(int s=0; s< numOfMethods; s++){
                     String methodName= checkMethodOverloading.get(s);
                     int numOfSameMethodNames=0;
@@ -126,9 +126,9 @@ public class PrintCppFile extends Visitor {
                 }
             }
             for(boolean overload : isAOverloadedMethod) {
-                System.out.println(overload);
+                //System.out.println(overload);
             }
-            System.out.println("--end checking method overloading--");
+            //System.out.println("--end checking method overloading--");
             //System.out.println(summaryTraversal.classNames);
 
             boolean constructorCreated = false;
@@ -498,10 +498,10 @@ public class PrintCppFile extends Visitor {
     public void visitMethodDeclaration(GNode n, GNode classBodyNode, boolean isThisMethodOverloaded) {
         //isThis method a overloaded method?
         if(isThisMethodOverloaded){
-            System.out.println("Overlaoded method");
+            //System.out.println("Overlaoded method");
         }
         else{
-            System.out.println("not a Overlaoded method");
+            //System.out.println("not a Overlaoded method");
         }
 
         if (!summary.isMainClass) {
