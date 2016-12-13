@@ -210,13 +210,6 @@ public class PrintCppFile extends Visitor {
                         else if (assignment.getName().equals("NewArrayExpression")) {
                             String qualifiedIdentifier = assignment.getNode(0).getString(0);
                             if (!qualifiedIdentifier.equals("String") && !qualifiedIdentifier.equals("Object")) {
-                                if (!summary.hasRunTime)
-                                    summary.startRunTime();
-                                summary.addRunTimeLine("template<>\n");
-                                summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier+">::__class()");
-                                summary.incRunTimeScope();
-                                summary.addRunTimeLine("static java::lang::Class k =\n");
-
                                 /*orginal*/
                                 //summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[java.lang.*EDITHERE*"+qualifiedIdentifier+";\"),\n");
 
@@ -247,13 +240,52 @@ public class PrintCppFile extends Visitor {
                                 for(int i=0; i<arrayDimension;i++){
                                     addDimensions+="[";
                                 }
-                                summary.addRunTimeLine("\tnew java::lang::__Class(literal(\""+addDimensions+"L"+packageName+"."+qualifiedIdentifier+";\"),\n");
+                                //if it is a 1D array of int, do not create another template
+                                if (!(arrayDimension == 1 && qualifiedIdentifier.equals("int"))) {
+                                    if (!summary.hasRunTime)
+                                        summary.startRunTime();
+                                    summary.addRunTimeLine("template<>\n");
+
+                                    if (arrayDimension > 1) { //only handles 2dimensions
+                                        if (qualifiedIdentifier.equals("int"))
+                                            summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + qualifiedIdentifier + ">* >::__class()");
+                                        else {
+                                            //add the first dimensional array
+                                            summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + ">::__class()");
+                                            summary.incRunTimeScope();
+                                            summary.addRunTimeLine("static java::lang::Class k =\n");
+                                            summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"" + addDimensions.substring(1) + "L" + packageName + "." + qualifiedIdentifier + ";\"),\n");
+                                            summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
+                                            summary.addRunTimeLine("\t\t\t" + summary.classLocation.replace(".", "::") + "__" + qualifiedIdentifier + "::__class());\n");
+                                            summary.addRunTimeLine("return k;\n");
+                                            summary.decRunTimeScope();
+
+                                            summary.addRunTimeLine("template<>\n");
+                                            summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + "> >::__class()");
+                                        }
+                                    }
+                                    else
+                                        summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + ">::__class()");
+                                    summary.incRunTimeScope();
+                                    summary.addRunTimeLine("static java::lang::Class k =\n");
+
+                                    summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"" + addDimensions + "L" + packageName + "." + qualifiedIdentifier + ";\"),\n");
                                 /*End editing*/
 
-                                summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
-                                summary.addRunTimeLine("\t\t\t"+summary.classLocation.replace(".", "::") +"__"+qualifiedIdentifier+"::__class());\n");
-                                summary.addRunTimeLine("return k;\n");
-                                summary.decRunTimeScope();
+                                    summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
+
+                                    if (arrayDimension > 1) { //only handles 2 dimensions
+                                        if (qualifiedIdentifier.equals("int"))
+                                            summary.addRunTimeLine("\t\t\t__rt::Array<" + qualifiedIdentifier + ">::__class());\n");
+                                        else
+                                            summary.addRunTimeLine("\t\t\t__rt::Array<"+summary.classLocation.replace(".", "::") +"__" + qualifiedIdentifier + ">::__class());\n");
+                                    }
+                                    else
+                                        summary.addRunTimeLine("\t\t\t" + summary.classLocation.replace(".", "::") + "__" + qualifiedIdentifier + "::__class());\n");
+
+                                    summary.addRunTimeLine("return k;\n");
+                                    summary.decRunTimeScope();
+                                }
 
                             }
                         }
