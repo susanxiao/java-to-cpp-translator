@@ -16,19 +16,15 @@ int main(void)
 
 	A a = new __A();
 
-	byte b = 1;
+	uint8_t b = 1;
 
-	Class k0 = a->__vptr->getClass(a);
-	checkClass(k0, b);
-
-		a->__vptr->methodM(a, (A) b);
-		a->__vptr->methodM(a, a);
-		a->__vptr->methodM(a, a);
-		a->__vptr->methodM(a, a);
-		a->__vptr->methodM(a, new A());
-		a->__vptr->methodM(a, new Object());
+		a->__vptr->methodMInt(a, (int32_t) b);
+		a->__vptr->methodMA(a, a);
+		a->__vptr->methodMDouble(a, 1.0);
+		a->__vptr->methodMObject(a, (Object) a);
+		a->__vptr->methodMAObject(a, new __A(), (Object) a);
+		a->__vptr->methodMObjectObject(a, new __Object(), (Object) a);
 	return 0;
 }
 
 //------------------
-

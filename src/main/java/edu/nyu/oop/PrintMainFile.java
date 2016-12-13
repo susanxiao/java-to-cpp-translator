@@ -46,6 +46,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitClassBody(GNode n) {
+
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -62,6 +63,19 @@ public class PrintMainFile extends Visitor {
 
     public void visitNestedBlock(GNode n) {
         mainImplementation.append(" {\n");
+
+        if (summary.init2D != null) {
+            String initPrimaryIdentifier = String.format(summary.init2D, summary.init2DDec);
+
+            mainImplementation.append("\t\t"+initPrimaryIdentifier+" = "+"new __rt::Array<"+summary.init2DType+">("+summary.init2DSize+");\n");
+
+            //reset them;
+            summary.init2D = null;
+            summary.init2DSize = null;
+            summary.init2DType = null;
+            summary.init2DDec = null;
+        }
+
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -89,7 +103,6 @@ public class PrintMainFile extends Visitor {
         int blockIndex = n.size() - 1;
         GNode block = (GNode) n.getNode(blockIndex);
         String methodName = n.getString(3);
-        //System.out.println(methodName);
 
         summary.localVariables = new HashMap<>();
 
@@ -100,7 +113,6 @@ public class PrintMainFile extends Visitor {
                 mainImplementation.append("\t__rt::Array<String>* args = new __rt::Array<String>(argc-1);\n");
                 mainImplementation.append("\tfor (int a = 1; a < argc; a++) {\n");//starts with a=1(not a=0) because the first argument in cpp is the command
                 mainImplementation.append("\t\tString argument = new __String(argv[a]);\n");
-                //mainImplementation.append("\t//cout << \"add arg: \"<< argument->data << endl;");
                 mainImplementation.append("\t\targs->__data[a-1] = argument;\n");
                 mainImplementation.append("\t}\n\n");
 
@@ -108,6 +120,7 @@ public class PrintMainFile extends Visitor {
             } else
                 mainImplementation.append("int main(void)\n{\n\n");
         }
+
 
         for (Object o : block) {
             if (o instanceof Node) {
@@ -135,15 +148,28 @@ public class PrintMainFile extends Visitor {
         String fieldDeclaration = "\t";
 
         String type = n.getNode(1).getNode(0).getString(0);
+        if (type.equals("byte"))
+            type = "uint8_t";
+
         boolean isTypeArray = false;
+        boolean is2D = false;
         if (n.getNode(1).getNode(1) != null) { // the type is an array
             if (n.getNode(1).getNode(1).getString(0).equals("[")) {
-                fieldDeclaration += "__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">* ";
+
                 isTypeArray = true;
+
+                if (n.getNode(1).getNode(1).size() > 1 && n.getNode(1).getNode(1).getString(1).equals("[")) {
+                    //2d array
+                    is2D = true;
+                    fieldDeclaration += "__rt::Array<__rt::Array<" + type + ">*>* ";
+                }
+                else {
+                    fieldDeclaration += "__rt::Array<" + type + ">* ";
+                }
             }
         }
         else {
-            fieldDeclaration += n.getNode(1).getNode(0).getString(0)+" ";
+            fieldDeclaration += type+" ";
         }
 
         if (n.getNode(2).getName().equals("Declarators")) {
@@ -153,6 +179,11 @@ public class PrintMainFile extends Visitor {
                     Node currentDeclarator = (Node) o;
                     String variable = currentDeclarator.getString(0);
                     summary.classVariables.put(variable, type);
+
+                    if (summary.localVariables == null)
+                        summary.localVariables = new HashMap<>();
+
+                    summary.localVariables.put(variable, type);
                     fieldDeclaration += variable;
                     if (currentDeclarator.getNode(2) != null) {
                         if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
@@ -162,7 +193,6 @@ public class PrintMainFile extends Visitor {
 
                                 String typeString = n.getNode(1).getNode(0).getString(0) + "[";
                                 summary.localVariables.put(variable, typeString);
-
                             } else {
                                 String qualifiedIdentifier = currentDeclarator.getNode(2).getNode(2).getString(0);
                                 fieldDeclaration += qualifiedIdentifier;
@@ -209,33 +239,45 @@ public class PrintMainFile extends Visitor {
                             if(sizeIsNegative){//size is negative
                                 size = negSize;
                             }
+                            if (is2D) {
+                                String size2 = newArray.getNode(1).getNode(1).getString(0);
 
+                                fieldDeclaration += "new __rt::Array<__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">*>("+size2+");\n";
 
-                            if (!type.equals(qualifiedIdentifier))
-                                fieldDeclaration += "(__rt::Array<"+type+">*) ";
+                                summary.init2D = variable+"->__data[%s]";
+                                summary.init2DSize = size2;
+                                summary.init2DType = n.getNode(1).getNode(0).getString(0);
 
-                            fieldDeclaration += "new __rt::Array<"+qualifiedIdentifier+">("+size+");\n";
-
-                            //check NegativeArraySizeException()
-                            //fieldDeclaration += "checkNegativeArraySize(" + size + ");";
-                            if(Integer.parseInt(size) < 0){
-                                //System.out.println("its a negative size");
-                                //need to throw NegativeArraySizeException() BEFORE assigning the array
-                                String fieldDeclaration_deepCopy = "";
-                                for(int i=0; i<fieldDeclaration.length(); i++){
-                                    char c = fieldDeclaration.charAt(i);
-                                    //System.out.println("c" + c);
-                                    fieldDeclaration_deepCopy += c;
-                                }
-                                //System.out.println("fieldDeclaration_deepCopy" + fieldDeclaration_deepCopy);
-                                fieldDeclaration ="";
-                                fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
-                                fieldDeclaration += fieldDeclaration_deepCopy;
+                                summary.localVariables.put(variable, type+"[[");
                             }
-                            //else{
+                            else {
+                                if (!type.equals(qualifiedIdentifier))
+                                    fieldDeclaration += "(__rt::Array<" + type + ">*) ";
+
+
+                                fieldDeclaration += "new __rt::Array<" + qualifiedIdentifier + ">(" + size + ");\n";
+
+                                //check NegativeArraySizeException()
+                                //fieldDeclaration += "checkNegativeArraySize(" + size + ");";
+                                if (Integer.parseInt(size) < 0) {
+                                    //System.out.println("its a negative size");
+                                    //need to throw NegativeArraySizeException() BEFORE assigning the array
+                                    String fieldDeclaration_deepCopy = "";
+                                    for (int i = 0; i < fieldDeclaration.length(); i++) {
+                                        char c = fieldDeclaration.charAt(i);
+                                        //System.out.println("c" + c);
+                                        fieldDeclaration_deepCopy += c;
+                                    }
+                                    //System.out.println("fieldDeclaration_deepCopy" + fieldDeclaration_deepCopy);
+                                    fieldDeclaration = "";
+                                    fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
+                                    fieldDeclaration += fieldDeclaration_deepCopy;
+                                }
+                                //else{
                                 //System.out.println("its a positive size");
-                            //}
-                            summary.localVariables.put(variable, type+"[");
+                                //}
+                                summary.localVariables.put(variable, type + "[");
+                            }
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
@@ -250,12 +292,6 @@ public class PrintMainFile extends Visitor {
                             fieldDeclaration += " = (__rt::Array<" + typeString + ">*) " + primaryId + ";\n";
 
                             summary.localVariables.put(variable, typeString + "[");
-
-                            /*fieldDeclaration += "("+ currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0)+");";
-                            mainImplementation.append(fieldDeclaration+"\n");//append here, Orelse the order are incorrect becasue the visit statments directly appends to mainImplementation string
-                            fieldDeclaration="";
-                            visitForStatement((GNode) currentDeclarator.getNode(2).getNode(1).getNode(0)); */
-
 
                         } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
                             String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
@@ -324,20 +360,11 @@ public class PrintMainFile extends Visitor {
             }else{//1D array
                 String  checkIndexBoundError =checkIndexBoundsForSubscriptExpression((GNode) checkIfThereIsAnArray);
 
-                //System.out.println("there is an array in the expression");
-                //System.out.println(checkIfThereIsAnArray.getName());
-
-                /*
-                String arrayVariableName = checkIfThereIsAnArray.getNode(0).getString(0);
-                String arrayIndex = checkIfThereIsAnArray.getNode(1).getString(0);
-                expressionStatement += "\tcheckIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n\t\t";
-                */
                 expressionStatement+=checkIndexBoundError;
             }
 
         }
         else{
-            //System.out.println("No array in the expression");
         }
 
         if (n.getNode(0).getName().equals("CallExpression")) {
@@ -419,7 +446,7 @@ public class PrintMainFile extends Visitor {
                                                 primaryId += primaryIdentifier1.get(0).toString() + "]";
 
                                                 expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
-                                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";;
+                                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";
                                             }
                                         }
                                     }
@@ -496,11 +523,6 @@ public class PrintMainFile extends Visitor {
                                         expressionStatement += primaryId;
                                     }
                                     expressionStatement += ")";
-                                    /*if (method.equals("toString")) {
-                                        expressionStatement += "->data";
-                                    } else if (primaryIdentifer.equals("cout")) {
-                                        expressionStatement += "->data";
-                                    }*/
                                 }
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
@@ -574,9 +596,13 @@ public class PrintMainFile extends Visitor {
                                     expressionStatement += primaryIdentifier1.get(0).toString() + "]";
                                 }
                                 else{ //2D array. assume we don't have 3D,4D,5D...
-                                    Node secondDimension = currentNode.getNode(0);//currentNode.getNode(0).getName() should be "SubscriptExpression"
-                                    String subscriptExpressionSTR= returnSubscriptExpression((GNode) secondDimension);
-                                    expressionStatement +=subscriptExpressionSTR;
+                                    primaryId = (primaryId == null ? "" : primaryId) + currentNode.getNode(0).getNode(0).getString(0) + "->__data[";
+                                    primaryId += currentNode.getNode(0).getNode(1).getString(0) + "]";
+                                    primaryId += "->data["+currentNode.getNode(1).getString(0) + "]";
+
+                                    expressionStatement += currentNode.getNode(0).getNode(0).getString(0) + "->__data[";
+                                    expressionStatement += currentNode.getNode(0).getNode(1).getString(0) + "]->__data[";
+                                    expressionStatement += currentNode.getNode(1).getString(0) + "]";
 
                                 }
 
@@ -590,58 +616,257 @@ public class PrintMainFile extends Visitor {
                 String methodName = callExpressionNode.getString(2);
                 if (!(methodName.startsWith("method"))) {
                     switch (methodName) {
-                    case "toString":
-                    case "hashCode":
-                    case "equals":
-                    case "getClass":
-                        break;
-                    default:
-                        methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
+                        case "toString":
+                        case "hashCode":
+                        case "equals":
+                        case "getClass":
+                            break;
+                        default:
+                            methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
 
                     }
                 }
+                    
                 String expressionStatement1 = "";
                 String variableCalling = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
                 String primaryIdentifer = callExpressionNode.getNode(0).getString(0);
                 expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
-                expressionStatement += methodName;
-                if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
-                    expressionStatement += "(";
-                    Node argumentsNode = callExpressionNode.getNode(3);
-                    expressionStatement += argumentsNode.getString(0) + ", ";
 
-                    if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
-                        Node newClassExpressionNode = argumentsNode.getNode(1);
-                        String newClassIdentifier = "new ";
-                        newClassIdentifier += newClassExpressionNode.getNode(2).getString(0) + "(";
-                        expressionStatement += newClassIdentifier;
-                        try{
-                            //Handles no argument case. - Ex Test032
-                            expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
-                        }
-                        catch(IndexOutOfBoundsException e){
+                String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
+                summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
 
+                if (summary.overLoadedMethods != null && summary.overLoadedMethods.containsKey(methodName)) {
+
+                    if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
+                        String arguments = "(";
+                        Node argumentsNode = callExpressionNode.getNode(3);
+
+                        ArrayList<MethodImplementation> methods = new ArrayList<>(summary.overLoadedMethods.get(methodName));
+                        ArrayList<Integer> distances = new ArrayList<>();
+
+                        for (int i = 0; i < methods.size(); i++) {
+                            if (methods.get(i).parameters.size() != argumentsNode.size() - 1) //number of arguments in Node includes __this
+                                //number of arguments is wrong
+                                methods.remove(i--);
+                            else
+                                distances.add(0);
                         }
-                        expressionStatement += ")";
-                    } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
-                        String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                        if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
-                            expressionStatement += argumentsNode.getNode(1).getString(0);
-                        } else {
-                            expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
-                            expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + variableCalling + "->__vptr->getClass(" + variableCalling + ");\n";
-                            expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
-                            summary.checkClassCounter++;
+
+                        if (methods.size() == 1) {
+                            arguments += argumentsNode.getString(0) + ", ";
+
+                            if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
+                                Node newClassExpressionNode = argumentsNode.getNode(1);
+                                arguments += "new "+ newClassExpressionNode.getNode(2).getString(0) + "(";
+                                if (newClassExpressionNode.getNode(3).size() > 0)
+                                    arguments += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                                arguments += ")";
+                            } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
+                                String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
+                                if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
+                                    arguments += argumentsNode.getNode(1).getString(0);
+                                }
+                            } else {
+                                arguments += argumentsNode.getString(0);
+                            }
+                            arguments += ");";
+
+                            expressionStatement += methods.get(0).name + arguments;
                         }
-                    } else {
-                        expressionStatement += argumentsNode.getString(0);
+                        else {
+                            int argIndex = 0;
+                            for (Object o : argumentsNode) {
+                                if (o instanceof Node) {
+                                    for (int i = 0; i < methods.size(); i++) {
+                                        MethodImplementation m = methods.get(i);
+                                        if (m.parameters.size() <= argIndex) {
+                                            methods.remove(i);
+                                            distances.remove(i--);
+                                        } else {
+
+                                            //p is the one the method requires
+                                            //argumentType is the one when calling
+                                            ParameterImplementation p = m.parameters.get(argIndex);
+                                            String argumentType = "";
+
+                                            if (((Node) o).getName().equals("PrimaryIdentifier")) {
+                                                argumentType = summary.localVariables.get(((Node) o).getString(0)).replace("__", "");
+                                            }
+                                            else if (((Node) o).getName().equals("FloatingPointLiteral")) {
+                                                argumentType = "float";
+                                            }
+                                            else if (((Node) o).getName().equals("CastExpression")) {
+                                                argumentType = ((Node) o).getNode(0).getNode(0).getString(0);
+                                            }
+                                            else if (((Node) o).getName().equals("NewClassExpression")) {
+                                                argumentType = ((Node) o).getNode(2).getString(0);
+                                            }
+                                            else {
+                                                //TODO: other things
+                                                System.out.println("Missed the argumentType");
+                                            }
+
+                                            //chain of primitives: byte->short->char?->int->long->float->double
+                                            if (!p.type.equals(argumentType)) {
+                                                int increaseBy = 1;
+                                                switch (argumentType) {
+                                                    case "uint8_t":
+                                                    case "byte":
+                                                        if (!p.type.equals("short"))
+                                                            increaseBy++;
+                                                        else
+                                                            break;
+                                                    case "short":
+                                                        if (!p.type.equals("char"))
+                                                            increaseBy++;
+                                                        else
+                                                            break;
+                                                    case "char" :
+                                                        if (!p.type.equals("int"))
+                                                            increaseBy++;
+                                                        else
+                                                            break;
+                                                    case "int32_t":
+                                                    case "int":
+                                                        if (!p.type.equals("long"))
+                                                            increaseBy++;
+                                                        else
+                                                            break;
+                                                    case "long":
+                                                        if (!p.type.equals("float"))
+                                                            increaseBy++;
+                                                        else
+                                                            break;
+                                                    case "float":
+                                                        if (!p.type.equals("double"))
+                                                            increaseBy++;
+                                                        else
+                                                            break;
+                                                    case "double": //then p.type is an object
+                                                        methods.remove(i);
+                                                        distances.remove(i--);
+                                                        continue;
+                                                    default: //both are objects...does this check for String?
+                                                        ClassImplementation currentClass = summaryTraversal.findClass(argumentType);
+                                                        while (currentClass != null && !currentClass.name.equals(p.type)) {
+                                                            currentClass = currentClass.superClass;
+                                                            increaseBy++;
+                                                        }
+
+                                                        if (currentClass == null) {
+                                                            if (p.type.equals("Object"))
+                                                                increaseBy++;
+                                                            else {
+                                                                methods.remove(i);
+                                                                distances.remove(i--);
+                                                                continue;
+                                                            }
+                                                        }
+                                                        break;
+                                                }
+                                                distances.set(i, distances.get(i)+increaseBy);
+                                            }
+                                        }
+                                    }
+                                    argIndex++;
+                                }
+                            }
+
+                            if (methods.size() > 0) {
+                                //find the smallest distance one
+                                int min = 0;
+                                for (int i = 1; i < methods.size(); i++) {
+                                    if (distances.get(i) < distances.get(min))
+                                        min = i;
+                                }
+
+                                arguments += argumentsNode.getString(0);
+
+                                MethodImplementation chosenMethod = methods.get(min);
+                                for (int i = 1; i < argumentsNode.size(); i++) {
+                                    arguments += ", ";
+                                    Object o = argumentsNode.getNode(i);
+                                    if (o instanceof Node) {
+                                        if (argumentsNode.getNode(i).getName().equals("NewClassExpression")) {
+                                            Node newClassExpressionNode = argumentsNode.getNode(i);
+                                            String paramType = newClassExpressionNode.getNode(2).getString(0);
+                                            if (!chosenMethod.parameters.get(i-1).type.equals(paramType)) //if it does not match argument type add cast
+                                                arguments += "("+chosenMethod.parameters.get(i-1).type+") ";
+                                            arguments += "new __"+ paramType + "(";
+                                            if (argumentsNode.getNode(i).getNode(3).size() > 0)
+                                                arguments += argumentsNode.getNode(i).getNode(3).getNode(0).getString(0);
+                                            arguments += ")";
+                                        }
+                                        else if (argumentsNode.getNode(i).getName().equals("PrimaryIdentifier")){
+                                            String primaryIdentifier1 = argumentsNode.getNode(i).getString(0);
+                                            if (!chosenMethod.parameters.get(i-1).type.equals(summary.classVariables.get(primaryIdentifier1))) {
+                                                String type = chosenMethod.parameters.get(i-1).type;
+                                                arguments += "("+(type.equals("int")? "int32_t" : type)+ ") ";
+                                            }
+                                            arguments += argumentsNode.getNode(i).getString(0);
+                                        }
+                                        else if (argumentsNode.getNode(i).getName().equals("FloatingPointLiteral")) {
+                                            arguments += argumentsNode.getNode(i).getString(0);
+                                        }
+                                        else if (argumentsNode.getNode(i).getName().equals("CastExpression")) {
+                                            String cast = argumentsNode.getNode(i).getNode(0).getNode(0).getString(0);
+                                            if (cast.equals("byte")) cast = "uint8_t";
+                                            else if (cast.equals("int")) cast = "int32_t";
+                                            arguments += "("+argumentsNode.getNode(i).getNode(0).getNode(0).getString(0)+") ";
+                                            if (argumentsNode.getNode(i).getNode(1).getName().equals("PrimaryIdentifier"));
+                                                arguments += argumentsNode.getNode(i).getNode(1).getString(0);
+                                        }
+                                        else {
+                                            //TODO: here
+                                            System.out.println("Missed the calling argumentType");
+                                        }
+                                    }
+                                }
+                                arguments += ");";
+
+                                expressionStatement += chosenMethod.overLoadedName + arguments;
+                            }
+                            else {
+                                System.out.println("SOMETHING WENT WRONG!!");
+                            }
+                        }
                     }
-                    expressionStatement += ");";
-                    String temp = expressionStatement;
-                    expressionStatement = "";
-                    expressionStatement += expressionStatement1;
-                    expressionStatement += temp;
+                }
+                else {
+                    expressionStatement += methodName;
+                    if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
+                        expressionStatement += "(";
+                        Node argumentsNode = callExpressionNode.getNode(3);
+                        expressionStatement += argumentsNode.getString(0) + ", ";
+
+                        if (argumentsNode.getNode(1).getName().equals("NewClassExpression")) {
+                            Node newClassExpressionNode = argumentsNode.getNode(1);
+                            String newClassIdentifier = "new ";
+                            newClassIdentifier += newClassExpressionNode.getNode(2).getString(0) + "(";
+                            expressionStatement += newClassIdentifier;
+                            if (newClassExpressionNode.getNode(3).size() > 0)
+                                expressionStatement += newClassExpressionNode.getNode(3).getNode(0).getString(0);
+                            expressionStatement += ")";
+                        } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
+                            String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
+                            if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
+                                expressionStatement += argumentsNode.getNode(1).getString(0);
+                            } else {
+                                expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
+                                expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + variableCalling + "->__vptr->getClass(" + variableCalling + ");\n";
+                                expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
+                                summary.checkClassCounter++;
+                            }
+                        } else {
+                            expressionStatement += argumentsNode.getString(0);
+                        }
+                        expressionStatement += ");";
+                        String temp = expressionStatement;
+                        expressionStatement = "";
+                        expressionStatement += expressionStatement1;
+                        expressionStatement += temp;
+                    }
                 }
             }
 
@@ -653,7 +878,7 @@ public class PrintMainFile extends Visitor {
                 Object o = expressionNode.get(nodeIndex);
                 if (o instanceof Node) {
                     Node currNode = (Node) o;
-                    boolean needToGetSecondArgumentForCheckStoreFunction= false;
+                    boolean needToGetSecondArgumentForCheckStoreFunction = false;
                     if (currNode.getName().equals("SelectionExpression")) {
                         String varName = currNode.getNode(0).getString(0);
                         primaryIdentifierExpression = varName;
@@ -709,54 +934,20 @@ public class PrintMainFile extends Visitor {
                             }
 
 
-                            /*
-                            //check type of primaryIdentifier0(variable as in test26)
-                            java.util.List<Node> fieldDecNodes = NodeUtil.dfsAll(methodDecNode, "FieldDeclaration");
-                            String theLeftSideArrayType="";
-                            for (Node f : fieldDecNodes ) {
-                                //System.out.println(f.getNode(2).getNode(0).getString(0)+", "+primaryIdentifier0.getString(0)+".");
-                                if(f.getNode(2).getNode(0).getString(0).equals(primaryIdentifier0.getString(0))){
-                                    Node declaratorNodeInFieldDec = NodeUtil.dfs(f,"Declarator");
-                                    Node qualifiedIdentifierInFieldDec  = NodeUtil.dfs(declaratorNodeInFieldDec,"QualifiedIdentifier");
-                                     theLeftSideArrayType = qualifiedIdentifierInFieldDec.getString(0);
-                                    //System.out.println("theLeftSideArrayType: " + theLeftSideArrayType);
-                                }else{
-                                    //System.out.println("not found");
-                                }
-                            }
-
-                            //Check if the right side type matches
-                            Node rightSideArrayType = expressionNode.getNode(2);
-                            Node qualifiedIdentifier_arrayType = NodeUtil.dfs(rightSideArrayType, "QualifiedIdentifier");
-                            String theRightSideArrayType  =   qualifiedIdentifier_arrayType.getString(0);
-                            //System.out.println("theRightSideArrayType: " + theRightSideArrayType);
-
-                            if(!theLeftSideArrayType.equals(theRightSideArrayType) )  {
-                                //System.out.println("check summary traversal");
-                                //System.out.println(summaryTraversal.classes.toString());
-                                //System.out.println(summaryTraversal.classes.containsKey(theRightSideArrayType));
-                                ClassImplementation classOf_theRightSideArryaType = summaryTraversal.classes.get(theRightSideArrayType);
-                                //System.out.println(classOf_theRightSideArryaType.superClassName);
-                                if(classOf_theRightSideArryaType.superClassName !=null){
-                                    if(classOf_theRightSideArryaType.superClassName.equals(theLeftSideArrayType)){//rightSideArrayType is a subclass of LeftClassArryType
-                                        //System.out.println("(checking for ArrayStoreException)rightSideArrayType is a subclass of LeftClassArryType - so its okay");
-                                    }
-                                }
-                                else{//doesn't have a superClass - rightSideArrayType is NOT a subclass of LeftClassArryType
-                                    System.out.println("throw java.lan.ArrayStoreException" );
-                                    expressionStatement += "throw java::lang::ArrayStoreException();\n";
-                                }
-
-                            }else{
-                                 //System.out.println("(checking for ArrayStoreException) Same type");
-                            }*/
-
-
                             primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
 
                             expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
                             expressionStatement += primaryIdentifier1.get(0).toString() + "]";
                             isArray = true;
+                        }
+                        else {
+                            GNode primaryIdentifier = currNode.getGeneric(0);//test31: as[i]
+                            String secondDimension = currNode.getNode(1).getString(0);//test31: j
+
+                            String mainIdentifier = primaryIdentifier.getNode(0).getString(0);
+                            String firstIdentifier = primaryIdentifier.getNode(1).getString(0);
+
+                            expressionStatement += mainIdentifier+"->__data["+firstIdentifier+"]->__data["+secondDimension+"]";
                         }
 
                     } else if (currNode.getName().equals("NewClassExpression")) {
@@ -861,12 +1052,14 @@ public class PrintMainFile extends Visitor {
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
+
                 if (currentNode.getName().equals("BasicForControl")) {
                     forStatement += "(";
                     GNode basicForControlNode = (GNode) o;
                     for (Object b : basicForControlNode) {
                         if (b instanceof Node) {
                             GNode b_Node = (GNode) b;
+
                             if (b_Node.getName().equals("Type")) {
                                 GNode primitiveType = (GNode) b_Node.get(0);
                                 if (primitiveType.get(0).toString().equals("int")) {
@@ -879,12 +1072,17 @@ public class PrintMainFile extends Visitor {
                                 forStatement += declaratorNode.get(0).toString() + " = "; //i =
                                 GNode IntegerLiteralNode = (GNode) declaratorNode.get(2);
                                 forStatement += IntegerLiteralNode.get(0).toString() + "; "; //0;
+
+                               summary.init2DDec = declaratorNode.getString(0);
+
                             } else if (b_Node.getName().equals("RelationalExpression")) {
 
                                 GNode primaryIdentifierNode = (GNode) b_Node.get(0);
                                 forStatement += primaryIdentifierNode.get(0).toString(); //i
                                 forStatement += " " + b_Node.get(1).toString() + " ";//<
                                 GNode SelectionExpressNode = (GNode) b_Node.get(2);
+
+
                                 //System.out.println("test Sel Node: "+SelectionExpressNode.toString());
                                 if(SelectionExpressNode.getNode(0).getName().equals("SubscriptExpression")){
                                     //Select expression in 2D array
@@ -932,18 +1130,17 @@ public class PrintMainFile extends Visitor {
         String currentClassName;
         String filePrinted;
         int checkClassCounter;
-        ArrayList<String> classNames = new ArrayList<String>();
-        ArrayList<String> variables = new ArrayList<String>();
+        ArrayList<String> classNames = new ArrayList<>();
+        ArrayList<String> variables = new ArrayList<>();
         TreeMap<String, String> classVariables = new TreeMap<>();
 
         HashMap<String, String> localVariables;
+        HashMap<String, ArrayList<MethodImplementation>> overLoadedMethods;
 
-        ArrayList<String> checkCast() {
-            ArrayList<String> result = new ArrayList<String>();
-            return result;
-        }
-
-
+        String init2D;
+        String init2DSize;
+        String init2DType;
+        String init2DDec;
     }
 
     public PrintMainFile.printMainFileSummary getSummary(GNode n) {
@@ -980,11 +1177,93 @@ public class PrintMainFile extends Visitor {
         for (Object o : n) {
             Node currentClass = (Node) o;
             if (currentClass.getName().equals("ClassDeclaration")) {
-                if (currentClass.getString(1).contains("Test")) {
+                if (currentClass.getString(1).contains("Test")) { //Main
+                    //save information for fields in main(use for method overloading)
+
+                    //System.out.println(currentClass.getNode(5).getNode(0).getNode(7).getName());//Block
+                    //GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
+                    GNode block = (GNode) NodeUtil.dfs(currentClass,"Block");
+                    for(Object obj : block) {
+                        Node currClass = (Node) obj;
+                        if (currClass.getName().equals("FieldDeclaration")) {
+                            String varName = currClass.getNode(2).getNode(0).getString(0);
+                            String varType = currClass.getNode(1).getNode(0).getString(0);
+                            if(varType.equals("byte")){
+                                varType = "uint8_t";
+
+                            }
+                            summaryTraversal.fieldsInMainInfo.put(varName, varType);
+                        }
+                    }
+                    //END: save information for fields in main(use for method overloading)
+
                     summary.currentClassName = currentClass.getString(1);
                     visitClassDeclaration((GNode) currentClass);
+
+                }
+                else{//it's not the main class
+
+                    //check for method overloading
+                    String className = currentClass.getString(1);
+                    ArrayList<String> a = new ArrayList<String>();
+                    a.add(className);
+
+
+
+                    Node ClassBody = currentClass.getNode(5);
+                    for(Object obj: ClassBody){
+                        ArrayList<String> finalMethodNames = new ArrayList<String>();
+                        finalMethodNames.add(className);
+                        Node currClass = (Node) obj;
+                        if (currClass.getName().equals("MethodDeclaration")) {
+                            String methodName = currClass.getString(3);
+                            //System.out.println(methodName);
+                            a.add(methodName);
+
+                            Node formalParamSNode = currClass.getNode(4);
+                            if(formalParamSNode.size()>1){
+                                methodName += "_";
+                                for(int i=1; i<formalParamSNode.size();i++){
+                                    methodName += formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0);
+                                    //System.out.println("new methodNAMe: " + methodName);
+                                    //System.out.println(formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0));
+
+                                }
+                            }
+                            finalMethodNames.add(methodName);
+                        }
+                        //System.out.println("final names" + finalMethodNames);
+                        summaryTraversal.overloadedMethodNames.add(finalMethodNames);
+                    }
+                    //System.out.println("final names" + summaryTraversal.overloadedMethodNames.toString());
+                    summaryTraversal.allMethods_checkMethodOverloading.add(a);
+                    //System.out.println( summaryTraversal.allMethods_checkMethodOverloading.toString() );
+
+                    for(int i=0; i<summaryTraversal.allMethods_checkMethodOverloading.size(); i++){
+                        ArrayList<String> arrayListElement = new ArrayList<String>();
+                        arrayListElement.add(summaryTraversal.allMethods_checkMethodOverloading.get(i).get(0));
+                        for(int j=1;j<summaryTraversal.allMethods_checkMethodOverloading.get(i).size(); j++){
+                            String checkIfThisMethodIsOverloaded= summaryTraversal.allMethods_checkMethodOverloading.get(i).get(j);
+                            int howManyTimeTheMethodIsDefined = 0;
+                            for(int k=1;k<summaryTraversal.allMethods_checkMethodOverloading.get(i).size(); k++){
+                                if (checkIfThisMethodIsOverloaded.equals(summaryTraversal.allMethods_checkMethodOverloading.get(i).get(k))){
+                                    howManyTimeTheMethodIsDefined++;
+                                }
+                            }
+                            if (howManyTimeTheMethodIsDefined>1){
+                                //System.out.println(checkIfThisMethodIsOverloaded + "is overloaded");
+                                arrayListElement.add("overloaded");
+                            }else{
+                                arrayListElement.add("not overloaded");
+                            }
+                        }
+                        summaryTraversal.isOverLoaded.add(arrayListElement);
+                    }
+                    //System.out.println( summaryTraversal.isOverLoaded.toString() );
+
                 }
             }
+
         }
 
         s1.append(mainImplementation);
@@ -1042,7 +1321,7 @@ public class PrintMainFile extends Visitor {
                 // get the summary of the cpp implementations
                 PrintMainFile visitor = new PrintMainFile(ImplementationUtil.newRuntime(), summaryTraversal);
                 PrintMainFile.printMainFileSummary summaryMain = visitor.getSummary(node);
-                ImplementationUtil.prettyPrintAst(node);
+                //ImplementationUtil.prettyPrintAst(node);
 
                 String mainFile = "";
                 mainFile += summaryMain.filePrinted;

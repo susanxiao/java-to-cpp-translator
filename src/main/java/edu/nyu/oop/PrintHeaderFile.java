@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.NodeUtil;
 import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -24,12 +25,15 @@ import java.io.IOException;
 
 
 public class PrintHeaderFile extends Visitor {
-
     private PrintHeaderFile.headerFileSummary summary = new headerFileSummary();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private Runtime runtime;
     private AstTraversal.AstTraversalSummary summaryTraversal;
+
+    //check overloading
+    //public ArrayList<ArrayList<String>> methodNames;
+    //public ArrayList<ArrayList<String>> methodIsOverloaded;
 
     // visitXXX methods
     public void visitHeaderDeclaration(GNode n) {
@@ -129,17 +133,62 @@ public class PrintHeaderFile extends Visitor {
         summary.addLine("static __" + summary.currentClass.name + "_VT __vtable;\n\n");
 
         //Methods that will be implemented in output.cpp
+
+        //check If Methods Are Overloaded
+        ArrayList<String> a = new ArrayList<String>();
+        //String[] a = new String[summary.currentClass.methods.size()];
+        a.add(summary.currentClass.name);
+        for (int i=0; i< summary.currentClass.methods.size(); i++){
+            MethodImplementation currentMethod = summary.currentClass.methods.get(i);
+            String name = currentMethod.name;
+            //a[i]=name;
+            a.add(name);
+        }
+        //System.out.println("a araylsit " + a.toString());
+        //System.out.println(methodNames.toString());
+        //this.methodNames.add(a);
+        summaryTraversal.allMethods_checkMethodOverloading.add(a);
+        //System.out.println(summaryTraversal.allMethods_checkMethodOverloading.toString());
+
+        //boolean[] isOverloaded = new boolean[summary.currentClass.methods.size()];
+        ArrayList<String> isOverloaded = new ArrayList<String>();
+        isOverloaded.add(summary.currentClass.name);
+        for (int i=0; i< summary.currentClass.methods.size(); i++){
+            //boolean isAOverloadedMethod=false;
+            String isAOverloadedMethod = "false";
+            int howManyTimesItAppears=0;
+            for (int j=0; j< summary.currentClass.methods.size(); j++){
+                if(summary.currentClass.methods.get(i).name.equals(summary.currentClass.methods.get(j).name)){
+                    howManyTimesItAppears++;
+                }
+            }
+            if (howManyTimesItAppears>1){
+                isAOverloadedMethod="true";
+            }
+            //isOverloaded[i]=isAOverloadedMethod;
+            isOverloaded.add(isAOverloadedMethod);
+        }
+        //System.out.println("isOverloaded.  " + isOverloaded.toString());
+        summaryTraversal.isOverLoaded.add(isOverloaded);
+
         int classMethodCount = 0;
+        //System.out.println( "size "+summary.currentClass.methods.size());
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
+            //check if the method is overloaded
+            //System.out.println( currentMethod.name.toString());
+            //int index = Arrays.asList(a).indexOf(currentMethod.name.toString());
+            int index = a.indexOf(currentMethod.name.toString());
+
             classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
-            StringBuilder method = new StringBuilder("static " + type + " " + currentMethod.name);
+            StringBuilder method = new StringBuilder("static " + type + " " + (currentMethod.isOverloaded ? currentMethod.overLoadedName : currentMethod.name));
+
             if (!currentMethod.isStatic) {
                 method.append("(" + summary.currentClass.name);
 
                 for (ParameterImplementation currentParameter : currentMethod.parameters) {
-                    method.append(", " + currentParameter.type);
+                    method.append(", " + (currentParameter.type.equals("int") ? "int32_t" : currentParameter.type));
                 }
                 method.append(");\n");
             } else {
@@ -194,9 +243,7 @@ public class PrintHeaderFile extends Visitor {
 
     public void visitVTable(GNode n) {
 
-        //NOTE: this does not handle overloading
         //ensure that the order is the same
-
         LinkedHashMap<String, String> vMethods = new LinkedHashMap<>();
         LinkedHashMap<String, String> vConstructor = new LinkedHashMap<>();
 
@@ -206,27 +253,30 @@ public class PrintHeaderFile extends Visitor {
         for (int i = summary.currentClass.methods.size() - 1; i >= 0; i--) {
             MethodImplementation currentMethod = summary.currentClass.methods.get(i);
             String currentMethodName = currentMethod.name;
+
+            //if the method is overloaded
+            if (currentMethod.isOverloaded)
+                //put in vTable with overLoaded name
+                currentMethodName = currentMethod.overLoadedName;
+
             if (!currentMethod.isStatic) {
                 if (!(currentMethodName.startsWith("method"))) {
                     switch (currentMethodName) {
-                    case "toString":
-                        break;
-                    case "hashCode":
-                        break;
-                    case "equals":
-                        break;
-                    case "getClass":
-                        break;
-                    default:
-                        currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
-
+                        case "toString":
+                        case "hashCode":
+                        case "equals":
+                        case "getClass":
+                            break;
+                        default:
+                            currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
                     }
                 }
+
                 vConstructor.put(currentMethodName, currentMethodName + "(&__" + summary.currentClass.name + "::" + currentMethodName + ")");
 
                 StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
                 for (ParameterImplementation p : currentMethod.parameters)
-                    method.append(", " + p.type);
+                    method.append(", " + (p.type.equals("int") ? "int32_t" : p.type));
                 method.append(");\n");
                 vMethods.put(currentMethodName, method.toString());
             }
@@ -238,26 +288,30 @@ public class PrintHeaderFile extends Visitor {
             for (int i = superClass.methods.size() - 1; i >= 0; i--) {
                 MethodImplementation currentMethod = superClass.methods.get(i);
                 String currentMethodName = currentMethod.name;
+
+                //if the method is overloaded
+                if (currentMethod.isOverloaded)
+                    //put in header with overLoaded name
+                    currentMethodName = currentMethod.overLoadedName;
+
                 if (!(currentMethodName.startsWith("method"))) {
                     switch (currentMethodName) {
                     case "toString":
-                        break;
                     case "hashCode":
-                        break;
                     case "equals":
-                        break;
                     case "getClass":
                         break;
                     default:
                         currentMethodName = "method" + currentMethodName.substring(0, 1).toUpperCase() + currentMethodName.substring(1);
                     }
                 }
+
                 if (!vConstructor.containsKey(currentMethodName)) { //if it already exists, it is the overwriting method
                     StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")");
 
                     StringBuilder parameters = new StringBuilder("(%s");
                     for (ParameterImplementation p : currentMethod.parameters)
-                        parameters.append(", " + p.type);
+                        parameters.append(", " + (p.type.equals("int") ? "int32_t" : p.type));
                     parameters.append(")");
 
                     method.append(parameters.toString() + ";\n");
@@ -406,6 +460,7 @@ public class PrintHeaderFile extends Visitor {
         TreeMap<String, Integer> classDeclarationCounts = new TreeMap<>();
 
 
+        HashMap<String, HashMap<String, ArrayList<MethodImplementation>>> overLoadedMethods = new HashMap<>();
         StringBuilder forwardDeclarations;
         StringBuilder typeDef;
         StringBuilder code;
@@ -516,8 +571,10 @@ public class PrintHeaderFile extends Visitor {
             GNode node = (GNode) ImplementationUtil.loadTestFile(test);
             AstTraversal visitorTraversal = new AstTraversal(ImplementationUtil.newRuntime());
             AstTraversal.AstTraversalSummary summaryTraversal = visitorTraversal.getTraversal(node);
+            //System.out.println("--------Before Mutation--------");
+            //ImplementationUtil.prettyPrintAst(node);//Before mutated
             GNode parentNode = HeaderAst.getHeaderAst(summaryTraversal).parent;
-            ImplementationUtil.prettyPrintAst(parentNode);
+            //ImplementationUtil.prettyPrintAst(parentNode);
 
             try {
                 PrintWriter printerHeader;

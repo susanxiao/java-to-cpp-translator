@@ -22,7 +22,6 @@ class HeaderComponent {
     private PrintHeaderFile.headerFileSummary headerFileSummary = null;
     private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
-
     HeaderComponent(String printPath, GNode root) {
         this.printPath = printPath;
         this.root = root;
@@ -171,7 +170,6 @@ public class TranslationFacade {
     private MainComponent mainController;
 
     public TranslationFacade() {
-
     }
 
     public TranslationFacade(String filePath, String path) {

@@ -69,21 +69,22 @@ public class ClassImplementation {
         declarations.add(declaration);
     }
 
-    public MethodImplementation findMethod(String name) {
-        for (int i = 0; i < methods.size(); i++) {
-            MethodImplementation m = methods.get(i);
-            if (name.equals(m.name)) return m;
-        }
-        return null;
-
+    public ArrayList<MethodImplementation> deepFindMethod(String name) {
+        return deepFindMethod(new ArrayList<MethodImplementation>(), name);
     }
 
-    public MethodImplementation deepFindMethod(String name) {
-        MethodImplementation method = findMethod(name);
-        if (method == null) {
-            if (superClass == null) return null;
-            else return superClass.deepFindMethod(name);
-        } else return method;
+    private void findMethod(ArrayList<MethodImplementation> methodsToReturn, String name) {
+        for (int i = 0; i < methods.size(); i++) {
+            MethodImplementation m = methods.get(i);
+            if (name.equals(m.name)) methodsToReturn.add(m);
+        }
+    }
+
+    private ArrayList<MethodImplementation> deepFindMethod(ArrayList<MethodImplementation> methodsToReturn, String name) {
+        findMethod(methodsToReturn, name);
+        if (superClass != null)
+            methodsToReturn.addAll(superClass.deepFindMethod(name));
+        return methodsToReturn;
     }
 
     public void addPackage(String name) {

@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.NodeUtil;
 import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -94,7 +95,44 @@ public class PrintCppFile extends Visitor {
 
     public void visitClassBody(GNode n) {
         if (!summary.isMainClass) {
+            //check If methods are overloaded
+           // System.out.println("check method overloading");
+            ArrayList<String> checkMethodOverloading = new ArrayList<String>();
+            for (Object methods : n) {
+                GNode currentMethod = (GNode) methods;
+                if (currentMethod.getName().equals("MethodDeclaration")) {
+                    String methodName = currentMethod.getString(3);
+                    checkMethodOverloading.add(methodName);
+                    //summaryTraversal.isTheMethodOverloaded.put(methodName, "");
+                }
+            }
+            int numOfMethods = checkMethodOverloading.size();
+            //System.out.println(numOfMethods);
+            boolean[] isAOverloadedMethod = new boolean[numOfMethods];//default is false
+            if(numOfMethods>1){//method overloading possible
+                //System.out.println("method overloading possible");
+                for(int s=0; s< numOfMethods; s++){
+                    String methodName= checkMethodOverloading.get(s);
+                    int numOfSameMethodNames=0;
+                    for(String findStringsWithSameName : checkMethodOverloading){
+                        if(methodName.equals(findStringsWithSameName)){
+                            numOfSameMethodNames++;
+                        }
+                    }
+                    if(numOfSameMethodNames>1){
+                        isAOverloadedMethod[s]=true;
+                        //summaryTraversal.isTheMethodOverloaded.
+                    }
+                }
+            }
+            for(boolean overload : isAOverloadedMethod) {
+                //System.out.println(overload);
+            }
+            //System.out.println("--end checking method overloading--");
+            //System.out.println(summaryTraversal.classNames);
+
             boolean constructorCreated = false;
+            int nthMethod=0;//use for checking overloading
             for (Object methods : n) {
                 GNode currentMethod = (GNode) methods;
                 if (currentMethod.getName().equals("FieldDeclaration")) {
@@ -104,10 +142,14 @@ public class PrintCppFile extends Visitor {
                     constructorCreated = true;
                     summary.code.append("\n");
                 } else if (currentMethod.getName().equals("MethodDeclaration")) {
-                    visitMethodDeclaration(currentMethod, n);
+                    boolean isThisMethodOverLoaded = isAOverloadedMethod[nthMethod];
+                    visitMethodDeclaration(currentMethod, n, isThisMethodOverLoaded);
+                    nthMethod++;
                     summary.code.append("\n");
+
                 }
             }
+
             if (!constructorCreated) {
                 summary.addLine("__" + summary.currentClass.name + "::__" + summary.currentClass.name + "() : __vptr(&__vtable)");
                 for (FieldDeclaration var : summaryTraversal.classes.get(summary.currentClass.name).declarations) {
@@ -129,7 +171,7 @@ public class PrintCppFile extends Visitor {
         else {
             for (Object o : n) {
                 if (o instanceof Node && ((Node) o).getName().equals("MethodDeclaration"))
-                    visitMethodDeclaration(GNode.cast(o), n);
+                    visitMethodDeclaration(GNode.cast(o), n, false);
             }
         }
     }
@@ -168,13 +210,6 @@ public class PrintCppFile extends Visitor {
                         else if (assignment.getName().equals("NewArrayExpression")) {
                             String qualifiedIdentifier = assignment.getNode(0).getString(0);
                             if (!qualifiedIdentifier.equals("String") && !qualifiedIdentifier.equals("Object")) {
-                                if (!summary.hasRunTime)
-                                    summary.startRunTime();
-                                summary.addRunTimeLine("template<>\n");
-                                summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier+">::__class()");
-                                summary.incRunTimeScope();
-                                summary.addRunTimeLine("static java::lang::Class k =\n");
-
                                 /*orginal*/
                                 //summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[java.lang.*EDITHERE*"+qualifiedIdentifier+";\"),\n");
 
@@ -205,13 +240,52 @@ public class PrintCppFile extends Visitor {
                                 for(int i=0; i<arrayDimension;i++){
                                     addDimensions+="[";
                                 }
-                                summary.addRunTimeLine("\tnew java::lang::__Class(literal(\""+addDimensions+"L"+packageName+"."+qualifiedIdentifier+";\"),\n");
+                                //if it is a 1D array of int, do not create another template
+                                if (!(arrayDimension == 1 && qualifiedIdentifier.equals("int"))) {
+                                    if (!summary.hasRunTime)
+                                        summary.startRunTime();
+                                    summary.addRunTimeLine("template<>\n");
+
+                                    if (arrayDimension > 1) { //only handles 2dimensions
+                                        if (qualifiedIdentifier.equals("int"))
+                                            summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + qualifiedIdentifier + ">* >::__class()");
+                                        else {
+                                            //add the first dimensional array
+                                            summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + ">::__class()");
+                                            summary.incRunTimeScope();
+                                            summary.addRunTimeLine("static java::lang::Class k =\n");
+                                            summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"" + addDimensions.substring(1) + "L" + packageName + "." + qualifiedIdentifier + ";\"),\n");
+                                            summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
+                                            summary.addRunTimeLine("\t\t\t" + summary.classLocation.replace(".", "::") + "__" + qualifiedIdentifier + "::__class());\n");
+                                            summary.addRunTimeLine("return k;\n");
+                                            summary.decRunTimeScope();
+
+                                            summary.addRunTimeLine("template<>\n");
+                                            summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + "> >::__class()");
+                                        }
+                                    }
+                                    else
+                                        summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + ">::__class()");
+                                    summary.incRunTimeScope();
+                                    summary.addRunTimeLine("static java::lang::Class k =\n");
+
+                                    summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"" + addDimensions + "L" + packageName + "." + qualifiedIdentifier + ";\"),\n");
                                 /*End editing*/
 
-                                summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
-                                summary.addRunTimeLine("\t\t\t"+summary.classLocation.replace(".", "::") +"__"+qualifiedIdentifier+"::__class());\n");
-                                summary.addRunTimeLine("return k;\n");
-                                summary.decRunTimeScope();
+                                    summary.addRunTimeLine("\t\t\tjava::lang::__Object::__class(),\n");
+
+                                    if (arrayDimension > 1) { //only handles 2 dimensions
+                                        if (qualifiedIdentifier.equals("int"))
+                                            summary.addRunTimeLine("\t\t\t__rt::Array<" + qualifiedIdentifier + ">::__class());\n");
+                                        else
+                                            summary.addRunTimeLine("\t\t\t__rt::Array<"+summary.classLocation.replace(".", "::") +"__" + qualifiedIdentifier + ">::__class());\n");
+                                    }
+                                    else
+                                        summary.addRunTimeLine("\t\t\t" + summary.classLocation.replace(".", "::") + "__" + qualifiedIdentifier + "::__class());\n");
+
+                                    summary.addRunTimeLine("return k;\n");
+                                    summary.decRunTimeScope();
+                                }
 
                             }
                         }
@@ -453,7 +527,14 @@ public class PrintCppFile extends Visitor {
         summary.code = new StringBuilder(String.format(summary.code.toString(), initializers.toString()));
     }
 
-    public void visitMethodDeclaration(GNode n, GNode classBodyNode) {
+    public void visitMethodDeclaration(GNode n, GNode classBodyNode, boolean isThisMethodOverloaded) {
+        //isThis method a overloaded method?
+        if(isThisMethodOverloaded){
+            //System.out.println("Overlaoded method");
+        }
+        else{
+            //System.out.println("not a Overlaoded method");
+        }
 
         if (!summary.isMainClass) {
             summary.currentClassMethodCount++;
@@ -477,10 +558,17 @@ public class PrintCppFile extends Visitor {
 
             String methodName = n.getString(3);
 
+            boolean isOverloaded = false;
+            HashMap<String, ArrayList<MethodImplementation>> map = summaryTraversal.overLoadedMethods.get(summary.currentClass.name);
+            if (map != null && map.containsKey(methodName)) {
+                isOverloaded = true;
+                methodSignature.append(returnType + " __" + summary.currentClass.name + "::%s("); //methodName goes here;
+            }
+            else {
+                methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
+            }
 
-            methodSignature.append(returnType + " __" + summary.currentClass.name + "::" + methodName + "(");
-
-            Set<String> paramNames = new TreeSet<>();
+            HashMap<String, String> paramNames = new HashMap<>();
 
             Node formalParameters = n.getNode(4);
             String[] paramTypesCorrespondingToParamNames = new String[formalParameters.size()];
@@ -495,45 +583,31 @@ public class PrintCppFile extends Visitor {
                         String paramTypeForParamName = formalParameter.getNode(1).getNode(0).getString(0);
                         if (isStatic) {
                             if (!paramName.equals("__this"))
-                                methodSignature.append(className + " " + paramName);
-                            paramNames.add(paramName);
-                            paramTypesCorrespondingToParamNames[i] = paramTypeForParamName;
-                            //System.out.println(paramTypeForParamName + " added");
+                                methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
+                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
                         } else {
-                            methodSignature.append(className + " " + paramName);
-                            paramNames.add(paramName);
-                            paramTypesCorrespondingToParamNames[i] = paramTypeForParamName;
-                            //System.out.println(paramTypeForParamName + " added");
+                            methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
+                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
                         }
                         if (i < formalParameters.size() - 1)
                             methodSignature.append(", ");
+
+                        if (isOverloaded && !paramName.equals("__this"))
+                            methodName += className.substring(0, 1).toUpperCase() + className.substring(1);
                     }
                 }
             }
             methodSignature.append(")");
-            summary.addLine(methodSignature.toString());
+            summary.addLine(isOverloaded ? String.format(methodSignature.toString(), methodName) : methodSignature.toString());
 
             summary.incScope();
             Node methodBlock = n.getNode(7);
 
-            //for (String name : paramNames) {
-            //System.out.println("--sizes--");
-            //System.out.println(paramNames.size());
-            //System.out.println(paramTypesCorrespondingToParamNames.length);
-            for(int i = 0; i<paramNames.size(); i++){
-                String name = paramNames.toArray()[i].toString();
-                System.out.println("print param names");
-                System.out.println(name);
-                //don't need to check null for primitive types
-                String paramTypesForParam = paramTypesCorrespondingToParamNames[i];
-                /*System.out.println(paramTypesForParam);
-                if(paramTypesForParam.equals("int")){
-                    System.out.println("its a int type!");
-                }
-                else{
-                    System.out.println("not a int type!");
-                }*/
-                if (!name.equals("__this") && !paramTypesForParam.equals("int") && !paramTypesForParam.equals("double") )
+            for (String name : paramNames.keySet()) {
+                String paramType = paramNames.get(name);
+                if (!name.equals("__this") &&
+                        !(paramType.equals("int32_t")
+                        || paramType.equals("double"))) //TODO: other primitives
                     summary.addLine("__rt::checkNotNull(" + name + ");\n");
 
             }
@@ -573,17 +647,14 @@ public class PrintCppFile extends Visitor {
                         if (primaryIdentifier.equals("cout")) {
                             StringBuilder line = new StringBuilder("cout << ");
                             Node arguments = expressionStatementChild.getNode(3);
-                            //IntelliJ tells me param is never used so I commented it as it was causing cast problems.
-                            //String param = arguments.getNode(0).getNode(0).getString(0);
-                            if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
+                            if (arguments.getNode(0).getName().equals("StringLiteral")) {
+                                line.append(arguments.getNode(0).getString(0));
+                            } else if (arguments.getNode(0).getName().equals("PrimaryIdentifier")) {
                                 Node argumentsPrimaryIdentifier = arguments.getNode(0);
                                 line.append(argumentsPrimaryIdentifier.getString(0) + "->__vptr");
                                 for (int i = 1; i < arguments.size(); i++) {
                                     String field = arguments.getString(i);
                                     line.append("->" + field);
-                                }
-                                if (expressionStatementChild.getString(2) != null) {
-                                    line.append(" << " + expressionStatementChild.getString(2));
                                 }
                             } else if (arguments.getNode(0).getName().equals("SelectionExpression")) {
                                 Node selectionExpression = arguments.getNode(0);
@@ -594,10 +665,6 @@ public class PrintCppFile extends Visitor {
                                     line.append("->" + field);
                                 }
                                 //line.append("->data");
-                                if (expressionStatementChild.getString(2) != null) {
-                                    line.append(" << " + expressionStatementChild.getString(2));
-                                }
-
                             } else if (arguments.getNode(0).getName().equals("CallExpression")) {
                                 Node callExpression = arguments.getNode(0);
                                 Node argumentsPrimaryIdentifier = callExpression.getNode(0);
@@ -621,15 +688,9 @@ public class PrintCppFile extends Visitor {
                                     }
                                 }
                                 //line.append("->data");
-                                if (expressionStatementChild.getString(2) != null) {
-                                    line.append(" << " + expressionStatementChild.getString(2));
-                                }
-
-                            } else if (arguments.getNode(0).getName().equals("StringLiteral")) {
-                                System.out.println("add cout string literal");
-                                String printThisString = arguments.getNode(0).getString(0);
-                                System.out.println(printThisString);
-
+                            }
+                            if (expressionStatementChild.getString(2) != null) {
+                                line.append(" << " + expressionStatementChild.getString(2));
                             }
                             summary.addLine(line.toString() + ";\n");
                         }

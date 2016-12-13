@@ -44,9 +44,9 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodSetFld(&__A::methodSetFld),
-			methodAlmostSetFld(&__A::methodAlmostSetFld),
-			methodGetFld(&__A::methodGetFld)
+			methodSetFld (&__A::methodSetFld),
+			methodAlmostSetFld (&__A::methodAlmostSetFld),
+			methodGetFld (&__A::methodGetFld)
 			{}
 		};
 
