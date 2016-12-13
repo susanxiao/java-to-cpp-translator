@@ -119,10 +119,8 @@ public class HeaderAst {
             TreeMap<String, ArrayList<String>> methods = new TreeMap<>();
             Set<String> methodNames = new TreeSet<>();
 
-            System.out.println("check overloading");
             ArrayList<String> methodNames_checkOverloading = new ArrayList<String>();
             for(MethodImplementation m : currentClass.methods) {
-                System.out.println(m.name);
                 methodNames_checkOverloading.add(m.name);
             }
             ArrayList<String> methodIsOverloaded = new ArrayList<String>();
@@ -167,7 +165,6 @@ public class HeaderAst {
                 methodCount++;
                 //check if this method is overloaded
                 int index = methodNames_checkOverloading.indexOf(m.name);
-                System.out.println("index: " + index);
                 String isOverloaded= methodIsOverloaded.get(index);
 
                 if(isOverloaded.equals("true")){
@@ -177,8 +174,6 @@ public class HeaderAst {
                     //getParams
                     ArrayList<String> paramForEachMethod = new ArrayList<>();
                     for (ParameterImplementation param : m.parameters) {
-                        System.out.println("get params");
-                        System.out.println(param.toString());
                         String paramName="";
                         String paramToString = param.toString();
                         for(char c: paramToString.toCharArray()){
@@ -189,7 +184,6 @@ public class HeaderAst {
                              break;
                             }
                         }
-                        System.out.println("paramNAme: " + paramName);
                         paramForEachMethod.add(paramName);
                     }
                     //End: got all parameters
@@ -198,7 +192,6 @@ public class HeaderAst {
                     for(String s: paramForEachMethod){
                         overloadedName += s;
                     }
-                    System.out.println("overloadedName: " +overloadedName);
 
                     currentMethod1.add(overloadedName);
                     currentMethod1.add(currentClass.name);
@@ -224,12 +217,9 @@ public class HeaderAst {
                     methods.put(m.name, currentMethod1);
                 }
             }//END: for(MethodImplementation m : currentClass.methods)
-            System.out.println("methodCount: " + methodCount);
 
-            System.out.println("methodNames.size()" + methodNames.size());
             for(Object name : methodNames) {
-                //
-                System.out.println("name: " + name);
+                
                 String mName = (String) name;
                 DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
                 dataLayoutNode.add(DataLayoutMethodDeclarationNode);

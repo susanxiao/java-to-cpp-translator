@@ -433,12 +433,10 @@ public class PrintMainFile extends Visitor {
                                 GNode SelectionExpressNode = (GNode) b_Node.get(2);
 
 
-                                //System.out.println("test Sel Node: "+SelectionExpressNode.toString());
                                 if(SelectionExpressNode.getNode(0).getName().equals("SubscriptExpression")){
                                     //Select expression in 2D array
                                     Node twoDimension_SubscriptExpression = SelectionExpressNode.getNode(0);
                                     String subscriptExpression = returnSubscriptExpression((GNode) twoDimension_SubscriptExpression);
-                                    //System.out.print("2nd for loop: "+subscriptExpression+"\n");
                                     forStatement += subscriptExpression;
 
                                 }else {
@@ -530,7 +528,6 @@ public class PrintMainFile extends Visitor {
                 if (currentClass.getString(1).contains("Test")) { //Main
                     //save information for fields in main(use for method overloading)
 
-                    //System.out.println(currentClass.getNode(5).getNode(0).getNode(7).getName());//Block
                     //GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
                     GNode block = (GNode) NodeUtil.dfs(currentClass,"Block");
                     for(Object obj : block) {
