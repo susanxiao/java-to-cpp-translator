@@ -3,10 +3,10 @@
 
 - Supports unit testing (sbt test-only)
 
-    - AstTraversalTest 0-17
-    - CppTest 0-17
-    - HeaderAstTest 0-17
-    - HeaderTest 0-17
+    - AstTraversalTest 0-30
+    - CppTest 0-30
+    - HeaderAstTest 0-30
+    - HeaderTest 0-30
 
 - Supports printing the output.h, output.cpp, and main.cpp files individually
 

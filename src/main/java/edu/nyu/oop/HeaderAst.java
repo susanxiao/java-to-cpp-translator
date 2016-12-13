@@ -12,6 +12,7 @@ import static edu.nyu.oop.AstTraversal.*;
 public class HeaderAst {
 
     static HeaderAstSummary getHeaderAst(AstTraversalSummary summary) {
+
         HeaderAstSummary constructionSummary = new HeaderAstSummary();
         constructionSummary = ConstructHeaderAst(summary, constructionSummary);
         return constructionSummary;
@@ -118,6 +119,29 @@ public class HeaderAst {
             TreeMap<String, ArrayList<String>> methods = new TreeMap<>();
             Set<String> methodNames = new TreeSet<>();
 
+            System.out.println("check overloading");
+            ArrayList<String> methodNames_checkOverloading = new ArrayList<String>();
+            for(MethodImplementation m : currentClass.methods) {
+                System.out.println(m.name);
+                methodNames_checkOverloading.add(m.name);
+            }
+            ArrayList<String> methodIsOverloaded = new ArrayList<String>();
+            for(int i=0; i< methodNames_checkOverloading.size(); i++){
+                String checkThisMethod = methodNames_checkOverloading.get(i);
+                int howMayOfthisMethod = 0;
+                for(int j=0; j< methodNames_checkOverloading.size(); j++){
+                    if(checkThisMethod.equals(methodNames_checkOverloading.get(j))){
+                        howMayOfthisMethod++;
+                    }
+                }
+                if(howMayOfthisMethod>1){
+                    methodIsOverloaded.add("true");
+                }
+                else{
+                    methodIsOverloaded.add("false");
+                }
+            }
+
             ClassImplementation superClass = currentClass.superClass;
             while(superClass != null) {
                 for (MethodImplementation m : superClass.methods) {
@@ -136,22 +160,76 @@ public class HeaderAst {
                 }
                 superClass = superClass.superClass;
             }
+
+
             int methodCount = 0;
             for(MethodImplementation m : currentClass.methods) {
                 methodCount++;
-                ArrayList<String> currentMethod1 = new ArrayList<>();
-                currentMethod1.add(m.returnType);
-                currentMethod1.add(m.name);
-                currentMethod1.add(currentClass.name);
-                currentMethod1.add("Parameters");
-                for(ParameterImplementation param : m.parameters) {
-                    currentMethod1.add(param.toString());
-                }
-                methodNames.add(m.name);
-                methods.put(m.name, currentMethod1);
-            }
+                //check if this method is overloaded
+                int index = methodNames_checkOverloading.indexOf(m.name);
+                System.out.println("index: " + index);
+                String isOverloaded= methodIsOverloaded.get(index);
 
+                if(isOverloaded.equals("true")){
+                    ArrayList<String> currentMethod1 = new ArrayList<>();
+                    currentMethod1.add(m.returnType);
+
+                    //getParams
+                    ArrayList<String> paramForEachMethod = new ArrayList<>();
+                    for (ParameterImplementation param : m.parameters) {
+                        System.out.println("get params");
+                        System.out.println(param.toString());
+                        String paramName="";
+                        String paramToString = param.toString();
+                        for(char c: paramToString.toCharArray()){
+                            if(c != ' '){
+                                paramName+=c;
+                            }
+                            else{
+                             break;
+                            }
+                        }
+                        System.out.println("paramNAme: " + paramName);
+                        paramForEachMethod.add(paramName);
+                    }
+                    //End: got all parameters
+
+                    String overloadedName = m.name + "_";
+                    for(String s: paramForEachMethod){
+                        overloadedName += s;
+                    }
+                    System.out.println("overloadedName: " +overloadedName);
+
+                    currentMethod1.add(overloadedName);
+                    currentMethod1.add(currentClass.name);
+                    currentMethod1.add("Parameters");
+                    for (ParameterImplementation param : m.parameters) {
+                        currentMethod1.add(param.toString());
+                    }
+                    methodNames.add(overloadedName);
+                    methods.put(overloadedName, currentMethod1);
+
+                }
+                else {//No overloaded methods
+
+                    ArrayList<String> currentMethod1 = new ArrayList<>();
+                    currentMethod1.add(m.returnType);
+                    currentMethod1.add(m.name);
+                    currentMethod1.add(currentClass.name);
+                    currentMethod1.add("Parameters");
+                    for (ParameterImplementation param : m.parameters) {
+                        currentMethod1.add(param.toString());
+                    }
+                    methodNames.add(m.name);
+                    methods.put(m.name, currentMethod1);
+                }
+            }//END: for(MethodImplementation m : currentClass.methods)
+            System.out.println("methodCount: " + methodCount);
+
+            System.out.println("methodNames.size()" + methodNames.size());
             for(Object name : methodNames) {
+                //
+                System.out.println("name: " + name);
                 String mName = (String) name;
                 DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
                 dataLayoutNode.add(DataLayoutMethodDeclarationNode);

@@ -39,12 +39,12 @@ public class ImplementationUtil {
             }
         }
 
-	TranslationFacade translator = new TranslationFacade();
+        TranslationFacade translator = new TranslationFacade();
 
         for (int i = start; i <= end; i++) {
             String filePath = String.format("./src/test/java/inputs/test%03d/Test%03d.java", i, i);
             String path = String.format("./testOutputs/translationOutputs/test%03d/", i);
-            
+
             translator.setControllers(filePath, path);
             translator.translate();
         }

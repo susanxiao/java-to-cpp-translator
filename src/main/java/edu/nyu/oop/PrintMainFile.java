@@ -46,6 +46,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitClassBody(GNode n) {
+
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -109,6 +110,7 @@ public class PrintMainFile extends Visitor {
                 mainImplementation.append("int main(void)\n{\n\n");
         }
 
+
         for (Object o : block) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -155,6 +157,10 @@ public class PrintMainFile extends Visitor {
                 if (o instanceof Node) {
                     Node currentDeclarator = (Node) o;
                     String variable = currentDeclarator.getString(0);
+                    if(type.equals("byte")){
+                        //System.out.println("need to change byte");
+                        type = "unsigned char";
+                    }
                     summary.classVariables.put(variable, type);
 
                     if (summary.localVariables == null)
@@ -607,6 +613,95 @@ public class PrintMainFile extends Visitor {
                             methodName = "method" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
 
                     }
+                    //check method overloading
+                    System.out.println("check index");
+                    System.out.println(methodName);
+                    //get the class the method belongs to
+                    String varName = callExpressionNode.getNode(0).getString(0);
+                    String classOfVar = summaryTraversal.fieldsInMainInfo.get(varName);
+                    System.out.println("classOfVar: " + classOfVar);
+
+                    int index=-1;
+                    int theClassWithOverloading=-1;
+                    for(int i=0; i<summaryTraversal.allMethods_checkMethodOverloading.size();i++){
+                        if(summaryTraversal.allMethods_checkMethodOverloading.get(i).get(0).equals(classOfVar)){
+                            index= summaryTraversal.allMethods_checkMethodOverloading.get(i).indexOf(methodName);//returns the first on it finds.
+                            theClassWithOverloading=i;
+                        }
+                    }
+
+                    System.out.println(index);
+                    if(index>-1){
+                        if(summaryTraversal.isOverLoaded.get(theClassWithOverloading).get(index).equals("overloaded")) {
+                            System.out.println("--fix overloading--");
+                            methodName += "_";
+                            //get type of parameters
+                            Node arguments = callExpressionNode.getNode(3);
+                            ArrayList<String> addParamsToMethodName = new ArrayList<String>();
+                            for (int i = 1; i < arguments.size(); i++) {
+                                Node currNode = arguments.getNode(i);
+                                if (currNode.getName().equals("PrimaryIdentifier")) {
+                                    String varType = summaryTraversal.fieldsInMainInfo.get(currNode.getString(0));
+                                    System.out.println(varType);
+                                    if (summaryTraversal.fieldsInMainInfo.get(currNode.getString(0)).equals("unsigned char")) {
+                                        //methodName += "int";
+                                        addParamsToMethodName.add("int");
+                                    } else {
+                                        //methodName += varType;
+                                        addParamsToMethodName.add(varType);
+                                    }
+                                } else if (currNode.getName().equals("FloatingPointLiteral")) {
+                                    //methodName += "double";
+                                    addParamsToMethodName.add("double");
+                                } else if (currNode.getName().equals("CastExpression")) {
+
+                                    //methodName += currNode.getNode(0).getNode(0).getString(0);
+                                    addParamsToMethodName.add(currNode.getNode(0).getNode(0).getString(0));
+                                } else if (currNode.getName().equals("NewClassExpression")) {
+                                    //methodName += currNode.getNode(2).getString(0);
+                                    addParamsToMethodName.add(currNode.getNode(2).getString(0));
+                                }
+                            }
+                            String tempNewMethodName = methodName;
+                            for (int i = 0; i < addParamsToMethodName.size(); i++) {
+                                tempNewMethodName += addParamsToMethodName.get(i);
+                                System.out.println("temp: " + tempNewMethodName);
+                            }
+                            //if tempNewMethod is not in the list of methods, change(downcast/upcast)
+                            int theIndexofParamToChange = addParamsToMethodName.size()-1;
+                            boolean methodDoesNotExist = true;
+                            while(methodDoesNotExist) {
+                                for (int i = 0; i < summaryTraversal.overloadedMethodNames.size(); i++) {
+                                    if (summaryTraversal.overloadedMethodNames.get(i).get(1).equals(tempNewMethodName)) {
+                                        methodDoesNotExist = false;
+                                        methodName = tempNewMethodName;
+                                        break;
+                                    }
+                                }
+
+                                if(methodDoesNotExist) {
+                                    //try editing tempNewMethodName
+                                    addParamsToMethodName.set(theIndexofParamToChange, "Object");
+                                    //Todo :fix Bug- works with test32, but not sure for future tests
+                                    theIndexofParamToChange--;
+                                    tempNewMethodName = methodName;
+                                    for (int i = 0; i < addParamsToMethodName.size(); i++) {
+                                        tempNewMethodName += addParamsToMethodName.get(i);
+                                    }
+
+                                    System.out.println("new temp name : " + tempNewMethodName);
+
+                                    /*if (!methodDoesNotExist) {
+                                        System.out.println("need to change name");
+                                    } else {
+                                        System.out.println("use this name");
+                                    }*/
+                                }
+                            }
+                        }
+
+                    }
+
                 }
                 String expressionStatement1 = "";
                 String variableCalling = callExpressionNode.getNode(0).getString(0);
@@ -1180,11 +1275,110 @@ public class PrintMainFile extends Visitor {
         for (Object o : n) {
             Node currentClass = (Node) o;
             if (currentClass.getName().equals("ClassDeclaration")) {
-                if (currentClass.getString(1).contains("Test")) {
+                if (currentClass.getString(1).contains("Test")) { //Main
+                    //save information for fields in main(use for method overloading)
+                    System.out.println("Testing");
+
+                    //System.out.println(currentClass.getNode(5).getNode(0).getNode(7).getName());//Block
+                    //GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
+                    GNode block = (GNode) NodeUtil.dfs(currentClass,"Block");
+                    for(Object obj : block) {
+                        Node currClass = (Node) obj;
+                        if (currClass.getName().equals("FieldDeclaration")) {
+                            System.out.println("Yes");
+                            String varName = currClass.getNode(2).getNode(0).getString(0);
+                            System.out.println(varName);
+                            String varType = currClass.getNode(1).getNode(0).getString(0);
+                            System.out.println(varType);
+                            if(varType.equals("byte")){
+                                varType = "unsigned char";
+
+                            }
+                            summaryTraversal.fieldsInMainInfo.put(varName, varType);
+                        }
+                    }
+                    System.out.println(summaryTraversal.fieldsInMainInfo.toString());
+                    //END: save information for fields in main(use for method overloading)
+
                     summary.currentClassName = currentClass.getString(1);
                     visitClassDeclaration((GNode) currentClass);
+
+                }
+                else{//it's not the main class
+
+
+
+
+
+                    //check for method overloading
+                    System.out.println("other class");
+                    String className = currentClass.getString(1);
+                    //System.out.println(className);
+                    ArrayList<String> a = new ArrayList<String>();
+                    a.add(className);
+
+
+
+                    Node ClassBody = currentClass.getNode(5);
+                    for(Object obj: ClassBody){
+                        ArrayList<String> finalMethodNames = new ArrayList<String>();
+                        finalMethodNames.add(className);
+                        Node currClass = (Node) obj;
+                        if (currClass.getName().equals("MethodDeclaration")) {
+                            String methodName = currClass.getString(3);
+                            System.out.println(methodName);
+                            a.add(methodName);
+
+                            Node formalParamSNode = currClass.getNode(4);
+                            if(formalParamSNode.size()>1){
+                                methodName += "_";
+                                for(int i=1; i<formalParamSNode.size();i++){
+                                    methodName += formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0);
+                                    System.out.println("new methodNAMe: " + methodName);
+                                    //System.out.println(formalParamSNode.getNode(i).getNode(1).getNode(0).getString(0));
+
+                                }
+                            }
+                            finalMethodNames.add(methodName);
+                        }
+                        //System.out.println("final names" + finalMethodNames);
+                        summaryTraversal.overloadedMethodNames.add(finalMethodNames);
+                    }
+                    System.out.println("final names" + summaryTraversal.overloadedMethodNames.toString());
+                    summaryTraversal.allMethods_checkMethodOverloading.add(a);
+                    System.out.println( summaryTraversal.allMethods_checkMethodOverloading.toString() );
+
+                    for(int i=0; i<summaryTraversal.allMethods_checkMethodOverloading.size(); i++){
+                        ArrayList<String> arrayListElement = new ArrayList<String>();
+                        arrayListElement.add(summaryTraversal.allMethods_checkMethodOverloading.get(i).get(0));
+                        for(int j=1;j<summaryTraversal.allMethods_checkMethodOverloading.get(i).size(); j++){
+                            String checkIfThisMethodIsOverloaded= summaryTraversal.allMethods_checkMethodOverloading.get(i).get(j);
+                            int howManyTimeTheMethodIsDefined = 0;
+                            for(int k=1;k<summaryTraversal.allMethods_checkMethodOverloading.get(i).size(); k++){
+                                if (checkIfThisMethodIsOverloaded.equals(summaryTraversal.allMethods_checkMethodOverloading.get(i).get(k))){
+                                    howManyTimeTheMethodIsDefined++;
+                                }
+                            }
+                            if (howManyTimeTheMethodIsDefined>1){
+                                System.out.println(checkIfThisMethodIsOverloaded + "is overloaded");
+                                arrayListElement.add("overloaded");
+                            }else{
+                                arrayListElement.add("not overloaded");
+                            }
+                        }
+                        summaryTraversal.isOverLoaded.add(arrayListElement);
+                    }
+                    System.out.println( summaryTraversal.isOverLoaded.toString() );
+
+
+
+
+
+
+
                 }
             }
+
         }
 
         s1.append(mainImplementation);

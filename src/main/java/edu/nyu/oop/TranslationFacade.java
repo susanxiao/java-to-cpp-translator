@@ -19,7 +19,6 @@ class HeaderComponent {
 
     private String printPath = null;
     private GNode root = null;
-
     private PrintHeaderFile.headerFileSummary headerFileSummary = null;
     private AstTraversal.AstTraversalSummary summaryTraversal = null;
 
@@ -174,7 +173,13 @@ public class TranslationFacade {
     }
 
     public TranslationFacade(String filePath, String path) {
-        this.headerController = new HeaderComponent(filePath, path, (GNode) loadTestFile(filePath));
+        this.headerController = new HeaderComponent(path, (GNode) loadTestFile(filePath));
+        this.cppController = new CppComponent(path, (GNode) loadTestFile(filePath));
+        this.mainController = new MainComponent(path, (GNode) loadTestFile(filePath));
+    }
+
+    public void setControllers(String filePath, String path) {
+        this.headerController = new HeaderComponent(path, (GNode) loadTestFile(filePath));
         this.cppController = new CppComponent(path, (GNode) loadTestFile(filePath));
         this.mainController = new MainComponent(path, (GNode) loadTestFile(filePath));
     }

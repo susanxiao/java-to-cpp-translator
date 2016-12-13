@@ -43,7 +43,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodPrintOther(&__A::methodPrintOther)
+			methodPrintOther (&__A::methodPrintOther)
 			{}
 		};
 
@@ -76,8 +76,8 @@ namespace inputs {
 			hashCode((int32_t(*)(B))&__Object::hashCode),
 			equals((bool(*)(B, Object))&__Object::equals),
 			getClass((Class(*)(B))&__Object::getClass),
-			toString(&__B::toString),
-			methodPrintOther(&__B::methodPrintOther)
+			toString (&__B::toString),
+			methodPrintOther (&__B::methodPrintOther)
 			{}
 		};
 
