@@ -219,7 +219,7 @@ public class HeaderAst {
             }//END: for(MethodImplementation m : currentClass.methods)
 
             for(Object name : methodNames) {
-                
+
                 String mName = (String) name;
                 DataLayoutMethodDeclarationNode = GNode.create("DataLayoutMethodDeclaration");
                 dataLayoutNode.add(DataLayoutMethodDeclarationNode);

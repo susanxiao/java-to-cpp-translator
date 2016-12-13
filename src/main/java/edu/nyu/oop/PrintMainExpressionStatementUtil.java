@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class PrintMainExpressionStatementUtil {
 
-    public static String handleCout(GNode expressionStatementRoot, PrintMainFile.PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
+    public static String handleCout(GNode expressionStatementRoot, PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
         String expressionStatement = "";
         expressionStatement += expressionStatementRoot.getNode(0).getNode(0).getNode(0).getString(0) + " << ";
         String primaryId = null;
@@ -257,7 +257,7 @@ public class PrintMainExpressionStatementUtil {
         return expressionStatement;
     } //End handleCout();
 
-    public static String handleCallExpressionPrimaryIdentifier(Node callExpressionNode, String methodName, PrintMainFile.PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
+    public static String handleCallExpressionPrimaryIdentifier(Node callExpressionNode, String methodName, PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
         String expressionStatement="";
         if (!(methodName.startsWith("method"))) {
             switch (methodName) {
@@ -516,7 +516,7 @@ public class PrintMainExpressionStatementUtil {
         return expressionStatement;
     } //End handleCallExpressionPrimaryIdentifier()
 
-    public static String handleExpressionNode(Node expressionNode, PrintMainFile.PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
+    public static String handleExpressionNode(Node expressionNode, PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
         String expressionStatement="";
         String primaryIdentifierExpression = "";
         boolean isArray = false;

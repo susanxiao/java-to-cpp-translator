@@ -474,23 +474,6 @@ public class PrintMainFile extends Visitor {
         this.summaryTraversal = summaryTraversal;
     }
 
-    public static class PrintMainFileSummary {
-        String currentClassName;
-        String filePrinted;
-        int checkClassCounter;
-        ArrayList<String> classNames = new ArrayList<>();
-        ArrayList<String> variables = new ArrayList<>();
-        TreeMap<String, String> classVariables = new TreeMap<>();
-
-        HashMap<String, String> localVariables;
-        HashMap<String, ArrayList<MethodImplementation>> overLoadedMethods;
-
-        String init2D;
-        String init2DSize;
-        String init2DType;
-        String init2DDec;
-    }
-
     public PrintMainFileSummary getSummary(GNode n) {
         StringBuilder s1 = new StringBuilder();
 
@@ -528,6 +511,7 @@ public class PrintMainFile extends Visitor {
                 if (currentClass.getString(1).contains("Test")) { //Main
                     //save information for fields in main(use for method overloading)
 
+                    //System.out.println(currentClass.getNode(5).getNode(0).getNode(7).getName());//Block
                     //GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
                     GNode block = (GNode) NodeUtil.dfs(currentClass,"Block");
                     for(Object obj : block) {
