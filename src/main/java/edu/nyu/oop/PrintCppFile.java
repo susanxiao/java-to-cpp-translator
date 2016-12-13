@@ -96,7 +96,6 @@ public class PrintCppFile extends Visitor {
     public void visitClassBody(GNode n) {
         if (!summary.isMainClass) {
             //check If methods are overloaded
-           // System.out.println("check method overloading");
             ArrayList<String> checkMethodOverloading = new ArrayList<String>();
             for (Object methods : n) {
                 GNode currentMethod = (GNode) methods;
@@ -107,10 +106,8 @@ public class PrintCppFile extends Visitor {
                 }
             }
             int numOfMethods = checkMethodOverloading.size();
-            //System.out.println(numOfMethods);
             boolean[] isAOverloadedMethod = new boolean[numOfMethods];//default is false
             if(numOfMethods>1){//method overloading possible
-                //System.out.println("method overloading possible");
                 for(int s=0; s< numOfMethods; s++){
                     String methodName= checkMethodOverloading.get(s);
                     int numOfSameMethodNames=0;
@@ -126,10 +123,7 @@ public class PrintCppFile extends Visitor {
                 }
             }
             for(boolean overload : isAOverloadedMethod) {
-                //System.out.println(overload);
             }
-            //System.out.println("--end checking method overloading--");
-            //System.out.println(summaryTraversal.classNames);
 
             boolean constructorCreated = false;
             int nthMethod=0;//use for checking overloading
@@ -142,8 +136,7 @@ public class PrintCppFile extends Visitor {
                     constructorCreated = true;
                     summary.code.append("\n");
                 } else if (currentMethod.getName().equals("MethodDeclaration")) {
-                    boolean isThisMethodOverLoaded = isAOverloadedMethod[nthMethod];
-                    visitMethodDeclaration(currentMethod, n, isThisMethodOverLoaded);
+                    visitMethodDeclaration(currentMethod, n);
                     nthMethod++;
                     summary.code.append("\n");
 
@@ -171,7 +164,7 @@ public class PrintCppFile extends Visitor {
         else {
             for (Object o : n) {
                 if (o instanceof Node && ((Node) o).getName().equals("MethodDeclaration"))
-                    visitMethodDeclaration(GNode.cast(o), n, false);
+                    visitMethodDeclaration(GNode.cast(o), n);
             }
         }
     }
@@ -214,14 +207,12 @@ public class PrintCppFile extends Visitor {
                                 //summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"[java.lang.*EDITHERE*"+qualifiedIdentifier+";\"),\n");
 
                                 /*edit*/
-                                //System.out.println("get packageName");
                                 String packageName="";//ex)inputs.test028
                                 ArrayList<String> currentPackages = summaryTraversal.currentPackages;
                                 int currentPackages_size = currentPackages.size();
                                 for(int i=0; i<currentPackages_size ; i++){
                                 //for(String p: currentPackages){
                                     String p = currentPackages.get(i);
-                                    //System.out.println(p);
                                     packageName+=p;
                                     if(i+1<currentPackages_size ){
                                         packageName+=".";
@@ -229,10 +220,7 @@ public class PrintCppFile extends Visitor {
                                 }
 
                                 //Find out Dimension of Array
-                                //System.out.println("Find out Dimension of Array");
                                 int arrayDimension=0;
-                                //System.out.println(n.getNode(1).getNode(1).getName());
-                                //System.out.println(n.getNode(1).getNode(1).size());
                                 if(n.getNode(1).getNode(1).getName().equals("Dimensions")){
                                     arrayDimension=n.getNode(1).getNode(1).size();
                                 }
@@ -335,19 +323,12 @@ public class PrintCppFile extends Visitor {
         //explicitly initialize the member 'parent' which does not have a default constructor
         if(constructorBlock.size()>0) {
             if (constructorBlock.getNode(0) != null) { // ExpressionStatementNode
-                //System.out.print("Almost there1");
                 if (constructorBlock.getNode(0).getName().equals("ExpressionStatement") && constructorBlock.getNode(0).getNode(0) != null) {
-                    //System.out.print("Almost there2");
                     if (constructorBlock.getNode(0).getNode(0).getName().equals("CallExpression")) {
-                        //System.out.print("Almost there3");
                         if (constructorBlock.getNode(0).getNode(0).getNode(0) == null) {
-                            //System.out.print("Almost there4");
                             if (constructorBlock.getNode(0).getNode(0).getNode(1) == null) {
-                                //System.out.print("Almost there5");
                                 if (constructorBlock.getNode(0).getNode(0).getString(2).equals("super")) {
-                                    //System.out.print("Almost there6");
                                     if (constructorBlock.getNode(0).getNode(0).getNode(3).getName().equals("Arguments")) {
-                                        //System.out.print("Almost there!");
                                         //there may be more than one argument
                                         String constructorArguments = "";
                                         int num_constructorArguments = constructorBlock.getNode(0).getNode(0).getNode(3).getNode(0).size();
@@ -527,14 +508,8 @@ public class PrintCppFile extends Visitor {
         summary.code = new StringBuilder(String.format(summary.code.toString(), initializers.toString()));
     }
 
-    public void visitMethodDeclaration(GNode n, GNode classBodyNode, boolean isThisMethodOverloaded) {
+    public void visitMethodDeclaration(GNode n, GNode classBodyNode) {
         //isThis method a overloaded method?
-        if(isThisMethodOverloaded){
-            //System.out.println("Overlaoded method");
-        }
-        else{
-            //System.out.println("not a Overlaoded method");
-        }
 
         if (!summary.isMainClass) {
             summary.currentClassMethodCount++;
@@ -772,7 +747,6 @@ public class PrintCppFile extends Visitor {
                         Object o1 = currentNode.get(i);
                         if (o1 instanceof Node) {
                             Node currentChild = (Node) o1;
-                            //System.out.println("print names: " + currentChild.getName());
                             if (currentChild.getName().equals("IntegerLiteral")) {
                                 additiveExpression += currentChild.getString(0);
                             } else if (currentChild.getName().equals("PrimaryIdentifier")) {

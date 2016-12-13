@@ -144,11 +144,8 @@ public class PrintHeaderFile extends Visitor {
             //a[i]=name;
             a.add(name);
         }
-        //System.out.println("a araylsit " + a.toString());
-        //System.out.println(methodNames.toString());
         //this.methodNames.add(a);
         summaryTraversal.allMethods_checkMethodOverloading.add(a);
-        //System.out.println(summaryTraversal.allMethods_checkMethodOverloading.toString());
 
         //boolean[] isOverloaded = new boolean[summary.currentClass.methods.size()];
         ArrayList<String> isOverloaded = new ArrayList<String>();
@@ -168,14 +165,11 @@ public class PrintHeaderFile extends Visitor {
             //isOverloaded[i]=isAOverloadedMethod;
             isOverloaded.add(isAOverloadedMethod);
         }
-        //System.out.println("isOverloaded.  " + isOverloaded.toString());
         summaryTraversal.isOverLoaded.add(isOverloaded);
 
         int classMethodCount = 0;
-        //System.out.println( "size "+summary.currentClass.methods.size());
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
             //check if the method is overloaded
-            //System.out.println( currentMethod.name.toString());
             //int index = Arrays.asList(a).indexOf(currentMethod.name.toString());
             int index = a.indexOf(currentMethod.name.toString());
 
