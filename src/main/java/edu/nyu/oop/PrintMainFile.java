@@ -57,11 +57,25 @@ public class PrintMainFile extends Visitor {
                 }
             }
         }
-
+        //GNode methodMain = (GNode) n.getNode(0);
+        //visitMethodDeclaration(methodMain);
     }
 
     public void visitNestedBlock(GNode n) {
         mainImplementation.append(" {\n");
+
+        if (summary.init2D != null) {
+            String initPrimaryIdentifier = String.format(summary.init2D, summary.init2DDec);
+
+            mainImplementation.append("\t\t"+initPrimaryIdentifier+" = "+"new __rt::Array<"+summary.init2DType+">("+summary.init2DSize+");\n");
+
+            //reset them;
+            summary.init2D = null;
+            summary.init2DSize = null;
+            summary.init2DType = null;
+            summary.init2DDec = null;
+        }
+
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -82,7 +96,9 @@ public class PrintMainFile extends Visitor {
 
     public void visitMethodDeclaration(GNode n) {
         //System.out.println(n.getString(3));
-
+        /*if(n.getString(3).equals("methodMain")){
+            mainImplementation.append("int main (int argc, char ** args) \n{\n\n");
+        }*/
         // block node is always last child of main method node
         int blockIndex = n.size() - 1;
         GNode block = (GNode) n.getNode(blockIndex);
@@ -97,7 +113,6 @@ public class PrintMainFile extends Visitor {
                 mainImplementation.append("\t__rt::Array<String>* args = new __rt::Array<String>(argc-1);\n");
                 mainImplementation.append("\tfor (int a = 1; a < argc; a++) {\n");//starts with a=1(not a=0) because the first argument in cpp is the command
                 mainImplementation.append("\t\tString argument = new __String(argv[a]);\n");
-                //mainImplementation.append("\t//cout << \"add arg: \"<< argument->data << endl;");
                 mainImplementation.append("\t\targs->__data[a-1] = argument;\n");
                 mainImplementation.append("\t}\n\n");
 
@@ -137,10 +152,20 @@ public class PrintMainFile extends Visitor {
             type = "uint8_t";
 
         boolean isTypeArray = false;
+        boolean is2D = false;
         if (n.getNode(1).getNode(1) != null) { // the type is an array
             if (n.getNode(1).getNode(1).getString(0).equals("[")) {
-                fieldDeclaration += "__rt::Array<" + type + ">* ";
+
                 isTypeArray = true;
+
+                if (n.getNode(1).getNode(1).size() > 1 && n.getNode(1).getNode(1).getString(1).equals("[")) {
+                    //2d array
+                    is2D = true;
+                    fieldDeclaration += "__rt::Array<__rt::Array<" + type + ">*>* ";
+                }
+                else {
+                    fieldDeclaration += "__rt::Array<" + type + ">* ";
+                }
             }
         }
         else {
@@ -168,7 +193,6 @@ public class PrintMainFile extends Visitor {
 
                                 String typeString = n.getNode(1).getNode(0).getString(0) + "[";
                                 summary.localVariables.put(variable, typeString);
-
                             } else {
                                 String qualifiedIdentifier = currentDeclarator.getNode(2).getNode(2).getString(0);
                                 fieldDeclaration += qualifiedIdentifier;
@@ -215,27 +239,45 @@ public class PrintMainFile extends Visitor {
                             if(sizeIsNegative){//size is negative
                                 size = negSize;
                             }
+                            if (is2D) {
+                                String size2 = newArray.getNode(1).getNode(1).getString(0);
 
+                                fieldDeclaration += "new __rt::Array<__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">*>("+size2+");\n";
 
-                            if (!type.equals(qualifiedIdentifier))
-                                fieldDeclaration += "(__rt::Array<"+type+">*) ";
+                                summary.init2D = variable+"->__data[%s]";
+                                summary.init2DSize = size2;
+                                summary.init2DType = n.getNode(1).getNode(0).getString(0);
 
-                            fieldDeclaration += "new __rt::Array<"+qualifiedIdentifier+">("+size+");\n";
-
-                            //check NegativeArraySizeException()
-                            if(Integer.parseInt(size) < 0){
-                                //need to throw NegativeArraySizeException() BEFORE assigning the array
-                                String fieldDeclaration_deepCopy = "";
-                                for(int i=0; i<fieldDeclaration.length(); i++){
-                                    char c = fieldDeclaration.charAt(i);
-                                    //System.out.println("c" + c);
-                                    fieldDeclaration_deepCopy += c;
-                                }
-                                fieldDeclaration ="";
-                                fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
-                                fieldDeclaration += fieldDeclaration_deepCopy;
+                                summary.localVariables.put(variable, type+"[[");
                             }
-                            summary.localVariables.put(variable, type+"[");
+                            else {
+                                if (!type.equals(qualifiedIdentifier))
+                                    fieldDeclaration += "(__rt::Array<" + type + ">*) ";
+
+
+                                fieldDeclaration += "new __rt::Array<" + qualifiedIdentifier + ">(" + size + ");\n";
+
+                                //check NegativeArraySizeException()
+                                //fieldDeclaration += "checkNegativeArraySize(" + size + ");";
+                                if (Integer.parseInt(size) < 0) {
+                                    //System.out.println("its a negative size");
+                                    //need to throw NegativeArraySizeException() BEFORE assigning the array
+                                    String fieldDeclaration_deepCopy = "";
+                                    for (int i = 0; i < fieldDeclaration.length(); i++) {
+                                        char c = fieldDeclaration.charAt(i);
+                                        //System.out.println("c" + c);
+                                        fieldDeclaration_deepCopy += c;
+                                    }
+                                    //System.out.println("fieldDeclaration_deepCopy" + fieldDeclaration_deepCopy);
+                                    fieldDeclaration = "";
+                                    fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
+                                    fieldDeclaration += fieldDeclaration_deepCopy;
+                                }
+                                //else{
+                                //System.out.println("its a positive size");
+                                //}
+                                summary.localVariables.put(variable, type + "[");
+                            }
                         } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
                             String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                             String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
@@ -250,7 +292,6 @@ public class PrintMainFile extends Visitor {
                             fieldDeclaration += " = (__rt::Array<" + typeString + ">*) " + primaryId + ";\n";
 
                             summary.localVariables.put(variable, typeString + "[");
-
 
                         } else if (currentDeclarator.getNode(2).getName().equals("PrimaryIdentifier")) {
                             String primaryIdentifier = currentDeclarator.getNode(2).getString(0);
@@ -277,6 +318,7 @@ public class PrintMainFile extends Visitor {
                 }
             }
         }
+        //fieldDeclaration += "end field dec";
         mainImplementation.append(fieldDeclaration + "\n");
     }
 
@@ -311,10 +353,13 @@ public class PrintMainFile extends Visitor {
             Node checkIfItsA2DArray = NodeUtil.dfs(checkIfThereIsAnArray,"SubscriptExpression");
             if(checkIfItsA2DArray!=null){//2D array
                 //Todo Do I Also need to checkIndexboudns error for 2d Arrays?
-
+                //Node secondDimension = checkIfItsA2DArray;
+                //String  checkIndexBoundError =checkIndexBoundsForSubscriptExpression((GNode) checkIfItsA2DArray );
+                //expressionStatement+=checkIndexBoundError;
 
             }else{//1D array
                 String  checkIndexBoundError =checkIndexBoundsForSubscriptExpression((GNode) checkIfThereIsAnArray);
+
                 expressionStatement+=checkIndexBoundError;
             }
 
@@ -401,7 +446,7 @@ public class PrintMainFile extends Visitor {
                                                 primaryId += primaryIdentifier1.get(0).toString() + "]";
 
                                                 expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
-                                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";;
+                                                expressionStatement += primaryIdentifier1.get(0).toString() + "]";
                                             }
                                         }
                                     }
@@ -409,6 +454,7 @@ public class PrintMainFile extends Visitor {
                                 } else {
                                     expressionStatement += currentNode.getNode(0).getString(0);
                                 }
+                                // expressionStatement += currentNode.getNode(0).getString(0);
                                 String method = currentNode.getString(2);
                                 if (!(method.startsWith("method"))) {
                                     switch (method) {
@@ -477,7 +523,6 @@ public class PrintMainFile extends Visitor {
                                         expressionStatement += primaryId;
                                     }
                                     expressionStatement += ")";
-
                                 }
                             } else if (currentNode.getName().equals("StringLiteral")) {
                                 expressionStatement += currentNode.getString(0) + " ";
@@ -509,6 +554,7 @@ public class PrintMainFile extends Visitor {
                                         }
 
                                         expressionStatement += gateParent ? "->parent." + field : "->" + field;
+                                        //expressionStatement += gateParent ? "->parent." + field + "->data" : "->" + field + "->data";
                                     }
 
                                 }
@@ -550,9 +596,13 @@ public class PrintMainFile extends Visitor {
                                     expressionStatement += primaryIdentifier1.get(0).toString() + "]";
                                 }
                                 else{ //2D array. assume we don't have 3D,4D,5D...
-                                    Node secondDimension = currentNode.getNode(0);//currentNode.getNode(0).getName() should be "SubscriptExpression"
-                                    String subscriptExpressionSTR= returnSubscriptExpression((GNode) secondDimension);
-                                    expressionStatement +=subscriptExpressionSTR;
+                                    primaryId = (primaryId == null ? "" : primaryId) + currentNode.getNode(0).getNode(0).getString(0) + "->__data[";
+                                    primaryId += currentNode.getNode(0).getNode(1).getString(0) + "]";
+                                    primaryId += "->data["+currentNode.getNode(1).getString(0) + "]";
+
+                                    expressionStatement += currentNode.getNode(0).getNode(0).getString(0) + "->__data[";
+                                    expressionStatement += currentNode.getNode(0).getNode(1).getString(0) + "]->__data[";
+                                    expressionStatement += currentNode.getNode(1).getString(0) + "]";
 
                                 }
 
@@ -883,11 +933,21 @@ public class PrintMainFile extends Visitor {
                                 expressionStatement += ");\n\t\t";
                             }
 
+
                             primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
 
                             expressionStatement += primaryIdentifier0.get(0).toString() + "->__data[";
                             expressionStatement += primaryIdentifier1.get(0).toString() + "]";
                             isArray = true;
+                        }
+                        else {
+                            GNode primaryIdentifier = currNode.getGeneric(0);//test31: as[i]
+                            String secondDimension = currNode.getNode(1).getString(0);//test31: j
+
+                            String mainIdentifier = primaryIdentifier.getNode(0).getString(0);
+                            String firstIdentifier = primaryIdentifier.getNode(1).getString(0);
+
+                            expressionStatement += mainIdentifier+"->__data["+firstIdentifier+"]->__data["+secondDimension+"]";
                         }
 
                     } else if (currNode.getName().equals("NewClassExpression")) {
@@ -992,12 +1052,14 @@ public class PrintMainFile extends Visitor {
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
+
                 if (currentNode.getName().equals("BasicForControl")) {
                     forStatement += "(";
                     GNode basicForControlNode = (GNode) o;
                     for (Object b : basicForControlNode) {
                         if (b instanceof Node) {
                             GNode b_Node = (GNode) b;
+
                             if (b_Node.getName().equals("Type")) {
                                 GNode primitiveType = (GNode) b_Node.get(0);
                                 if (primitiveType.get(0).toString().equals("int")) {
@@ -1010,16 +1072,23 @@ public class PrintMainFile extends Visitor {
                                 forStatement += declaratorNode.get(0).toString() + " = "; //i =
                                 GNode IntegerLiteralNode = (GNode) declaratorNode.get(2);
                                 forStatement += IntegerLiteralNode.get(0).toString() + "; "; //0;
+
+                               summary.init2DDec = declaratorNode.getString(0);
+
                             } else if (b_Node.getName().equals("RelationalExpression")) {
 
                                 GNode primaryIdentifierNode = (GNode) b_Node.get(0);
                                 forStatement += primaryIdentifierNode.get(0).toString(); //i
                                 forStatement += " " + b_Node.get(1).toString() + " ";//<
                                 GNode SelectionExpressNode = (GNode) b_Node.get(2);
+
+
+                                //System.out.println("test Sel Node: "+SelectionExpressNode.toString());
                                 if(SelectionExpressNode.getNode(0).getName().equals("SubscriptExpression")){
                                     //Select expression in 2D array
                                     Node twoDimension_SubscriptExpression = SelectionExpressNode.getNode(0);
                                     String subscriptExpression = returnSubscriptExpression((GNode) twoDimension_SubscriptExpression);
+                                    //System.out.print("2nd for loop: "+subscriptExpression+"\n");
                                     forStatement += subscriptExpression;
 
                                 }else {
@@ -1046,6 +1115,7 @@ public class PrintMainFile extends Visitor {
             }
         }
 
+        //mainImplementation.append(forStatement + "\n\n");
     }
 
     // visitMethod
@@ -1066,6 +1136,11 @@ public class PrintMainFile extends Visitor {
 
         HashMap<String, String> localVariables;
         HashMap<String, ArrayList<MethodImplementation>> overLoadedMethods;
+
+        String init2D;
+        String init2DSize;
+        String init2DType;
+        String init2DDec;
     }
 
     public PrintMainFile.printMainFileSummary getSummary(GNode n) {
@@ -1133,6 +1208,8 @@ public class PrintMainFile extends Visitor {
                     ArrayList<String> a = new ArrayList<String>();
                     a.add(className);
 
+
+
                     Node ClassBody = currentClass.getNode(5);
                     for(Object obj: ClassBody){
                         ArrayList<String> finalMethodNames = new ArrayList<String>();
@@ -1158,6 +1235,7 @@ public class PrintMainFile extends Visitor {
                         //System.out.println("final names" + finalMethodNames);
                         summaryTraversal.overloadedMethodNames.add(finalMethodNames);
                     }
+                    //System.out.println("final names" + summaryTraversal.overloadedMethodNames.toString());
                     summaryTraversal.allMethods_checkMethodOverloading.add(a);
                     //System.out.println( summaryTraversal.allMethods_checkMethodOverloading.toString() );
 
