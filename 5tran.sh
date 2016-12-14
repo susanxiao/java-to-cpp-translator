@@ -5,6 +5,16 @@ end=50
 packages="edu.nyu.oop"
 testArgs="1 2 3 4"
 
+#CLEANING OUTPUT FOLDERS
+echo "Removing past outputs for $start to $end"
+for ((i=start; i <= end; i++)); do
+	formatNum=$(printf "%03d" $i)
+	cppOutputPath="./testOutputs/translationOutputs/test$formatNum"
+	test -d $cppOutputPath/output || mkdir $cppOutputPath/output
+	rm $cppOutputPath/output/*
+done
+echo "Removed past outputs from testOutputs/translationOutputs"
+
 #TRANSLATE
 echo "Translating inputs $start to $end"
 sbt --error 'set showSuccess := false' "run-main $packages.ImplementationUtil $start $end"
@@ -18,16 +28,6 @@ for ((i=start; i <= end; i++)); do
 	cp ./output/* $cppOutputPath
 done
 echo "Copied java_lang files into translationOutputs directories"
-
-#CLEANING OUTPUT FOLDERS
-echo "Removing past outputs for $start to $end"
-for ((i=start; i <= end; i++)); do
-	formatNum=$(printf "%03d" $i)
-	cppOutputPath="./testOutputs/translationOutputs/test$formatNum"
-	test -d $cppOutputPath/output || mkdir $cppOutputPath/output
-	rm $cppOutputPath/output/*
-done
-echo "Removed past outputs from testOutputs/translationOutputs"
 
 #COMPILING JAVA CODE
 echo "Compiling and outputting Java code for $start to $end"
