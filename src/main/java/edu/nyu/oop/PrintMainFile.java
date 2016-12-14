@@ -160,7 +160,10 @@ public class PrintMainFile extends Visitor {
                 if (n.getNode(1).getNode(1).size() > 1 && n.getNode(1).getNode(1).getString(1).equals("[")) {
                     //2d array
                     is2D = true;
-                    fieldDeclaration += "__rt::Array<__rt::Array<" + type + ">*>* ";
+                    if (type.equals("int"))
+                        fieldDeclaration += "__rt::Array<__rt::Array<" + type + ">*>* ";
+                    else
+                        fieldDeclaration += "__rt::Array<__rt::Array<__" + type + ">*>* ";
                 }
                 else {
                     fieldDeclaration += "__rt::Array<" + type + ">* ";

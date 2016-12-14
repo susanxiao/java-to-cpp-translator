@@ -137,8 +137,11 @@ public class PrintMainFieldDeclarationUtil {
         }*/
         if (is2D) {
             String size2 = newArray.getNode(1).getNode(1).getString(0);
-
-            fieldDeclaration += "new __rt::Array<__rt::Array<" + n.getNode(1).getNode(0).getString(0) + ">*>("+size2+");\n";
+            String type2 = n.getNode(1).getNode(0).getString(0);
+            if (type2.equals("int"))
+                fieldDeclaration += "new __rt::Array<__rt::Array<" + type2 + ">*>("+size2+");\n";
+            else
+                fieldDeclaration += "new __rt::Array<__rt::Array<__" + type2 + ">*>("+size2+");\n";
 
             summary.init2D = variable+"->__data[%s]";
             summary.init2DSize = size2;

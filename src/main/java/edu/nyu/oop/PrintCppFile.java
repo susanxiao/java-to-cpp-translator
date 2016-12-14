@@ -239,7 +239,7 @@ public class PrintCppFile extends Visitor {
                                             summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + qualifiedIdentifier + ">* >::__class()");
                                         else {
                                             //add the first dimensional array
-                                            summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + ">::__class()");
+                                            summary.addRunTimeLine("java::lang::Class Array<" + summary.classLocation.replace(".", "::") + "__"+qualifiedIdentifier + ">::__class()");
                                             summary.incRunTimeScope();
                                             summary.addRunTimeLine("static java::lang::Class k =\n");
                                             summary.addRunTimeLine("\tnew java::lang::__Class(literal(\"" + addDimensions.substring(1) + "L" + packageName + "." + qualifiedIdentifier + ";\"),\n");
@@ -249,7 +249,7 @@ public class PrintCppFile extends Visitor {
                                             summary.decRunTimeScope();
 
                                             summary.addRunTimeLine("template<>\n");
-                                            summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + summary.classLocation.replace(".", "::") + qualifiedIdentifier + "> >::__class()");
+                                            summary.addRunTimeLine("java::lang::Class Array< __rt::Array<" + summary.classLocation.replace(".", "::") + "__"+ qualifiedIdentifier + ">* >::__class()");
                                         }
                                     }
                                     else
