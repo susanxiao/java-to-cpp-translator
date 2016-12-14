@@ -32,3 +32,6 @@ test030 -> Passed
 test031 -> Passed
 test032 -> Passed
 test033 -> Passed
+test034 -> Passed
+test035 -> Passed
+test036 -> Passed

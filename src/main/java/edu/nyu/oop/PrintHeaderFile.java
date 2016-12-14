@@ -133,46 +133,9 @@ public class PrintHeaderFile extends Visitor {
         summary.addLine("static __" + summary.currentClass.name + "_VT __vtable;\n\n");
 
         //Methods that will be implemented in output.cpp
-
-        //check If Methods Are Overloaded
-        ArrayList<String> a = new ArrayList<String>();
-        //String[] a = new String[summary.currentClass.methods.size()];
-        a.add(summary.currentClass.name);
-        for (int i=0; i< summary.currentClass.methods.size(); i++){
-            MethodImplementation currentMethod = summary.currentClass.methods.get(i);
-            String name = currentMethod.name;
-            //a[i]=name;
-            a.add(name);
-        }
-        //this.methodNames.add(a);
-        summaryTraversal.allMethods_checkMethodOverloading.add(a);
-
-        //boolean[] isOverloaded = new boolean[summary.currentClass.methods.size()];
-        ArrayList<String> isOverloaded = new ArrayList<String>();
-        isOverloaded.add(summary.currentClass.name);
-        for (int i=0; i< summary.currentClass.methods.size(); i++){
-            //boolean isAOverloadedMethod=false;
-            String isAOverloadedMethod = "false";
-            int howManyTimesItAppears=0;
-            for (int j=0; j< summary.currentClass.methods.size(); j++){
-                if(summary.currentClass.methods.get(i).name.equals(summary.currentClass.methods.get(j).name)){
-                    howManyTimesItAppears++;
-                }
-            }
-            if (howManyTimesItAppears>1){
-                isAOverloadedMethod="true";
-            }
-            //isOverloaded[i]=isAOverloadedMethod;
-            isOverloaded.add(isAOverloadedMethod);
-        }
-        summaryTraversal.isOverLoaded.add(isOverloaded);
-
         int classMethodCount = 0;
         for (MethodImplementation currentMethod : summary.currentClass.methods) {
             //check if the method is overloaded
-            //int index = Arrays.asList(a).indexOf(currentMethod.name.toString());
-            int index = a.indexOf(currentMethod.name.toString());
-
             classMethodCount += 1;
             String type = (currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType);
 
@@ -182,7 +145,7 @@ public class PrintHeaderFile extends Visitor {
                 method.append("(" + summary.currentClass.name);
 
                 for (ParameterImplementation currentParameter : currentMethod.parameters) {
-                    method.append(", " + (currentParameter.type.equals("int") ? "int32_t" : currentParameter.type));
+                    method.append(", " + (currentParameter.type.equals("int") ? "int32_t" : (currentParameter.type.equals("byte") ? "uint8_t" : currentParameter.type)));
                 }
                 method.append(");\n");
             } else {
@@ -270,7 +233,7 @@ public class PrintHeaderFile extends Visitor {
 
                 StringBuilder method = new StringBuilder((currentMethod.returnType.equals("int") ? "int32_t" : currentMethod.returnType) + " (*" + currentMethodName + ")(%s");
                 for (ParameterImplementation p : currentMethod.parameters)
-                    method.append(", " + (p.type.equals("int") ? "int32_t" : p.type));
+                    method.append(", " + (p.type.equals("int") ? "int32_t" : (p.type.equals("byte") ? "uint8_t" : p.type)));
                 method.append(");\n");
                 vMethods.put(currentMethodName, method.toString());
             }

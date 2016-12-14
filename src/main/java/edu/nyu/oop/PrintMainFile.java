@@ -373,7 +373,7 @@ public class PrintMainFile extends Visitor {
             Node currentClass = (Node) o;
             if (currentClass.getName().equals("ClassDeclaration")) {
                 if (currentClass.getString(1).contains("Test")) { //Main
-                    //save information for fields in main(use for method overloading)
+                    /*save information for fields in main(use for method overloading)
 
                     //System.out.println(currentClass.getNode(5).getNode(0).getNode(7).getName());//Block
                     //GNode block = (GNode) currentClass.getNode(5).getNode(0).getNode(7);
@@ -390,13 +390,13 @@ public class PrintMainFile extends Visitor {
                             summaryTraversal.fieldsInMainInfo.put(varName, varType);
                         }
                     }
-                    //END: save information for fields in main(use for method overloading)
+                    //END: save information for fields in main(use for method overloading) */
 
                     summary.currentClassName = currentClass.getString(1);
                     visitClassDeclaration((GNode) currentClass);
 
                 }
-                else{//it's not the main class
+                /*else{//it's not the main class
 
                     //check for method overloading
                     String className = currentClass.getString(1);
@@ -446,7 +446,7 @@ public class PrintMainFile extends Visitor {
                         summaryTraversal.isOverLoaded.add(arrayListElement);
                     }
 
-                }
+                }*/
             }
 
         }

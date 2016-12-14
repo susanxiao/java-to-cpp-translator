@@ -554,11 +554,11 @@ public class PrintCppFile extends Visitor {
                         String paramName = formalParameter.getString(3);
                         if (isStatic) {
                             if (!paramName.equals("__this"))
-                                methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
-                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
+                                methodSignature.append((className.equals("int") ? "int32_t" : (className.equals("byte") ? "uint8_t" : className)) + " " + paramName);
+                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : (className.equals("byte") ? "uint8_t" : className)));
                         } else {
-                            methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
-                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
+                            methodSignature.append((className.equals("int") ? "int32_t" : (className.equals("byte") ? "uint8_t" : className)) + " " + paramName);
+                            paramNames.put(paramName, (className.equals("int") ? "int32_t" : (className.equals("byte") ? "uint8_t" : className)));
                         }
                         if (!(isStatic && paramName.equals("__this")) && i < formalParameters.size() - 1)
                             methodSignature.append(", ");
@@ -578,7 +578,8 @@ public class PrintCppFile extends Visitor {
                 String paramType = paramNames.get(name);
                 if (!name.equals("__this") &&
                         !(paramType.equals("int32_t")
-                        || paramType.equals("double"))) //TODO: other primitives
+                        || paramType.equals("double")
+                        || paramType.equals("uint8_t"))) //TODO: other primitives
                     summary.addLine("__rt::checkNotNull(" + name + ");\n");
 
             }

@@ -356,16 +356,20 @@ public class PrintMainExpressionStatementUtil {
                                     else if (((Node) o).getName().equals("NewClassExpression")) {
                                         argumentType = ((Node) o).getNode(2).getString(0);
                                     }
+                                    else if (((Node) o).getName().equals("AdditiveExpression")) {
+                                        argumentType = "int";
+                                    }
                                     else {
                                         //TODO: other things
                                         System.out.println("Missed the argumentType");
                                     }
 
+                                    if (argumentType.equals("uint8_t")) argumentType = "byte";
+
                                     //chain of primitives: byte->short->char?->int->long->float->double
                                     if (!p.type.equals(argumentType)) {
                                         int increaseBy = 1;
                                         switch (argumentType) {
-                                            case "uint8_t":
                                             case "byte":
                                                 if (!p.type.equals("short"))
                                                     increaseBy++;
@@ -381,7 +385,6 @@ public class PrintMainExpressionStatementUtil {
                                                     increaseBy++;
                                                 else
                                                     break;
-                                            case "int32_t":
                                             case "int":
                                                 if (!p.type.equals("long"))
                                                     increaseBy++;
@@ -448,6 +451,7 @@ public class PrintMainExpressionStatementUtil {
                                 if (argumentsNode.getNode(i).getName().equals("NewClassExpression")) {
                                     Node newClassExpressionNode = argumentsNode.getNode(i);
                                     String paramType = newClassExpressionNode.getNode(2).getString(0);
+                                    if (paramType.equals("byte")) paramType.equals("uint8_t");
                                     if (!chosenMethod.parameters.get(isStatic ? i : i-1).type.equals(paramType)) //if it does not match argument type add cast
                                         arguments += "("+chosenMethod.parameters.get(isStatic ? i : i-1).type+") ";
                                     arguments += "new __"+ paramType + "(";
@@ -457,7 +461,9 @@ public class PrintMainExpressionStatementUtil {
                                 }
                                 else if (argumentsNode.getNode(i).getName().equals("PrimaryIdentifier")){
                                     String primaryIdentifier1 = argumentsNode.getNode(i).getString(0);
-                                    if (!chosenMethod.parameters.get(isStatic ? i : i-1).type.equals(summary.classVariables.get(primaryIdentifier1))) {
+                                    String callWithType = summary.classVariables.get(primaryIdentifier1);
+                                    if (callWithType.equals("uint8_t")) callWithType = "byte";
+                                    if (!chosenMethod.parameters.get(isStatic ? i : i-1).type.equals(callWithType)) {
                                         String type = chosenMethod.parameters.get(isStatic ? i : i-1).type;
                                         arguments += "("+(type.equals("int")? "int32_t" : type)+ ") ";
                                     }
@@ -470,9 +476,29 @@ public class PrintMainExpressionStatementUtil {
                                     String cast = argumentsNode.getNode(i).getNode(0).getNode(0).getString(0);
                                     if (cast.equals("byte")) cast = "uint8_t";
                                     else if (cast.equals("int")) cast = "int32_t";
-                                    arguments += "("+argumentsNode.getNode(i).getNode(0).getNode(0).getString(0)+") ";
-                                    if (argumentsNode.getNode(i).getNode(1).getName().equals("PrimaryIdentifier"));
-                                    arguments += argumentsNode.getNode(i).getNode(1).getString(0);
+                                    arguments += "("+cast+") ";
+                                    if (argumentsNode.getNode(i).getNode(1).getName().equals("PrimaryIdentifier"))
+                                        arguments += argumentsNode.getNode(i).getNode(1).getString(0);
+                                    else if (argumentsNode.getNode(i).getNode(1).getName().equals("NewClassExpression")) {
+                                        arguments += "new " + argumentsNode.getNode(i).getNode(1).getNode(2).getString(0)+"(";
+                                        Node innerArgs = argumentsNode.getNode(i).getNode(1).getNode(3);
+                                        for (int j = 0; j < innerArgs.size(); j++) {
+                                            System.out.println("need to handle this");
+                                        }
+                                        arguments += ")";
+                                    }
+                                }
+                                else if (argumentsNode.getNode(i).getName().equals("AdditiveExpression")) {
+                                    for (Object o1 : argumentsNode.getNode(i)) {
+                                        if (o1 instanceof Node) {
+                                            if (((Node) o1).getName().equals("PrimaryIdentifier")) {
+                                                arguments += ((Node) o1).getString(0);
+                                            }
+                                        }
+                                        else if (o1 instanceof String) {
+                                            arguments += " "+o1+" ";
+                                        }
+                                    }
                                 }
                                 else {
                                     //TODO: here
