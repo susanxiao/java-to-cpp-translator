@@ -21,12 +21,12 @@ namespace inputs {
 
 			static __A_VT __vtable;
 
-			static int32_t methodM(int);
-			static void methodM(A);
-			static void methodM(double);
-			static void methodM(Object);
-			static void methodM(Object, Object);
-			static void methodM(A, Object);
+			static int32_t methodMInt(int);
+			static void methodMA(A);
+			static void methodMDouble(double);
+			static void methodMObject(Object);
+			static void methodMObjectObject(Object, Object);
+			static void methodMAObject(A, Object);
 		};
 
 		struct __A_VT {

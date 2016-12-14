@@ -10,11 +10,11 @@ namespace inputs {
 
 namespace __rt {
 	template<>
-	java::lang::Class Array<inputs::test031::int>::__class() {
+	java::lang::Class Array< __rt::Array<int>* >::__class() {
 		static java::lang::Class k =
 			new java::lang::__Class(literal("[[Linputs.test031.int;"),
 					java::lang::__Object::__class(),
-					inputs::test031::__int::__class());
+					__rt::Array<int>::__class());
 		return k;
 	}
 }

@@ -24,8 +24,9 @@ public class PrintMainFieldDeclarationUtil {
                     summary.localVariables = new HashMap<>();
 
                 summary.localVariables.put(variable, type);
-                fieldDeclaration += variable;
+
                 if (currentDeclarator.getNode(2) != null) {
+                    fieldDeclaration += variable;
                     if (currentDeclarator.getNode(2).getName().equals("NewClassExpression")) {
                         fieldDeclaration += " = new ";
                         if (isTypeArray) {
@@ -60,8 +61,9 @@ public class PrintMainFieldDeclarationUtil {
                         }
 
                     } else if (currentDeclarator.getNode(2).getName().equals("NewArrayExpression")) {
-                       fieldDeclaration += handleNewArrayExpression(n, declaratorsNode, type, variable, is2D, summary);
+                       fieldDeclaration += handleNewArrayExpression(n, currentDeclarator, type, variable, is2D, summary);
                     } else if (currentDeclarator.getNode(2).getName().equals("CastExpression")) {
+
                         String typeDeclarator = currentDeclarator.getNode(2).getNode(0).getNode(0).getString(0);
                         String primaryIdentifier = currentDeclarator.getNode(2).getNode(1).getString(0);
 
@@ -96,7 +98,7 @@ public class PrintMainFieldDeclarationUtil {
                     }
                 } else {
                     //only instantiated variable, not defined
-                    fieldDeclaration += ";\n";
+                    fieldDeclaration += variable+";\n";
                 }
             }
         }
@@ -107,12 +109,13 @@ public class PrintMainFieldDeclarationUtil {
     All parameters are passed in through handleDeclarator(), with variables of the same name.
      */
     public static String handleNewArrayExpression(Node n, Node currentDeclarator, String type, String variable, boolean is2D, PrintMainFileSummary summary){
+        summary.needsSizeCheck = true;
         String fieldDeclaration="";
         fieldDeclaration += " = ";
 
         Node newArray = currentDeclarator.getNode(2);
         String qualifiedIdentifier = newArray.getNode(0).getString(0);
-        //check if size is negative or positive
+        /*//check if size is negative or positive
         boolean sizeIsNegative = false;
         String negSize="";
         Node sizeMightBeNegative = NodeUtil.dfs(newArray,"UnaryExpression");
@@ -121,12 +124,17 @@ public class PrintMainFieldDeclarationUtil {
                 sizeIsNegative = true;
                 negSize = "-"+sizeMightBeNegative.getNode(1).getString(0);
             }
-        }
+        }*/
 
-        String size = newArray.getNode(1).getNode(0).getString(0);//size is positive
-        if(sizeIsNegative){//size is negative
+        String size = "";
+        if (newArray.getNode(1).getNode(0).getName().equals("UnaryExpression"))
+            size = newArray.getNode(1).getNode(0).getString(0)+newArray.getNode(1).getNode(0).getNode(1).getString(0);
+        else
+            size = newArray.getNode(1).getNode(0).getString(0);
+        summary.size = new Integer(size);
+        /*if(sizeIsNegative){//size is negative
             size = negSize;
-        }
+        }*/
         if (is2D) {
             String size2 = newArray.getNode(1).getNode(1).getString(0);
 
@@ -145,6 +153,7 @@ public class PrintMainFieldDeclarationUtil {
 
             fieldDeclaration += "new __rt::Array<" + qualifiedIdentifier + ">(" + size + ");\n";
 
+            /*
             //check NegativeArraySizeException()
             if (Integer.parseInt(size) < 0) {
                 //need to throw NegativeArraySizeException() BEFORE assigning the array
@@ -156,7 +165,7 @@ public class PrintMainFieldDeclarationUtil {
                 fieldDeclaration = "";
                 fieldDeclaration += "\tthrow java::lang::NegativeArraySizeException();  //size of array is negative\n\t\t";
                 fieldDeclaration += fieldDeclaration_deepCopy;
-            }
+            }*/
             summary.localVariables.put(variable, type + "[");
         }
         return fieldDeclaration;

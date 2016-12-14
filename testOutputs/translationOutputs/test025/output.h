@@ -44,7 +44,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodGet (&__A::methodGet)
+			methodGet(&__A::methodGet)
 			{}
 		};
 
@@ -76,7 +76,7 @@ namespace inputs {
 			equals((bool(*)(B, Object))&__Object::equals),
 			getClass((Class(*)(B))&__Object::getClass),
 			toString((String(*)(B))&__Object::toString),
-			methodGet (&__B::methodGet)
+			methodGet(&__B::methodGet)
 			{}
 		};
 

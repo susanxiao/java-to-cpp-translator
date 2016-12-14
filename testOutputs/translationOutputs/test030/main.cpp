@@ -14,7 +14,8 @@ using namespace inputs::test030;
 int main(void)
 {
 
-	__rt::Array<A>* as = new __rt::Array<A>(5);
+	if (5 < 0) throw java::lang::NegativeArraySizeException();
+	__rt::Array<__rt::Array<A>*>* as = new __rt::Array<__rt::Array<A>*>(5);
 
 		cout << as->__vptr->getClass(as)->__vptr->toString(as->__vptr->getClass(as)) << endl;
 	return 0;

@@ -509,8 +509,6 @@ public class PrintCppFile extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n, GNode classBodyNode) {
-        //isThis method a overloaded method?
-
         if (!summary.isMainClass) {
             summary.currentClassMethodCount++;
 
@@ -546,7 +544,6 @@ public class PrintCppFile extends Visitor {
             HashMap<String, String> paramNames = new HashMap<>();
 
             Node formalParameters = n.getNode(4);
-            String[] paramTypesCorrespondingToParamNames = new String[formalParameters.size()];
             for (int i = 0; i < formalParameters.size(); i++) {
                 Object o = formalParameters.get(i);
                 if (o instanceof Node) {
@@ -555,7 +552,6 @@ public class PrintCppFile extends Visitor {
                         Node paramType = formalParameter.getNode(1);
                         String className = paramType.getNode(0).getString(0);
                         String paramName = formalParameter.getString(3);
-                        String paramTypeForParamName = formalParameter.getNode(1).getNode(0).getString(0);
                         if (isStatic) {
                             if (!paramName.equals("__this"))
                                 methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
@@ -564,7 +560,7 @@ public class PrintCppFile extends Visitor {
                             methodSignature.append((className.equals("int") ? "int32_t" : className) + " " + paramName);
                             paramNames.put(paramName, (className.equals("int") ? "int32_t" : className));
                         }
-                        if (i < formalParameters.size() - 1)
+                        if (!(isStatic && paramName.equals("__this")) && i < formalParameters.size() - 1)
                             methodSignature.append(", ");
 
                         if (isOverloaded && !paramName.equals("__this"))

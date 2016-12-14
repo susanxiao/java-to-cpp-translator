@@ -146,7 +146,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-        String fieldDeclaration = "\t";
+        String fieldDeclaration = "%s\t";
 
         String type = n.getNode(1).getNode(0).getString(0);
         if (type.equals("byte"))
@@ -174,7 +174,7 @@ public class PrintMainFile extends Visitor {
             Node declaratorsNode = n.getNode(2);
             fieldDeclaration += PrintMainFieldDeclarationUtil.handleDeclarators(n, declaratorsNode, type, isTypeArray, is2D, summary, summaryTraversal);
         }
-        mainImplementation.append(fieldDeclaration + "\n");
+        mainImplementation.append(String.format(fieldDeclaration, summary.needsSizeCheck ? "\tif ("+summary.size+" < 0) throw java::lang::NegativeArraySizeException();\n" : "") + "\n");
     }
 
     public String checkIndexBoundsForSubscriptExpression(GNode n){

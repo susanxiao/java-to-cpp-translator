@@ -40,7 +40,7 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodGetFld (&__A::methodGetFld)
+			methodGetFld(&__A::methodGetFld)
 			{}
 		};
 

@@ -1,1 +1,1 @@
-class [[Linputs.test030.A;
+sudo: ./testOutputs/translationOutputs/test030/bin/a.out: command not found

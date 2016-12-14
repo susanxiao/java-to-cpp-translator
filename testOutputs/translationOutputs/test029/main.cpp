@@ -14,8 +14,8 @@ using namespace inputs::test029;
 int main(void)
 {
 
-	throw java::lang::NegativeArraySizeException();  //size of array is negative
-			__rt::Array<A>* as = new __rt::Array<A>(-1);
+	if (-1 < 0) throw java::lang::NegativeArraySizeException();
+	__rt::Array<A>* as = new __rt::Array<A>(-1);
 
 		cout << as->__vptr->getClass(as)->__vptr->toString(as->__vptr->getClass(as)) << endl;
 	return 0;

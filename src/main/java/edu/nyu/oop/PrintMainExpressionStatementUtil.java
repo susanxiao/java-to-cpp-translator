@@ -274,12 +274,21 @@ public class PrintMainExpressionStatementUtil {
 
         String expressionStatement1 = "";
         String variableCalling = callExpressionNode.getNode(0).getString(0);
-        expressionStatement += callExpressionNode.getNode(0).getString(0) + "->";
-        String primaryIdentifer = callExpressionNode.getNode(0).getString(0);
-        expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
+        String primaryIdentifier = variableCalling;
+        boolean isStatic = false;
 
-        String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
-        summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
+        if(summaryTraversal.classes.containsKey(variableCalling)) { // then this is static
+            expressionStatement += "__"+variableCalling+"::";
+            summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(variableCalling);
+            isStatic = true;
+        }
+        else {
+            expressionStatement += variableCalling + "->";
+            expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
+
+            String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
+            summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
+        }
 
         if (summary.overLoadedMethods != null && summary.overLoadedMethods.containsKey(methodName)) {
 
@@ -291,7 +300,7 @@ public class PrintMainExpressionStatementUtil {
                 ArrayList<Integer> distances = new ArrayList<>();
 
                 for (int i = 0; i < methods.size(); i++) {
-                    if (methods.get(i).parameters.size() != argumentsNode.size() - 1) //number of arguments in Node includes __this
+                    if (methods.get(i).parameters.size() != (isStatic ? argumentsNode.size() : argumentsNode.size() - 1)) //number of arguments in Node includes __this for nonstatic
                         //number of arguments is wrong
                         methods.remove(i--);
                     else
@@ -309,7 +318,7 @@ public class PrintMainExpressionStatementUtil {
                         arguments += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                        if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
+                        if (summary.classVariables.get(primaryIdentifier).equals(summary.classVariables.get(primaryIdentifier1))) {
                             arguments += argumentsNode.getNode(1).getString(0);
                         }
                     } else {
@@ -426,18 +435,21 @@ public class PrintMainExpressionStatementUtil {
                                 min = i;
                         }
 
-                        arguments += argumentsNode.getString(0);
+                        if (!isStatic)
+                            arguments += argumentsNode.getString(0);
 
                         MethodImplementation chosenMethod = methods.get(min);
-                        for (int i = 1; i < argumentsNode.size(); i++) {
-                            arguments += ", ";
+                        for (int i = (isStatic ? 0 : 1); i < argumentsNode.size(); i++) {
+                            if (i > 0)
+                                arguments += ", ";
+
                             Object o = argumentsNode.getNode(i);
                             if (o instanceof Node) {
                                 if (argumentsNode.getNode(i).getName().equals("NewClassExpression")) {
                                     Node newClassExpressionNode = argumentsNode.getNode(i);
                                     String paramType = newClassExpressionNode.getNode(2).getString(0);
-                                    if (!chosenMethod.parameters.get(i-1).type.equals(paramType)) //if it does not match argument type add cast
-                                        arguments += "("+chosenMethod.parameters.get(i-1).type+") ";
+                                    if (!chosenMethod.parameters.get(isStatic ? i : i-1).type.equals(paramType)) //if it does not match argument type add cast
+                                        arguments += "("+chosenMethod.parameters.get(isStatic ? i : i-1).type+") ";
                                     arguments += "new __"+ paramType + "(";
                                     if (argumentsNode.getNode(i).getNode(3).size() > 0)
                                         arguments += argumentsNode.getNode(i).getNode(3).getNode(0).getString(0);
@@ -445,8 +457,8 @@ public class PrintMainExpressionStatementUtil {
                                 }
                                 else if (argumentsNode.getNode(i).getName().equals("PrimaryIdentifier")){
                                     String primaryIdentifier1 = argumentsNode.getNode(i).getString(0);
-                                    if (!chosenMethod.parameters.get(i-1).type.equals(summary.classVariables.get(primaryIdentifier1))) {
-                                        String type = chosenMethod.parameters.get(i-1).type;
+                                    if (!chosenMethod.parameters.get(isStatic ? i : i-1).type.equals(summary.classVariables.get(primaryIdentifier1))) {
+                                        String type = chosenMethod.parameters.get(isStatic ? i : i-1).type;
                                         arguments += "("+(type.equals("int")? "int32_t" : type)+ ") ";
                                     }
                                     arguments += argumentsNode.getNode(i).getString(0);
@@ -495,10 +507,10 @@ public class PrintMainExpressionStatementUtil {
                     expressionStatement += ")";
                 } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                     String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                    if (summary.classVariables.get(primaryIdentifer).equals(summary.classVariables.get(primaryIdentifier1))) {
+                    if (summary.classVariables.get(primaryIdentifier).equals(summary.classVariables.get(primaryIdentifier1))) {
                         expressionStatement += argumentsNode.getNode(1).getString(0);
                     } else {
-                        expressionStatement += "(" + summary.classVariables.get(primaryIdentifer) + ") " + primaryIdentifier1;
+                        expressionStatement += "(" + summary.classVariables.get(primaryIdentifier) + ") " + primaryIdentifier1;
                         expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + variableCalling + "->__vptr->getClass(" + variableCalling + ");\n";
                         expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
                         summary.checkClassCounter++;

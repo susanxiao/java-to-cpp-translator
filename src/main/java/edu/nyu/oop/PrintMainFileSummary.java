@@ -23,5 +23,8 @@ public class PrintMainFileSummary {
     String init2DSize;
     String init2DType;
     String init2DDec;
+
+    boolean needsSizeCheck = false;
+    Integer size;
     
 }

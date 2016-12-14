@@ -5,35 +5,35 @@ using namespace java::lang;
 using namespace std;
 namespace inputs {
 	namespace test033 {
-		int32_t __A::methodM(, int i) {
-			cout << ;
+		int32_t __A::methodMInt(int32_t i) {
+			cout << "A.m(int)" << endl;
 			return i;
 		};
 
-		void __A::methodM(, A a) {
+		void __A::methodMA(A a) {
 			__rt::checkNotNull(a);
-			cout << ;
+			cout << "A.m(A)" << endl;
 		};
 
-		void __A::methodM(, double d) {
-			cout << ;
+		void __A::methodMDouble(double d) {
+			cout << "A.m(double)" << endl;
 		};
 
-		void __A::methodM(, Object o) {
+		void __A::methodMObject(Object o) {
 			__rt::checkNotNull(o);
-			cout << ;
+			cout << "A.m(Object)" << endl;
 		};
 
-		void __A::methodM(, Object o1, Object o2) {
+		void __A::methodMObjectObject(Object o1, Object o2) {
 			__rt::checkNotNull(o1);
 			__rt::checkNotNull(o2);
-			cout << ;
+			cout << "A.m(Object, Object)" << endl;
 		};
 
-		void __A::methodM(, A a1, Object o2) {
+		void __A::methodMAObject(A a1, Object o2) {
 			__rt::checkNotNull(a1);
 			__rt::checkNotNull(o2);
-			cout << ;
+			cout << "A.m(A, Object)" << endl;
 		};
 
 		__A::__A() : __vptr(&__vtable)

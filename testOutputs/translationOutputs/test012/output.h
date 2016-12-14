@@ -56,9 +56,9 @@ namespace inputs {
 			equals((bool(*)(A, Object))&__Object::equals),
 			getClass((Class(*)(A))&__Object::getClass),
 			toString((String(*)(A))&__Object::toString),
-			methodSetA (&__A::methodSetA),
-			methodPrintOther (&__A::methodPrintOther),
-			methodMyToString (&__A::methodMyToString)
+			methodSetA(&__A::methodSetA),
+			methodPrintOther(&__A::methodPrintOther),
+			methodMyToString(&__A::methodMyToString)
 			{}
 		};
 
@@ -167,7 +167,7 @@ namespace inputs {
 			toString((String(*)(C))&__Object::toString),
 			methodSetA((void(*)(C, String))&__A::methodSetA),
 			methodPrintOther((void(*)(C, A))&__A::methodPrintOther),
-			methodMyToString (&__C::methodMyToString)
+			methodMyToString(&__C::methodMyToString)
 			{}
 		};
 

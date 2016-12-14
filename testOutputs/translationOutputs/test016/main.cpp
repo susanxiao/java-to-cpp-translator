@@ -18,14 +18,14 @@ int main(void)
 
 	B other = new __B();
 
-	Class k0 = other->__vptr->getClass(other);
+			Class k0 = other->__vptr->getClass(other);
 	checkClass(k0, a);
 
-		other->some = (B) a;
-	Class k1 = a->__vptr->getClass(a);
+other->some = (B) a;
+			Class k1 = a->__vptr->getClass(a);
 	checkClass(k1, other);
 
-		a->__vptr->methodPrintOther(a, (A) other);
+a->__vptr->methodPrintOther(a, (A) other);
 	return 0;
 }
 

@@ -14,12 +14,14 @@ using namespace inputs::test024;
 int main(void)
 {
 
+	if (10 < 0) throw java::lang::NegativeArraySizeException();
 	__rt::Array<Object>* as = (__rt::Array<Object>*) new __rt::Array<A>(10);
 
 	for (int32_t i = 0; i < as->length; i++) {
 			checkStore(as, new __A(i));
 		as->__data[i] = (Object) new __A(i);
 	}
+	if (10 < 0) throw java::lang::NegativeArraySizeException();
 	int k = 0;
 
 	while (k < 10) {

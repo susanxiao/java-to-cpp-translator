@@ -28,9 +28,17 @@ namespace __rt {
 	template<>
 	java::lang::Class Array<inputs::test030::A>::__class() {
 		static java::lang::Class k =
-			new java::lang::__Class(literal("[[Linputs.test030.A;"),
+			new java::lang::__Class(literal("[Linputs.test030.A;"),
 					java::lang::__Object::__class(),
 					inputs::test030::__A::__class());
+		return k;
+	}
+	template<>
+	java::lang::Class Array< __rt::Array<inputs::test030::A> >::__class() {
+		static java::lang::Class k =
+			new java::lang::__Class(literal("[[Linputs.test030.A;"),
+					java::lang::__Object::__class(),
+					__rt::Array<inputs::test030::__A>::__class());
 		return k;
 	}
 }
