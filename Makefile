@@ -69,7 +69,7 @@ clean:
 		formatNum=`printf "%03d" $$num` ; \
 		cppOutputPath=`expr ./testOutputs/translationOutputs/test$$formatNum` ; \
 		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
-		rm $$cppOutputPath/output  ; \
+		rm $$cppOutputPath/output/*  ; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Removed past outputs from testOutputs/translationOutputs" ;
