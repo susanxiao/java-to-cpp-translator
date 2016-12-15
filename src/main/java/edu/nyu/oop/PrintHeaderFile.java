@@ -280,6 +280,8 @@ public class PrintHeaderFile extends Visitor {
 
                 } else { //if it already exists, we need to move its location to where the superclass holds it
                     String key = currentMethod.name;
+                    if (currentMethod.isOverloaded)
+                        key = currentMethod.overLoadedName;
                     String constructorValue = vConstructor.remove(key);
                     String methodValue = vMethods.remove(key);
                     vConstructor.put(key, constructorValue);

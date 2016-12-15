@@ -74,6 +74,10 @@ public class AstTraversal extends Visitor {
         if (superClassName != null) {
             ClassImplementation superClass = summary.findClass(superClassName);
             summary.addClass(superClass, name, modifier);
+
+            //add overloaded methods of super class
+            HashMap<String, ArrayList<MethodImplementation>> superOverload = summary.overLoadedMethods.get(superClassName);
+            summary.overLoadedMethods.put(name, superOverload);
         } else {
             summary.addClass(null, name, modifier);
         }
@@ -213,7 +217,7 @@ public class AstTraversal extends Visitor {
 
         if (!potentials.isEmpty()) {
             if (potentials.size() == 1 && potentials.get(0).overLoadedName.equals(m.overLoadedName)) {
-                //THIS IS OVERRIDING!!!!
+                //THIS IS ONLY OVERRIDING!!!!
             }
             else {
                 for (MethodImplementation potential : potentials) {
@@ -246,7 +250,15 @@ public class AstTraversal extends Visitor {
 
                 if (!mOverLoadMap.containsKey(name))
                     mOverLoadMap.put(name, new ArrayList<MethodImplementation>());
-                mOverLoadMap.get(name).add(m);
+
+                ArrayList<MethodImplementation> methods = mOverLoadMap.get(name);
+                for (int i = 0; i < methods.size(); i++) {
+                    MethodImplementation m2 = methods.get(i);
+                    if (m.overLoadedName.equals(m2.overLoadedName)) //overriding
+                        methods.set(i, m);
+                }
+
+                methods.add(m);
             }
         }
 

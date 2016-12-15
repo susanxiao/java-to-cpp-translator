@@ -21,6 +21,7 @@ public class ClassImplementation {
     ArrayList<FieldDeclaration> declarations;
 
     public ClassImplementation(ClassImplementation superClass, String name, String modifier) {
+
         if(superClass != null) {
             this.superClassName = superClass.name;
             this.superClass = superClass;
@@ -40,21 +41,6 @@ public class ClassImplementation {
         methods = new ArrayList<>();
         declarations = new ArrayList<>();
 
-    }
-
-    public boolean isSuperClass(String superClassName) {
-        if (superClass == null) return false;
-        else if (superClass.name.equals(superClassName)) return true;
-
-        return superClass.isSuperClass(superClassName);
-    }
-
-    public ClassImplementation(String name, String modifier) {
-        this(null, name, modifier);
-    }
-
-    public void setSuperClass(ClassImplementation superClass) {
-        this.superClass = superClass;
     }
 
     public void addMethod(MethodImplementation m) {
@@ -83,17 +69,8 @@ public class ClassImplementation {
     private ArrayList<MethodImplementation> deepFindMethod(ArrayList<MethodImplementation> methodsToReturn, String name) {
         findMethod(methodsToReturn, name);
         if (superClass != null)
-            methodsToReturn.addAll(superClass.deepFindMethod(name));
+           superClass.deepFindMethod(methodsToReturn, name);
         return methodsToReturn;
-    }
-
-    public void addPackage(String name) {
-        packages.add(name);
-    }
-
-    //TODO
-    public String toHeader() {
-        return "";
     }
 
     @Override
