@@ -10,8 +10,7 @@ echo "Removing past outputs for $start to $end"
 for ((i=start; i <= end; i++)); do
 	formatNum=$(printf "%03d" $i)
 	cppOutputPath="./testOutputs/translationOutputs/test$formatNum"
-	test -d $cppOutputPath/output || mkdir $cppOutputPath/output
-	rm $cppOutputPath/output/*
+	rm -rf $$cppOutputPath/output/*  ; \
 done
 echo "Removed past outputs from testOutputs/translationOutputs"
 

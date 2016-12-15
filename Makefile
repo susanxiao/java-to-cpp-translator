@@ -68,8 +68,7 @@ clean:
 	@num=$(start) ; while [ $$num -le $(end) ] ; do \
 		formatNum=`printf "%03d" $$num` ; \
 		cppOutputPath=`expr ./testOutputs/translationOutputs/test$$formatNum` ; \
-		test -d $$cppOutputPath/output || mkdir $$cppOutputPath/output ; \
-		rm $$cppOutputPath/output/*  ; \
+		rm -rf $$cppOutputPath/output/*  ; \
 		num=`expr $$num + 1` ; \
 	done ;
 	@echo "Removed past outputs from testOutputs/translationOutputs" ;
