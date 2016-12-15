@@ -278,7 +278,7 @@ public class PrintMainExpressionStatementUtil {
         String primaryIdentifier = "";
         boolean isStatic = false;
         if (callExpressionNode.getNode(0).getName().equals("CallExpression")) {
-            expressionStatement += handleCallExpressionPrimaryIdentifier(callExpressionNode.getNode(0), methodName, summary, summaryTraversal)+"->";
+            expressionStatement += handleCallExpressionPrimaryIdentifier(callExpressionNode.getNode(0), methodName, summary, summaryTraversal)+"->__vptr->";
             String returned = summary.chosenMethod.returnType; //get the return type of the first call
             summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(returned);
         }
