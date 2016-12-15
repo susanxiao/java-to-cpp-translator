@@ -274,12 +274,12 @@ public class PrintMainExpressionStatementUtil {
         }
 
         String expressionStatement1 = "";
-
         String primaryIdentifier = "";
+        String returned = "";
         boolean isStatic = false;
         if (callExpressionNode.getNode(0).getName().equals("CallExpression")) {
             expressionStatement += handleCallExpressionPrimaryIdentifier(callExpressionNode.getNode(0), methodName, summary, summaryTraversal)+"->__vptr->";
-            String returned = summary.chosenMethod.returnType; //get the return type of the first call
+            returned = summary.chosenMethod.returnType; //get the return type of the first call
             summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(returned);
         }
         else {
@@ -330,6 +330,8 @@ public class PrintMainExpressionStatementUtil {
                         if (!primaryIdentifier.isEmpty() && summary.classVariables.get(primaryIdentifier).equals(summary.classVariables.get(primaryIdentifier1))) {
                             arguments += argumentsNode.getNode(1).getString(0);
                         }
+                    } else if (argumentsNode.getNode(1).getName().equals("CallExpression")) {
+                        arguments += handleCallExpressionPrimaryIdentifier(argumentsNode.getNode(1), methodName, summary, summaryTraversal);
                     } else {
                         arguments += argumentsNode.getString(0);
                     }
@@ -337,7 +339,7 @@ public class PrintMainExpressionStatementUtil {
 
                     expressionStatement += methods.get(0).name + arguments;
                 }
-                else { //methods.size() is greater than 1.
+                else { //methods.size() is greater than 1
                     int argIndex = 0;
                     for (Object o : argumentsNode) {
                         if (o instanceof Node) {
@@ -367,6 +369,10 @@ public class PrintMainExpressionStatementUtil {
                                     }
                                     else if (((Node) o).getName().equals("AdditiveExpression")) {
                                         argumentType = "int";
+                                    }
+                                    else if (((Node) o).getName().equals("CallExpression")) {
+                                        handleCallExpressionPrimaryIdentifier((Node) o, methodName, summary, summaryTraversal);
+                                        argumentType = summary.chosenMethod.returnType;
                                     }
                                     else {
                                         //TODO: other things
@@ -451,7 +457,7 @@ public class PrintMainExpressionStatementUtil {
                             if (argumentsNode.size() > 0)
                                 arguments += argumentsNode.getString(0);
                             else
-                                arguments += "new __"+summary.chosenMethod.returnType+"()"; //this is kind of bad but how else can you do it
+                                arguments += "new __"+returned+"()"; //this is kind of bad but how else can you do it
                         }
 
                         MethodImplementation chosenMethod = methods.get(min);
@@ -512,6 +518,14 @@ public class PrintMainExpressionStatementUtil {
                                             arguments += " "+o1+" ";
                                         }
                                     }
+                                }
+                                else if (argumentsNode.getNode(i).getName().equals("CallExpression")) {
+                                    String nestedCall = handleCallExpressionPrimaryIdentifier(argumentsNode.getNode(i), methodName, summary, summaryTraversal);
+                                    if (!chosenMethod.parameters.get(isStatic ? i : i-1).type.equals(summary.chosenMethod.returnType)) {
+                                        String type = chosenMethod.parameters.get(isStatic ? i : i-1).type;
+                                        arguments += "("+(type.equals("int")? "int32_t" : type)+ ") ";
+                                    }
+                                    arguments += nestedCall;
                                 }
                                 else {
                                     //TODO: here

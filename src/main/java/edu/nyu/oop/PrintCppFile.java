@@ -685,7 +685,6 @@ public class PrintCppFile extends Visitor {
             for (Object o : n) {
                 Node currentNode = (Node) o;
                 if (currentNode.getName().equals("NewClassExpression")) {
-                    //TODO:
                     String newClass = "new "+currentNode.getNode(2).getString(0)+"(";
                     Node arg = currentNode.getNode(3);
                     for (int i = 0; i < arg.size(); i++) {
