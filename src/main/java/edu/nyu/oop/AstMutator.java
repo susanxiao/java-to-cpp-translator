@@ -354,6 +354,8 @@ public class AstMutator extends Visitor {
                 }
             } else if (((Node) o).getName().equals("Arguments")) {
                 visitArguments(n.getGeneric(3));
+            } else if (((Node) o).getName().equals("CallExpression")) {
+               visitCallExpression(GNode.cast(o));
             } else visit((Node) o);
         }
     }

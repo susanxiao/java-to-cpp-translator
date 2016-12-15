@@ -229,7 +229,7 @@ public class PrintMainFile extends Visitor {
             } else { //Primary Identifier.
                 Node callExpressionNode = n.getNode(0);
                 String methodName = callExpressionNode.getString(2);
-                expressionStatement += PrintMainExpressionStatementUtil.handleCallExpressionPrimaryIdentifier(callExpressionNode, methodName, summary, summaryTraversal);
+                expressionStatement += PrintMainExpressionStatementUtil.handleCallExpressionPrimaryIdentifier(callExpressionNode, methodName, summary, summaryTraversal)+";";
             }
         } else if (n.getNode(0).getName().equals("Expression")) {
             Node expressionNode = n.getNode(0);

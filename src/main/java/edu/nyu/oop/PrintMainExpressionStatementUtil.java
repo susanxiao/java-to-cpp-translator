@@ -258,6 +258,7 @@ public class PrintMainExpressionStatementUtil {
     } //End handleCout();
 
     public static String handleCallExpressionPrimaryIdentifier(Node callExpressionNode, String methodName, PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
+        summary.chosenMethod = null; //reset the chosen overloaded method;
         String expressionStatement="";
         if (!(methodName.startsWith("method"))) {
             switch (methodName) {
@@ -273,21 +274,29 @@ public class PrintMainExpressionStatementUtil {
         }
 
         String expressionStatement1 = "";
-        String variableCalling = callExpressionNode.getNode(0).getString(0);
-        String primaryIdentifier = variableCalling;
-        boolean isStatic = false;
 
-        if(summaryTraversal.classes.containsKey(variableCalling)) { // then this is static
-            expressionStatement += "__"+variableCalling+"::";
-            summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(variableCalling);
-            isStatic = true;
+        String primaryIdentifier = "";
+        boolean isStatic = false;
+        if (callExpressionNode.getNode(0).getName().equals("CallExpression")) {
+            expressionStatement += handleCallExpressionPrimaryIdentifier(callExpressionNode.getNode(0), methodName, summary, summaryTraversal)+"->";
+            String returned = summary.chosenMethod.returnType; //get the return type of the first call
+            summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(returned);
         }
         else {
-            expressionStatement += variableCalling + "->";
-            expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
+            String variableCalling = callExpressionNode.getNode(0).getString(0);
+            primaryIdentifier = variableCalling;
 
-            String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
-            summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
+            if (summaryTraversal.classes.containsKey(variableCalling)) { // then this is static
+                expressionStatement += "__" + variableCalling + "::";
+                summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(variableCalling);
+                isStatic = true;
+            } else {
+                expressionStatement += variableCalling + "->";
+                expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
+
+                String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
+                summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
+            }
         }
 
         if (summary.overLoadedMethods != null && summary.overLoadedMethods.containsKey(methodName)) {
@@ -300,7 +309,7 @@ public class PrintMainExpressionStatementUtil {
                 ArrayList<Integer> distances = new ArrayList<>();
 
                 for (int i = 0; i < methods.size(); i++) {
-                    if (methods.get(i).parameters.size() != (isStatic ? argumentsNode.size() : argumentsNode.size() - 1)) //number of arguments in Node includes __this for nonstatic
+                    if (methods.get(i).parameters.size() != ((isStatic || argumentsNode.size() == 0) ? argumentsNode.size() : argumentsNode.size() - 1)) //number of arguments in Node includes __this for nonstatic
                         //number of arguments is wrong
                         methods.remove(i--);
                     else
@@ -318,13 +327,13 @@ public class PrintMainExpressionStatementUtil {
                         arguments += ")";
                     } else if (argumentsNode.getNode(1).getName().equals("PrimaryIdentifier")) {
                         String primaryIdentifier1 = argumentsNode.getNode(1).getString(0);
-                        if (summary.classVariables.get(primaryIdentifier).equals(summary.classVariables.get(primaryIdentifier1))) {
+                        if (!primaryIdentifier.isEmpty() && summary.classVariables.get(primaryIdentifier).equals(summary.classVariables.get(primaryIdentifier1))) {
                             arguments += argumentsNode.getNode(1).getString(0);
                         }
                     } else {
                         arguments += argumentsNode.getString(0);
                     }
-                    arguments += ");";
+                    arguments += ")";
 
                     expressionStatement += methods.get(0).name + arguments;
                 }
@@ -438,8 +447,12 @@ public class PrintMainExpressionStatementUtil {
                                 min = i;
                         }
 
-                        if (!isStatic)
-                            arguments += argumentsNode.getString(0);
+                        if (!isStatic) {
+                            if (argumentsNode.size() > 0)
+                                arguments += argumentsNode.getString(0);
+                            else
+                                arguments += "new __"+summary.chosenMethod.returnType+"()"; //this is kind of bad but how else can you do it
+                        }
 
                         MethodImplementation chosenMethod = methods.get(min);
                         for (int i = (isStatic ? 0 : 1); i < argumentsNode.size(); i++) {
@@ -506,9 +519,10 @@ public class PrintMainExpressionStatementUtil {
                                 }
                             }
                         }
-                        arguments += ");";
+                        arguments += ")";
 
                         expressionStatement += chosenMethod.overLoadedName + arguments;
+                        summary.chosenMethod = chosenMethod;
                     }
                     else {
                         System.out.println("SOMETHING WENT WRONG!!");
@@ -537,14 +551,14 @@ public class PrintMainExpressionStatementUtil {
                         expressionStatement += argumentsNode.getNode(1).getString(0);
                     } else {
                         expressionStatement += "(" + summary.classVariables.get(primaryIdentifier) + ") " + primaryIdentifier1;
-                        expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + variableCalling + "->__vptr->getClass(" + variableCalling + ");\n";
+                        expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + primaryIdentifier + "->__vptr->getClass(" + primaryIdentifier + ");\n";
                         expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
                         summary.checkClassCounter++;
                     }
                 } else {
                     expressionStatement += argumentsNode.getString(0);
                 }
-                expressionStatement += ");";
+                expressionStatement += ")";
                 String temp = expressionStatement;
                 expressionStatement = "";
                 expressionStatement += expressionStatement1;

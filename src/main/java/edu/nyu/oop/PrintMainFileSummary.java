@@ -19,6 +19,8 @@ public class PrintMainFileSummary {
     HashMap<String, String> localVariables;
     HashMap<String, ArrayList<MethodImplementation>> overLoadedMethods;
 
+    MethodImplementation chosenMethod;
+
     String init2D;
     String init2DSize;
     String init2DType;
