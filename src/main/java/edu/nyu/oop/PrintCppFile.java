@@ -704,6 +704,8 @@ public class PrintCppFile extends Visitor {
                 } else if (currentNode.getName().equals("IntegerLiteral")) {
                     String value = currentNode.getString(0);
                     summary.addLine("return " + value + ";\n");
+                } else if (currentNode.getName().equals("NullLiteral")) {
+                    summary.addLine("return __rt::null();\n");
                 } else if (currentNode.getName().equals("CallExpression")) {
                     String primaryIdentifier = currentNode.getNode(0).getString(0);
                     boolean parentGate = true; //if true, we need to call parent Object to get its field

@@ -252,13 +252,17 @@ public class AstTraversal extends Visitor {
                     mOverLoadMap.put(name, new ArrayList<MethodImplementation>());
 
                 ArrayList<MethodImplementation> methods = mOverLoadMap.get(name);
+                boolean overrode = false;
                 for (int i = 0; i < methods.size(); i++) {
                     MethodImplementation m2 = methods.get(i);
-                    if (m.overLoadedName.equals(m2.overLoadedName)) //overriding
+                    if (m.overLoadedName.equals(m2.overLoadedName)) { //overriding
                         methods.set(i, m);
+                        overrode = true;
+                    }
                 }
 
-                methods.add(m);
+                if (!overrode)
+                    methods.add(m);
             }
         }
 
@@ -764,13 +768,6 @@ public class AstTraversal extends Visitor {
         HashMap<String, HashMap<String, ArrayList<MethodImplementation>>> overLoadedMethods = new HashMap<>();
 
         boolean usesArgs = false;
-
-        ArrayList<ArrayList<String>> allMethods_checkMethodOverloading = new ArrayList<ArrayList<String>>();
-        ArrayList<ArrayList<String>> isOverLoaded = new ArrayList<ArrayList<String>>();
-        //ArrayList<ArrayList<String>> fieldsInMainInfo = new ArrayList<ArrayList<String>>();
-        HashMap<String, String> fieldsInMainInfo =  new HashMap<>();
-        ArrayList<ArrayList<String>> overloadedMethodNames = new ArrayList<ArrayList<String>>();
-
 
         // operators ?
         String operators = "=+-*/";

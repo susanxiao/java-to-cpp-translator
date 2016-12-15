@@ -13,8 +13,5 @@
     - HeaderAstTest (0-17)
     - HeaderTest (0-17)
 
-# 21 - 31: Arrays
-- 31 needs translating
-
 # 32 - 50: Method Overloading
-- Not started
+- Not finished
