@@ -89,8 +89,6 @@ public class StdOutputChecking {
                     String javaInputLine = javaInput.nextLine();
                     if(javaInputLine.startsWith("Exception")) {
                         message = " - Exception";
-                        if(!cppInput.hasNext())
-                            isEqual = true;
                     }
                     else if (javaInputLine.startsWith("inputs.test"))
                         message = " - Location";
