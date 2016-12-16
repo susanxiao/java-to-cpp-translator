@@ -576,7 +576,7 @@ public class PrintCppFile extends Visitor {
 
             for (String name : paramNames.keySet()) {
                 String paramType = paramNames.get(name);
-                if (!(paramType.equals("int32_t")
+                if (!(isStatic && name.equals("__this")) && !(paramType.equals("int32_t")
                         || paramType.equals("double")
                         || paramType.equals("uint8_t"))) //TODO: other primitives
                     summary.addLine("__rt::checkNotNull(" + name + ");\n");
