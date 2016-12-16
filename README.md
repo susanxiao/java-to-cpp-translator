@@ -68,24 +68,19 @@
     - make 5tran start=[start] end=[end]
     - make 5tran
 
-    Without Makefile
-    - run full translation over the entire range of inputs. This gets the updated .h .cpp files.
-    - bash bashScript.sh; (from shell)
-        - compiles all the C++ generated code
-        - Redirects outputs to files   
-    - run-main edu.nyu.oop.StdOutputChecking (from SBT)
-        - outputs result of the translation on the inputs
+    Without Makefile (no variability of the range)
+    - 5tran.sh
 
 - Supports inputs
 
-    - Phase 1 0-20
-    - Phase 2 0-20
-    - Phase 3 0-20
-    - Phase 4 0-15 and 17
-    - Phase 5 0-15 and 17  
+    - Phase 1 0-50
+    - Phase 2 0-50
+    - Phase 3 0-50
+    - Phase 4 0-50
+    - Phase 5 0-50, except 49 
 
 Run "make help" for other Makefile commands
-        
+
 Translator
 ----------
 
@@ -119,12 +114,10 @@ Project Map
 ├── logs (logger output)
 │   └── xtc.log 
 │
-├── output (target c++ source & supporting java_lang library)
+├── output (supporting java_lang library)
 │   ├── java_lang.cpp
 │   ├── java_lang.h
-│   ├── main.cpp
-│   ├── output.cpp
-│   └── output.h
+│   ├── ptr.h
 │
 ├── project (sbt configuration, shouldn't need to be touched)
 │
@@ -132,14 +125,46 @@ Project Map
 │   ├── cpp.ast
 │   └── inheritance.ast
 │
-└── src 
-    ├── main
-    │   ├── java
-    │   │   └── edu (translator source code)
-    │   └── resources
-    │       └── xtc.properties (translator properties file)
-    └── test
-        └── java
-            ├── edu (translator unit tests)
-            └── inputs (translator test inputs)
+├── src 
+|   ├── main
+|   │   ├── java
+|   │   │   └── edu (translator source code)
+|   │   └── resources
+|   │       └── xtc.properties (translator properties file)
+|   └── test
+|       └── java
+|           ├── edu (translator unit tests)
+|           └── inputs (translator test inputs)
+|
+└── testOutputs
+    ├── astOutputs (AST traversal output)
+    |   ├── Test000.txt
+    |   |   ...
+    |   └── Test050.txt
+    |
+    ├── mutatedAstOutputs (mutated AST output)
+    |   ├── test000.txt
+    |   |   ...
+    |   └── test050.txt
+    |
+    ├── translationOutputs (actual translated outputs)
+    |   ├── test000
+    |   |   ├── bin
+    |   |   |   ├── inputs/test000
+    |   |   |   └── a.out
+    |   |   |
+    |   |   ├── output (translated codes' outputs)
+    |   |   |   ├── cpp_output.txt
+    |   |   |   └── java_output.txt
+    |   |   |
+    |   |   ├── java_lang.cpp
+    |   |   ├── java_lang.h
+    |   |   ├── main.cpp
+    |   |   ├── output.cpp
+    |   |   ├── output.h
+    |   |   └── ptr.h
+    |   |   ...
+    |   └── test050
+    |
+    └── input_tests.txt
 ```
