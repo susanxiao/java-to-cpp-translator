@@ -30,7 +30,7 @@ help :
 	@echo "make cpp ---------"
 	@echo "     printCpp ---- To print output.cpp files"
 	@echo "make main --------"
-	@echo "     printMaine -- To print main.cpp files"
+	@echo "     printMain --- To print main.cpp files"
 	@echo "make translate ---"
 	@echo "     printAll ---- To print the full translation"
 	@echo "make copy --------"
