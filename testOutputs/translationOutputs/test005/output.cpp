@@ -6,6 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test005 {
 		String __A::toString(A __this) {
+			__rt::checkNotNull(__this);
 			return new __String("A");
 		};
 
@@ -21,6 +22,7 @@ namespace inputs {
 		__A_VT __A::__vtable;
 
 		String __B::toString(B __this) {
+			__rt::checkNotNull(__this);
 			return new __String("B");
 		};
 

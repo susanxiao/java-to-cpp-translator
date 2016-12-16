@@ -10,17 +10,20 @@ namespace inputs {
 		};
 
 		void __A::methodSetFld(A __this, String f) {
+			__rt::checkNotNull(__this);
 			__rt::checkNotNull(f);
 			__this->fld = f;
 		};
 
 		void __A::methodAlmostSetFld(A __this, String f) {
+			__rt::checkNotNull(__this);
 			__rt::checkNotNull(f);
 			String fld;
 			fld = f;
 		};
 
 		String __A::methodGetFld(A __this) {
+			__rt::checkNotNull(__this);
 			return __this->fld;
 		};
 

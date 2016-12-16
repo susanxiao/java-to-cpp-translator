@@ -6,12 +6,14 @@ using namespace std;
 namespace inputs {
 	namespace test013 {
 		void __A::methodSetA(A __this, String x) {
+			__rt::checkNotNull(__this);
 			__rt::checkNotNull(x);
 			__this->a = x;
 		};
 
 		void __A::methodPrintOther(A __this, A other) {
 			__rt::checkNotNull(other);
+			__rt::checkNotNull(__this);
 			cout << other->__vptr->toString(other) << endl;
 		};
 

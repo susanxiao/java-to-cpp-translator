@@ -13,6 +13,7 @@ import java.lang.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -77,7 +78,13 @@ public class AstTraversal extends Visitor {
 
             //add overloaded methods of super class
             HashMap<String, ArrayList<MethodImplementation>> superOverload = summary.overLoadedMethods.get(superClassName);
-            summary.overLoadedMethods.put(name, superOverload);
+            if (superOverload != null) {
+                HashMap<String, ArrayList<MethodImplementation>> clone = new HashMap<>();
+                for (Map.Entry<String, ArrayList<MethodImplementation>> entry : superOverload.entrySet()) {
+                    clone.put(entry.getKey(), new ArrayList<>(entry.getValue())); //deep copy
+                }
+                summary.overLoadedMethods.put(name, clone);
+            }
         } else {
             summary.addClass(null, name, modifier);
         }

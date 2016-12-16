@@ -11,6 +11,7 @@ namespace inputs {
 		};
 
 		A __A::methodSelf(A __this) {
+			__rt::checkNotNull(__this);
 			return __this->self;
 		};
 

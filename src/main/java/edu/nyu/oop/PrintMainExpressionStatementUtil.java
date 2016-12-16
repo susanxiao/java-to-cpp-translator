@@ -276,7 +276,6 @@ public class PrintMainExpressionStatementUtil {
         String expressionStatement1 = "";
         String primaryIdentifier = "";
         String returned = "";
-        String castedType = null;
         boolean isStatic = false;
         if (callExpressionNode.getNode(0).getName().equals("CallExpression")) {
             expressionStatement += handleCallExpressionPrimaryIdentifier(callExpressionNode.getNode(0), methodName, summary, summaryTraversal)+"->__vptr->";
@@ -284,12 +283,12 @@ public class PrintMainExpressionStatementUtil {
             summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(returned);
         }
         else if (callExpressionNode.getNode(0).getName().equals("CastExpression")) {
-            castedType = callExpressionNode.getNode(0).getNode(0).getNode(0).getString(0);
+            String castedType = callExpressionNode.getNode(0).getNode(0).getNode(0).getString(0);
             expressionStatement += "(("+castedType+") ";
             Node castedThing = callExpressionNode.getNode(0).getNode(1);
             if (castedThing.getName().equals("CallExpression")) {
                 expressionStatement += handleCallExpressionPrimaryIdentifier(castedThing, methodName, summary, summaryTraversal);
-                returned = summary.chosenMethod.returnType; //get the return type of the first call
+                returned = castedType; //get the return type of the first call
                 summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(returned);
             }
             expressionStatement += ")->__vptr->";
@@ -310,17 +309,11 @@ public class PrintMainExpressionStatementUtil {
                 else
                     expressionStatement += callExpressionNode.getNode(1).getString(0) + "->";
 
-                if (castedType == null) {
-                    String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
-                    summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
-                }
-                else
-                    summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(castedType);
+                String primaryClass = summary.localVariables.get(variableCalling).replace("__", "");
+                summary.overLoadedMethods = summaryTraversal.overLoadedMethods.get(primaryClass);
             }
         }
-
         if (summary.overLoadedMethods != null && summary.overLoadedMethods.containsKey(methodName)) {
-
             if (callExpressionNode.getNode(3).getName().equals("Arguments")) {
                 String arguments = "(";
                 Node argumentsNode = callExpressionNode.getNode(3);
@@ -337,8 +330,15 @@ public class PrintMainExpressionStatementUtil {
                 }
 
                 if (methods.size() == 1) {
+
+                    int offset = 0;
+
                     if (argumentsNode.size() == 0 && !isStatic) //it is missing the primary identifier;
                         arguments += "new __"+returned+"()";
+                    else if (!(argumentsNode.get(0) instanceof String))
+                        arguments += "new __"+returned+"(), ";
+                    else
+                        offset = 1;
 
                     for (int i = 0; i < argumentsNode.size(); i++) {
                         if (i > 0)
@@ -357,10 +357,14 @@ public class PrintMainExpressionStatementUtil {
                                 if (!primaryIdentifier.isEmpty() && summary.classVariables.get(primaryIdentifier).equals(summary.classVariables.get(primaryIdentifier1))) {
                                     arguments += primaryIdentifier1;
                                 }
+                                else {
+                                    arguments += "("+methods.get(0).parameters.get(i - offset).type+") "+primaryIdentifier1;
+                                }
                             } else if (argument.getName().equals("CallExpression")) {
                                 arguments += handleCallExpressionPrimaryIdentifier(argument, methodName, summary, summaryTraversal);
+                            } else if (argument.getName().equals("CastExpression")) {
+                               arguments += "("+argument.getNode(0).getNode(0).getString(0)+") " + argument.getNode(1).getString(0);
                             } else {
-                                //arguments += argumentsNode.getString(0);
                                 System.out.println("handle this");
                             }
                         }
@@ -369,7 +373,12 @@ public class PrintMainExpressionStatementUtil {
                     }
                     arguments += ")";
 
-                    expressionStatement += methods.get(0).name + arguments;
+                    if (methods.get(0).isOverloaded) {
+                        expressionStatement += methods.get(0).overLoadedName + arguments;
+                        summary.chosenMethod = methods.get(0);
+                    }
+                    else
+                        expressionStatement += methods.get(0).name + arguments;
                 }
                 else { //methods.size() is greater than 1
                     int argIndex = 0;

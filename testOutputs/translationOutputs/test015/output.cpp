@@ -7,6 +7,7 @@ namespace inputs {
 	namespace test015 {
 		void __A::methodPrintOther(A __this, A other) {
 			__rt::checkNotNull(other);
+			__rt::checkNotNull(__this);
 			cout << other->__vptr->toString(other) << endl;
 		};
 
@@ -24,10 +25,12 @@ namespace inputs {
 
 		void __B::methodPrintOther(B __this, A other) {
 			__rt::checkNotNull(other);
+			__rt::checkNotNull(__this);
 			cout << other->__vptr->toString(other) << endl;
 		};
 
 		String __B::toString(B __this) {
+			__rt::checkNotNull(__this);
 			return __this->parent.some->__vptr->toString(__this->parent.some);
 		};
 

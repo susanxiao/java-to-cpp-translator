@@ -10,6 +10,7 @@ namespace inputs {
 		};
 
 		int32_t __A::methodGet(A __this) {
+			__rt::checkNotNull(__this);
 			return __this->i;
 		};
 
@@ -25,6 +26,7 @@ namespace inputs {
 		};
 
 		int32_t __B::methodGet(B __this) {
+			__rt::checkNotNull(__this);
 			return 10-__this->parent.i;
 		};
 

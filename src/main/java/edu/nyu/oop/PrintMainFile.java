@@ -68,6 +68,8 @@ public class PrintMainFile extends Visitor {
     public void visitNestedBlock(GNode n) {
         mainImplementation.append(" {\n");
 
+        mainImplementation.append("\t\tif ("+summary.index+" < 0 || "+summary.arrayName+"->length <= "+summary.index+") throw java::lang::ArrayIndexOutOfBoundsException();\n");
+
         if (summary.init2D != null) {
             String initPrimaryIdentifier = String.format(summary.init2D, summary.init2DDec);
 
@@ -79,7 +81,7 @@ public class PrintMainFile extends Visitor {
             summary.init2DType = null;
             summary.init2DDec = null;
         }
-
+            mainImplementation.append("\t\t");
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -199,6 +201,7 @@ public class PrintMainFile extends Visitor {
         String subscriptExpression_str = primaryIdentifier0.get(0).toString() + "->__data[";
         subscriptExpression_str += primaryIdentifier1.get(0).toString() + "]";
 
+        summary.arrayName = subscriptExpression_str;
         return subscriptExpression_str;
     }
 
@@ -248,6 +251,7 @@ public class PrintMainFile extends Visitor {
                 if (currentNode.getName().equals("RelationalExpression")) {
                     GNode primaryIdentifierNode = (GNode) currentNode.get(0);
                     whileStatement += "("+primaryIdentifierNode.get(0).toString() +  " " + currentNode.get(1).toString() + " ";//<
+                    summary.index = primaryIdentifierNode.getString(0);
                     for (int i = 2; i < currentNode.size(); i++) {
                         Object o1 = currentNode.get(i);
                         if (o1 instanceof Node) {
@@ -293,7 +297,8 @@ public class PrintMainFile extends Visitor {
                                 GNode IntegerLiteralNode = (GNode) declaratorNode.get(2);
                                 forStatement += IntegerLiteralNode.get(0).toString() + "; "; //0;
 
-                               summary.init2DDec = declaratorNode.getString(0);
+                                summary.init2DDec = declaratorNode.getString(0);
+                                summary.index = declaratorNode.getString(0);
 
                             } else if (b_Node.getName().equals("RelationalExpression")) {
 
@@ -312,7 +317,8 @@ public class PrintMainFile extends Visitor {
                                 }else {
                                     //Select expression in 1D array
                                     GNode PrimaryId_inSelectionExNode = (GNode) SelectionExpressNode.get(0);
-                                    forStatement += PrimaryId_inSelectionExNode.get(0).toString(); // as
+                                    summary.arrayName = PrimaryId_inSelectionExNode.get(0).toString(); // as
+                                    forStatement += summary.arrayName; // as
                                 }
                                 forStatement +=  "->" + SelectionExpressNode.get(1).toString() + "; ";
                             } else if (b_Node.getName().equals("ExpressionList")) {
@@ -327,7 +333,7 @@ public class PrintMainFile extends Visitor {
                     }
                     forStatement += ")";
                     mainImplementation.append(forStatement);
-                } else if (currentNode.getName().equals("Block")) {
+                    } else if (currentNode.getName().equals("Block")) {
                     visitNestedBlock(currentNode);
                 }
             }

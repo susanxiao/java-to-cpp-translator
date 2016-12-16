@@ -22,7 +22,8 @@ int main (int argc, char ** argv)
 	}
 
 	for (int32_t i = 0; i < args->length; i++) {
-			cout << args->__data[i] << endl;
+		if (i < 0 || args->length <= i) throw java::lang::ArrayIndexOutOfBoundsException();
+					cout << args->__data[i] << endl;
 	}
 	return 0;
 }

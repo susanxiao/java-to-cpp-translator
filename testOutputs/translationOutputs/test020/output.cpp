@@ -6,6 +6,7 @@ using namespace std;
 namespace inputs {
 	namespace test020 {
 		int32_t __A::methodX() {
+			__rt::checkNotNull(__this);
 			return 4;
 		};
 

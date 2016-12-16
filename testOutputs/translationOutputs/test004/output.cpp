@@ -10,6 +10,7 @@ namespace inputs {
 		};
 
 		String __A::methodGetFld(A __this) {
+			__rt::checkNotNull(__this);
 			return __this->fld;
 		};
 

@@ -576,8 +576,7 @@ public class PrintCppFile extends Visitor {
 
             for (String name : paramNames.keySet()) {
                 String paramType = paramNames.get(name);
-                if (!name.equals("__this") &&
-                        !(paramType.equals("int32_t")
+                if (!(paramType.equals("int32_t")
                         || paramType.equals("double")
                         || paramType.equals("uint8_t"))) //TODO: other primitives
                     summary.addLine("__rt::checkNotNull(" + name + ");\n");
@@ -668,7 +667,7 @@ public class PrintCppFile extends Visitor {
                         }
                     }
                 } else if (currentNode.getName().equals("ReturnStatement")) {
-                    visitReturnStatement(currentNode, classBodyNode);
+                    visitReturnStatement(currentNode, classBodyNode, returnType);
                 }
             }
             summary.decMethodScope();
@@ -680,7 +679,7 @@ public class PrintCppFile extends Visitor {
         }
     }
 
-    public void visitReturnStatement(GNode n,GNode classBodyNode) {
+    public void visitReturnStatement(GNode n,GNode classBodyNode, String returnType) {
         if (!summary.isMainClass) {
             for (Object o : n) {
                 Node currentNode = (Node) o;
@@ -705,7 +704,10 @@ public class PrintCppFile extends Visitor {
                     String value = currentNode.getString(0);
                     summary.addLine("return " + value + ";\n");
                 } else if (currentNode.getName().equals("NullLiteral")) {
-                    summary.addLine("return __rt::null();\n");
+                    if (returnType.equals("Object"))
+                        summary.addLine("return __rt::null();\n");
+                    else
+                        summary.addLine("return ("+returnType+") __rt::null();\n");
                 } else if (currentNode.getName().equals("CallExpression")) {
                     String primaryIdentifier = currentNode.getNode(0).getString(0);
                     boolean parentGate = true; //if true, we need to call parent Object to get its field

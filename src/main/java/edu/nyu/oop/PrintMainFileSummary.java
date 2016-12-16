@@ -26,6 +26,10 @@ public class PrintMainFileSummary {
     String init2DType;
     String init2DDec;
 
+    String arrayName;
+    String index;
+
+
     boolean needsSizeCheck = false;
     Integer size;
     

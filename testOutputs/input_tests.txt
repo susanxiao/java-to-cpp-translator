@@ -25,7 +25,7 @@ test023 -> Passed
 test024 -> Passed
 test025 -> Passed
 test026 -> Passed - Exception
-test027 -> Failed - Exception
+test027 -> Passed - Exception
 test028 -> Passed
 test029 -> Passed - Exception
 test030 -> Passed
@@ -45,14 +45,10 @@ test043 -> Passed
 test044 -> Passed
 test045 -> Passed
 test046 -> Passed
-test047 -> Failed
-test048 -> Failed
+test047 -> Passed
+test048 -> Passed
 test049 -> Failed - Exception
-test050 -> Failed
+test050 -> Passed
 
 Failed:
-test027 -> Failed - Exception
-test047 -> Failed
-test048 -> Failed
 test049 -> Failed - Exception
-test050 -> Failed
