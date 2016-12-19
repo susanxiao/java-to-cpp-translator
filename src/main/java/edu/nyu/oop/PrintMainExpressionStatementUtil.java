@@ -615,8 +615,8 @@ public class PrintMainExpressionStatementUtil {
                         expressionStatement += argumentsNode.getNode(1).getString(0);
                     } else {
                         expressionStatement += "(" + summary.classVariables.get(primaryIdentifier) + ") " + primaryIdentifier1;
-                        expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + primaryIdentifier + "->__vptr->getClass(" + primaryIdentifier + ");\n";
-                        expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n\n";
+                        expressionStatement1 += PrintMainFile.getTabs()+"Class k" + summary.checkClassCounter + " = " + primaryIdentifier + "->__vptr->getClass(" + primaryIdentifier + ");\n";
+                        expressionStatement1 += PrintMainFile.getTabs()+"checkClass(k" + summary.checkClassCounter + ", " + primaryIdentifier1 + ");\n";
                         summary.checkClassCounter++;
                     }
                 } else {
@@ -692,7 +692,7 @@ public class PrintMainExpressionStatementUtil {
                                     }
                                 }
                             }
-                            expressionStatement += ");\n\t\t";
+                            expressionStatement += ");\n";
                         }
 
                         primaryIdentifierExpression = primaryIdentifier0.get(0).toString();
@@ -761,9 +761,9 @@ public class PrintMainExpressionStatementUtil {
                     String varName = currNode.getNode(1).getString(0);
                     expressionStatement += "(" + castType + ") " + varName;
                     String expressionStatement1 = "";
-                    expressionStatement1 += "\tClass k" + summary.checkClassCounter + " = " + primaryIdentifierExpression
+                    expressionStatement1 += PrintMainFile.getTabs()+"Class k" + summary.checkClassCounter + " = " + primaryIdentifierExpression
                             + "->__vptr->getClass(" + primaryIdentifierExpression + ");\n";
-                    expressionStatement1 += "\tcheckClass(k" + summary.checkClassCounter + ", " + varName + ");\n\n";
+                    expressionStatement1 += PrintMainFile.getTabs()+"checkClass(k" + summary.checkClassCounter + ", " + varName + ");\n";
                     summary.checkClassCounter++;
                     String temp = expressionStatement;
                     expressionStatement = "";

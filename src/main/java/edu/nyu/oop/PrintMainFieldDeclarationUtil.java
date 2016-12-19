@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class PrintMainFieldDeclarationUtil {
 
     public static String handleDeclarators(Node n, Node declaratorsNode, String type, boolean isTypeArray, boolean is2D, PrintMainFileSummary summary, AstTraversal.AstTraversalSummary summaryTraversal){
-        String fieldDeclaration="";
+        String fieldDeclaration = "";
         for (Object o : declaratorsNode) {
             if (o instanceof Node) {
                 Node currentDeclarator = (Node) o;
@@ -110,7 +110,7 @@ public class PrintMainFieldDeclarationUtil {
      */
     public static String handleNewArrayExpression(Node n, Node currentDeclarator, String type, String variable, boolean is2D, PrintMainFileSummary summary){
         summary.needsSizeCheck = true;
-        String fieldDeclaration="";
+        String fieldDeclaration ="" ;
         fieldDeclaration += " = ";
 
         Node newArray = currentDeclarator.getNode(2);

@@ -30,6 +30,21 @@ public class PrintMainFile extends Visitor {
     private AstTraversal.AstTraversalSummary summaryTraversal;
 
     StringBuilder mainImplementation = new StringBuilder();
+    static int scope = 0;
+
+    public static void incScope() {
+        scope++;
+    }
+
+    public static void decScope() {
+        scope--;
+    }
+
+    public static String getTabs() {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < scope; i++) s.append("\t");
+        return s.toString();
+    }
 
     //constructor
     public PrintMainFile(Runtime runtime, AstTraversal.AstTraversalSummary summaryTraversal) {
@@ -67,13 +82,13 @@ public class PrintMainFile extends Visitor {
 
     public void visitNestedBlock(GNode n) {
         mainImplementation.append(" {\n");
-
-        mainImplementation.append("\t\tif ("+summary.index+" < 0 || "+summary.arrayName+"->length <= "+summary.index+") throw java::lang::ArrayIndexOutOfBoundsException();\n");
+        //incScope();
+        mainImplementation.append(getTabs()+"if ("+summary.index+" < 0 || "+summary.arrayName+"->length <= "+summary.index+") throw java::lang::ArrayIndexOutOfBoundsException();\n");
 
         if (summary.init2D != null) {
             String initPrimaryIdentifier = String.format(summary.init2D, summary.init2DDec);
 
-            mainImplementation.append("\t\t"+initPrimaryIdentifier+" = "+"new __rt::Array<"+summary.init2DType+">("+summary.init2DSize+");\n");
+            mainImplementation.append(getTabs()+initPrimaryIdentifier+" = "+"new __rt::Array<"+summary.init2DType+">("+summary.init2DSize+");\n");
 
             //reset them;
             summary.init2D = null;
@@ -81,23 +96,29 @@ public class PrintMainFile extends Visitor {
             summary.init2DType = null;
             summary.init2DDec = null;
         }
-            mainImplementation.append("\t\t");
+
+        //mainImplementation.append(getTabs());
+
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("FieldDeclaration")) {
-                    mainImplementation.append("\t");
+                    mainImplementation.append(getTabs());
+                    //mainImplementation.append("\t");
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
-                    mainImplementation.append("\t");
+                    //mainImplementation.append(getTabs());
+                    //mainImplementation.append("\t");
                     visitExpressionStatement(currentNode);
                 } else if (currentNode.getName().equals("ForStatement")) {
-                    mainImplementation.append("\t");
+                    //mainImplementation.append(getTabs());
+                    //incScope();
                     visitForStatement(currentNode);
                 }
             }
         }
-        mainImplementation.append("\t}\n");
+        decScope();
+        mainImplementation.append(getTabs()+"}\n");
     }
 
     public void visitMethodDeclaration(GNode n) {
@@ -111,17 +132,23 @@ public class PrintMainFile extends Visitor {
 
         if (methodName.equals("methodMain")) {
             if (summaryTraversal.usesArgs) {
-                mainImplementation.append("int main (int argc, char ** argv) \n{\n\n");
-                mainImplementation.append("\t//get command line arguments. convert between args(java) and argv(c++). for test22, 23...\n");
-                mainImplementation.append("\t__rt::Array<String>* args = new __rt::Array<String>(argc-1);\n");
-                mainImplementation.append("\tfor (int a = 1; a < argc; a++) {\n");//starts with a=1(not a=0) because the first argument in cpp is the command
-                mainImplementation.append("\t\tString argument = new __String(argv[a]);\n");
-                mainImplementation.append("\t\targs->__data[a-1] = argument;\n");
-                mainImplementation.append("\t}\n\n");
+                mainImplementation.append(getTabs()+"int main (int argc, char ** argv) {\n");
+                incScope();
+                //mainImplementation.append("\t//get command line arguments. convert between args(java) and argv(c++). for test22, 23...\n");
+                mainImplementation.append(getTabs()+"__rt::Array<String>* args = new __rt::Array<String>(argc-1);\n");
+                mainImplementation.append(getTabs()+"for (int a = 1; a < argc; a++) {\n");//starts with a=1(not a=0) because the first argument in cpp is the command
+                incScope();
+                mainImplementation.append(getTabs()+"String argument = new __String(argv[a]);\n");
+                mainImplementation.append(getTabs()+"args->__data[a-1] = argument;\n");
+                decScope();
+                mainImplementation.append(getTabs()+"}\n\n");
 
                 summary.localVariables.put("args", "String[");
-            } else
-                mainImplementation.append("int main(void)\n{\n\n");
+            } else {
+                mainImplementation.append(getTabs() + "int main(void) {\n");
+                incScope();
+            }
+
         }
 
 
@@ -142,13 +169,15 @@ public class PrintMainFile extends Visitor {
         summary.localVariables = null;
         if (methodName.equals("methodMain")) {
             // append the return statement
-            mainImplementation.append("\treturn 0;\n");
-            mainImplementation.append("}");
+            mainImplementation.append(getTabs()+"return 0;\n");
+            decScope();
+            mainImplementation.append(getTabs()+"}");
+
         }
     }
 
     public void visitFieldDeclaration(GNode n) {
-        String fieldDeclaration = "%s\t";
+        String fieldDeclaration = "%s";
 
         String type = n.getNode(1).getNode(0).getString(0);
         if (type.equals("byte"))
@@ -179,14 +208,14 @@ public class PrintMainFile extends Visitor {
             Node declaratorsNode = n.getNode(2);
             fieldDeclaration += PrintMainFieldDeclarationUtil.handleDeclarators(n, declaratorsNode, type, isTypeArray, is2D, summary, summaryTraversal);
         }
-        mainImplementation.append(String.format(fieldDeclaration, summary.needsSizeCheck ? "\tif ("+summary.size+" < 0) throw java::lang::NegativeArraySizeException();\n" : "") + "\n");
+        mainImplementation.append(getTabs()+String.format(fieldDeclaration, summary.needsSizeCheck ? "if ("+summary.size+" < 0) throw java::lang::NegativeArraySizeException();\n"+getTabs() : "") + "\n");
     }
 
     public String checkIndexBoundsForSubscriptExpression(GNode n){
         String arrayVariableName = n.getNode(0).getString(0);
         String arrayIndex = n.getNode(1).getString(0);
 
-        return "\tcheckIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n\t\t";
+        return "checkIndex("+ arrayVariableName + ", " + arrayIndex+ ");\n";
     }
 
     public String returnSubscriptExpression(GNode n){
@@ -206,7 +235,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitExpressionStatement(GNode n) {
-        String expressionStatement = "\t\t";
+        String expressionStatement = "";
         //See if there is an array in the expression Statement
         //If there is an array, make sure we do not get an ArrayIndexOutOfBoundsException
         Node subscriptExpression = NodeUtil.dfs(n,"SubscriptExpression");
@@ -239,11 +268,11 @@ public class PrintMainFile extends Visitor {
             expressionStatement += PrintMainExpressionStatementUtil.handleExpressionNode(expressionNode, summary, summaryTraversal);
             expressionStatement += ";";
         }
-        mainImplementation.append(expressionStatement + "\n");
+        mainImplementation.append(getTabs()+expressionStatement + "\n");
     }
 
     public void visitWhileStatement(GNode n) {
-        String whileStatement = "\twhile ";
+        String whileStatement = "while ";
 
         for (Object o : n) {
             if (o instanceof Node) {
@@ -261,10 +290,12 @@ public class PrintMainFile extends Visitor {
                         }
                     }
                     whileStatement += ")";
-                    mainImplementation.append(whileStatement);
+                    mainImplementation.append(getTabs()+whileStatement);
                 }
                 else if (currentNode.getName().equals("Block")) {
+                    incScope();
                     visitNestedBlock(currentNode);
+                    //decScope();
                 }
             }
         }
@@ -272,7 +303,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitForStatement(GNode n) {
-        String forStatement = "\tfor ";
+        String forStatement = getTabs()+"for ";
         for (Object o : n) {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
@@ -334,7 +365,9 @@ public class PrintMainFile extends Visitor {
                     forStatement += ")";
                     mainImplementation.append(forStatement);
                     } else if (currentNode.getName().equals("Block")) {
+                    incScope();
                     visitNestedBlock(currentNode);
+                    //decScope();
                 }
             }
         }
@@ -347,10 +380,11 @@ public class PrintMainFile extends Visitor {
     public PrintMainFileSummary getSummary(GNode n) {
         StringBuilder s1 = new StringBuilder();
 
-        s1.append("\n//------------------\n\n");
+        //s1.append("\n//------------------\n\n");
 
-        s1.append("#include <iostream>\n#include <sstream>\n");
-        s1.append("#include \"java_lang.h\"\n\n");
+        s1.append("#include <iostream>\n");
+        s1.append("#include <sstream>\n\n");
+        s1.append("#include \"java_lang.h\"\n");
         s1.append("#include \"output.h\"\n");
         s1.append("\n" +
                   "using namespace java::lang;\n" +
@@ -372,7 +406,7 @@ public class PrintMainFile extends Visitor {
             }
         }
 
-        s1.append(";\n\n");
+        s1.append(";\n");
 
         //  visit the main method
         for (Object o : n) {
@@ -459,7 +493,7 @@ public class PrintMainFile extends Visitor {
 
         s1.append(mainImplementation);
 
-        s1.append("\n\n//------------------\n\n");
+        //s1.append("\n\n//------------------\n\n");
 
         summary.filePrinted = s1.toString();
 
