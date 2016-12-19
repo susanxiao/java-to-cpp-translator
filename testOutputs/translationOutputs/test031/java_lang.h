@@ -390,9 +390,13 @@ void checkClass(T __this, U object)
     java::lang::Class k = object->__vptr->getClass(object);
     do
     {
-        if (k == __this){ return; }
+        if (k == __this)
+        {
+            return;
+        }
         k = k->parent;
-    }while (!(k == (java::lang::Class)__rt::null()));
+    }
+    while (!(k == (java::lang::Class)__rt::null()));
     throw java::lang::ClassCastException();
 }
 

@@ -103,7 +103,7 @@ public class PrintMainFile extends Visitor {
             if (o instanceof Node) {
                 GNode currentNode = (GNode) o;
                 if (currentNode.getName().equals("FieldDeclaration")) {
-                    mainImplementation.append(getTabs());
+                    //mainImplementation.append(getTabs());
                     //mainImplementation.append("\t");
                     visitFieldDeclaration(currentNode);
                 } else if (currentNode.getName().equals("ExpressionStatement")) {
@@ -177,7 +177,7 @@ public class PrintMainFile extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-        String fieldDeclaration = "%s";
+        String fieldDeclaration = "%s"+getTabs();
 
         String type = n.getNode(1).getNode(0).getString(0);
         if (type.equals("byte"))
@@ -208,7 +208,7 @@ public class PrintMainFile extends Visitor {
             Node declaratorsNode = n.getNode(2);
             fieldDeclaration += PrintMainFieldDeclarationUtil.handleDeclarators(n, declaratorsNode, type, isTypeArray, is2D, summary, summaryTraversal);
         }
-        mainImplementation.append(getTabs()+String.format(fieldDeclaration, summary.needsSizeCheck ? "if ("+summary.size+" < 0) throw java::lang::NegativeArraySizeException();\n"+getTabs() : "") + "\n");
+        mainImplementation.append(String.format(fieldDeclaration, summary.needsSizeCheck ? getTabs()+"if ("+summary.size+" < 0) throw java::lang::NegativeArraySizeException();\n": "") + "\n");
     }
 
     public String checkIndexBoundsForSubscriptExpression(GNode n){

@@ -692,7 +692,7 @@ public class PrintMainExpressionStatementUtil {
                                     }
                                 }
                             }
-                            expressionStatement += ");\n";
+                            expressionStatement += ");\n"+PrintMainFile.getTabs();
                         }
 
                         primaryIdentifierExpression = primaryIdentifier0.get(0).toString();

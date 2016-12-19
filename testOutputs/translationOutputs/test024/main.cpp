@@ -14,7 +14,7 @@ int main(void) {
 	for (int32_t i = 0; i < as->length; i++) {
 		if (i < 0 || as->length <= i) throw java::lang::ArrayIndexOutOfBoundsException();
 		checkStore(as, new __A(i));
-as->__data[i] = (Object) new __A(i);
+		as->__data[i] = (Object) new __A(i);
 	}
 	if (10 < 0) throw java::lang::NegativeArraySizeException();
 	int k = 0;
